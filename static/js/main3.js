@@ -121,17 +121,13 @@ function load_tabs() {
 function load_preview_tabs() {
     var ul = document.getElementById("tab_list");
     var tab_pg_content = document.getElementById("tab_page_content");
-    var tab_list=[ 
-            {"Name":"Entity Config"},
-            {"Name":"Network Config"},
-            {"Name":"System Config"},
-        ];
+    
     const tab_data = JSON.parse(sessionStorage.getItem("tab_config") || "{}");
 
     // Check if 'Admin' exists and access its tab_list
-    const preview_tab_list = tab_data["Admin"]?.tab_list || [];
+    var tab_list = tab_data["Admin"]?.tab_list || [];
 
-    for (var i = 0; i < preview_tab_list.length; i++) {
+    for (var i = 0; i < tab_list.length; i++) {
         var li = document.createElement("li");
         li.className = "nav-item";
 
