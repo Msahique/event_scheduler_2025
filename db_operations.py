@@ -1,6 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
 import json
+from datetime import datetime
 
 def create_connection(db):
     """Create and return a database connection."""
@@ -115,84 +116,6 @@ def get_json_column(db, table_name):
         if connection:
             connection.close()
 
-import mysql.connector
-from mysql.connector import Error
-'''
-def get_data(db, table_name, select_fields, where_data=None):
-    """
-    Dynamically retrieves data from MySQL, handling both normal and deeply nested JSON fields 
-    in SELECT and WHERE clauses.
-
-    Args:
-    - db (str): Database name.
-    - table_name (str): Table name.
-    - select_fields (list): List of fields to retrieve (supports JSON fields).
-    - where_data (dict, optional): Filtering conditions (supports JSON fields).
-
-    Returns:
-    - list: Retrieved rows from the database.
-    """
-    connection = None
-    cursor = None
-    try:
-        # Connect to the database
-        connection = create_connection(db)
-        if connection and connection.is_connected():
-            cursor = connection.cursor(dictionary=True)
-
-            # Prepare SELECT clause (handling JSON columns)
-            formatted_select_fields = []
-            for field in select_fields:
-                if "." in field:  # If it's a nested JSON field
-                    column_name, *json_path_parts = field.split(".")
-                    json_path = ".".join(json_path_parts)
-                    formatted_field = f"JSON_UNQUOTE(JSON_EXTRACT({column_name}, '$.{json_path}')) AS `{field}`"
-                else:
-                    formatted_field = field  # Normal column
-
-                formatted_select_fields.append(formatted_field)
-
-            select_clause = ', '.join(formatted_select_fields)
-            query = f"SELECT {select_clause} FROM {table_name}"
-
-            # Prepare WHERE conditions
-            where_clauses = []
-            values = []
-
-            if where_data:
-                for key, value in where_data.items():
-                    column_name, *json_path_parts = key.split(".")
-                    json_path = ".".join(json_path_parts)
-
-                    if json_path:  # JSON filter
-                        json_query = f"JSON_UNQUOTE(JSON_EXTRACT({column_name}, '$.{json_path}')) LIKE %s"
-                        where_clauses.append(json_query)
-                    else:  # Normal filter
-                        where_clauses.append(f"{column_name} LIKE %s")
-
-                    values.append(f"%{value}%")
-
-            if where_clauses:
-                query += f" WHERE {' AND '.join(where_clauses)}"
-
-            print(f"[INFO] Final Query: {query}")
-            print(f"[INFO] Query Values: {values}")
-
-            # Execute the query
-            cursor.execute(query, values)
-            result = cursor.fetchall()
-
-            print(f"[INFO] Query Result: {result}")
-            return result
-    except Error as e:
-        print(f"[ERROR] {e}")
-        return None
-    finally:
-        if cursor:
-            cursor.close()
-        if connection and connection.is_connected():
-            connection.close()
-'''
 def get_data(db, table_name, select_fields, where_data=None, exact_match=False):
     """
     Retrieves data from MySQL, supporting JSON field access and optional exact match filters (e.g., for login).
@@ -307,6 +230,138 @@ def check_duplicate_entry(connection, table_name, insert_data):
     finally:
         cursor.close()
 
+# This function handles inserting data into a table with version control if duplicates are found.
+def insert_ignore(db, table_name, insert_data):
+    connection = create_connection(db)
+    cursor = None
+    try:
+        if connection and connection.is_connected():
+            cursor = connection.cursor()
+
+            # Add created_at timestamp
+            if 'created_at' not in insert_data:
+                insert_data['created_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+            insert_columns = ', '.join(insert_data.keys())
+            insert_placeholders = ', '.join(['%s'] * len(insert_data))
+            insert_values = list(insert_data.values())
+
+            query = f"""
+            INSERT IGNORE INTO {table_name} ({insert_columns})
+            VALUES ({insert_placeholders});
+            """
+            print(f"Executing Query: {query}")
+            cursor.execute(query, insert_values)
+            connection.commit()
+
+            if cursor.rowcount > 0:
+                print(f"Row inserted into {table_name} successfully.")
+                return True, "Row inserted into entity successfully."
+            else:
+                is_duplicate, duplicate_columns = check_duplicate_entry(connection, table_name, insert_data)
+                if is_duplicate:
+                    print(f"Insert ignored due to duplicate entry in {table_name}. Conflicting columns: {duplicate_columns}")
+                    user_input = input("Duplicate entry found. Do you want to insert with version control? (y/n): ").strip().lower()
+
+                    if user_input == 'y':
+                        if 'version' not in insert_data:
+                            insert_data['version'] = 'v1'
+                        else:
+                            # Find max version for same identifying fields (excluding version)
+                            condition_clauses = " AND ".join([f"{col} = %s" for col in duplicate_columns if col != 'version'])
+                            condition_values = [insert_data[col] for col in duplicate_columns if col != 'version']
+                            version_query = f"SELECT version FROM {table_name} WHERE {condition_clauses} ORDER BY version DESC LIMIT 1"
+                            cursor.execute(version_query, condition_values)
+                            result = cursor.fetchone()
+
+                            if result:
+                                latest_version = result[0]
+                                try:
+                                    next_version_number = int(latest_version.lstrip('v')) + 1
+                                    insert_data['version'] = f"v{next_version_number}"
+                                except:
+                                    insert_data['version'] = 'v2'
+                            else:
+                                insert_data['version'] = 'v1'
+
+                        # Retry insert
+                        insert_data['created_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # Update timestamp
+                        insert_columns = ', '.join(insert_data.keys())
+                        insert_placeholders = ', '.join(['%s'] * len(insert_data))
+                        insert_values = list(insert_data.values())
+                        retry_query = f"""
+                        INSERT IGNORE INTO {table_name} ({insert_columns})
+                        VALUES ({insert_placeholders});
+                        """
+                        print(f"Retrying Insert with version: {insert_data['version']}")
+                        cursor.execute(retry_query, insert_values)
+                        connection.commit()
+
+                        if cursor.rowcount > 0:
+                            return True, f"Row inserted with version {insert_data['version']}."
+                        else:
+                            return False, "Retry insert failed even with versioning."
+                    else:
+                        return False, f"Insert ignored due to duplicate entry. Conflicting columns: {duplicate_columns}"
+                else:
+                    return False, "Insert ignored, but no exact duplicate found."
+    except Error as e:
+        print(f"Error: {e}")
+        return False, str(e)
+    finally:
+        if cursor:
+            cursor.close()
+        if connection and connection.is_connected():
+            connection.close()
+
+'''
+#This function handles inserting data into a table with created_at timestamp and checks for duplicate entries.
+def insert_ignore(db, table_name, insert_data):
+    connection = create_connection(db)
+    cursor = None
+    try:
+        if connection and connection.is_connected():
+            cursor = connection.cursor()
+
+            # Add created_at timestamp if not already present
+            if 'created_at' not in insert_data:
+                insert_data['created_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+            insert_columns = ', '.join(insert_data.keys())
+            insert_placeholders = ', '.join(['%s'] * len(insert_data))
+            insert_values = list(insert_data.values())
+
+            query = f"""
+            INSERT IGNORE INTO {table_name} ({insert_columns})
+            VALUES ({insert_placeholders});
+            """
+            print(f"Executing Query: {query}")
+            cursor.execute(query, insert_values)
+            connection.commit()
+
+            if cursor.rowcount > 0:
+                print(f"Row inserted into {table_name} successfully.")
+                return True, "Row inserted into entity successfully."
+            else:
+                # Identify which columns caused the duplicate entry
+                is_duplicate, duplicate_columns = check_duplicate_entry(connection, table_name, insert_data)
+                if is_duplicate:
+                    print(f"Insert ignored due to duplicate entry in {table_name}. Conflicting columns: {duplicate_columns}")
+                    return False, f"Insert ignored due to duplicate entry. Conflicting columns: {duplicate_columns}"
+                else:
+                    return False, "Insert ignored, but no exact duplicate found."
+    except Error as e:
+        print(f"Error: {e}")
+        return False, str(e)
+    finally:
+        if cursor:
+            cursor.close()
+        if connection and connection.is_connected():
+            connection.close()
+'''
+
+
+'''
 def insert_ignore(db, table_name, insert_data):
     connection = create_connection(db)
     cursor = None
@@ -343,6 +398,9 @@ def insert_ignore(db, table_name, insert_data):
             cursor.close()
         if connection and connection.is_connected():
             connection.close()
+'''
+
+
 
 #data = get_data("event_scheduler2025","entity", ['*'],{'entity_id': 1})
 #print(data)
