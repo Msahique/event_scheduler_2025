@@ -917,6 +917,7 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js" defer></script>
     <script>
         var tabStatus=0;
+        var global_settings={"language":"english", }
          const MainConfig = JSON.parse(sessionStorage.getItem("config_data") || "{}");
             const affiliations =JSON.parse(sessionStorage.getItem("tab_config") || "[]");
             console.log("Main Config:", MainConfig);

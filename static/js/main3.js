@@ -841,7 +841,6 @@ function createTable(responseData) {
         
         tbody.appendChild(tr);
     });
-
     table.appendChild(tbody);
     tableWrapper.appendChild(table);
 
@@ -855,6 +854,329 @@ function createTable(responseData) {
     // Initialize Pagination
     createPaginationControls();
     displayPage(1);
+}
+
+function previewCreateTable(responseData) {
+    console.log("Preview mode - showing table structure only");
+    console.log(selectedItemFromDropdown);
+    console.log(responseData);
+    
+    document.getElementById("tab_page_content").style.display = "block";
+    const container = document.getElementById("tab_page_header");   
+    if (!container) {
+        console.error(`Element with id 'tab_page_header' not found.`);
+        return;
+    }
+
+    // Create a div for controls (dropdowns and buttons)
+    var divControls = document.createElement('div');
+    if (selectedItemFromDropdown === null) {
+        try {
+            container.innerHTML = ""; 
+            divControls.className = 'mb-3 d-flex gap-2';
+            
+            responseData.controls.forEach(control => {
+                if (control.roles && control.roles.includes(role)) {
+                    let input = null;
+
+                    if (control.type === "select") {
+                        let selectContainer = document.createElement('div');
+                        selectContainer.className = 'custom-dropdown';
+                        
+                        input = document.createElement('select');
+                        input.className = 'form-control dropdown-select';
+                        input.name = control.tag || control.name;
+                        input.setAttribute('id', control.tag);
+
+                        // Add a default option
+                        let defaultOption = document.createElement('option');
+                        defaultOption.value = control.tag;
+                        defaultOption.textContent = control.textContent;
+                        defaultOption.disabled = true;
+                        defaultOption.selected = true;
+                        input.appendChild(defaultOption);
+
+                        // Get options from JSON config
+                        let data = control.options || ["Config A", "Config B", "Config C"];
+                        console.log(`Preview Dropdown '${control.name}' Options:`, data);
+
+                        if (Array.isArray(data) && data.length > 0) {
+                            data.forEach(value => {
+                                let option = document.createElement('option');
+                                option.value = value;
+                                option.textContent = value;
+                                input.appendChild(option);
+                            });
+                        }
+
+                        // Add event listener (disabled in preview mode)
+                        input.addEventListener("change", function () {
+                            console.log(`Preview Mode - Selected: ${this.value}`);
+                            // Note: In preview mode, actual data loading is disabled
+                        });
+                        
+                        selectContainer.appendChild(input);
+                        divControls.appendChild(selectContainer);
+                    } 
+                    else { // For buttons
+                        input = document.createElement('button');
+                        input.setAttribute('onclick', control.function);
+                        input.className = control.class;
+                        input.innerHTML = control.name;
+                        divControls.appendChild(input);
+                    }
+                }
+            });
+            container.appendChild(divControls);
+        }
+        catch (err) {
+            console.log("Preview error:", err.message);
+        }
+    }
+
+    // Create content container
+    const contentContainer = document.getElementById("tab_page_content");
+    contentContainer.innerHTML = ""; 
+
+    // Create Search Bar (preview only)
+    let searchInput = document.createElement("input");
+    searchInput.setAttribute("type", "text");
+    searchInput.setAttribute("placeholder", "Search... (Preview Mode)");
+    searchInput.className = "form-control mb-3";
+    searchInput.disabled = true; // Disabled in preview mode
+
+    // Table Wrapper
+    let tableWrapper = document.createElement('div');
+    tableWrapper.id = 'tableWrapper';
+    tableWrapper.className = 'table-responsive';
+
+    let table = document.createElement('table');
+    table.className = 'table table-bordered table-striped table-hover';
+    table.setAttribute("id", "dataTable");
+
+    // Create Table Header
+    let thead = document.createElement('thead');
+    thead.className = 'table-dark sticky-top';
+    let headerRow = document.createElement('tr');
+
+    let received_Data = responseData.fields.data[0];
+    let visibleFields = received_Data.fields.filter(field => field.show);
+    
+    // Create filter container (preview only)
+    const filterContainer = document.getElementById("tab_page_filter");
+    let filterForm = document.createElement("div");
+    filterForm.id = "filterForm";
+    filterForm.className = "filter-form d-flex flex-wrap gap-2 align-items-center mb-3";
+
+    // Show filter structure without functionality
+    document.getElementById("filter_btn").style.display = "block";
+    document.getElementById("show_btn").style.display = "block";
+
+    // Create preview filter inputs
+    visibleFields.forEach(element => {
+        try {
+            let fieldWrapper = document.createElement("div");
+            fieldWrapper.className = "mb-3";
+            
+            if (element.filter_type === "datetime") {
+                let label1 = document.createElement("label");
+                label1.innerHTML = element.field + " FROM:";
+                label1.className = "form-label";
+
+                let input1 = document.createElement("input");
+                input1.type = "datetime-local";
+                input1.placeholder = "FROM (Preview)";
+                input1.className = "form-control";
+                input1.disabled = true;
+
+                let label2 = document.createElement("label");
+                label2.innerHTML = element.field + " TO:";
+                label2.className = "form-label";
+
+                let input2 = document.createElement("input");
+                input2.type = "datetime-local";
+                input2.placeholder = "TO (Preview)";
+                input2.className = "form-control";
+                input2.disabled = true;
+
+                fieldWrapper.appendChild(label1);
+                fieldWrapper.appendChild(input1);
+                fieldWrapper.appendChild(label2);
+                fieldWrapper.appendChild(input2);
+                fieldWrapper.appendChild(document.createElement('br'));
+            } 
+            else if (element.filter_type === "dropdown") {
+                let select = document.createElement("select");
+                select.className = "form-select";
+                select.disabled = true;
+
+                let defaultOption = document.createElement("option");
+                defaultOption.value = "";
+                defaultOption.textContent = "Select " + element.field + " (Preview)";
+                select.appendChild(defaultOption);
+
+                fieldWrapper.appendChild(select);
+                fieldWrapper.appendChild(document.createElement('br'));
+            } 
+            else if (element.filter_type === "textbox" || element.filter_type === "lable") {
+                let input = document.createElement("input");
+                input.setAttribute("type", "text");
+                input.setAttribute("placeholder", (element.label || element.field) + " (Preview)");
+                input.className = "form-control";
+                input.disabled = true;
+
+                fieldWrapper.appendChild(input);
+                fieldWrapper.appendChild(document.createElement('br'));
+            }
+            
+            filterForm.appendChild(fieldWrapper);
+        } catch (err) {
+            console.log("Preview filter error:", err);
+        }
+    });
+
+    // Add preview filter button
+    let filterButtonWrapper = document.createElement("div");
+    filterButtonWrapper.className = "mb-3 text-center";
+    
+    let filterButton = document.createElement("button");
+    filterButton.textContent = "OK (Preview)";
+    filterButton.className = "btn btn-primary";
+    filterButton.disabled = true;
+
+    filterButtonWrapper.appendChild(document.createElement('br'));
+    filterButtonWrapper.appendChild(filterButton);
+    filterForm.appendChild(filterButtonWrapper);
+
+    filterContainer.appendChild(filterForm);
+
+    // Add Edit Column if applicable
+    if (received_Data.edit_option) {
+        let editTh = document.createElement('th');
+        editTh.className = "text-center";
+        editTh.textContent = "Select";
+        editTh.setAttribute('scope', 'col');
+        headerRow.appendChild(editTh);
+    }
+
+    // Create table headers
+    visibleFields.forEach(element => {
+        let th = document.createElement('th');
+        th.className = "text-center sortable";
+        th.setAttribute('scope', 'col');
+        th.setAttribute("data-field", element.field);
+        
+        let thContent = document.createElement('div');
+        thContent.style.display = "flex";
+        thContent.style.alignItems = "center";
+        thContent.style.justifyContent = "center";
+        thContent.style.cursor = "default"; // No sorting in preview
+        
+        let columnText = document.createElement('span');
+        columnText.textContent = element.lang[global_settings.language] || element.field.replace(/_/g, ' ').toUpperCase();
+        columnText.style.marginRight = "5px";
+        
+        let sortIcon = document.createElement('span');
+        sortIcon.innerHTML = "&#9650;&#9660;"; // Show both arrows for preview
+        sortIcon.style.opacity = "0.5"; // Faded to indicate disabled
+        
+        thContent.appendChild(columnText);
+        thContent.appendChild(sortIcon);
+        th.appendChild(thContent);
+        headerRow.appendChild(th);
+    });
+
+    // Create column visibility panel
+    let columnPanel = document.getElementById("show_columns_panel");
+    columnPanel.innerHTML = "";
+
+    visibleFields.forEach(element => {
+        let columnItem = document.createElement("div");
+        columnItem.className = "column-item";
+
+        let checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.setAttribute("data-field", element.field);
+        checkbox.checked = true;
+        checkbox.disabled = true; // Disabled in preview
+
+        let label = document.createElement("label");
+        label.textContent = element.lang[global_settings.language] || element.field.replace(/_/g, ' ').toUpperCase();
+        label.style.marginLeft = "5px";
+        label.style.opacity = "0.7"; // Faded for preview
+
+        columnItem.appendChild(checkbox);
+        columnItem.appendChild(label);
+        columnPanel.appendChild(columnItem);
+    });
+
+    // Add disabled update button
+    let updateButton = document.createElement("button");
+    updateButton.textContent = "OK (Preview)";
+    updateButton.className = "btn btn-primary mt-2";
+    updateButton.disabled = true;
+    columnPanel.appendChild(updateButton);
+
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Create Table Body with preview message
+    let tbody = document.createElement('tbody');
+    tbody.setAttribute("id", "entityTableBody");
+    
+    // Add a preview row to show structure
+    let previewRow = document.createElement('tr');
+    previewRow.style.backgroundColor = "#f8f9fa";
+    previewRow.style.fontStyle = "italic";
+    previewRow.style.color = "#6c757d";
+
+    // Add radio button column if applicable
+    if (received_Data.edit_option) {
+        let previewTd = document.createElement('td');
+        previewTd.className = "text-center";
+        previewTd.innerHTML = "○"; // Empty radio symbol
+        previewRow.appendChild(previewTd);
+    }
+
+    // Add preview data cells
+    visibleFields.forEach(field => {
+        let td = document.createElement('td');
+        td.className = "text-center";
+        td.setAttribute("data-field", field.field);
+        
+        if (["remark", "schedule", "venue", "photo"].includes(field.field.toLowerCase())) {
+            td.innerHTML = "<em>View Button</em>";
+        } else {
+            td.textContent = `[${field.field}]`;
+        }
+        
+        previewRow.appendChild(td);
+    });
+
+    tbody.appendChild(previewRow);
+
+    // Add additional preview message row
+    let messageRow = document.createElement('tr');
+    let messageCell = document.createElement('td');
+    messageCell.colSpan = visibleFields.length + (received_Data.edit_option ? 1 : 0);
+    messageCell.className = "text-center";
+    messageCell.style.padding = "20px";
+    messageCell.style.backgroundColor = "#e9ecef";
+    messageCell.innerHTML = "<strong>PREVIEW MODE</strong><br>Table structure and headers are shown above.<br>Data will be populated when actual data is loaded.";
+    messageRow.appendChild(messageCell);
+    tbody.appendChild(messageRow);
+
+    table.appendChild(tbody);
+    tableWrapper.appendChild(table);
+
+    // Append everything to container
+    if (page_load_conf.tab !== "EntityConfig" && page_load_conf.tab !== "NetworkConfig" && page_load_conf.tab !== "SystemConfig") {
+        container.appendChild(divControls);
+    }
+    contentContainer.appendChild(searchInput);
+    contentContainer.appendChild(tableWrapper);
+
+    console.log("Preview table structure created successfully");
 }
 
 function edit_data(){
