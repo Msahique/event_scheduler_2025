@@ -400,8 +400,6 @@ def insert_ignore(db, table_name, insert_data):
             connection.close()
 '''
 
-
-
 #data = get_data("event_scheduler2025","entity", ['*'],{'entity_id': 1})
 #print(data)
 

@@ -356,7 +356,7 @@ function createTable(responseData) {
         var hasField = false;
         document.getElementById("filter_btn").style.display = "block";
         document.getElementById("show_btn").style.display = "block";
-   
+        
         //console.log("page_load_conf:", page_load_conf);
         //console.log("page_load_conf.tab:", page_load_conf?.tab);
         //console.log("selectedItemFromDropdown:",selectedItemFromDropdown);
@@ -1536,9 +1536,11 @@ async function Registration_modal() {
             input = document.createElement("venue-control");
             //input.setAttribute()
             input.id = field.field;
+        } else if (field.control === "doc-template-control"){
+            input = document.createElement("doc-template-control");
+            //input.setAttribute()
+            input.id = field.field;
         } else if (field.control === "attachment-control"){
-           
-            
             input = document.createElement("attachment-control");
             //input.setAttribute()
             input.id = field.field;
@@ -1712,6 +1714,9 @@ async function Registration_modal() {
             } else if (field.control === 'venue-control') {
                 let venueElement = document.querySelector("venue-control");
                 newData[field.field] = venueElement ? venueElement.value : "";
+            }else if (field.control === 'doc-template-control') {
+                let docTemplateElement = document.querySelector("doc-template-control");
+                newData[field.field] = docTemplateElement ? docTemplateElement.value : "";
             } else if (field.control === "file") {
                 newData.file = await storeFileForUpload(field);  // Store file for later upload
             } else if (input) {

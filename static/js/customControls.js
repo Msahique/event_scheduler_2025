@@ -621,6 +621,7 @@ class AttachmentControl extends HTMLElement {
 }
 customElements.define("attachment-control", AttachmentControl);
 
+
 class Doc_template_Control extends HTMLElement {
   constructor() {
     super();
@@ -831,7 +832,6 @@ class Doc_template_Control extends HTMLElement {
     return JSON.stringify({ fields: this.fields });
   }
 }
-
 customElements.define('doc-template-control', Doc_template_Control);
 
 

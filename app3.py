@@ -1384,8 +1384,75 @@ def get_documentUI_registry():
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
 
+######################################################  Document UI Template  APIs  ####################################################################
+
+@app.route('/trigger_functions/new', methods=['POST'])
+def insert_trigger_functions():
+    json_data = json.load(open('config/new/get_DB_data.json')) 
+    data = stream_json()  # Receiving data in chunks
+    
+    success, message = insert_ignore(json_data['db_name'], json_data[data['tab']][data['type']], data.get("qry"))
+    
+    if success:
+        return jsonify({'message': message}), 201
+    else:
+        return jsonify({'error': message}), 400
+
+@app.route('/trigger_functions/modifications', methods=['PUT'])
+def update_trigger_functions():
+    json_data = json.load(open('config/new/get_DB_data.json'))
+    data = stream_json()  # Receiving data in chunks
+    
+    update_data = data.get("qry")
+    where_data = {"entity_id": data.get('entity_id')}
+
+    if not update_data or not where_data.get("entity_id"):
+        return jsonify({"error": "Missing entity_id or update_data"}), 400
+
+    success = update_entry(json_data['db_name'], json_data[data['tab']][data['type']], update_data, where_data)
+    
+    if success:
+        return jsonify({"message": "Entry updated successfully"}), 200
+    else:
+        return jsonify({"error": "Failed to update entry"}), 500
+
+@app.route('/trigger_functions', methods=['DELETE'])
+def delete_trigger_functions():
+    json_data = json.load(open('config/new/get_DB_data.json'))
+    data = stream_json()  # Receiving data in chunks
+    entity_id = data.get('entity_id')
+
+    if not entity_id:
+        return jsonify({"error": "Missing entity_id"}), 400
+
+    success = delete_entry(json_data['db_name'], json_data[data['tab']][data['type']], {"entity_id": entity_id})
+    
+    if success:
+        return jsonify({"message": "Entry deleted successfully"}), 200
+    else:
+        return jsonify({"error": "Failed to delete entry"}), 500
+
+@app.route('/trigger_functions/list_details', methods=['POST', 'GET'])
+def get_trigger_functions():
+    json_data = json.load(open('config/new/get_DB_data.json'))
+    data = stream_json()  # Receiving data in chunks
+    
+    try:
+        myresult = get_data(
+            json_data['db_name'],
+            json_data[data['tab']][data['type']],
+            data['qry']['select_fields'],
+            data['qry']['where_data']
+        )
+        
+        return jsonify([myresult] if data['qry']['where_data'] else [myresult])
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+ 
+
+########################################################### Final Template Registry APIs ####################################################################
 
 @app.route('/finalTemplate_registry/new', methods=['POST'])
 def insert_finalTemplate_registry():

@@ -44,7 +44,8 @@
     },
     "Document Config":{
         "Document Registry":"doc_templates",
-        "Document UI template":"doc_ui_template"
+        "Document UI template":"doc_ui_template",
+        "Trigger Functions":"trigger_functions"
     },
      "Editor Config":{
         "Final Templates":"doc_final_templates"

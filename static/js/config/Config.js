@@ -2622,7 +2622,7 @@ var MainConfig={
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
-         {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Document Registry","Document UI template"],"textContent": "Items"},
+         {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Document Registry","Document UI template","Trigger Functions"],"textContent": "Items"},
          {"type": "select", "tag": "entriesPerPage", "roles": ["Admin","Approver","User"], "name": "EntriesPerPage", "options": [2,3,5,10,15,20,25,30,35,40,45,50], "textContent": "Rows/Page"},
         ],
         "Roles":["Admin"],
@@ -2634,14 +2634,18 @@ var MainConfig={
                 "create":{
                 "roles":["Admin"],   
                 "data":[
+                  {"helper":"getDocTemplates",
+                     "fields":[
+                        {"field":"doc_type","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document type","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}}
+                        ]
+                   },
                     {  "helper":"none",
                         "fields":[
                             {"field":"doc_affiliation_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Affiliation ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"doc_type","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Type","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"affiliation_id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"doc_description","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"doc_template","edit":true,"show":true,"control":"doc-template-control","mandatory":true,"default":"","filter_type":"","lang":{"english":"Doc Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"ui_template","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"field":"affiliation_id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"field":"doc_description","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"field":"doc_template","edit":true,"show":true,"control":"doc-template-control","mandatory":true,"default":"","filter_type":"textbox","lang":{"english":"Doc Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"field":"ui_template","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -2654,14 +2658,10 @@ var MainConfig={
                 "list":{
                 "roles":["Admin"],  
                 "data":[
-                     {"helper":"getDocTemplates",
-                     "fields":[
-                        {"field":"doc_type","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":""}
-                        ]
-                   },
                     {  "helper":"none",
                         "fields":[
                             {"field":"doc_templates_id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"field":"doc_type","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document type","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
                             {"field":"affiliation_id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
                             {"field":"doc_description","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
                             {"field":"doc_template","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Doc Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
@@ -2796,6 +2796,114 @@ var MainConfig={
                             {"field":"affiliation_id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
                             {"field":"description","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
                             {"field":"ui_template","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                        ],  
+                        "edit_option":true,
+                        "delete_option":false
+                    }
+                ],
+                "onSuccess":"Role_approved()"
+                
+                },
+                "cancel":{"api":"config","onSuccess":"Role_canceled()"}
+            }
+        },
+        "Trigger Functions":{
+            "getDataApi":"config/list_details",
+            "key":"id",
+            "attchment_files_path":"",
+            "job":{
+                "create":{
+                "roles":["Admin"],   
+                "data":[
+                    {  "helper":"none",
+                        "fields":[
+                           {"field":"id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
+                           {"field":"trigger_name","name":"Trigger Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Trigger Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
+                           {"field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
+                           {"field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
+                           {"field":"trigger_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Trigger Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
+                           {"field":"helper_function","name":"Helper Function","edit":true,"show":true,"control":"text","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
+                           {"field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
+                           {"field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","german":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
+                           {"field":"version","name":"Version","edit":false,"show":false,"control":"text","mandatory":true,"default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
+                           {"field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","mandatory":false,"default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}}
+
+                        ],
+                        "edit_option":true,
+                        "delete_option":true
+                    }
+                ],
+                "api":"config/new",
+                "onSuccess":"Role_created()"
+                
+                },
+                "list":{
+                "roles":["Admin"],  
+                "data":[
+                    {  "helper":"none",
+                        "fields":[
+                           {"field":"id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
+                           {"field":"trigger_name","name":"Trigger Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Trigger Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
+                           {"field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
+                           {"field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
+                           {"field":"trigger_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Trigger Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
+                           {"field":"helper_function","name":"Helper Function","edit":true,"show":true,"control":"text","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
+                           {"field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
+                           {"field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","german":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
+                           {"field":"version","name":"Version","edit":false,"show":false,"control":"text","mandatory":true,"default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
+                           {"field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","mandatory":false,"default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}}
+    
+                        ],
+                        "edit_option":true,
+                        "delete_option":true
+                    }
+                ],
+                "api":"config/list_details",
+                "onSuccess":"Role_listed()"
+                },
+                "update":{
+                    "roles":["Admin"],  
+                    "data":[
+                        {  "helper":"none",
+                            "fields":[
+                              {"field":"id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
+                              {"field":"trigger_name","name":"Trigger Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Trigger Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
+                              {"field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
+                              {"field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
+                              {"field":"trigger_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Trigger Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
+                              {"field":"helper_function","name":"Helper Function","edit":true,"show":true,"control":"text","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
+                              {"field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
+                              {"field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","german":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
+                              {"field":"version","name":"Version","edit":false,"show":false,"control":"text","mandatory":true,"default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
+                              {"field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","mandatory":false,"default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}}
+
+                           ],
+                            "edit_option":true,
+                            "delete_option":true
+                        }
+                    ],
+                    "checklist":{
+                        "checkpoints":[]
+                    },
+                    "api":"config/modifications"
+                    
+
+                },
+                "approver":{
+                "roles":["Approver"],
+                "data":[
+                    {  "helper":"none",
+                        "fields":[
+                           {"field":"id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
+                           {"field":"trigger_name","name":"Trigger Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Trigger Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
+                           {"field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
+                           {"field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
+                           {"field":"trigger_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Trigger Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
+                           {"field":"helper_function","name":"Helper Function","edit":true,"show":true,"control":"text","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
+                           {"field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
+                           {"field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","german":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
+                           {"field":"version","name":"Version","edit":false,"show":false,"control":"text","mandatory":true,"default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
+                           {"field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","mandatory":false,"default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}}
                         ],  
                         "edit_option":true,
                         "delete_option":false
