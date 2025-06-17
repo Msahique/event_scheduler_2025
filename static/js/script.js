@@ -29,13 +29,46 @@ function get_data_list(selected_item,where_data){
             fetchData();    
         }
         else if(selected_item) {
-            console.log(">>>>>",selected_item)
-            data_list_body.type=selected_item;
-            data_list_body.tab=page_load_conf.tab;
-            console.log(MainConfig[page_load_conf.tab][selected_item].getDataApi)
-            API_call(domain,MainConfig[page_load_conf.tab][selected_item].getDataApi,data_list_body,"POST")
-        }
-        
+            console.log(">>>>>", selected_item);
+            data_list_body.type = selected_item;
+            console.log(data_list_body.type);
+            data_list_body.tab = page_load_conf.tab;
+            console.log(data_list_body.tab);
+            console.log(tabStatus);
+            console.log(MainConfig);
+            
+            if (tabStatus == 0) {
+                let tabName = page_load_conf.tab;
+                
+                if (MainConfig[tabName]) {
+                    // Get the first available item configuration from MainConfig for this tab
+                    let firstItemKey = Object.keys(MainConfig[tabName]).find(key => 
+                        key !== 'controls' && MainConfig[tabName][key] && MainConfig[tabName][key].job
+                    );
+                    
+                    if (firstItemKey && MainConfig[tabName][firstItemKey].job && MainConfig[tabName][firstItemKey].job.list) {
+                        var data_list = {
+                            tab_name: tabName,
+                            controls: MainConfig[tabName].controls || [],
+                            data: {},
+                            fields: MainConfig[tabName][firstItemKey].job.list
+                        };
+                        
+                        console.log("Data List:", data_list);
+                        console.log(selectedItemFromDropdown);
+                        previewCreateTable(data_list);
+                    } else {
+                        console.warn(`No valid configuration found for tab: ${tabName}`);
+                        present_Data({});
+                    }
+                } else {
+                    console.warn(`Tab "${tabName}" not found in MainConfig`);
+                    present_Data({});
+                }
+            } else {
+                API_call(domain, MainConfig[page_load_conf.tab][selected_item].getDataApi, data_list_body, "POST");
+            }
+        } 
         else{present_Data({})}
 }
 
@@ -84,7 +117,7 @@ function present_Data(data,item) {
         fields: field_data
     };
 
-    console.log(data_list);
+    console.log("Data List: ",data_list);
     console.log(selectedItemFromDropdown)
     createTable(data_list);
 }
