@@ -17,7 +17,7 @@ from db_operations import *
 mydb = pymysql.connect(
   host="localhost",
   user="root",
-  password="Blr@2025",
+  password="root",
   database="event_scheduler2025",
   port=3306,
   cursorclass=pymysql.cursors.DictCursor
@@ -1297,19 +1297,22 @@ def delete_document_registry():
 def get_document_registry():
     json_data = json.load(open('config/new/get_DB_data.json'))
     data = stream_json()  # Receiving data in chunks
+    print(data)
+    print("db name: ", json_data['db_name'])
+    #try:
+    myresult = get_data(
+        json_data['db_name'],
+        json_data[data['tab']][data['type']],
+        data['qry']['select_fields'],
+        data['qry']['where_data'],
+        exact_match=True
+    )
+    print("api called:",myresult)
     
-    try:
-        myresult = get_data(
-            json_data['db_name'],
-            json_data[data['tab']][data['type']],
-            data['qry']['select_fields'],
-            data['qry']['where_data']
-        )
-        
-        return jsonify([myresult] if data['qry']['where_data'] else [myresult])
+    return jsonify([myresult] if data['qry']['where_data'] else [myresult])
     
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    #except Exception as e:
+    #    return jsonify({"error": str(e)}), 500
     
 ######################################################  Document UI Template  APIs  ####################################################################
 

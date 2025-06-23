@@ -16,10 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  document.addEventListener('DOMContentLoaded', () => {
+ /* document.addEventListener('DOMContentLoaded', () => {
     const affiliations = window.affiliations || [];
     console.log("Affiliations:", affiliations);
-  });
+  });*/
   
 var page_load_conf={
     rows_PP:null,
@@ -1850,6 +1850,10 @@ async function Registration_modal() {
                     input.appendChild(option);
                 });
             }
+            if (field.onchange && typeof window[field.onchange] === "function") {
+                input.addEventListener("change", (e) => window[field.onchange](e));
+            }
+
         } else if (field.control === "schedule-control"){
             input = document.createElement("schedule-control");
             //input.setAttribute()
@@ -1874,11 +1878,7 @@ async function Registration_modal() {
             input = document.createElement("field-attribute-control");
             //input.setAttribute()
             input.id = field.field; 
-            input.fields = [
-                { "name": "id", "datatype": "INT", "unique": "", "not_null": "" },
-                { "name": "name", "datatype": "VARCHAR(45)", "unique": "", "not_null": "" },
-                { "name": "age", "datatype": "INT", "unique": "", "not_null": "" }
-            ];
+           
         } else if (field.control === "checkbox") {
             input = document.createElement('input');
             input.type = 'checkbox';
@@ -1985,12 +1985,18 @@ async function Registration_modal() {
                 } 
             } else if (field.control === 'doc-template-control') {
                 let doc_template_Element = document.querySelector("doc-template-control");
-                
                 if (doc_template_Element) {
-                    newData[field.field] = doc_template_Element.value;
+                    try {
+                        let parsedValue = JSON.parse(doc_template_Element.value);
+                        console.log("Parsed doc-template value:", parsedValue);
+                        newData[field.field] = parsedValue;
+                    } catch (e) {
+                        console.error("Failed to parse doc-template-control value:", e);
+                    }
                 } else {
                     console.warn(`doc_template control element not found.`);
                 }
+
             } else if (field.control === "field-attribute-control") {
                 let fieldElement = document.querySelector("field-attribute-control");
                 if (fieldElement) {
@@ -2271,53 +2277,52 @@ document.getElementById("eventForm_new").addEventListener("submit", function (ev
 
 
     // Periodically check for pending requests
-   /* setInterval(async () => {
+    /*setInterval(async () => {
         if (navigator.onLine) {
             console.log("[Network] Checking pending requests...");
             await processOfflineRequests();
         }
-    }, 15000);*/   
+    }, 15000);  */
 
 
-    /*
+/*
 
+    ALTER TABLE `affiliation` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `event_scheduler2025.alert_schedule` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `event_scheduler2025.alert_templates` ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `application_registry` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `appointment` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `department_types` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `doc_final_templates` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `doc_status_types` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `doc_templates` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `doc_types` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `doc_ui_template` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `entity` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `entity_types` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `event_log` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `event_new` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `event_type` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `events` ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `final_templates` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `gov_service_regsitry` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `message_details` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `network_log` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `notifications` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `options` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `program_registry` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `qrlinks` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `resource_allocation` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `resource_profile` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `resource_registry` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `resource_type` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `roles` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `roles_permissions_old` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `subscriber` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `system_log` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `system_settings` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `token_details` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `user_registration` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `venue` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
 
-ALTER TABLE `affiliation` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `event_scheduler2025.alert_schedule` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `event_scheduler2025.alert_templates` ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `application_registry` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `appointment` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `department_types` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `doc_final_templates` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `doc_status_types` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `doc_templates` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `doc_types` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `doc_ui_template` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `entity` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `entity_types` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `event_log` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `event_new` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `event_type` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `events` ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `final_templates` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `gov_service_regsitry` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `message_details` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `network_log` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `notifications` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `options` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `program_registry` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `qrlinks` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `resource_allocation` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `resource_profile` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `resource_registry` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `resource_type` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `roles` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `roles_permissions_old` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `subscriber` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `system_log` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `system_settings` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `token_details` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `user_registration` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-ALTER TABLE `venue` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
-
-    */
+*/

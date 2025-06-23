@@ -427,104 +427,6 @@ async function storeRequest(requestData) {
     store.add(requestObject);
     console.log("[IndexedDB] Request stored offline:", requestObject);
 }
-/*
-async function processOfflineRequests() {
-    if (sending) return;
-
-    sending = true;
-    let db = await openDB();
-    let transaction = db.transaction(STORE_NAME, "readonly");
-    let store = transaction.objectStore(STORE_NAME);
-    let getAll = store.getAll();
-    
-    getAll.onsuccess = async () => {
-        let requests = getAll.result.filter(req => req.status === "pending");
-
-        if (requests.length === 0) {
-            console.log("[IndexedDB] No pending requests.");
-            sending = false;
-            return;
-        }
-
-        for (let request of requests) {
-            console.log("[Processing] Sending API request:", request);
-
-            let apiEndpoint = "";
-            let creation_body = request.body;
-            let requestResponses = []; // Store all responses
-            
-            try {
-                if (selectedItemFromDropdown != null) {
-                    apiEndpoint = domain + request.endpoint;
-                    creation_body.type = selectedItemFromDropdown;
-                    creation_body.tab = page_load_conf.tab;
-                } else {
-                    apiEndpoint = domain + request.endpoint;
-                }
-
-                try{
-                    // ✅ Check if a file exists in the request
-                    if (creation_body.file) {
-                        console.log("[File Upload] File detected, starting upload...");
-                        
-                        let fileUploadData = creation_body.file;
-                        let fileResponse = await fetch(fileUploadData.url, {
-                            method: fileUploadData.method,
-                            body: fileUploadData.body
-                        });
-
-                        let fileResult = await fileResponse.json();
-                        requestResponses.push({ type: "file_upload", response: fileResult });
-
-                        if (!fileResponse.ok) {
-                            console.error("[File Upload Failed] File upload failed, skipping API request.");
-                            continue; // ❌ Skip API request if file upload fails
-                        }
-
-                        console.log("[File Upload Success] File uploaded successfully:", fileResult);
-
-                        // ✅ Remove 'file' key and update request body with uploaded file name
-                        delete creation_body.file;
-                        creation_body[fileUploadData.fieldName] = fileResult.fileName; // Store uploaded file name
-                    }
-                } catch (error) {
-                    console.error("[File Upload Error] Failed to upload file:", error);
-                }
-
-                // ✅ Proceed to the regular API request after successful file upload
-                console.log(apiEndpoint, JSON.stringify(creation_body));
-                let response = await fetch(apiEndpoint, {
-                    method: request.method,
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(creation_body)
-                });
-
-                let data = await response.json();
-                requestResponses.push({ type: "api_request", response: data });
-
-                if (data.message) {
-                    console.log(`[Success] Request ID ${request.id} processed successfully. Response: ${requestResponses}`);
-                    await updateStoredRequest(request.id, "archive", requestResponses); // Archive request
-                    tab_status[page_load_conf.tab] = 0;
-                    get_data_list(selectedItemFromDropdown, {});
-                } else {
-                    console.warn(`[Failure] Request ID ${request.id} failed: ${data.message || "Unknown error"}`);
-                }
-            } catch (error) {
-                console.error(`[API Error] Failed to process request ID ${request.id}:`, error);
-            }
-        }
-
-        sending = false;
-    };
-
-    getAll.onerror = () => {
-        console.error("[IndexedDB] Error retrieving stored requests.");
-        sending = false;
-    };
-}*/
 
 async function processOfflineRequests() {
     if (sending) return;
@@ -756,4 +658,47 @@ function createEvent(eventId, eventData) {
     // Your event creation logic here
     console.log(`Creating/Updating event ${eventId} with data:`, eventData);
 }
+
+async function general_data_fetch(domain, endpoint, body, method) {
+    const end_point = domain + endpoint;
+    console.log(end_point, method);
+
+    let response;
+    let result;
+
+    try {
+        if (method !== "GET") {
+            response = await fetch(end_point, {
+                method: method,
+                body: JSON.stringify(body),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            });
+        } else {
+            response = await fetch(end_point, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            });
+        }
+
+        if (response.ok) {
+            const raps = await response.json();
+            result = raps || "No data found";
+        } else {
+            result = `Error: ${response.status}`;
+        }
+
+        return result;
+
+    } catch (error) {
+        console.error("Fetch error:", error);
+        return `Error: ${error.message}`;
+    }
+}
+
 

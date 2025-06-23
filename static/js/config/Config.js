@@ -258,10 +258,8 @@ var MainConfig={
             }
         },
         "Resource Category":{
-
             "getDataApi":"config/list_details",
-            "key":"resource_type_id",
-            
+            "key":"resource_type_id",        
             "job":{
                 "create":{
                 "roles":["Admin"],   
@@ -328,7 +326,6 @@ var MainConfig={
                     
                 },
                 "cancel":{"api":"config",}
-        
             }
         },
         "Resource Registry":{
@@ -2622,7 +2619,7 @@ var MainConfig={
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
-         {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Document Registry","Document UI template","Trigger Functions"],"textContent": "Items"},
+         {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Document Registry","Document UI template","Trigger Functions","Helper Functions"],"textContent": "Items"},
          {"type": "select", "tag": "entriesPerPage", "roles": ["Admin","Approver","User"], "name": "EntriesPerPage", "options": [2,3,5,10,15,20,25,30,35,40,45,50], "textContent": "Rows/Page"},
         ],
         "Roles":["Admin"],
@@ -2728,7 +2725,7 @@ var MainConfig={
                 "data":[
                       {"helper":"getDocTemplates",
                      "fields":[
-                        {"field":"doc_type","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":""}
+                        {"field":"doc_type","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"",}
                         ]
                    },
                     {  "helper":"none",
