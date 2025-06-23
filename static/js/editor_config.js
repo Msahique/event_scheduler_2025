@@ -847,7 +847,7 @@
                     }
                 }
             }*/
-            //reloadIframe();
+
             const result = await configResponse.json();
             console.log('Configuration submission result:', result);
             
@@ -865,6 +865,7 @@
     }
 
     async function submitPreviewAndRedirect() {
+        console.log(Object.keys(config).length)
     if (Object.keys(config).length === 0) {
         alert('No configuration to submit');
         return;
@@ -885,8 +886,12 @@
     }
 }
 
+    function saveButton(status='draft')
+    {
+        submitConfig(status);
+    }
 
-    async function submitConfig() {
+    async function submitConfig(status) {
         if (Object.keys(config).length === 0) {
             alert('No configuration to submit');
             return;
@@ -902,7 +907,8 @@
                 body: JSON.stringify({
                     config: config,
                     user_id: USER_CONFIG.user_id,
-                    tab_config: user_tab
+                    tab_config: user_tab,
+                    status:status
                 })
             });
             
@@ -926,7 +932,6 @@
                     }
                 }
             }
-            //reloadIframe();
             const result = await configResponse.json();
             console.log('Configuration submission result:', result);
             
@@ -943,10 +948,6 @@
         }
     }
 
-    function reloadIframe() {
-        const iframe = document.getElementById("appPreview");
-        iframe.src = iframe.src.split("?")[0] + "?t=" + new Date().getTime(); // avoid caching
-    }
 
     // Reset configuration
     function resetConfig() {
