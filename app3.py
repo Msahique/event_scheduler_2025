@@ -1700,7 +1700,7 @@ def submit_config():
         user_tab_data=data.get("tab_config")
         user_id=data.get("user_id")
         print("User Tab Data",user_tab_data)
-        subkey = data.get("subkey")
+        status = data.get("status")
         
         if not config_data:
             return jsonify({"message": "Missing config data"}), 400
@@ -1714,15 +1714,15 @@ def submit_config():
         try:
             
             insert_query = """
-                INSERT INTO final_templates (template, affiliation_id) 
-                VALUES (%s, %s)
+                INSERT INTO doc_final_templates (template, affiliation_id,status) 
+                VALUES (%s, %s,%s)
             """
-            success = execute_insert(insert_query, (config_json, user_id))
+            success = execute_insert(insert_query, (config_json, user_id,status))
 
             if not success:
                 return jsonify({"message": "Database storage failed"}), 500
 
-            print(f"✅ Config stored in database for user_id: {user_id}")
+            print(f"✅ Config stored in database for user_id: {user_id} with status: {status}")
             
         except Exception as db_error:
             print(f"❌ Database error: {str(db_error)}")
@@ -1730,11 +1730,11 @@ def submit_config():
         #print(config_data)
         configuration={"main_config":config_data,"user_tab_config":user_tab_data}
         # 🔄 Send config to Backend B (Port 5000)
-        response = requests.post('http://127.0.0.1:5000/preview', json=configuration)
-        print("📤 Forwarded to Backend B:")
+        # response = requests.post('http://127.0.0.1:5000/preview', json=configuration)
+        # print("📤 Forwarded to Backend B:")
 
-        if response.status_code != 200:
-            return jsonify({"message": "Failed to update config in Backend B"}), 500
+        # if response.status_code != 200:
+        #     return jsonify({"message": "Failed to update config in Backend B"}), 500
 
 
         # Create JS config file with the MainConfig variable declaration
