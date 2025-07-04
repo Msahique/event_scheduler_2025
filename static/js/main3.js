@@ -1,6 +1,35 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const affParam = urlParams.get('affiliation');
+
+    let affiliations = [];
+    if (affParam) {
+        try {
+            affiliations = JSON.parse(decodeURIComponent(affParam));
+        } catch (err) {
+            console.error("Error parsing affiliation data:", err);
+        }
+    }
+
+    console.log("Affiliations:", affiliations);
+    const submenu = document.getElementById('affiliationMenu');
+    if (submenu && Array.isArray(affiliations)) {
+        affiliations.forEach(aff => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.className = 'dropdown-item';
+            a.href = '#';
+            a.textContent = `${aff.program} - ${aff.entity} - ${aff.department} - ${aff.service} - ${aff.role}`;
+            li.appendChild(a);
+            submenu.appendChild(li);
+        });
+    }
+});
+
+
+/*document.addEventListener('DOMContentLoaded', () => {
     //const affiliations = [1, 2, 3, 4];
-    const affiliations = window.affiliations || [];
+    const affiliations = window.affiliation || [];
     console.log("Affiliations:", affiliations);
     const submenu = document.getElementById('affiliationMenu');
     console.log(affiliations);
@@ -15,13 +44,15 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log(li.outerHTML);
     });
   });
+  */
 
  /* document.addEventListener('DOMContentLoaded', () => {
     const affiliations = window.affiliations || [];
     console.log("Affiliations:", affiliations);
   });*/
   
-var page_load_conf={
+
+  var page_load_conf={
     rows_PP:null,
     sort_col:null,
     page_count:0,
@@ -687,7 +718,7 @@ function createTable(responseData) {
             td.className = "text-center";
             td.setAttribute("data-field", field.field);
         
-            if (["remark", "schedule", "venue", "photo"].includes(field.field.toLowerCase())) {
+            if (["remark", "schedule", "venue", "photo","doc_template","ui_template"].includes(field.field.toLowerCase())) {
                 let viewBtn = document.createElement("button");
                 viewBtn.className = "btn btn-info btn-sm";
                 viewBtn.innerHTML = "View";
@@ -826,6 +857,24 @@ function createTable(responseData) {
                             console.warn("No photo available for preview.");
                             alert("No photo available.");
                         }
+                    }
+                    else if (field.field.toLowerCase() === "doc_template") {
+                        console.log(6);
+                        let remarkContent = document.getElementById("remark_content");
+                        let content = rowData[field.field] ? JSON.stringify(JSON.parse(rowData[field.field]), null, 2) : "No data available";
+                        remarkContent.innerText = content;
+        
+                        let modalInstance = new bootstrap.Modal(document.getElementById("remark_modal"));
+                        modalInstance.show();
+                    }
+                    else if (field.field.toLowerCase() === "ui_template") {
+                        console.log(6);
+                        let remarkContent = document.getElementById("remark_content");
+                        let content = rowData[field.field] ? JSON.stringify(JSON.parse(rowData[field.field]), null, 2) : "No data available";
+                        remarkContent.innerText = content;
+        
+                        let modalInstance = new bootstrap.Modal(document.getElementById("remark_modal"));
+                        modalInstance.show();
                     }
         
                     console.log(5);
@@ -1453,7 +1502,7 @@ function editModalCreation(response,selectedItemFromDropdown) {
     var config_path;
     if (selectedItemFromDropdown==null){config_path=MainConfig[page_load_conf.tab]; }
     else{config_path=MainConfig[page_load_conf.tab][selectedItemFromDropdown]; rowData = response[0][0]; }
-    
+    console.log("rowData:", rowData);
     console.log(config_path.job);
     if(role == "Admin"){data=config_path.job.update.data[0];}
     else if(role == "Admin"){data=config_path.job.approver.data[0];}
@@ -1478,153 +1527,169 @@ function editModalCreation(response,selectedItemFromDropdown) {
 
         let input;
       
-        console.log(label, field.field)
-        if (field.field === "work_days") {
-            input = document.createElement('input');
-            input.className = 'form-control';
-            input.name = field.field;
-            input.id = 'work_days';
-            input.readOnly = true;
-            input.value = rowData[field.field] || "{}";
-            formGroup.appendChild(input);
-        
-            let eventButton = document.createElement('button');
-            eventButton.type = 'button';
-            eventButton.textContent = "Open";
-            eventButton.className = 'btn btn-primary mt-2';
+        console.log(label, field.field, field.control);
+    
+            if (field.field === "work_days") {
+                console.log(1);
+                input = document.createElement('input');
+                input.className = 'form-control';
+                input.name = field.field;
+                input.id = 'work_days';
+                input.readOnly = true;
+                input.value = rowData[field.field] || "{}";
+                formGroup.appendChild(input);
             
-            eventButton.onclick = function () {
-                console.log("Raw work_days value:", input.value);
+                let eventButton = document.createElement('button');
+                eventButton.type = 'button';
+                eventButton.textContent = "Open";
+                eventButton.className = 'btn btn-primary mt-2';
                 
-                try {
-                    let workDaysData = JSON.parse(input.value || "{}");
-                    console.log("Parsed Work Days Data:", workDaysData);
+                eventButton.onclick = function () {
+                    console.log("Raw work_days value:", input.value);
                     
-                    // Populate modal fields
-                    document.getElementById('eventName').value = workDaysData.title || "";
-                    document.getElementById('eventDescription').value = workDaysData.description || "";
-                    document.getElementById('eventStartDate').value = workDaysData.start_date || ""; 
-                    document.getElementById('eventEndDate').value = workDaysData.end_date || "";
-        
-                    // Clear previous entries
-                    let scheduleContainer = document.getElementById('scheduleContainer');
-                    scheduleContainer.innerHTML = "";
+                    try {
+                        let workDaysData = JSON.parse(input.value || "{}");
+                        console.log("Parsed Work Days Data:", workDaysData);
+                        
+                        // Populate modal fields
+                        document.getElementById('eventName').value = workDaysData.title || "";
+                        document.getElementById('eventDescription').value = workDaysData.description || "";
+                        document.getElementById('eventStartDate').value = workDaysData.start_date || ""; 
+                        document.getElementById('eventEndDate').value = workDaysData.end_date || "";
+            
+                        // Clear previous entries
+                        let scheduleContainer = document.getElementById('scheduleContainer');
+                        scheduleContainer.innerHTML = "";
 
-                    // Populate existing schedule
-                    let daysOfWeek = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+                        // Populate existing schedule
+                        let daysOfWeek = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 
-                    daysOfWeek.forEach(day => {
-                        console.log(day, workDaysData[day]); // Debugging log
-                    
-                        if (workDaysData[day]) {  
-                            let timingsArray = workDaysData[day]; // Already an array
-                    
-                            if (Array.isArray(timingsArray)) {
-                                timingsArray.forEach((timeSlot, index) => {
-                                    if (Array.isArray(timeSlot) && timeSlot.length === 2) {
-                                        addScheduleRow_edit(day, timeSlot[0], timeSlot[1], index); // Pass day name & start/end times
-                                    }
-                                });
+                        daysOfWeek.forEach(day => {
+                            console.log(day, workDaysData[day]); // Debugging log
+                        
+                            if (workDaysData[day]) {  
+                                let timingsArray = workDaysData[day]; // Already an array
+                        
+                                if (Array.isArray(timingsArray)) {
+                                    timingsArray.forEach((timeSlot, index) => {
+                                        if (Array.isArray(timeSlot) && timeSlot.length === 2) {
+                                            addScheduleRow_edit(day, timeSlot[0], timeSlot[1], index); // Pass day name & start/end times
+                                        }
+                                    });
+                                }
                             }
-                        }
-                    });
-                    // Show modal
-                    let addEventModal = new bootstrap.Modal(document.getElementById('addEventModal'));
-                    addEventModal.show();
-        
-                } catch (error) {
-                    console.error("Error parsing workDays JSON:", error);
+                        });
+                        // Show modal
+                        let addEventModal = new bootstrap.Modal(document.getElementById('addEventModal'));
+                        addEventModal.show();
+            
+                    } catch (error) {
+                        console.error("Error parsing workDays JSON:", error);
+                    }
+                };
+            
+                formGroup.appendChild(eventButton);
+            } else if (field.control === "schedule-control") {
+                console.log(2);
+                input = document.createElement("schedule-control");
+                input.id = field.field;
+            
+                // Ensure rowData[field.field] contains a valid schedule JSON string
+                if (rowData[field.field]) {
+                    try {
+                        const scheduleData = JSON.parse(rowData[field.field]);
+                        input.value = scheduleData; // Assign parsed data to the custom element
+                    } catch (error) {
+                        console.error("Invalid schedule data:", error);
+                    }
                 }
-            };
-        
-            formGroup.appendChild(eventButton);
-        } else if (field.control === "schedule-control") {
-            input = document.createElement("schedule-control");
-            input.id = field.field;
-        
-            // Ensure rowData[field.field] contains a valid schedule JSON string
-            if (rowData[field.field]) {
-                try {
-                    const scheduleData = JSON.parse(rowData[field.field]);
-                    input.value = scheduleData; // Assign parsed data to the custom element
-                } catch (error) {
-                    console.error("Invalid schedule data:", error);
+            
+                // Append input to the DOM if necessary (if inside a form or specific container)
+                document.body.appendChild(input); // Change this according to your structure
+            
+                // Select and use the schedule-control element after appending it
+                let scheduleControl = document.getElementById(field.field);
+            
+            
+            } else if (field.control === "venue-control") {
+                
+                console.log(3);
+                input = document.createElement("venue-control");
+                input.id = field.field;
+            
+                // Ensure rowData[field.field] contains a valid schedule JSON string
+                if (rowData[field.field]) {
+                    try {
+                        const scheduleData = JSON.parse(rowData[field.field]);
+                        input.value = scheduleData; // Assign parsed data to the custom element
+                    } catch (error) {
+                        console.error("Invalid venue data:", error);
+                    }
                 }
-            }
-        
-            // Append input to the DOM if necessary (if inside a form or specific container)
-            document.body.appendChild(input); // Change this according to your structure
-        
-            // Select and use the schedule-control element after appending it
-            let scheduleControl = document.getElementById(field.field);
-        
-        
-        } else if (field.control === "venue-control") {
-            input = document.createElement("venue-control");
-            input.id = field.field;
-        
-            // Ensure rowData[field.field] contains a valid schedule JSON string
-            if (rowData[field.field]) {
-                try {
-                    const scheduleData = JSON.parse(rowData[field.field]);
-                    input.value = scheduleData; // Assign parsed data to the custom element
-                } catch (error) {
-                    console.error("Invalid venue data:", error);
-                }
-            }
-        
-            // Append input to the DOM if necessary (if inside a form or specific container)
-            document.body.appendChild(input); // Change this according to your structure
-        
-            // Select and use the schedule-control element after appending it
-            let venueControl = document.getElementById(field.field);
-        
-        
-        } else if (field.control === "checkbox") {
-            input = document.createElement('input');
-            input.type = 'checkbox';
-            input.className = 'form-check-input';
-            input.name = field.field;
-            input.checked = rowData[field.field] == "true" || rowData[field.field] == 1;
-        } else if (field.control === "dropdown" && field.values) {
-            input = document.createElement('select');
-            input.className = 'form-control';
-            input.name = field.field;
+            
+                // Append input to the DOM if necessary (if inside a form or specific container)
+                document.body.appendChild(input); // Change this according to your structure
+            
+                // Select and use the schedule-control element after appending it
+                let venueControl = document.getElementById(field.field);
+            
+            
+            } else if (field.control === "checkbox") {
+                console.log(4);
+                input = document.createElement('input');
+                input.type = 'checkbox';
+                input.className = 'form-check-input';
+                input.name = field.field;
+                input.checked = rowData[field.field] == "true" || rowData[field.field] == 1;
+            } else if (field.control === "dropdown" && field.values) {
+                console.log(5);
+                input = document.createElement('select');
+                input.className = 'form-control';
+                input.name = field.field;
 
-            field.values.forEach(value => {
-                let option = document.createElement('option');
-                option.value = value;
-                option.textContent = value;
-                if (rowData[field.field] === value) {
-                    option.selected = true;
+                field.values.forEach(value => {
+                    let option = document.createElement('option');
+                    option.value = value;
+                    option.textContent = value;
+                    if (rowData[field.field] === value) {
+                        option.selected = true;
+                    }
+                    input.appendChild(option);
+                });
+            } else if (field.control === "datetime-local") {
+                console.log(6);
+                input = document.createElement('input');
+                input.type = 'datetime-local';
+                input.className = 'form-control';
+                input.name = field.field;
+            
+                // Convert stored date into proper format for datetime-local input
+                if (rowData[field.field]) {
+                    let dateObj = new Date(rowData[field.field]);
+                    if (!isNaN(dateObj)) {
+                        input.value = dateObj.toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:MM
+                    }
                 }
-                input.appendChild(option);
-            });
-        } else if (field.control === "datetime-local") {
-            input = document.createElement('input');
-            input.type = 'datetime-local';
-            input.className = 'form-control';
-            input.name = field.field;
-        
-            // Convert stored date into proper format for datetime-local input
-            if (rowData[field.field]) {
-                let dateObj = new Date(rowData[field.field]);
-                if (!isNaN(dateObj)) {
-                    input.value = dateObj.toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:MM
-                }
+            } else {
+                console.log(7);
+                console.log(label, field.field, field.control, rowData[field.field]);
+                
+                input = document.createElement('input');
+                input.className = 'form-control';
+                input.name = field.field;
+                input.value = rowData[field.field] || "";
             }
-        } else {
-            input = document.createElement('input');
-            input.className = 'form-control';
-            input.name = field.field;
-            input.value = rowData[field.field] || "";
-        }
+            console.log(8)
 
-        if (!field.edit) input.setAttribute('disabled', 'true');
+            if (!field.edit) input.setAttribute('disabled', 'true');
 
-        formGroup.appendChild(label);
-        formGroup.appendChild(input);
-        form.appendChild(formGroup);
+            formGroup.appendChild(label);
+            formGroup.appendChild(input);
+            form.appendChild(formGroup);
+
+      
+       
+       
     });
     
     document.getElementById("venueForm").onsubmit = function (e) {
@@ -2275,14 +2340,42 @@ document.getElementById("eventForm_new").addEventListener("submit", function (ev
     alert("✅ Schedule saved successfully!");
 });
 
+async function affiliationFilterCheck(db, table, selectFields, filterOptions, getDataFunc) {
+  const keys = Object.keys(filterOptions);
+  const valueArrays = keys.map(k => filterOptions[k]);
+
+  function cartesianProduct(arrays) {
+    return arrays.reduce((acc, vals) =>
+      acc.flatMap(d => vals.map(v => [...d, v])), [[]]
+    );
+  }
+
+  const combinations = cartesianProduct(valueArrays);
+
+  const results = [];
+
+  for (const combo of combinations) {
+    const whereData = {};
+    combo.forEach((val, i) => {
+      if (val !== "*") whereData[keys[i]] = val;
+    });
+
+    const rows = await getDataFunc(db, table, selectFields, whereData, true);
+    results.push({ ...whereData, result: rows.length > 0 ? "YES" : "NO" });
+  }
+
+  return results;
+}
+
+
 
     // Periodically check for pending requests
-    /*setInterval(async () => {
+    setInterval(async () => {
         if (navigator.onLine) {
             console.log("[Network] Checking pending requests...");
             await processOfflineRequests();
         }
-    }, 15000);  */
+    }, 15000);  
 
 
 /*

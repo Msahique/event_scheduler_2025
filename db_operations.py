@@ -115,8 +115,8 @@ def get_json_column(db, table_name):
             cursor.close()
         if connection:
             connection.close()
-
-def get_data(db, table_name, select_fields, where_data=None, exact_match=False):
+'''
+def get_data_working(db, table_name, select_fields, where_data=None, exact_match=False):
     """
     Retrieves data from MySQL, supporting JSON field access and optional exact match filters (e.g., for login).
 
@@ -184,7 +184,7 @@ def get_data(db, table_name, select_fields, where_data=None, exact_match=False):
             cursor.close()
         if connection and connection.is_connected():
             connection.close()
-
+'''
 
 def get_token_details(token,db):
     """Retrieve data from token_details table for a given token."""
@@ -313,6 +313,258 @@ def insert_ignore(db, table_name, insert_data):
             cursor.close()
         if connection and connection.is_connected():
             connection.close()
+
+def is_affiliation_allowed(table_name, user_affiliations, db):
+    """
+    Determine the list of affiliation_ids from the target table that the user is allowed to access.
+    Supports wildcard logic in affiliation table (e.g., '*' for universal access).
+    
+    Args:
+        table_name (str): Target data table (e.g. 'doc_templates')
+        user_affiliations (list): List of user's affiliation dicts
+        db (str): Database name
+    
+    Returns:
+        set: Set of allowed affiliation_ids from the target table
+    """
+    try:
+        print(f"[DEBUG] Checking affiliations for table: {table_name}")
+        connection = create_connection(db)
+        if not connection or not connection.is_connected():
+            print("[ERROR] Could not connect to DB.")
+            return set()
+
+        cursor = connection.cursor(dictionary=True)
+
+        # Fetch all rows from affiliation table
+        cursor.execute("SELECT * FROM affiliation")
+        all_affiliations = cursor.fetchall()
+
+        print(f"[DEBUG] Loaded {len(all_affiliations)} rows from affiliation table")
+
+        # Build allowed set
+        allowed_aff_ids = set()
+        for row in all_affiliations:
+            for user_aff in user_affiliations:
+                match = True
+                for field in ['program', 'entity', 'department', 'service', 'role']:
+                    row_val = row.get(field, '').strip().lower()
+                    user_val = str(user_aff.get(field, '')).strip().lower()
+                    if row_val != '*' and row_val != user_val:
+                        match = False
+                        break
+                if match:
+                    allowed_aff_ids.add(row['affiliation_id'])
+                    break  # No need to check more user affiliations for this row
+
+        print(f"[DEBUG] Final allowed affiliation_ids: {allowed_aff_ids}")
+        return allowed_aff_ids
+
+    except Exception as e:
+        print(f"[ERROR] Exception in is_affiliation_allowed(): {e}")
+        return set()
+    finally:
+        if cursor:
+            cursor.close()
+        if connection and connection.is_connected():
+            connection.close()
+            print("[INFO] Closed DB connection in affiliation check.")
+
+def get_data(db, table_name, select_fields, where_data=None, exact_match=False, user_affiliations=None):
+    print("[init] where_data:", where_data)
+    print("[init] exact_match:", exact_match)
+    print("[init] user_affiliations:", user_affiliations)
+    connection = None
+    cursor = None
+
+    try:
+        print(f"[START] Querying table: `{table_name}` in DB: `{db}`")
+
+        connection = create_connection(db)
+        if not connection or not connection.is_connected():
+            print("[ERROR] Failed to connect to database.")
+            return []
+
+        cursor = connection.cursor(dictionary=True)
+
+        formatted_select_fields = []
+        for field in select_fields:
+            if "." in field:
+                column, *json_parts = field.split(".")
+                json_path = ".".join(json_parts)
+                formatted_select_fields.append(
+                    f"JSON_UNQUOTE(JSON_EXTRACT({column}, '$.{json_path}')) AS `{field}`"
+                )
+            else:
+                formatted_select_fields.append(field)
+
+        select_clause = ", ".join(formatted_select_fields)
+        query = f"SELECT {select_clause} FROM {table_name}"
+
+        where_clauses = []
+        values = []
+
+        if where_data:
+            where_data = {k: v for k, v in where_data.items() if v != "*"}
+            print("[DEBUG] Filtered where_data:", where_data)
+
+            for key, value in where_data.items():
+                column, *json_parts = key.split(".")
+                clause = (
+                    f"JSON_UNQUOTE(JSON_EXTRACT({column}, '$.{'.'.join(json_parts)}'))"
+                    if json_parts else column
+                )
+                if exact_match:
+                    where_clauses.append(f"{clause} = %s")
+                    values.append(value)
+                else:
+                    where_clauses.append(f"{clause} LIKE %s")
+                    values.append(f"%{value}%")
+                print(f"[DEBUG] WHERE condition added: {where_clauses[-1]} with value {values[-1]}")
+
+        if user_affiliations:
+            allowed_ids = is_affiliation_allowed(table_name, user_affiliations, db)
+            if not allowed_ids:
+                print("[INFO] No affiliation matches. Returning empty result.")
+                return []
+
+            placeholders = ','.join(['%s'] * len(allowed_ids))
+            where_clauses.append(f"affiliation_id IN ({placeholders})")
+            values.extend(list(allowed_ids))
+
+
+        if where_clauses:
+            query += f" WHERE {' AND '.join(where_clauses)}"
+
+        print("[INFO] Final SQL Query:", query)
+        print("[INFO] Parameters:", values)
+
+        cursor.execute(query, values)
+        results = cursor.fetchall()
+        print(f"[INFO] Query returned {len(results)} result(s).")
+        return results
+
+    except Exception as e:
+        print(f"[ERROR] Exception in get_data(): {e}")
+        return []
+
+    finally:
+        if cursor:
+            cursor.close()
+        if connection and connection.is_connected():
+            connection.close()
+            print("[INFO] Database connection closed.")
+
+
+
+'''
+# workin code with affiliation_id enforcement
+# This function retrieves data from a MySQL table with optional WHERE clause filtering and affiliation_id enforcement
+def get_data(db, table_name, select_fields, where_data=None, exact_match=False, user_affiliations=None):
+    """
+    Retrieves data from MySQL with WHERE clause filtering and affiliation_id enforcement.
+
+    Args:
+        db (str): Database name.
+        table_name (str): Table name.
+        select_fields (list): Fields to select (supporting JSON dot notation).
+        where_data (dict): Optional filtering criteria.
+        exact_match (bool): Use '=' or 'LIKE'.
+        user_affiliations (list): List of dicts with 'affiliation_id'.
+
+    Returns:
+        list: Filtered rows matching the query and affiliation check.
+    """
+    print("[init] ", where_data)
+    print("[init] ", exact_match)
+    print("[init] ",user_affiliations)
+    connection = None
+    cursor = None
+
+    try:
+        print(f"[START] Querying table: `{table_name}` in DB: `{db}`")
+
+        connection = create_connection(db)
+        if not connection or not connection.is_connected():
+            print("[ERROR] Failed to connect to database.")
+            return []
+
+        cursor = connection.cursor(dictionary=True)
+
+        # Prepare SELECT fields
+        formatted_select_fields = []
+        for field in select_fields:
+            if "." in field:
+                column, *json_parts = field.split(".")
+                json_path = ".".join(json_parts)
+                formatted_select_fields.append(
+                    f"JSON_UNQUOTE(JSON_EXTRACT({column}, '$.{json_path}')) AS `{field}`"
+                )
+            else:
+                formatted_select_fields.append(field)
+        select_clause = ', '.join(formatted_select_fields)
+        query = f"SELECT {select_clause} FROM {table_name}"
+
+        # WHERE clause construction
+        where_clauses = []
+        values = []
+
+        if where_data:
+            # Remove wildcard '*' filters
+            where_data = {k: v for k, v in where_data.items() if v != "*"}
+            print(f"[DEBUG] Filtered where_data: {where_data}")
+
+            for key, value in where_data.items():
+                column, *json_parts = key.split(".")
+                clause = (
+                    f"JSON_UNQUOTE(JSON_EXTRACT({column}, '$.{'.'.join(json_parts)}'))"
+                    if json_parts else column
+                )
+                if exact_match:
+                    where_clauses.append(f"{clause} = %s")
+                    values.append(value)
+                else:
+                    where_clauses.append(f"{clause} LIKE %s")
+                    values.append(f"%{value}%")
+                print(f"[DEBUG] WHERE condition added: {where_clauses[-1]} with value {values[-1]}")
+
+        # Add affiliation_id check
+        print("[user_affiliations] ",user_affiliations);
+        if user_affiliations:
+            aff_ids = [int(aff["affiliation_id"]) for aff in user_affiliations if "affiliation_id" in aff]
+            if not aff_ids:
+                print("[INFO] No valid affiliation_id found in user_affiliations.")
+                return []
+
+            placeholders = ','.join(['%s'] * len(aff_ids))
+            where_clauses.append(f"affiliation_id IN ({placeholders})")
+            values.extend(aff_ids)
+            print(f"[DEBUG] affiliation_id filter: affiliation_id IN ({placeholders})")
+            print(f"[DEBUG] Affiliation values: {aff_ids}")
+
+        # Combine query
+        if where_clauses:
+            query += f" WHERE {' AND '.join(where_clauses)}"
+
+        print(f"[INFO] Final SQL Query: {query}")
+        print(f"[INFO] Query Parameters: {values}")
+
+        cursor.execute(query, values)
+        rows = cursor.fetchall()
+        print(f"[INFO] Query returned {len(rows)} row(s).")
+        return rows
+
+    except Exception as e:
+        print(f"[ERROR] Exception in get_data(): {e}")
+        return []
+
+    finally:
+        if cursor:
+            cursor.close()
+        if connection and connection.is_connected():
+            connection.close()
+            print("[INFO] Database connection closed.")
+'''
 
 '''
 #This function handles inserting data into a table with created_at timestamp and checks for duplicate entries.

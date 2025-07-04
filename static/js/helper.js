@@ -83,6 +83,28 @@ async function getDocTemplates(data) {
     console.log(options)
     return options
 }
+
+async function getDocTemplates1(data) {
+    var end_point = domain +"options";
+    var body={
+        "requestor_id":"", 
+        "request_token": "", 
+        "tab":"Document Config",
+        "event": "getDocTemplates",
+        "type":"Document Registry",
+        "qry": {
+            "select_fields": ['*'], 
+            "where_data": {}
+            }
+    }
+    console.log("Fetching:", end_point, body);
+    /*body.array.forEach(element => {
+        console.log(element);
+    });*/
+    var options =  API_helper_call(end_point, body);
+    console.log(options)
+    return options
+}
   
 async function getTabs(data) {
     var end_point = domain +"options";
@@ -132,6 +154,25 @@ async function getRole(){
         "tab":"Entity Config",
         "qry":{
             "select_fields":["role_name"],
+            "where_data":{}
+        }
+    }
+    console.log("Fetching:", end_point, body);
+    var options =  API_helper_call(end_point, body);
+    return options
+
+}
+
+async function getHelperFunction(){
+    console.log("helper called")
+    var end_point = domain +"options";
+    var body={
+        "requestor_id":"",
+        "request_token":"",
+        "type":"Helper Functions",
+        "tab":"Document Config",
+        "qry":{
+            "select_fields":["helper_functions_name"],
             "where_data":{}
         }
     }
@@ -200,7 +241,7 @@ async function API_helper_call(end_point, body){
             // Check if any object has 'affiliation_id'
             const hasAffiliation = data.some(element => 'affiliation_id' in element);
         
-            if (hasAffiliation) {
+            /*if (hasAffiliation) {
                 // Create formatted array for affiliation data
                 let affiliationArray = data
                     .filter(element => 'affiliation_id' in element)
@@ -218,7 +259,8 @@ async function API_helper_call(end_point, body){
                 return affiliationArray;
             } else {
                 return myArray;
-            }
+            }*/
+            return data;
         } else {
             console.error("Failed to fetch entity types.");
             return [];

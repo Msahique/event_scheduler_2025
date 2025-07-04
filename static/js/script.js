@@ -16,6 +16,8 @@ function get_data_list(selected_item,where_data){
     data_list_body={
         "requestor_id":"",
         "request_token":"",
+        "affiliations": JSON.parse(sessionStorage.getItem("userAffiliations")),
+
         "qry":{
             "select_fields":["*"],
             "where_data":where_data
@@ -350,11 +352,12 @@ function addScheduleRow_edit(dayKey = "", startTime = "", endTime = "") {
     scheduleContainer.appendChild(rowDiv);
 }
 
-
+/*
 document.getElementById("toggleButton").addEventListener("click", function () {
     let content = document.getElementById("tab_page_filter");
     content.style.display = (content.style.display === "none" || content.style.display === "") ? "block" : "none";
 });
+*/
 
 
 async function viewFile(filename) {
@@ -603,7 +606,7 @@ setInterval(async function () {
         console.log("[Scheduler] Checking for pending requests...");
         await processOfflineRequests();
     }
-}, 15000);
+}, 150000);
 
 // Also, process requests immediately when the user comes online
 window.addEventListener("online", () => {
@@ -700,5 +703,3 @@ async function general_data_fetch(domain, endpoint, body, method) {
         return `Error: ${error.message}`;
     }
 }
-
-

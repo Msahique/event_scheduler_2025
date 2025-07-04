@@ -47,6 +47,8 @@ function login(event) {
         if(data.message== "Login successful") {
             //window.location.href = "http://127.0.0.1:5000/app";
             console.log(data.affiliations);
+            sessionStorage.setItem("userAffiliations", JSON.stringify(data.affiliations));
+
             const encodedAff = encodeURIComponent(JSON.stringify(data.affiliations));
             alert(JSON.stringify(data));
             window.location.href = `http://127.0.0.1:5000/app?affiliation=${encodedAff}`;

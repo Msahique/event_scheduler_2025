@@ -167,12 +167,8 @@ def login_page():
 @app.route('/app')
 def home_page():
     aff_json = request.args.get('affiliation') 
-    convert_data = json.dumps(aff_json) 
-    affiliations = json.loads(convert_data)  # Now it's a list of dicts
-    print(type(affiliations))  # Should print <class 'list'>
-    print("Received affiliations:", affiliations)
+    affiliations = json.loads(aff_json) if aff_json else [] ; print("Received affiliations:", affiliations)
     return render_template('index3.html', affiliation=affiliations)
-    #return render_template('index3.html') 
 
 @app.route('/preview')
 def page_preview():
@@ -258,11 +254,11 @@ def update_affiliation():
     json_data = json.load(open('config/new/get_DB_data.json'))
     data = stream_json()  # Receiving data in chunks
     
-    update_data = data.get("qry")
-    where_data = {"entity_id": data.get('entity_id')}
+    update_data = data.get("qry", {}).get("update")
+    where_data = {"affiliation_id": data.get('affiliation_id')}
 
-    if not update_data or not where_data.get("entity_id"):
-        return jsonify({"error": "Missing entity_id or update_data"}), 400
+    if not update_data or not where_data.get("affiliation_id"):
+        return jsonify({"error": "Missing affiliation_id or update_data"}), 400
 
     success = update_entry(json_data['db_name'], json_data[data['tab']][data['type']], update_data, where_data)
     
@@ -275,12 +271,12 @@ def update_affiliation():
 def Affiliation_entry_api():
     json_data = json.load(open('config/new/get_DB_data.json'))
     data = stream_json()  # Receiving data in chunks
-    affiliation_id = data.get('affiliation_id')
-
-    if not affiliation_id:
-        return jsonify({"error": "Missing entity_id"}), 400
-
-    success = delete_entry(json_data['db_name'], json_data[data['tab']][data['type']], {"affiliation_id": affiliation_id})
+    print(data)
+    where_data = data.get('qry', {}).get('where_data', {})
+    print("where_data :",where_data)
+    
+    success = delete_entry(json_data['db_name'], json_data[data['tab']][data['type']], where_data)
+    #success = delete_entry(json_data['db_name'], json_data[data['tab']][data['type']], {"affiliation_id": affiliation_id})
     
     if success:
         return jsonify({"message": "Entry deleted successfully"}), 200
@@ -300,7 +296,8 @@ def affiliation_get_data():
             data['qry']['where_data']
         )
         
-        return jsonify(myresult if data['qry']['where_data'] else [myresult])
+        #return jsonify(myresult if data['qry']['where_data'] else ([myresult]))
+        return jsonify([myresult])
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -320,16 +317,6 @@ def insert_entity():
     json_data = json.load(open('config/new/get_DB_data.json')) 
     data = stream_json()  # Receiving data in chunks
     
-    if not data:
-        return jsonify({'error': 'Invalid or missing data'}), 400
-    
-    required_columns = ['entity_id', 'entity_name', 'entity_type', 'created_at', 'updated_at', 'entry_status', 'archive']
-    
-    # Check for missing columns
-    missing_columns = [col for col in required_columns if col not in data.get("qry", {})]
-    if missing_columns:
-        return jsonify({'error': f'Missing columns: {missing_columns}'}), 400
-
     success, message = insert_ignore(json_data['db_name'], json_data[data['tab']][data['type']], data.get("qry"))
     
     if success:
@@ -342,7 +329,7 @@ def update_entry_api():
     json_data = json.load(open('config/new/get_DB_data.json'))
     data = stream_json()  # Receiving data in chunks
     
-    update_data = data.get("qry")
+    update_data = data.get("qry", {}).get("update")
     where_data = {"entity_id": data.get('entity_id')}
 
     if not update_data or not where_data.get("entity_id"):
@@ -359,12 +346,10 @@ def update_entry_api():
 def delete_entry_api():
     json_data = json.load(open('config/new/get_DB_data.json'))
     data = stream_json()  # Receiving data in chunks
-    entity_id = data.get('entity_id')
+    where_data = data.get('qry', {}).get('where_data', {})
+    print("where_data :",where_data)
 
-    if not entity_id:
-        return jsonify({"error": "Missing entity_id"}), 400
-
-    success = delete_entry(json_data['db_name'], json_data[data['tab']][data['type']], {"entity_id": entity_id})
+    success = delete_entry(json_data['db_name'], json_data[data['tab']][data['type']],  where_data)
     
     if success:
         return jsonify({"message": "Entry deleted successfully"}), 200
@@ -384,8 +369,8 @@ def entity_get_data():
             data['qry']['where_data']
         )
         
-        return jsonify(myresult if data['qry']['where_data'] else [myresult])
-    
+        #return jsonify(myresult if data['qry']['where_data'] else [myresult])
+        return jsonify([myresult])
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -660,7 +645,8 @@ def message_update():
     f=open('config/new/get_DB_data.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
-    update_data = data.get("qry")
+    qry = data.get("qry")
+    update_data = qry.get("update")
     where_data = {"message_id":data.get('message_id')}
     print(">>",update_data,where_data) 
 
@@ -678,9 +664,10 @@ def message_delete():
     f=open('config/new/get_DB_data.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
-    where_data = data.get('where_data')
+    where_data = data.get('qry', {}).get('where_data', {})
 
-    success = delete_entry(json_data['general']['message_table_name'], where_data,json_data['db_name'])
+    #success = delete_entry(json_data['general']['message_table_name'], where_data,json_data['db_name'])
+    success = delete_entry(json_data['db_name'],json_data[data['tab']][data['type']], where_data )
     if success:
         return jsonify({"message": "Entry deleted successfully"}), 200
     else:
@@ -936,7 +923,16 @@ def entityConfig_list():
     data = json.loads(request.data); print(data)
     
     try:
-        myresult=get_data(json_data['db_name'],json_data[data['tab']][data['type']], data['qry']['select_fields'],data['qry']['where_data']) 
+        #myresult=get_data(json_data['db_name'],json_data[data['tab']][data['type']], data['qry']['select_fields'],data['qry']['where_data']) 
+        myresult = get_data(
+            json_data['db_name'],
+            json_data[data['tab']][data['type']],
+            data['qry']['select_fields'],
+            data['qry']['where_data'],
+            "none",
+            data['affiliations']
+        )
+        
         print(myresult)
         if(data['qry']['where_data']=={}):
             return jsonify(myresult,data['type'])
@@ -1063,11 +1059,12 @@ def update_app_registry():
     json_data = json.load(open('config/new/get_DB_data.json'))
     data = stream_json()  # Receiving data in chunks
     
-    update_data = data.get("qry")
-    where_data = {"entity_id": data.get('entity_id')}
+    qry = data.get("qry")
+    update_data =qry.get("update")
+    where_data = {"app_registry_id": data.get('app_registry_id')}
 
-    if not update_data or not where_data.get("entity_id"):
-        return jsonify({"error": "Missing entity_id or update_data"}), 400
+    if not update_data or not where_data.get("app_registry_id"):
+        return jsonify({"error": "Missing app_registry_id or update_data"}), 400
 
     success = update_entry(json_data['db_name'], json_data[data['tab']][data['type']], update_data, where_data)
     
@@ -1366,13 +1363,21 @@ def delete_documentUI_registry():
 def get_documentUI_registry():
     json_data = json.load(open('config/new/get_DB_data.json'))
     data = stream_json()  # Receiving data in chunks
-    
+    print( 
+        ">>>>>>>",
+        json_data['db_name'],
+        json_data[data['tab']][data['type']],
+        data['qry']['select_fields'],
+        data['qry']['where_data'],
+        data['affiliations']
+    )
     try:
         myresult = get_data(
             json_data['db_name'],
             json_data[data['tab']][data['type']],
             data['qry']['select_fields'],
-            data['qry']['where_data']
+            data['qry']['where_data'],
+            data['affiliations']
         )
         
         return jsonify([myresult] if data['qry']['where_data'] else [myresult])
