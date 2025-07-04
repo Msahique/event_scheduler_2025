@@ -1879,6 +1879,14 @@ async function Registration_modal() {
             //input.setAttribute()
             input.id = field.field; 
            
+        } else if(field.control === "maps-control"){
+            input = document.createElement("maps-control");
+            input.id = field.field;
+
+        } else if (field.control === "venue-location-control") {
+            input = document.createElement("venue-location-control");
+            input.id = field.field;
+
         } else if (field.control === "checkbox") {
             input = document.createElement('input');
             input.type = 'checkbox';
@@ -1946,7 +1954,7 @@ async function Registration_modal() {
             if (!field.show) continue;
             let input = form.elements[field.field];
     
-            if (!input && field.control !== 'schedule-control' && field.control !== 'venue-control' && field.control !== 'file' && field.control !== 'attachment-control' && field.control !== 'doc-template-control' && field.control !== 'field-attribute-control') {
+            if (!input && field.control !== 'schedule-control' && field.control !== 'venue-control' && field.control !== 'file' && field.control !== 'attachment-control' && field.control !== 'doc-template-control' && field.control !== 'field-attribute-control' && field.control !== 'maps-control' && field.control !== 'venue-location-control') {
                 console.warn(`Field ${field.field} is missing in the form.`);
                 continue;
             }
@@ -2001,6 +2009,17 @@ async function Registration_modal() {
                 let fieldElement = document.querySelector("field-attribute-control");
                 if (fieldElement) {
                     newData[field.field] = fieldElement.value;
+                }
+            } else if (field.control === "maps-control") {
+                let mapElement = document.querySelector("maps-control");
+                if (mapElement) {
+                    // Use .value or custom getter if defined
+                    newData[field.field] = mapElement.value || mapElement.getValue?.() || null;
+                }
+            } else if (field.control === "venue-location-control") {
+                let venueElement = document.querySelector("venue-location-control");
+                if (venueElement) {
+                    newData[field.field] = venueElement.value || venueElement.getValue?.() || null;
                 }
             } else if (field.control === "file") {
                 //await uploadFile(field, newData); // Await file upload
@@ -2277,12 +2296,12 @@ document.getElementById("eventForm_new").addEventListener("submit", function (ev
 
 
     // Periodically check for pending requests
-    /*setInterval(async () => {
+    setInterval(async () => {
         if (navigator.onLine) {
             console.log("[Network] Checking pending requests...");
             await processOfflineRequests();
         }
-    }, 15000);  */
+    }, 15000);  
 
 
 /*

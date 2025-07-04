@@ -1587,3 +1587,1621 @@ window.onDocTypeChange = async function (event) {
   }
 };
 
+
+// enhanced-maps-control.js
+class MapsControl extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.mapId = 'leaflet-map-' + Math.random().toString(36).substring(7);
+    this.map = null;
+    this.markers = [];
+    this.geocoder = null;
+  }
+
+  connectedCallback() {
+    this.render();
+    this.loadLeaflet(() => this.initMap());
+  }
+
+  render() {
+    this.shadowRoot.innerHTML = `
+      <style>
+        /* Import Leaflet CSS directly */
+        @import url('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
+        
+        .map-container {
+          width: 100%;
+          max-width: 800px;
+          height: 500px;
+          border: 2px solid #ccc;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          background: #f0f0f0;
+          display: flex;
+          flex-direction: column;
+          position: relative;
+        }
+        
+        .map-controls {
+          padding: 10px;
+          background: #fff;
+          border-bottom: 1px solid #ddd;
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
+          align-items: center;
+          position: relative;
+          z-index: 1000;
+          pointer-events: auto;
+          flex-shrink: 0;
+          min-height: 50px;
+        }
+        
+        .control-group {
+          display: flex;
+          gap: 5px;
+          align-items: center;
+          pointer-events: auto;
+          position: relative;
+          z-index: 1001;
+        }
+        
+        input {
+          padding: 5px 8px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          font-size: 14px;
+          pointer-events: auto;
+          z-index: 1002;
+          position: relative;
+        }
+        
+        button {
+          padding: 5px 12px;
+          background: #007cba;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 12px;
+          pointer-events: auto;
+          z-index: 1002;
+          position: relative;
+        }
+        
+        button:hover {
+          background: #005a87;
+        }
+        
+        button:disabled {
+          background: #ccc;
+          cursor: not-allowed;
+        }
+        
+        .map-element {
+          flex: 1;
+          width: 100%;
+          background: #e0e0e0;
+          position: relative;
+          z-index: 1;
+          overflow: hidden;
+          min-height: 380px;
+          max-height: 380px;
+        }
+        
+        /* Ensure Leaflet tiles render properly */
+        .map-element .leaflet-container {
+          height: 100% !important;
+          width: 100% !important;
+          background: #fff;
+          position: absolute !important;
+          top: 0 !important;
+          left: 0 !important;
+          z-index: 1 !important;
+        }
+        
+        .map-element .leaflet-control-container {
+          position: absolute !important;
+          z-index: 100 !important;
+        }
+        
+        .map-element .leaflet-control-zoom {
+          position: absolute !important;
+          top: 10px !important;
+          left: 10px !important;
+          z-index: 101 !important;
+        }
+        
+        .map-element .leaflet-tile {
+          max-width: none !important;
+        }
+        
+        .loading {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
+          color: #666;
+        }
+        
+        label {
+          font-size: 12px;
+          font-weight: bold;
+          color: #333;
+        }
+        
+        .status {
+          font-size: 12px;
+          color: #666;
+          padding: 5px;
+          background: #f9f9f9;
+          border-top: 1px solid #ddd;
+          flex-shrink: 0;
+          min-height: 20px;
+          z-index: 1000;
+          position: relative;
+        }
+
+        /* Custom draggable marker styles */
+        .custom-marker {
+          cursor: grab !important;
+        }
+        
+        .custom-marker:active {
+          cursor: grabbing !important;
+        }
+        
+        .dragging .custom-marker {
+          cursor: grabbing !important;
+        }
+      </style>
+      
+      <div class="map-container">
+        <div class="map-controls">
+          <div class="control-group">
+            <label>Lat:</label>
+            <input type="number" id="lat-input" step="any" placeholder="51.505" style="width: 80px;">
+          </div>
+          <div class="control-group">
+            <label>Lng:</label>
+            <input type="number" id="lng-input" step="any" placeholder="-0.09" style="width: 80px;">
+          </div>
+          <button id="goto-coords">Go to Coordinates</button>
+          
+          <div class="control-group">
+            <label>Location:</label>
+            <input type="text" id="location-input" placeholder="Enter city or address" style="width: 150px;">
+          </div>
+          <button id="search-location">Search</button>
+          
+          <button id="add-marker">Add Marker</button>
+          <button id="clear-markers">Clear All</button>
+        </div>
+        
+        <div id="${this.mapId}" class="map-element">
+          <div class="loading">Loading interactive map...</div>
+        </div>
+        
+        <div class="status" id="status">Ready - Markers are draggable!</div>
+      </div>
+    `;
+  }
+
+  loadLeaflet(callback) {
+    if (!window.L) {
+      // Load Leaflet CSS into shadow DOM
+      const leafletCss = document.createElement('link');
+      leafletCss.rel = 'stylesheet';
+      leafletCss.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      leafletCss.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
+      leafletCss.crossOrigin = '';
+      
+      // Also add to document head for global access
+      document.head.appendChild(leafletCss.cloneNode(true));
+      
+      // Add CSS to shadow DOM
+      this.shadowRoot.appendChild(leafletCss);
+
+      const leafletScript = document.createElement('script');
+      leafletScript.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      leafletScript.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
+      leafletScript.crossOrigin = '';
+      leafletScript.onload = () => {
+        // Small delay to ensure CSS is loaded
+        setTimeout(callback, 100);
+      };
+      document.head.appendChild(leafletScript);
+    } else {
+      callback();
+    }
+  }
+
+  initMap() {
+    try {
+      // Initialize map with confined space
+      const mapElement = this.shadowRoot.getElementById(this.mapId);
+      mapElement.innerHTML = ''; // Clear loading message
+      
+      // Force map container dimensions and prevent overflow
+      mapElement.style.height = '100%';
+      mapElement.style.width = '100%';
+      mapElement.style.position = 'relative';
+      mapElement.style.overflow = 'hidden';
+      
+      this.map = L.map(mapElement, {
+        center: [51.505, -0.09],
+        zoom: 13,
+        zoomControl: true,
+        scrollWheelZoom: true,
+        doubleClickZoom: true,
+        dragging: true,
+        attributionControl: true,
+        // Prevent map from expanding beyond container
+        maxBoundsViscosity: 1.0
+      });
+
+      // Add tile layer with better error handling
+      const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+        minZoom: 1,
+        tileSize: 256,
+        crossOrigin: true
+      });
+
+      tileLayer.addTo(this.map);
+
+      // Force map to invalidate size after a short delay and on zoom
+      setTimeout(() => {
+        if (this.map) {
+          this.map.invalidateSize();
+          // Ensure map stays within bounds
+          this.constrainMapSize();
+        }
+      }, 100);
+
+      // Add event listeners for zoom to ensure map stays constrained
+      this.map.on('zoomend', () => {
+        this.constrainMapSize();
+      });
+
+      this.map.on('moveend', () => {
+        this.constrainMapSize();
+      });
+
+      // Add initial marker
+      this.addMarker(51.505, -0.09, 'Default Location', 'blue');
+
+      // Setup event listeners
+      this.setupEventListeners();
+
+      // Map click event to get coordinates
+      this.map.on('click', (e) => {
+        const lat = e.latlng.lat.toFixed(6);
+        const lng = e.latlng.lng.toFixed(6);
+        this.updateStatus(`Clicked: ${lat}, ${lng}`);
+        this.shadowRoot.getElementById('lat-input').value = lat;
+        this.shadowRoot.getElementById('lng-input').value = lng;
+      });
+
+      // Handle tile loading
+      tileLayer.on('loading', () => {
+        this.updateStatus('Loading map tiles...');
+      });
+
+      tileLayer.on('load', () => {
+        this.updateStatus('Map loaded successfully. Click on map to get coordinates. Drag markers to move them!');
+      });
+
+      tileLayer.on('tileerror', (e) => {
+        console.warn('Tile loading error:', e);
+        this.updateStatus('Some map tiles failed to load');
+      });
+      
+    } catch (error) {
+      console.error('Error initializing map:', error);
+      this.updateStatus('Error loading map: ' + error.message);
+    }
+  }
+
+  constrainMapSize() {
+    if (this.map) {
+      // Force the map to stay within its container
+      const mapElement = this.shadowRoot.getElementById(this.mapId);
+      const container = mapElement.querySelector('.leaflet-container');
+      
+      if (container) {
+        container.style.position = 'absolute';
+        container.style.top = '0px';
+        container.style.left = '0px';
+        container.style.width = '100%';
+        container.style.height = '100%';
+        container.style.zIndex = '1';
+      }
+      
+      // Force size recalculation
+      this.map.invalidateSize();
+    }
+  }
+
+  setupEventListeners() {
+    const shadow = this.shadowRoot;
+    
+    // Prevent event bubbling from controls to map
+    const controlsElement = shadow.querySelector('.map-controls');
+    controlsElement.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+    
+    controlsElement.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+    });
+    
+    // Go to coordinates button
+    shadow.getElementById('goto-coords').addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const lat = parseFloat(shadow.getElementById('lat-input').value);
+      const lng = parseFloat(shadow.getElementById('lng-input').value);
+      
+      if (!isNaN(lat) && !isNaN(lng)) {
+        this.goToCoordinates(lat, lng);
+      } else {
+        this.updateStatus('Please enter valid coordinates');
+      }
+    });
+
+    // Search location button
+    shadow.getElementById('search-location').addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const location = shadow.getElementById('location-input').value.trim();
+      if (location) {
+        this.searchLocation(location);
+      } else {
+        this.updateStatus('Please enter a location to search');
+      }
+    });
+
+    // Add marker button
+    shadow.getElementById('add-marker').addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const lat = parseFloat(shadow.getElementById('lat-input').value);
+      const lng = parseFloat(shadow.getElementById('lng-input').value);
+      
+      if (!isNaN(lat) && !isNaN(lng)) {
+        this.addMarker(lat, lng, `Marker at ${lat.toFixed(4)}, ${lng.toFixed(4)}`, 'red');
+      } else {
+        this.updateStatus('Please enter valid coordinates to add marker');
+      }
+    });
+
+    // Clear markers button
+    shadow.getElementById('clear-markers').addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.clearAllMarkers();
+    });
+
+    // Enter key support with event prevention
+    shadow.getElementById('lat-input').addEventListener('keypress', (e) => {
+      e.stopPropagation();
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        shadow.getElementById('goto-coords').click();
+      }
+    });
+    
+    shadow.getElementById('lng-input').addEventListener('keypress', (e) => {
+      e.stopPropagation();
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        shadow.getElementById('goto-coords').click();
+      }
+    });
+    
+    shadow.getElementById('location-input').addEventListener('keypress', (e) => {
+      e.stopPropagation();
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        shadow.getElementById('search-location').click();
+      }
+    });
+
+    // Prevent input focus issues
+    const inputs = shadow.querySelectorAll('input');
+    inputs.forEach(input => {
+      input.addEventListener('focus', (e) => {
+        e.stopPropagation();
+      });
+      
+      input.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    });
+  }
+
+  goToCoordinates(lat, lng) {
+    if (this.map) {
+      this.map.setView([lat, lng], 15);
+      this.updateStatus(`Moved to coordinates: ${lat}, ${lng}`);
+    }
+  }
+
+  async searchLocation(locationName) {
+    try {
+      this.updateStatus('Searching location...');
+      
+      // Using OpenStreetMap Nominatim API for geocoding
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationName)}&limit=1`
+      );
+      
+      if (!response.ok) {
+        throw new Error('Search failed');
+      }
+      
+      const data = await response.json();
+      
+      if (data && data.length > 0) {
+        const result = data[0];
+        const lat = parseFloat(result.lat);
+        const lng = parseFloat(result.lon);
+        
+        // Update input fields
+        this.shadowRoot.getElementById('lat-input').value = lat.toFixed(6);
+        this.shadowRoot.getElementById('lng-input').value = lng.toFixed(6);
+        
+        // Move map to location
+        this.goToCoordinates(lat, lng);
+        
+        // Add marker
+        this.addMarker(lat, lng, result.display_name, 'green');
+        
+        this.updateStatus(`Found: ${result.display_name}`);
+      } else {
+        this.updateStatus('Location not found');
+      }
+    } catch (error) {
+      console.error('Geocoding error:', error);
+      this.updateStatus('Error searching location');
+    }
+  }
+
+  addMarker(lat, lng, popupText = '', color = 'blue') {
+    if (!this.map) return;
+
+    // Create custom icon based on color
+    const iconColors = {
+      blue: '#3388ff',
+      red: '#ff3333',
+      green: '#33ff33',
+      orange: '#ff8800',
+      purple: '#8833ff'
+    };
+
+    const customIcon = L.divIcon({
+      html: `<div style="
+        background-color: ${iconColors[color] || iconColors.blue};
+        width: 20px;
+        height: 20px;
+        border-radius: 50% 50% 50% 0;
+        border: 2px solid white;
+        transform: rotate(-45deg);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      "></div>`,
+      iconSize: [20, 20],
+      iconAnchor: [10, 20],
+      className: 'custom-marker'
+    });
+
+    // Create draggable marker
+    const marker = L.marker([lat, lng], { 
+      icon: customIcon,
+      draggable: true,
+      autoPan: true
+    }).addTo(this.map);
+    
+    // Store original metadata with the marker
+    marker.originalData = {
+      popupText: popupText,
+      color: color,
+      createdAt: new Date().toISOString()
+    };
+
+    // Create popup content
+    const createPopupContent = (marker) => {
+      const pos = marker.getLatLng();
+      return `
+        <div style="min-width: 200px;">
+          <strong>${marker.originalData.popupText}</strong><br>
+          <small style="color: #666;">Created: ${new Date(marker.originalData.createdAt).toLocaleString()}</small><br>
+          <strong>Current Position:</strong><br>
+          Lat: ${pos.lat.toFixed(6)}<br>
+          Lng: ${pos.lng.toFixed(6)}<br>
+          <small style="color: #888; font-style: italic;">Drag marker to move</small>
+        </div>
+      `;
+    };
+
+    // Set initial popup
+    if (popupText) {
+      marker.bindPopup(createPopupContent(marker));
+    }
+
+    // Handle drag events
+    marker.on('dragstart', (e) => {
+      this.updateStatus('Dragging marker...');
+      // Add dragging class to map container for cursor styling
+      const mapContainer = this.shadowRoot.querySelector('.map-element');
+      mapContainer.classList.add('dragging');
+    });
+
+    marker.on('drag', (e) => {
+      const newPos = e.target.getLatLng();
+      const currentLat = newPos.lat.toFixed(6);
+      const currentLng = newPos.lng.toFixed(6);
+      
+      // Update input fields in real-time during drag
+      const latInput = this.shadowRoot.getElementById('lat-input');
+      const lngInput = this.shadowRoot.getElementById('lng-input');
+      
+      if (latInput && lngInput) {
+        latInput.value = currentLat;
+        lngInput.value = currentLng;
+      }
+      
+      this.updateStatus(`Dragging to: ${newPos.lat.toFixed(4)}, ${newPos.lng.toFixed(4)}`);
+      
+      // Update popup content in real-time if popup is open
+      if (marker.isPopupOpen()) {
+        marker.setPopupContent(createPopupContent(marker));
+      }
+    });
+
+    marker.on('dragend', (e) => {
+      const newPos = e.target.getLatLng();
+      const finalLat = newPos.lat.toFixed(6);
+      const finalLng = newPos.lng.toFixed(6);
+      
+      // Remove dragging class
+      const mapContainer = this.shadowRoot.querySelector('.map-element');
+      mapContainer.classList.remove('dragging');
+      
+      // Ensure input fields are updated with final coordinates
+      const latInput = this.shadowRoot.getElementById('lat-input');
+      const lngInput = this.shadowRoot.getElementById('lng-input');
+      
+      if (latInput && lngInput) {
+        latInput.value = finalLat;
+        lngInput.value = finalLng;
+      }
+      
+      // Update popup content
+      marker.setPopupContent(createPopupContent(marker));
+      
+      // Update status
+      this.updateStatus(`Marker moved to: ${finalLat}, ${finalLng}`);
+      
+      // Trigger custom event for external listeners
+      this.dispatchEvent(new CustomEvent('markerMoved', {
+        detail: {
+          marker: marker,
+          newPosition: { lat: parseFloat(finalLat), lng: parseFloat(finalLng) },
+          originalData: marker.originalData
+        }
+      }));
+    });
+
+    // Handle click events on marker
+    marker.on('click', (e) => {
+      const pos = e.target.getLatLng();
+      this.shadowRoot.getElementById('lat-input').value = pos.lat.toFixed(6);
+      this.shadowRoot.getElementById('lng-input').value = pos.lng.toFixed(6);
+      this.updateStatus(`Selected marker at: ${pos.lat.toFixed(4)}, ${pos.lng.toFixed(4)}`);
+    });
+
+    this.markers.push(marker);
+    this.updateStatus(`Added draggable marker at ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+    
+    return marker;
+  }
+
+  clearAllMarkers() {
+    this.markers.forEach(marker => {
+      this.map.removeLayer(marker);
+    });
+    this.markers = [];
+    this.updateStatus('All markers cleared');
+  }
+
+  updateStatus(message) {
+    const statusElement = this.shadowRoot.getElementById('status');
+    if (statusElement) {
+      statusElement.textContent = message;
+    }
+  }
+
+  // Public methods for external use
+  setCenter(lat, lng, zoom = 13) {
+    if (this.map) {
+      this.map.setView([lat, lng], zoom);
+    }
+  }
+
+  addCustomMarker(lat, lng, options = {}) {
+    const { popup = '', color = 'blue', draggable = true } = options;
+    return this.addMarker(lat, lng, popup, color);
+  }
+
+  getCenter() {
+    if (this.map) {
+      const center = this.map.getCenter();
+      return { lat: center.lat, lng: center.lng };
+    }
+    return null;
+  }
+
+  // Get all marker positions and their metadata
+  getAllMarkers() {
+    return this.markers.map(marker => {
+      const pos = marker.getLatLng();
+      return {
+        position: { lat: pos.lat, lng: pos.lng },
+        originalData: marker.originalData,
+        id: marker._leaflet_id
+      };
+    });
+  }
+
+  // Find marker by ID
+  getMarkerById(id) {
+    return this.markers.find(marker => marker._leaflet_id === id);
+  }
+}
+
+customElements.define('maps-control', MapsControl);
+
+
+class VenueLocationControl extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        this.mapId = 'leaflet-map-' + Math.random().toString(36).substring(7);
+        this.map = null;
+        this.markers = [];
+        this.selectedLocation = null;
+        this.debugInfo = [];
+    }
+
+    log(message) {
+        console.log('[VenueLocationControl]', message);
+        this.debugInfo.push(`${new Date().toLocaleTimeString()}: ${message}`);
+        this.updateDebugInfo();
+    }
+
+    updateDebugInfo() {
+        const debugElement = document.getElementById('debug-info');
+        if (debugElement) {
+            debugElement.innerHTML = this.debugInfo.slice(-10).join('<br>');
+        }
+    }
+
+    debugLayout() {
+        this.log('=== DEBUG LAYOUT ===');
+        
+        const container = this.shadowRoot.querySelector('.venue-location-container');
+        this.log('Main container:', container ? 'FOUND' : 'NOT FOUND');
+        if (container) {
+            this.log('Container dimensions:', container.offsetWidth + 'x' + container.offsetHeight);
+            this.log('Container display:', getComputedStyle(container).display);
+        }
+        
+        const venueSection = this.shadowRoot.querySelector('.venue-form-section');
+        this.log('Venue section:', venueSection ? 'FOUND' : 'NOT FOUND');
+        if (venueSection) {
+            this.log('Venue dimensions:', venueSection.offsetWidth + 'x' + venueSection.offsetHeight);
+        }
+        
+        const mapsSection = this.shadowRoot.querySelector('.maps-section');
+        this.log('Maps section:', mapsSection ? 'FOUND' : 'NOT FOUND');
+        if (mapsSection) {
+            this.log('Maps dimensions:', mapsSection.offsetWidth + 'x' + mapsSection.offsetHeight);
+            this.log('Maps display:', getComputedStyle(mapsSection).display);
+        }
+        
+        const mapContainer = this.shadowRoot.querySelector('.map-container');
+        this.log('Map container:', mapContainer ? 'FOUND' : 'NOT FOUND');
+        if (mapContainer) {
+            this.log('Map container dimensions:', mapContainer.offsetWidth + 'x' + mapContainer.offsetHeight);
+        }
+        
+        const mapElement = this.shadowRoot.getElementById(this.mapId);
+        this.log('Map element:', mapElement ? 'FOUND' : 'NOT FOUND');
+        if (mapElement) {
+            this.log('Map element dimensions:', mapElement.offsetWidth + 'x' + mapElement.offsetHeight);
+        }
+        
+        this.log('=== END DEBUG ===');
+    }
+
+    connectedCallback() {
+        this.log('Connected to DOM');
+        this.render();
+        this.debugLayout();
+        this.loadLeaflet(() => this.initMap());
+    }
+
+    render() {
+        this.log('Rendering component');
+        this.shadowRoot.innerHTML = `
+            <style>
+                /* Import Leaflet CSS directly */
+                @import url('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
+                
+                /* Debug borders to see what's happening */
+                * {
+                    box-sizing: border-box;
+                }
+                
+                .venue-location-container {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                    width: 100%;
+                    max-width: 1200px;
+                    min-height: 600px;
+                    font-family: Arial, sans-serif;
+                    background: #fff;
+                }
+                
+                .venue-form-section {
+                    flex: 0 0 auto;
+                    padding: 20px;
+                    background: #f9f9f9;
+                }
+                
+                .maps-section {
+                    flex: 1;
+                    background: #e8f4fd;
+                    padding: 20px;
+                    min-height: 500px;
+                }
+                
+                .section-title {
+                    font-size: 18px;
+                    font-weight: bold;
+                    margin-bottom: 15px;
+                    border-bottom: 2px solid #007cba;
+                    padding-bottom: 5px;
+                }
+                
+                .venue-container label {
+                    display: block;
+                    margin-top: 12px;
+                    font-weight: bold;
+                    font-size: 14px;
+                }
+                
+                .venue-container input {
+                    width: 100%;
+                    padding: 8px;
+                    margin-top: 5px;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    font-size: 14px;
+                }
+                
+                /* FIXED: Separate controls from map container */
+                .map-controls {
+                    width: 100%;
+                    padding: 10px;
+                    background: #ffffff;
+                    border: 2px solid #007cba;
+                    border-radius: 5px;
+                    margin-bottom: 10px;
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 10px;
+                    align-items: center;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                    z-index: 9999; /* Extremely high z-index */
+                    position: relative; /* Ensure it stays in document flow */
+                }
+                
+                /* Map container without controls inside */
+                .map-container {
+                    width: 100%;
+                    height: 400px;
+                    border: 3px solid orange; /* DEBUG */
+                    background: #f0f0f0;
+                    position: relative;
+                    overflow: hidden;
+                }
+                
+                .map-controls input {
+                    padding: 5px 8px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    font-size: 14px;
+                    background: white; /* Ensure input backgrounds are solid */
+                }
+                
+                .map-controls button {
+                    padding: 5px 12px;
+                    background: #007cba;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 12px;
+                    font-weight: 500;
+                }
+                
+                .control-group {
+                    display: flex;
+                    gap: 5px;
+                    align-items: center;
+                    background: #f8f9fa;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    border: 1px solid #e9ecef;
+                }
+                
+                .map-controls label {
+                    font-size: 12px;
+                    font-weight: bold;
+                    color: #333;
+                    white-space: nowrap;
+                }
+                
+                .map-controls button:hover {
+                    background: #005a87;
+                }
+                
+                .send-button {
+                    background: #28a745 !important;
+                    font-weight: bold;
+                }
+                
+                .send-button:hover {
+                    background: #218838 !important;
+                }
+                
+                /* FIXED: Map element takes full container */
+                .map-element {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 30px;
+                    background: #e0e0e0;
+                    border: 2px solid yellow; /* DEBUG */
+                    z-index: 1;
+                }
+                
+                /* FIXED: Prevent Leaflet from interfering with controls */
+                .map-element .leaflet-container {
+                    height: 100% !important;
+                    width: 100% !important;
+                    position: relative !important;
+                    z-index: 1 !important; /* Keep map below controls */
+                }
+                
+                /* Ensure Leaflet controls don't interfere */
+                .map-element .leaflet-control-container {
+                    z-index: 100 !important; /* Lower than our custom controls */
+                }
+                
+                .map-element .leaflet-tile {
+                    max-width: none !important;
+                }
+                
+                /* Prevent map from capturing events on controls area */
+                .map-controls * {
+                    pointer-events: auto !important;
+                }
+                
+                .loading {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    height: 100%;
+                    color: #666;
+                    font-size: 16px;
+                }
+                
+                /* Status bar at bottom of map */
+                .status {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    height: 30px;
+                    font-size: 12px;
+                    color: #666;
+                    padding: 5px 10px;
+                    background: #f9f9f9;
+                    border-top: 1px solid #ddd;
+                    border: 2px solid pink; /* DEBUG */
+                    z-index: 100;
+                }
+                
+                .location-info {
+                    background: #e8f4fd;
+                    padding: 10px;
+                    margin: 10px 0;
+                    border-radius: 5px;
+                    border: 1px solid #b3d9f2;
+                    font-size: 13px;
+                    display: none;
+                }
+                
+                .location-info.show {
+                    display: block;
+                }
+                
+                .location-info strong {
+                    color: #0066cc;
+                }
+            </style>
+            
+            <div class="venue-location-container">
+                <!-- Venue Form Section -->
+                <div class="venue-form-section">
+                    <div class="section-title">📍 Venue Details</div>
+                    <div class="venue-container">
+                        <label>Building: <input type="text" id="building"></label>
+                        <label>Street: <input type="text" id="street"></label>
+                        <label>Area: <input type="text" id="area"></label>
+                        <label>City: <input type="text" id="city"></label>
+                        <label>State: <input type="text" id="state"></label>
+                        <label>Country: <input type="text" id="country"></label>
+                        <label>URL Address: <input type="url" id="url_address"></label>
+                        <label>Latitude: <input type="text" id="latitude" readonly></label>
+                        <label>Longitude: <input type="text" id="longitude" readonly></label>
+                    </div>
+                    
+                    <div class="location-info" id="location-info">
+                        <strong>Selected Location:</strong><br>
+                        <span id="location-display"></span>
+                    </div>
+                </div>
+                
+                <!-- Maps Section -->
+                <div class="maps-section">
+                    <div class="section-title">🗺️ Interactive Map</div>
+                    
+                    <div class="map-container">
+                        <div id="${this.mapId}" class="map-element">
+                            <div class="loading">🗺️ Loading interactive map...</div>
+                        </div>
+                        
+                        <div class="status" id="status">Ready - Markers are draggable!</div>
+                    </div>
+                    
+                    <!-- FIXED: Controls moved outside and above map container -->
+                    <div class="map-controls">
+                        <div class="control-group">
+                            <label>Lat:</label>
+                            <input type="number" id="lat-input" step="any" placeholder="51.505" style="width: 80px;">
+                        </div>
+                        <div class="control-group">
+                            <label>Lng:</label>
+                            <input type="number" id="lng-input" step="any" placeholder="-0.09" style="width: 80px;">
+                        </div>
+                        <button id="goto-coords">Go to Coordinates</button>
+                        
+                        <div class="control-group">
+                            <label>Location:</label>
+                            <input type="text" id="location-input" placeholder="Enter city or address" style="width: 150px;">
+                        </div>
+                        <button id="search-location">Search</button>
+                        
+                        <button id="add-marker">Add Marker</button>
+                        <button id="clear-markers">Clear All</button>
+                        <button id="send-to-venue" class="send-button">📤 Send to Venue</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    loadLeaflet(callback) {
+        if (!window.L) {
+            this.log('Loading Leaflet library...');
+            
+            // Load Leaflet CSS into shadow DOM
+            const leafletCss = document.createElement('link');
+            leafletCss.rel = 'stylesheet';
+            leafletCss.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+            leafletCss.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
+            leafletCss.crossOrigin = '';
+            
+            // Also add to document head for global access
+            document.head.appendChild(leafletCss.cloneNode(true));
+            
+            // Add CSS to shadow DOM
+            this.shadowRoot.appendChild(leafletCss);
+
+            const leafletScript = document.createElement('script');
+            leafletScript.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+            leafletScript.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
+            leafletScript.crossOrigin = '';
+            leafletScript.onload = () => {
+                this.log('Leaflet loaded successfully');
+                // Small delay to ensure CSS is loaded
+                setTimeout(() => {
+                    this.log('Initializing map after delay');
+                    callback();
+                }, 200);
+            };
+            leafletScript.onerror = (error) => {
+                this.log('Error loading Leaflet: ' + error);
+                console.error('Error loading Leaflet:', error);
+            };
+            document.head.appendChild(leafletScript);
+        } else {
+            this.log('Leaflet already loaded');
+            callback();
+        }
+    }
+
+    initMap() {
+        try {
+            this.log('Starting map initialization');
+            
+            // Initialize map with confined space
+            const mapElement = this.shadowRoot.getElementById(this.mapId);
+            if (!mapElement) {
+                this.log('Error: Map element not found');
+                return;
+            }
+            
+            mapElement.innerHTML = ''; // Clear loading message
+            
+            // Force map container dimensions and prevent overflow
+            mapElement.style.height = '100%';
+            mapElement.style.width = '100%';
+            mapElement.style.position = 'relative';
+            mapElement.style.overflow = 'hidden';
+            
+            this.log('Creating Leaflet map instance');
+            
+            this.map = L.map(mapElement, {
+                center: [51.505, -0.09],
+                zoom: 13,
+                zoomControl: true,
+                scrollWheelZoom: true,
+                doubleClickZoom: true,
+                dragging: true,
+                attributionControl: true,
+                // Prevent map from expanding beyond container
+                maxBoundsViscosity: 1.0
+            });
+
+            this.log('Map instance created, adding tile layer');
+
+            // Add tile layer with better error handling
+            const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19,
+                minZoom: 1,
+                tileSize: 256,
+                crossOrigin: true
+            });
+
+            tileLayer.addTo(this.map);
+            this.log('Tile layer added');
+
+            // Force map to invalidate size after a short delay and on zoom
+            setTimeout(() => {
+                if (this.map) {
+                    this.log('Invalidating map size');
+                    this.map.invalidateSize();
+                    this.constrainMapSize();
+                }
+            }, 300); // CHANGE: from 100 to 300ms
+
+            // Add event listeners for zoom to ensure map stays constrained
+            this.map.on('zoomend', () => {
+                this.constrainMapSize();
+            });
+
+            this.map.on('moveend', () => {
+                this.constrainMapSize();
+            });
+
+            // Add initial marker
+            this.addMarker(51.505, -0.09, 'Default Location - London', 'blue');
+
+            // Setup event listeners
+            this.setupEventListeners();
+
+            // Map click event to get coordinates
+            this.map.on('click', (e) => {
+                const lat = e.latlng.lat.toFixed(6);
+                const lng = e.latlng.lng.toFixed(6);
+                this.updateStatus(`Clicked: ${lat}, ${lng}`);
+                this.shadowRoot.getElementById('lat-input').value = lat;
+                this.shadowRoot.getElementById('lng-input').value = lng;
+                
+                this.selectedLocation = {
+                    lat: parseFloat(lat),
+                    lng: parseFloat(lng),
+                    address: `Coordinates: ${lat}, ${lng}`
+                };
+            });
+
+            // Handle tile loading
+            tileLayer.on('loading', () => {
+                this.updateStatus('Loading map tiles...');
+            });
+
+            tileLayer.on('load', () => {
+                this.updateStatus('Map loaded successfully. Click on map to get coordinates. Drag markers to move them!');
+                this.log('Map tiles loaded successfully');
+            });
+
+            tileLayer.on('tileerror', (e) => {
+                console.warn('Tile loading error:', e);
+                this.updateStatus('Some map tiles failed to load');
+                this.log('Tile loading error occurred');
+            });
+            
+            this.log('Map initialization completed');
+            
+        } catch (error) {
+            console.error('Error initializing map:', error);
+            this.log('Error initializing map: ' + error.message);
+            this.updateStatus('Error loading map: ' + error.message);
+        }
+    }
+
+    constrainMapSize() {
+        if (this.map) {
+            // Force the map to stay within its container
+            const mapElement = this.shadowRoot.getElementById(this.mapId);
+            const container = mapElement?.querySelector('.leaflet-container');
+            
+            if (container) {
+                container.style.position = 'absolute';
+                container.style.top = '0px';
+                container.style.left = '0px';
+                container.style.width = '100%';
+                container.style.height = '100%';
+                container.style.zIndex = '1';
+            }
+            
+            // Force size recalculation
+            this.map.invalidateSize();
+        }
+    }
+
+    setupEventListeners() {
+        this.log('Setting up event listeners');
+        const shadow = this.shadowRoot;
+        
+        // Go to coordinates button
+        shadow.getElementById('goto-coords').addEventListener('click', (e) => {
+            e.preventDefault();
+            const lat = parseFloat(shadow.getElementById('lat-input').value);
+            const lng = parseFloat(shadow.getElementById('lng-input').value);
+            
+            if (!isNaN(lat) && !isNaN(lng)) {
+                this.goToCoordinates(lat, lng);
+                this.selectedLocation = {
+                    lat: lat,
+                    lng: lng,
+                    address: `Coordinates: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
+                };
+            } else {
+                this.updateStatus('Please enter valid coordinates');
+            }
+        });
+
+        // Search location button
+        shadow.getElementById('search-location').addEventListener('click', (e) => {
+            e.preventDefault();
+            const location = shadow.getElementById('location-input').value.trim();
+            if (location) {
+                this.searchLocation(location);
+            } else {
+                this.updateStatus('Please enter a location to search');
+            }
+        });
+
+        // Add marker button
+        shadow.getElementById('add-marker').addEventListener('click', (e) => {
+            e.preventDefault();
+            const lat = parseFloat(shadow.getElementById('lat-input').value);
+            const lng = parseFloat(shadow.getElementById('lng-input').value);
+            
+            if (!isNaN(lat) && !isNaN(lng)) {
+                this.addMarker(lat, lng, `Marker at ${lat.toFixed(4)}, ${lng.toFixed(4)}`, 'red');
+                this.selectedLocation = {
+                    lat: lat,
+                    lng: lng,
+                    address: `Marker: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
+                };
+            } else {
+                this.updateStatus('Please enter valid coordinates to add marker');
+            }
+        });
+
+        // Clear markers button
+        shadow.getElementById('clear-markers').addEventListener('click', (e) => {
+            e.preventDefault();
+            this.clearAllMarkers();
+        });
+
+        // Send to Venue button
+        shadow.getElementById('send-to-venue').addEventListener('click', (e) => {
+            e.preventDefault();
+            this.sendToVenue();
+        });
+
+        // Enter key support
+        shadow.getElementById('lat-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                shadow.getElementById('goto-coords').click();
+            }
+        });
+        
+        shadow.getElementById('lng-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                shadow.getElementById('goto-coords').click();
+            }
+        });
+        
+        shadow.getElementById('location-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                shadow.getElementById('search-location').click();
+            }
+        });
+    }
+
+    sendToVenue() {
+        const shadow = this.shadowRoot;
+        const lat = shadow.getElementById('lat-input').value;
+        const lng = shadow.getElementById('lng-input').value;
+        
+        if (!lat || !lng) {
+            this.updateStatus('Please select a location first (click on map, search, or add marker)');
+            return;
+        }
+        
+        shadow.getElementById('latitude').value = lat;
+        shadow.getElementById('longitude').value = lng;
+        
+        if (this.selectedLocation && this.selectedLocation.searchResult) {
+            const result = this.selectedLocation.searchResult;
+            this.parseAndFillLocationData(result.display_name, result);
+        }
+        
+        const locationInfo = shadow.getElementById('location-info');
+        const locationDisplay = shadow.getElementById('location-display');
+        
+        let displayText = `Lat: ${lat}, Lng: ${lng}`;
+        if (this.selectedLocation && this.selectedLocation.address) {
+            displayText += `<br>Address: ${this.selectedLocation.address}`;
+        }
+        
+        locationDisplay.innerHTML = displayText;
+        locationInfo.classList.add('show');
+        
+        this.updateStatus(`Location data sent to venue form! Coordinates: ${lat}, ${lng}`);
+        
+        this.dispatchEvent(new CustomEvent('locationSentToVenue', {
+            detail: {
+                latitude: lat,
+                longitude: lng,
+                selectedLocation: this.selectedLocation
+            }
+        }));
+    }
+
+    parseAndFillLocationData(displayName, searchResult) {
+        const shadow = this.shadowRoot;
+        const parts = displayName.split(',').map(part => part.trim());
+        
+        if (parts.length >= 1) {
+            let building = '';
+            let street = '';
+            let area = '';
+            let city = '';
+            let state = '';
+            let country = '';
+            
+            if (parts.length > 0) country = parts[parts.length - 1];
+            if (parts.length > 1) state = parts[parts.length - 2];
+            if (parts.length > 2) city = parts[parts.length - 3];
+            if (parts.length > 3) area = parts[parts.length - 4];
+            if (parts.length > 4) street = parts[parts.length - 5];
+            if (parts.length > 5) building = parts.slice(0, parts.length - 5).join(', ');
+            
+            if (!shadow.getElementById('building').value && building) shadow.getElementById('building').value = building;
+            if (!shadow.getElementById('street').value && street) shadow.getElementById('street').value = street;
+            if (!shadow.getElementById('area').value && area) shadow.getElementById('area').value = area;
+            if (!shadow.getElementById('city').value && city) shadow.getElementById('city').value = city;
+            if (!shadow.getElementById('state').value && state) shadow.getElementById('state').value = state;
+            if (!shadow.getElementById('country').value && country) shadow.getElementById('country').value = country;
+        }
+    }
+
+    goToCoordinates(lat, lng) {
+        if (this.map) {
+            this.map.setView([lat, lng], 15);
+            this.updateStatus(`Moved to coordinates: ${lat}, ${lng}`);
+            this.log(`Map moved to: ${lat}, ${lng}`);
+        }
+    }
+
+    async searchLocation(locationName) {
+        try {
+            this.updateStatus('Searching location...');
+            this.log(`Searching for: ${locationName}`);
+            
+            const response = await fetch(
+                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationName)}&limit=1`
+            );
+            
+            if (!response.ok) {
+                throw new Error('Search failed');
+            }
+            
+            const data = await response.json();
+            
+            if (data && data.length > 0) {
+                const result = data[0];
+                const lat = parseFloat(result.lat);
+                const lng = parseFloat(result.lon);
+                
+                this.shadowRoot.getElementById('lat-input').value = lat.toFixed(6);
+                this.shadowRoot.getElementById('lng-input').value = lng.toFixed(6);
+                
+                this.goToCoordinates(lat, lng);
+                this.addMarker(lat, lng, result.display_name, 'green');
+                
+                this.selectedLocation = {
+                    lat: lat,
+                    lng: lng,
+                    address: result.display_name,
+                    searchResult: result
+                };
+                
+                this.updateStatus(`Found: ${result.display_name}`);
+                this.log(`Search successful: ${result.display_name}`);
+            } else {
+                this.updateStatus('Location not found');
+                this.log('Search returned no results');
+            }
+        } catch (error) {
+            this.log(`Search error: ${error.message}`);
+            console.error('Geocoding error:', error);
+            this.updateStatus('Error searching location');
+        }
+    }
+
+    addMarker(lat, lng, popupText = '', color = 'blue') {
+        if (!this.map) {
+            this.log('Cannot add marker: map not initialized');
+            return;
+        }
+
+        const iconColors = {
+            blue: '#3388ff',
+            red: '#ff3333',
+            green: '#33ff33',
+            orange: '#ff8800',
+            purple: '#8833ff'
+        };
+
+        const customIcon = L.divIcon({
+            html: `<div style="
+                background-color: ${iconColors[color] || iconColors.blue};
+                width: 20px;
+                height: 20px;
+                border-radius: 50% 50% 50% 0;
+                border: 2px solid white;
+                transform: rotate(-45deg);
+                box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            "></div>`,
+            iconSize: [20, 20],
+            iconAnchor: [10, 20],
+            className: 'custom-marker'
+        });
+
+        const marker = L.marker([lat, lng], { 
+            icon: customIcon,
+            draggable: true
+        }).addTo(this.map);
+        
+        if (popupText) {
+            marker.bindPopup(`
+                <div style="min-width: 200px;">
+                    <strong>${popupText}</strong><br>
+                    <strong>Position:</strong><br>
+                    Lat: ${lat.toFixed(6)}<br>
+                    Lng: ${lng.toFixed(6)}
+                </div>
+            `);
+        }
+
+        marker.on('click', (e) => {
+            const pos = e.target.getLatLng();
+            this.shadowRoot.getElementById('lat-input').value = pos.lat.toFixed(6);
+            this.shadowRoot.getElementById('lng-input').value = pos.lng.toFixed(6);
+            this.updateStatus(`Selected marker at: ${pos.lat.toFixed(4)}, ${pos.lng.toFixed(4)}`);
+            
+            this.selectedLocation = {
+                lat: pos.lat,
+                lng: pos.lng,
+                address: `Marker: ${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)}`
+            };
+        });
+
+        this.markers.push(marker);
+        this.updateStatus(`Added marker at ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+        this.log(`Added ${color} marker at ${lat}, ${lng}`);
+        
+        return marker;
+    }
+
+    clearAllMarkers() {
+        this.markers.forEach(marker => {
+            this.map.removeLayer(marker);
+        });
+        this.markers = [];
+        this.selectedLocation = null;
+        this.updateStatus('All markers cleared');
+        this.log('All markers cleared');
+    }
+
+    updateStatus(message) {
+        const statusElement = this.shadowRoot.getElementById('status');
+        if (statusElement) {
+            statusElement.textContent = message;
+        }
+        this.log(`Status: ${message}`);
+    }
+
+    // Venue control methods
+    set value(venueData) {
+        if (!venueData) return;
+        if (typeof venueData === "string") venueData = JSON.parse(venueData);
+
+        const shadow = this.shadowRoot;
+        shadow.getElementById("building").value = venueData.building || "";
+        shadow.getElementById("street").value = venueData.street || "";
+        shadow.getElementById("area").value = venueData.area || "";
+        shadow.getElementById("city").value = venueData.city || "";
+        shadow.getElementById("state").value = venueData.state || "";
+        shadow.getElementById("country").value = venueData.country || "";
+        shadow.getElementById("url_address").value = venueData.url_address || "";
+        shadow.getElementById("latitude").value = venueData.latitude || "";
+        shadow.getElementById("longitude").value = venueData.longitude || "";
+        
+        if (venueData.latitude && venueData.longitude) {
+            const lat = parseFloat(venueData.latitude);
+            const lng = parseFloat(venueData.longitude);
+            
+            if (!isNaN(lat) && !isNaN(lng)) {
+                shadow.getElementById("lat-input").value = lat;
+                shadow.getElementById("lng-input").value = lng;
+                
+                if (this.map) {
+                    this.goToCoordinates(lat, lng);
+                    this.addMarker(lat, lng, 'Loaded Venue Location', 'purple');
+                }
+                
+                this.selectedLocation = {
+                    lat: lat,
+                    lng: lng,
+                    address: `Loaded: ${lat}, ${lng}`
+                };
+            }
+        }
+    }
+
+    get value() {
+        const shadow = this.shadowRoot;
+        return JSON.stringify({
+            building: shadow.getElementById("building").value,
+            street: shadow.getElementById("street").value,
+            area: shadow.getElementById("area").value,
+            city: shadow.getElementById("city").value,
+            state: shadow.getElementById("state").value,
+            country: shadow.getElementById("country").value,
+            url_address: shadow.getElementById("url_address").value,
+            latitude: shadow.getElementById("latitude").value,
+            longitude: shadow.getElementById("longitude").value
+        });
+    }
+
+    // **Public methods for external use**
+    setCenter(lat, lng, zoom = 13) {
+        if (this.map) {
+            this.map.setView([lat, lng], zoom);
+        }
+    }
+
+    addCustomMarker(lat, lng, options = {}) {
+        const { popup = '', color = 'blue', draggable = true } = options;
+        return this.addMarker(lat, lng, popup, color);
+    }
+
+    getCenter() {
+        if (this.map) {
+            const center = this.map.getCenter();
+            return { lat: center.lat, lng: center.lng };
+        }
+        return null;
+    }
+
+    // Get all marker positions and their metadata
+    getAllMarkers() {
+        return this.markers.map(marker => {
+            const pos = marker.getLatLng();
+            return {
+                position: { lat: pos.lat, lng: pos.lng },
+                originalData: marker.originalData,
+                id: marker._leaflet_id
+            };
+        });
+    }
+
+    // Find marker by ID
+    getMarkerById(id) {
+        return this.markers.find(marker => marker._leaflet_id === id);
+    }
+
+    // Get current selected location
+    getSelectedLocation() {
+        return this.selectedLocation;
+    }
+
+    // Reset the entire control
+    reset() {
+        const shadow = this.shadowRoot;
+        
+        // Clear venue form
+        shadow.getElementById("building").value = "";
+        shadow.getElementById("street").value = "";
+        shadow.getElementById("area").value = "";
+        shadow.getElementById("city").value = "";
+        shadow.getElementById("state").value = "";
+        shadow.getElementById("country").value = "";
+        shadow.getElementById("url_address").value = "";
+        shadow.getElementById("latitude").value = "";
+        shadow.getElementById("longitude").value = "";
+        
+        // Clear map inputs
+        shadow.getElementById("lat-input").value = "";
+        shadow.getElementById("lng-input").value = "";
+        shadow.getElementById("location-input").value = "";
+        
+        // Clear markers and location info
+        this.clearAllMarkers();
+        shadow.getElementById('location-info').classList.remove('show');
+        
+        // Reset map to default position
+        if (this.map) {
+            this.map.setView([51.505, -0.09], 13);
+        }
+        
+        this.updateStatus('Control reset to default state');
+    }
+}
+
+// **Register the custom element**
+customElements.define("venue-location-control", VenueLocationControl);
