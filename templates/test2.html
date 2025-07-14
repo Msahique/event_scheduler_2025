@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Template Field Mapping Control</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <style>
+    template-mapping-control .row > div {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+<!-- Launch Modal Button -->
+<div class="container mt-5">
+  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#mappingModal">
+    Open Template Mapping Modal
+  </button>
+</div>
+
+<!-- Modal Structure -->
+<div class="modal fade" id="mappingModal" tabindex="-1" aria-labelledby="mappingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="mappingModalLabel">Template Field Mapping</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12 d-flex">
+            <div style="flex: 0 0 30%; max-width: 30%; padding-right: 15px;">
+              <h5>📄 Document Fields</h5>
+              <ul id="jsonFieldsContainer" class="list-group"></ul>
+            </div>
+            <div style="flex: 0 0 70%; max-width: 70%;">
+              <template-mapping-control></template-mapping-control>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+class TemplateMappingControl extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+    this.jsonFields = [];
+    this.templateHTML = "";
+    this.templateFields = [];
+    this.mappings = {}; // Final result
+  }
+
+  connectedCallback() {
+    this.render();
+  }
+
+  set data({ jsonFields, htmlTemplate }) {
+    this.jsonFields = jsonFields;
+    this.templateHTML = htmlTemplate;
+    this.templateFields = this.extractTemplateFields(htmlTemplate);
+    this.render();
+  }
+
+  get value() {
+    return this.mappings;
+  }
+
+  extractTemplateFields(html) {
+    const matches = html.match(/{{\s*([^{}\s]+)\s*}}/g) || [];
+    return [...new Set(matches.map(m => m.replace(/{{|}}|\s/g, '')))].sort();
+  }
+
+  render() {
+    this.shadowRoot.innerHTML = `
+      <style>
+        .draggable { cursor: grab; }
+        .dropzone {
+          min-height: 40px;
+          border: 1px dashed #ced4da;
+          padding: 5px;
+          background-color: #f8f9fa;
+        }
+      </style>
+      <div class="p-2">
+        <div id="templateFields" class="d-flex flex-column gap-3"></div>
+
+        <div class="mt-3">
+          <button class="btn btn-primary" id="save">💾 Save</button>
+          <button class="btn btn-danger ms-2" id="clear">🗑️ Clear</button>
+          <button class="btn btn-secondary ms-2" id="export">📤 Export</button>
+          <label class="btn btn-info mb-0 ms-2">
+            📥 Import <input type="file" accept=".json" id="import" hidden />
+          </label>
+        </div>
+
+        <pre class="bg-white mt-3 p-2 border rounded" id="output"></pre>
+      </div>
+    `;
+
+    const shadow = this.shadowRoot;
+    const templateContainer = shadow.getElementById("templateFields");
+
+    this.templateFields.forEach(field => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="card-header"><strong>{{${field}}}</strong></div>
+        <div class="card-body">
+          <ul id="drop_${field}" class="list-group dropzone"></ul>
+          <input type="text" class="form-control mt-2" id="input_${field}" placeholder="Mapped fields" />
+        </div>
+      `;
+      templateContainer.appendChild(card);
+
+      const dropzone = card.querySelector(`#drop_${field}`);
+      const input = card.querySelector(`#input_${field}`);
+
+      new Sortable(dropzone, {
+        group: { name: "shared", pull: true, put: true },
+        animation: 150,
+        onAdd: update,
+        onUpdate: update
+      });
+
+      input.addEventListener("change", () => syncInputToDropzone(input, dropzone));
+
+      function update() {
+        const values = Array.from(dropzone.children).map(el => el.textContent.trim());
+        input.value = values.join(", ");
+      }
+    });
+
+    function syncInputToDropzone(input, dropzone) {
+      const values = input.value.split(',').map(v => v.trim()).filter(Boolean);
+      dropzone.innerHTML = "";
+      values.forEach(val => {
+        const li = document.createElement("li");
+        li.className = "list-group-item";
+        li.textContent = val;
+        dropzone.appendChild(li);
+      });
+    }
+
+    shadow.getElementById("save").onclick = () => {
+      this.mappings = {};
+      this.templateFields.forEach(field => {
+        const val = shadow.getElementById(`input_${field}`).value.trim();
+        this.mappings[field] = val;
+      });
+      shadow.getElementById("output").textContent = JSON.stringify(this.mappings, null, 2);
+    };
+
+    shadow.getElementById("clear").onclick = () => {
+      this.templateFields.forEach(field => {
+        shadow.getElementById(`input_${field}`).value = "";
+        shadow.getElementById(`drop_${field}`).innerHTML = "";
+      });
+      this.mappings = {};
+      shadow.getElementById("output").textContent = "";
+    };
+
+    shadow.getElementById("export").onclick = () => {
+      const blob = new Blob([JSON.stringify(this.mappings, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "field_mapping.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+
+    shadow.getElementById("import").addEventListener("change", event => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const data = JSON.parse(e.target.result);
+          this.templateFields.forEach(field => {
+            const val = data[field] || "";
+            const input = shadow.getElementById(`input_${field}`);
+            const dropzone = shadow.getElementById(`drop_${field}`);
+            input.value = val;
+            syncInputToDropzone(input, dropzone);
+          });
+          shadow.getElementById("output").textContent = JSON.stringify(data, null, 2);
+          this.mappings = data;
+        } catch {
+          alert("Invalid JSON file");
+        }
+      };
+      reader.readAsText(file);
+    });
+  }
+}
+
+customElements.define("template-mapping-control", TemplateMappingControl);
+
+const htmlTemplate = `
+  <div>
+    <p>Name: {{fullName}}</p>
+    <p>Age Block: {{ageBlock}}</p>
+    <p>Address: {{addressLine}}</p>
+  </div>
+`;
+
+document.getElementById("mappingModal").addEventListener("shown.bs.modal", () => {
+  document.querySelector("template-mapping-control").data = {
+    jsonFields: ["name", "age", "site_no", "street", "area", "state", "country"],
+    htmlTemplate
+  };
+
+  const container = document.getElementById("jsonFieldsContainer");
+  container.innerHTML = "";
+  ["name", "age", "site_no", "street", "area", "state", "country"].forEach(field => {
+    const li = document.createElement("li");
+    li.className = "list-group-item draggable";
+    li.textContent = field;
+    li.setAttribute("draggable", "true");
+    container.appendChild(li);
+  });
+
+  new Sortable(container, {
+    group: { name: "shared", pull: "clone", put: false },
+    sort: false
+  });
+});
+</script>
+
+</body>
+</html>

@@ -699,17 +699,24 @@ function createTable(responseData) {
             let editTd = document.createElement('td');
             editTd.className = "text-center";
         
-            let radioInput = document.createElement('input');
-            radioInput.type = 'radio';
+           /* let radioInput = document.createElement('input');
+            radioInput.type = 'radio'; // Changed to checkbox for multiple selection
             radioInput.name = 'editRowSelect'; // Group all radio buttons
             radioInput.value = rowDataString;  // Store data as value
+            editTd.appendChild(radioInput);*/
         
            /* radioInput.addEventListener('change', function () {
                 let rowData = JSON.parse(this.value);
                 editRow(rowData); // Call the same function when selected
             });*/
         
-            editTd.appendChild(radioInput);
+            
+
+            let checkboxInput = document.createElement('input');
+            checkboxInput.type = 'checkbox';
+            checkboxInput.name = 'editRowSelect[]';  // ✅ Match with selector
+            checkboxInput.value = rowDataString;
+            editTd.appendChild(checkboxInput);
             tr.appendChild(editTd);
         }
         
@@ -1227,7 +1234,8 @@ function previewCreateTable(responseData) {
 
     console.log("Preview table structure created successfully");
 }
-
+/*
+CODE FOR SELECTING A ROW BASED ON RADIO BUTTONs
 function edit_data(){
     let selectedRadio = document.querySelector('input[name="editRowSelect"]:checked');
     if (selectedRadio) {
@@ -1238,8 +1246,65 @@ function edit_data(){
     } else {
         alert('Please select a row first.');
     }
+}*/
+
+function edit_data() {
+    const selectedCheckboxes = document.querySelectorAll('input[name="editRowSelect[]"]:checked');
+
+    if (selectedCheckboxes.length === 1) {
+        const rowData = JSON.parse(selectedCheckboxes[0].value);
+        console.log('Selected Row Data:', rowData);
+        editRow(rowData); // Call your edit function
+    } else if (selectedCheckboxes.length === 0) {
+        alert('Please select one row to edit.');
+    } else {
+        alert('Please select only one row to edit.');
+    }
+}
+/*
+function print_document(){
+    console.log(" Inside print_document function");
+    let selectedRadio = document.querySelector('input[name="editRowSelect"]:checked');
+    console.log("Selected Radio Button:", selectedRadio);
+    if (selectedRadio) {
+        let rowData = JSON.parse(selectedRadio.value);
+        console.log('Selected Row Data for printing:', rowData);
+        // You can call any function or populate a form:
+        //editRow(rowData);
+        printing_document(
+            "🔒 Confidential Resource Report",
+            "🕒 Generated on: " + new Date().toLocaleString(),
+            rowData
+        );
+    } else {
+        alert('Please select a row first.');
+    }
+}*/
+
+function print_document() {
+    console.log("Inside print_document function");
+
+    // Select all checked checkboxes
+    const selectedCheckboxes = document.querySelectorAll('input[name="editRowSelect[]"]:checked');
+    console.log("Selected Checkboxes:", selectedCheckboxes);
+
+    if (selectedCheckboxes.length === 1) {
+        const rowData = JSON.parse(selectedCheckboxes[0].value);
+        console.log('Selected Row Data for printing:', rowData);
+
+        printing_document(
+            "🔒 Confidential Resource Report",
+            "🕒 Generated on: " + new Date().toLocaleString(),
+            rowData
+        );
+    } else if (selectedCheckboxes.length === 0) {
+        alert('Please select one row to print.');
+    } else {
+        alert('Please select only one row to print.');
+    }
 }
 
+/*
 function delete_data(){
     let selectedRadio = document.querySelector('input[name="editRowSelect"]:checked');
     if (selectedRadio) {
@@ -1250,7 +1315,22 @@ function delete_data(){
     } else {
         alert('Please select a row first.');
     }
+}*/
+
+function delete_data() {
+    const selectedCheckboxes = document.querySelectorAll('input[name="editRowSelect[]"]:checked');
+
+    if (selectedCheckboxes.length === 1) {
+        const rowData = JSON.parse(selectedCheckboxes[0].value);
+        console.log('Selected Row Data for deletion:', rowData);
+        deleteRow(rowData); // Your custom delete function
+    } else if (selectedCheckboxes.length === 0) {
+        alert('Please select one row to delete.');
+    } else {
+        alert('Please select only one row to delete.');
+    }
 }
+
 
 function displayPage(page) {
     let tableBody = document.getElementById("entityTableBody");
@@ -1867,6 +1947,7 @@ async function Registration_modal() {
                     field.dropdownValues = field.values;
                 } else if (entry.helper !== "none") {
                     const fetchedData = await fetchHelperData(entry.helper);
+                    console.log("Fetched Data:", fetchedData);
                     field.dropdownValues = Array.isArray(fetchedData) && fetchedData.length > 0 ? fetchedData : (field.default ? [field.default] : []);
                 } else {
                     field.dropdownValues = field.default ? [field.default] : [];

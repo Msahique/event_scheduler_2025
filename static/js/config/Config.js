@@ -4,7 +4,7 @@ var MainConfig={
     "Entity Config":{
         "controls":[
          {"type":"button","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
-         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
          {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Role Registry","Affiliation Registry","Resource Category","Resource Registry","Event Category","Message Template","Application Registry","Entity log" ],"textContent": "Items"},
@@ -89,7 +89,12 @@ var MainConfig={
                 "onSuccess":"Role_approved()"
                 
                 },
-                "cancel":{"api":"config","onSuccess":"Role_canceled()"}
+                "cancel":{"api":"config","onSuccess":"Role_canceled()"},
+                "view":{
+                  "doc_view_template_id":"1",
+                  "doc_view_template_name":"invoice1",
+                  "onSuccess":"",
+               }
             }
         },
         "Affiliation Registry":{
@@ -484,7 +489,7 @@ var MainConfig={
                      {"type":"button","name":"<i class='fa fa-chevron-left'></i> ","function":"previous_page()","class":"btn btn-primary btn-xs my-xs-btn"},
                      {"type":"button","name":"<i class='fa fa-chevron-right'></i> ","function":"next_page()","class":"btn btn-primary btn-xs my-xs-btn"},
                      {"type":"button","name":"<i class='fa fa-step-forward'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
-                     {"type":"button","name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+                     {"type":"button","name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
                      {"type":"button","name":"<i class='fa fa-refresh'></i> ","function":"refreshTable()","class":"btn btn-primary btn-xs my-xs-btn"}
                      ],
                      "create":{
@@ -660,7 +665,7 @@ var MainConfig={
                      {"type":"button","name":"<i class='fa fa-chevron-left'></i> ","function":"previous_page()","class":"btn btn-primary btn-xs my-xs-btn"},
                      {"type":"button","name":"<i class='fa fa-chevron-right'></i> ","function":"next_page()","class":"btn btn-primary btn-xs my-xs-btn"},
                      {"type":"button","name":"<i class='fa fa-step-forward'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
-                     {"type":"button","name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+                     {"type":"button","name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
                      {"type":"button","name":"<i class='fa fa-refresh'></i> ","function":"refreshTable()","class":"btn btn-primary btn-xs my-xs-btn"}
                      ],
                      "create":{
@@ -830,7 +835,7 @@ var MainConfig={
                      {"type":"button","name":"<i class='fa fa-chevron-left'></i> ","function":"previous_page()","class":"btn btn-primary btn-xs my-xs-btn"},
                      {"type":"button","name":"<i class='fa fa-chevron-right'></i> ","function":"next_page()","class":"btn btn-primary btn-xs my-xs-btn"},
                      {"type":"button","name":"<i class='fa fa-step-forward'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
-                     {"type":"button","name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+                     {"type":"button","name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
                      {"type":"button","name":"<i class='fa fa-refresh'></i> ","function":"refreshTable()","class":"btn btn-primary btn-xs my-xs-btn"}
                      ],
                      "create":{
@@ -935,7 +940,7 @@ var MainConfig={
     "Network Config":{
       "controls":[
          {"type":"button","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
-         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
          {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Entity Category","Entity Registry","Network Log"], "function": "","textContent": "Items"},
@@ -954,7 +959,7 @@ var MainConfig={
            {"type":"button","tag":"left","roles":["Admin","Approver"],"name":"<i class='fa fa-chevron-left'></i> ","function":"previous_page()","class":"btn btn-primary btn-xs my-xs-btn"},
            {"type":"button","tag":"right","roles":["Admin","Approver"],"name":"<i class='fa fa-chevron-right'></i> ","function":"next_page()","class":"btn btn-primary btn-xs my-xs-btn"},
            {"type":"button","tag":"forward","roles":["Admin","Approver"],"name":"<i class='fa fa-step-forward'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
-           {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+           {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
            {"type":"button","tag":"refresh","roles":["Admin","Approver"],"name":"<i class='fa fa-refresh'></i> ","function":"refreshTable()","class":"btn btn-primary btn-xs my-xs-btn"}
         ],
         "job":{
@@ -1043,7 +1048,7 @@ var MainConfig={
            {"type":"button","tag":"left","roles":["Admin","Approver"],"name":"<i class='fa fa-chevron-left'></i> ","function":"previous_page()","class":"btn btn-primary btn-xs my-xs-btn"},
            {"type":"button","tag":"right","roles":["Admin","Approver"],"name":"<i class='fa fa-chevron-right'></i> ","function":"next_page()","class":"btn btn-primary btn-xs my-xs-btn"},
            {"type":"button","tag":"forward","roles":["Admin","Approver"],"name":"<i class='fa fa-step-forward'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
-           {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+           {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
            {"type":"button","tag":"refresh","roles":["Admin","Approver"],"name":"<i class='fa fa-refresh'></i> ","function":"refreshTable()","class":"btn btn-primary btn-xs my-xs-btn"}
         ],
         "job":{
@@ -1153,7 +1158,7 @@ var MainConfig={
     "System Config":{
         "controls":[
          {"type":"button","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
-         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
          {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Doc_status_type","system log","Com Settings","API Queue"], "function": "","textContent": "Items"},
@@ -1169,7 +1174,7 @@ var MainConfig={
            {"type":"button","tag":"left","roles":["Admin","Approver"],"name":"<i class='fa fa-chevron-left'></i> ","function":"previous_page()","class":"btn btn-primary btn-xs my-xs-btn"},
            {"type":"button","tag":"right","roles":["Admin","Approver"],"name":"<i class='fa fa-chevron-right'></i> ","function":"next_page()","class":"btn btn-primary btn-xs my-xs-btn"},
            {"type":"button","tag":"forward","roles":["Admin","Approver"],"name":"<i class='fa fa-step-forward'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
-           {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+           {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
            {"type":"button","tag":"refresh","roles":["Admin","Approver"],"name":"<i class='fa fa-refresh'></i> ","function":"refreshTable()","class":"btn btn-primary btn-xs my-xs-btn"}
         ],
         "job":{
@@ -1253,7 +1258,7 @@ var MainConfig={
            {"type":"button","tag":"left","roles":["Admin","Approver"],"name":"<i class='fa fa-chevron-left'></i> ","function":"previous_page()","class":"btn btn-primary btn-xs my-xs-btn"},
            {"type":"button","tag":"right","roles":["Admin","Approver"],"name":"<i class='fa fa-chevron-right'></i> ","function":"next_page()","class":"btn btn-primary btn-xs my-xs-btn"},
            {"type":"button","tag":"forward","roles":["Admin","Approver"],"name":"<i class='fa fa-step-forward'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
-           {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+           {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
            {"type":"button","tag":"refresh","roles":["Admin","Approver"],"name":"<i class='fa fa-refresh'></i> ","function":"refreshTable()","class":"btn btn-primary btn-xs my-xs-btn"}
         ],
         "job":{
@@ -1335,9 +1340,9 @@ var MainConfig={
     "Event Config":{
         "controls":[
          {"type":"button","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
-         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
-         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
-         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
+         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
+         {"type":"button","tag":"edit","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
+         {"type":"button","tag":"delete","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
          {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": [ "Event Schedule","Alert Schedule","Appointment Schedule","Event Log","Subscriber Registry","Subscriber Log"], "function": "","textContent": "Items"},
          {"type": "select", "tag": "entriesPerPage", "roles": ["Admin","Approver","User"], "name": "EntriesPerPage", "options": [2,3,5,10,15,20,25,30,35,40,45,50], "textContent": "Rows/Page"},
       ],
@@ -1446,7 +1451,7 @@ var MainConfig={
             "api": "event/modifications",
         },
         "cancel":{
-           "api":"event_id",
+           "api":"event",
            },
         "Approver":{
            "controls":[
@@ -1455,7 +1460,7 @@ var MainConfig={
               {"type":"button","name":"<i class='fa fa-chevron-left'></i> ","function":"previous_page()","class":"btn btn-primary btn-xs my-xs-btn"},
               {"type":"button","name":"<i class='fa fa-chevron-right'></i> ","function":"next_page()","class":"btn btn-primary btn-xs my-xs-btn"},
               {"type":"button","name":"<i class='fa fa-step-forward'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
-              {"type":"button","name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+              {"type":"button","name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
               {"type":"button","name":"<i class='fa fa-refresh'></i> ","function":"refreshTable()","class":"btn btn-primary btn-xs my-xs-btn"}
               ],
               "create":{
@@ -1650,7 +1655,7 @@ var MainConfig={
               {"type":"button","name":"<i class='fa fa-chevron-left'></i> ","function":"previous_page()","class":"btn btn-primary btn-xs my-xs-btn"},
               {"type":"button","name":"<i class='fa fa-chevron-right'></i> ","function":"next_page()","class":"btn btn-primary btn-xs my-xs-btn"},
               {"type":"button","name":"<i class='fa fa-step-forward'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
-              {"type":"button","name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+              {"type":"button","name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
               {"type":"button","name":"<i class='fa fa-refresh'></i> ","function":"refreshTable()","class":"btn btn-primary btn-xs my-xs-btn"}
               ],
               "create":{
@@ -1837,6 +1842,7 @@ var MainConfig={
                     "delete_option":true
                  }
               ],
+              "api":"appointment/modifications",
               "checklist":[
                   {  "fields":["status", "exclusive"],
                      "checkpoints":["Is the new sot available?","Are the same participants available for the new slot ","Have participants been notified about the new slot?"]},
@@ -1856,7 +1862,7 @@ var MainConfig={
                  {"type":"button","name":"<i class='fa fa-chevron-left'></i> ","function":"previous_page()","class":"btn btn-primary btn-xs my-xs-btn"},
                  {"type":"button","name":"<i class='fa fa-chevron-right'></i> ","function":"next_page()","class":"btn btn-primary btn-xs my-xs-btn"},
                  {"type":"button","name":"<i class='fa fa-step-forward'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
-                 {"type":"button","name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+                 {"type":"button","name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
                  {"type":"button","name":"<i class='fa fa-refresh'></i> ","function":"refreshTable()","class":"btn btn-primary btn-xs my-xs-btn"}
                  ],
                  "create":{
@@ -1974,21 +1980,21 @@ var MainConfig={
              "data":[
                 {  "helper":"none",
                    "fields": [
-                         {"field": "subscriber_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Subscriber ID", "german": "Abonnenten-ID", "arabic": "معرف المشترك", "french": "ID d'abonné"}},
+                         {"field": "subscriber_id", "edit": true, "show": false, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Subscriber ID", "german": "Abonnenten-ID", "arabic": "معرف المشترك", "french": "ID d'abonné"}},
                          {"field": "name", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Name", "german": "Name", "arabic": "الاسم", "french": "Nom"}},
-                         {"field": "category", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Category", "german": "Kategorie", "arabic": "الفئة", "french": "Catégorie"}},
+                         {"field": "category", "edit": true, "show": true, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Category", "german": "Kategorie", "arabic": "الفئة", "french": "Catégorie"}},
                          {"field": "phone_number", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Phone Number", "german": "Telefonnummer", "arabic": "رقم الهاتف", "french": "Numéro de téléphone"}},
                          {"field": "email", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Email", "german": "E-Mail", "arabic": "البريد الإلكتروني", "french": "E-mail"}},
                          {"field": "alert_url", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert URL", "german": "Alarm-URL", "arabic": "رابط التنبيه", "french": "URL d'alerte"}},
-                         {"field": "alert_preference", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert Preference", "german": "Alarmpräferenz", "arabic": "تفضيل التنبيه", "french": "Préférence d'alerte"}},
+                         {"field": "alert_preference", "edit": true, "show": true, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert Preference", "german": "Alarmpräferenz", "arabic": "تفضيل التنبيه", "french": "Préférence d'alerte"}},
                          {"field": "status_poll_url", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Status Poll URL", "german": "Statusabfrage-URL", "arabic": "رابط استعلام الحالة", "french": "URL de sondage de statut"}},
-                         {"field": "log", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}}
+                         {"field": "log", "edit": true, "show":false, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}}
                    ],
                    "edit_option":true,
                    "delete_option":true
                 }
              ],
-             "api":"sbscriber/new"
+             "api":"subscriber/new"
           },
           "list":{
                 "roles":["Admin"],
@@ -2028,7 +2034,8 @@ var MainConfig={
                    "edit_option":true,
                    "delete_option":true
                 }
-             ]
+             ],
+             "api":"subscriber/modifications",
           },
           "cancel":{
            "api":"subscriber_id",
@@ -2040,7 +2047,7 @@ var MainConfig={
                 {"type":"button","name":"<i class='fa fa-chevron-left'></i> ","function":"previous_page()","class":"btn btn-primary btn-xs my-xs-btn"},
                 {"type":"button","name":"<i class='fa fa-chevron-right'></i> ","function":"next_page()","class":"btn btn-primary btn-xs my-xs-btn"},
                 {"type":"button","name":"<i class='fa fa-step-forward'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
-                {"type":"button","name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+                {"type":"button","name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
                 {"type":"button","name":"<i class='fa fa-refresh'></i> ","function":"refreshTable()","class":"btn btn-primary btn-xs my-xs-btn"}
                 ],
                 "create":{
@@ -2144,7 +2151,7 @@ var MainConfig={
     "Program Config":{
         "controls":[
          {"type":"button","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
-         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
          {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Program Registry"], "function": "","textContent": "Items"},
@@ -2160,7 +2167,7 @@ var MainConfig={
            {"type":"button","tag":"left","roles":["Admin","Approver"],"name":"<i class='fa fa-chevron-left'></i> ","function":"previous_page()","class":"btn btn-primary btn-xs my-xs-btn"},
            {"type":"button","tag":"right","roles":["Admin","Approver"],"name":"<i class='fa fa-chevron-right'></i> ","function":"next_page()","class":"btn btn-primary btn-xs my-xs-btn"},
            {"type":"button","tag":"forward","roles":["Admin","Approver"],"name":"<i class='fa fa-step-forward'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
-           {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+           {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
            {"type":"button","tag":"refresh","roles":["Admin","Approver"],"name":"<i class='fa fa-refresh'></i> ","function":"refreshTable()","class":"btn btn-primary btn-xs my-xs-btn"}
         ],
         "job":{
@@ -2247,7 +2254,7 @@ var MainConfig={
     "Service Config":{
         "controls":[
          {"type":"button","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
-         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
          {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Service Registry"], "function": "","textContent": "Items"},
@@ -2263,7 +2270,7 @@ var MainConfig={
            {"type":"button","tag":"left","roles":["Admin","Approver"],"name":"<i class='fa fa-chevron-left'></i> ","function":"previous_page()","class":"btn btn-primary btn-xs my-xs-btn"},
            {"type":"button","tag":"right","roles":["Admin","Approver"],"name":"<i class='fa fa-chevron-right'></i> ","function":"next_page()","class":"btn btn-primary btn-xs my-xs-btn"},
            {"type":"button","tag":"forward","roles":["Admin","Approver"],"name":"<i class='fa fa-step-forward'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
-           {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+           {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
            {"type":"button","tag":"refresh","roles":["Admin","Approver"],"name":"<i class='fa fa-refresh'></i> ","function":"refreshTable()","class":"btn btn-primary btn-xs my-xs-btn"}
         ],
         "job":{
@@ -2289,7 +2296,7 @@ var MainConfig={
               "data":[
                  {  "helper":"none",
                     "fields":[
-                     {"field":"gov_service_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Service Registry ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
+                     {"field":"gov_service_id","name":"Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Service Registry ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
                      {"field":"gov_service_name","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Service Name","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
                      {"field":"description","name":"Status","edit":true,"show":true,"control":"text","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Description","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
                      {"field":"terms&conditions","name":"Status","edit":true,"show":true,"control":"text","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Terms&Conditions","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
@@ -2308,7 +2315,7 @@ var MainConfig={
             "data":[
                {  "helper":"none",
                   "fields":[
-                     {"field":"gov_service_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Service Registry ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
+                     {"field":"gov_service_id","name":"Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Service Registry ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
                      {"field":"gov_service_name","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Service Name","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
                      {"field":"description","name":"Status","edit":true,"show":true,"control":"text","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Description","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
                      {"field":"terms&conditions","name":"Status","edit":true,"show":true,"control":"text","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Terms&Conditions","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
@@ -2334,7 +2341,7 @@ var MainConfig={
     "Subscriber Config":{
         "controls":[
          {"type":"button","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
-         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
          {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Subscriber Registry","Subscriber Log"], "function": "","textContent": "Items"},
@@ -2427,7 +2434,7 @@ var MainConfig={
                 {"type":"button","name":"<i class='fa fa-chevron-left'></i> ","function":"previous_page()","class":"btn btn-primary btn-xs my-xs-btn"},
                 {"type":"button","name":"<i class='fa fa-chevron-right'></i> ","function":"next_page()","class":"btn btn-primary btn-xs my-xs-btn"},
                 {"type":"button","name":"<i class='fa fa-step-forward'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
-                {"type":"button","name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+                {"type":"button","name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
                 {"type":"button","name":"<i class='fa fa-refresh'></i> ","function":"refreshTable()","class":"btn btn-primary btn-xs my-xs-btn"}
                 ],
                 "create":{
@@ -2531,7 +2538,7 @@ var MainConfig={
     "Notifications Config":{
         "controls":[
          {"type":"button","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
-         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
          {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Notifications"],"textContent": "Items"},
@@ -2621,14 +2628,15 @@ var MainConfig={
     "Document Config":{
         "controls":[
          {"type":"button","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
-         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
-         {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Document Registry","Document UI template","Trigger Functions","Helper Functions"],"textContent": "Items"},
+         {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Document Registry","Document UI template","Document View Template","HTML Template","Trigger Functions","Helper Functions"],"textContent": "Items"},
          {"type": "select", "tag": "entriesPerPage", "roles": ["Admin","Approver","User"], "name": "EntriesPerPage", "options": [2,3,5,10,15,20,25,30,35,40,45,50], "textContent": "Rows/Page"},
         ],
         "Roles":["Admin"],
         "Document Registry":{
+            "doc_title":"Document Data Template",
             "getDataApi":"config/list_details",
             "key":"role_id",
             "attchment_files_path":"",
@@ -2804,6 +2812,81 @@ var MainConfig={
                     }
                 ],
                 "onSuccess":"Role_approved()"
+                
+                },
+                "cancel":{"api":"config","onSuccess":"Role_canceled()"}
+            }
+        },
+        "Document View Template":{
+            "getDataApi":"config/list_details",
+            "key":"id",
+            "attchment_files_path":"",
+            "job":{
+                "create":{
+                "roles":["Admin"],   
+                "data":[
+                     {"helper":"none",
+                        "fields":[
+                           {"field":"id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"ID","german":"Kennung","arabic":"معرف","french":"ID"}},
+                           {"field":"template_name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template Name","german":"Vorlagenname","arabic":"اسم القالب","french":"Nom du modèle"}},
+                           {"field":"doc_view_html","edit":true,"show":true,"control":"textarea","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document View HTML","german":"HTML-Ansicht","arabic":"عرض المستند HTML","french":"Vue HTML du document"}},
+                           {"field":"doc_type","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document Type","german":"Dokumenttyp","arabic":"نوع المستند","french":"Type de document"}}
+                        ],
+                        "edit_option":true,
+                        "delete_option":true}
+                     ],
+                  "api":"config/new",
+                  "onSuccess":"Template_created()"
+                },
+                "list":{
+                  "roles":["Admin"],
+                  "data":[
+                     {"helper":"none",
+                        "fields":[
+                           {"field":"id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"ID","german":"Kennung","arabic":"معرف","french":"ID"}},
+                           {"field":"template_name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template Name","german":"Vorlagenname","arabic":"اسم القالب","french":"Nom du modèle"}},
+                           {"field":"doc_view_html","edit":true,"show":true,"control":"textarea","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document View HTML","german":"HTML-Ansicht","arabic":"عرض المستند HTML","french":"Vue HTML du document"}},
+                           {"field":"doc_type","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document Type","german":"Dokumenttyp","arabic":"نوع المستند","french":"Type de document"}}
+                        ],
+                        "edit_option":true,
+                        "delete_option":true}
+                     ],
+                     "api":"template_config/list_details",
+                     "onSuccess":"Template_listed()"
+                  },
+                "update":{
+                    "roles":["Admin"],  
+                    "data":[
+                     {"helper":"none",
+                        "fields":[
+                           {"field":"id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"ID","german":"Kennung","arabic":"معرف","french":"ID"}},
+                           {"field":"template_name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template Name","german":"Vorlagenname","arabic":"اسم القالب","french":"Nom du modèle"}},
+                           {"field":"doc_view_html","edit":true,"show":true,"control":"textarea","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document View HTML","german":"HTML-Ansicht","arabic":"عرض المستند HTML","french":"Vue HTML du document"}},
+                           {"field":"doc_type","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document Type","german":"Dokumenttyp","arabic":"نوع المستند","french":"Type de document"}}
+                        ],
+                        "edit_option":true,
+                        "delete_option":true}
+                     ],
+                     "onSuccess":"Template_modified()",
+                     "api":"config/modifications"
+                    
+
+                },
+                "approver":{
+                "roles":["Approver"],
+               "data":[
+                     {"helper":"none",
+                        "fields":[
+                           {"field":"id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"ID","german":"Kennung","arabic":"معرف","french":"ID"}},
+                           {"field":"template_name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template Name","german":"Vorlagenname","arabic":"اسم القالب","french":"Nom du modèle"}},
+                           {"field":"doc_view_html","edit":true,"show":true,"control":"textarea","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document View HTML","german":"HTML-Ansicht","arabic":"عرض المستند HTML","french":"Vue HTML du document"}},
+                           {"field":"doc_type","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document Type","german":"Dokumenttyp","arabic":"نوع المستند","french":"Type de document"}}
+                        ],
+                        "edit_option":true,
+                        "delete_option":true}
+                     ],
+                     "api":"template_config/list_details",
+                     "onSuccess":"Role_approved()"
                 
                 },
                 "cancel":{"api":"config","onSuccess":"Role_canceled()"}
@@ -3040,7 +3123,7 @@ var MainConfig={
     "Editor Config":{
         "controls":[
          {"type":"button","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"editor_config_modal()","class":"btn btn-success btn-xs my-xs-btn"},
-         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"","class":"btn btn-primary btn-xs my-xs-btn"},
+         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
          {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Final Templates"],"textContent": "Items"},

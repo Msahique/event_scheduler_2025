@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Template Field Mapping UI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <style>
+    .draggable {
+      cursor: grab;
+    }
+    .dropzone {
+      min-height: 40px;
+      border: 1px dashed #ced4da;
+      padding: 5px;
+      background-color: #f8f9fa;
+    }
+    .list-inline-item {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+<div class="container py-4">
+  <h2 class="mb-4 text-center">🔁 Map Template Fields to Document Fields</h2>
+  <div class="row">
+    <!-- Document Fields Column -->
+    <div class="col-md-4">
+      <h5>📄 Document Fields</h5>
+      <ul id="jsonFields" class="list-group"></ul>
+    </div>
+
+    <!-- Template Fields Column -->
+    <div class="col-md-8">
+      <h5>🧩 Template Placeholders</h5>
+      <div id="templateFields" class="d-flex flex-column gap-3"></div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mt-4">
+    <div>
+      <button class="btn btn-primary" onclick="saveMappings()">💾 Save Mapping</button>
+      <button class="btn btn-danger ms-2" onclick="clearMappings()">🗑️ Clear All</button>
+    </div>
+    <button class="btn btn-secondary" onclick="exportMappings()">📤 Export JSON</button>
+    <label class="btn btn-info mb-0">
+      📥 Import JSON <input type="file" accept=".json" onchange="importMappings(event)" hidden />
+    </label>
+  </div>
+
+  <h5 class="mt-4">✅ Final Mappings</h5>
+  <pre id="finalMapping" class="bg-white p-3 border rounded"></pre>
+</div>
+
+<script>
+const jsonFields = ["name", "age", "site_no", "street", "area", "state", "country"];
+const templateFields = ["fullName", "ageBlock", "addressLine"];
+
+// Render Document Fields List
+jsonFields.forEach(field => {
+  const li = document.createElement("li");
+  li.className = "list-group-item draggable";
+  li.textContent = field;
+  li.setAttribute("draggable", "true");
+  document.getElementById("jsonFields").appendChild(li);
+});
+
+// Make Document Fields List a Cloneable Sortable Source
+new Sortable(document.getElementById("jsonFields"), {
+  group: {
+    name: "shared",
+    pull: "clone",
+    put: false
+  },
+  sort: false
+});
+
+// Render Template Dropzones
+const templateContainer = document.getElementById("templateFields");
+templateFields.forEach(field => {
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `
+    <div class="card-header"><strong>{{${field}}}</strong></div>
+    <div class="card-body">
+      <ul id="drop_${field}" class="list-group dropzone"></ul>
+      <input type="text" class="form-control mt-2" id="input_${field}" placeholder="Mapped fields (comma separated)" />
+    </div>
+  `;
+  templateContainer.appendChild(card);
+
+  const dropzone = card.querySelector(`#drop_${field}`);
+  const input = card.querySelector(`#input_${field}`);
+
+  new Sortable(dropzone, {
+    group: {
+      name: "shared",
+      pull: true,
+      put: true
+    },
+    animation: 150,
+    onAdd: updateInput,
+    onUpdate: updateInput
+  });
+
+  input.addEventListener("change", () => {
+    const values = input.value.split(',').map(v => v.trim()).filter(Boolean);
+    dropzone.innerHTML = "";
+    values.forEach(val => {
+      const li = document.createElement("li");
+      li.className = "list-group-item";
+      li.textContent = val;
+      dropzone.appendChild(li);
+    });
+  });
+
+  function updateInput() {
+    const values = Array.from(dropzone.children).map(el => el.textContent.trim());
+    input.value = values.join(", ");
+  }
+});
+
+function saveMappings() {
+  const result = {};
+  templateFields.forEach(field => {
+    const val = document.getElementById(`input_${field}`).value.trim();
+    result[field] = val;
+  });
+  document.getElementById("finalMapping").textContent = JSON.stringify(result, null, 2);
+}
+
+function clearMappings() {
+  templateFields.forEach(field => {
+    document.getElementById(`input_${field}`).value = "";
+    document.getElementById(`drop_${field}`).innerHTML = "";
+  });
+  document.getElementById("finalMapping").textContent = "";
+}
+
+function exportMappings() {
+  const result = {};
+  templateFields.forEach(field => {
+    const val = document.getElementById(`input_${field}`).value.trim();
+    result[field] = val;
+  });
+  const blob = new Blob([JSON.stringify(result, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "field_mapping.json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function importMappings(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      templateFields.forEach(field => {
+        const value = data[field] || "";
+        document.getElementById(`input_${field}`).value = value;
+        const dropzone = document.getElementById(`drop_${field}`);
+        dropzone.innerHTML = "";
+        value.split(',').map(v => v.trim()).filter(Boolean).forEach(val => {
+          const li = document.createElement("li");
+          li.className = "list-group-item";
+          li.textContent = val;
+          dropzone.appendChild(li);
+        });
+      });
+      saveMappings();
+    } catch (err) {
+      alert("Invalid JSON file");
+    }
+  };
+  reader.readAsText(file);
+}
+</script>
+
+</body>
+</html>

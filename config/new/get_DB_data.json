@@ -32,7 +32,10 @@
     "Event Config":{
         "Event Schedule":"event_new",
         "Alert Schedule":"alert",
-        "Event log":""
+        "Appointment Schedule":"appointment",
+        "Subscriber Registry":"subscriber",
+        "Event log":"",
+        "Subscriber Log":""
     },
     "Program Config":{
         "Program Registry":"program_registry",
@@ -43,8 +46,9 @@
         "Service log":""
     },
     "Document Config":{
-        "Document Registry":"doc_templates",
-        "Document UI template":"doc_ui_template",
+        "Document Data Templates":"doc_templates",
+        "Document UI Templates":"doc_ui_template",
+        "Document View Templates":"doc_view_template",
         "Trigger Functions":"trigger_functions",
         "Helper Functions":"helper_functions"
     },

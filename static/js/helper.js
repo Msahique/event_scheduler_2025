@@ -90,10 +90,10 @@ async function getDocTemplates1(data) {
         "requestor_id":"", 
         "request_token": "", 
         "tab":"Document Config",
-        "event": "getDocTemplates",
+        "event": "getDocTemplates1",
         "type":"Document Registry",
         "qry": {
-            "select_fields": ['*'], 
+            "select_fields": ["doc_type","doc_template"], 
             "where_data": {}
             }
     }
@@ -218,6 +218,24 @@ async function getStatus(){
     return options 
 }
 
+async function getEventList(){
+    console.log("helper called")
+    var end_point = domain +"options";
+    var body={
+        "requestor_id":"",
+        "request_token":"",
+        "type":"Event Schedule",
+        "tab":"Event Config",
+        "qry":{
+            "select_fields":["name"],
+            "where_data":{}
+        }
+    }
+    console.log("Fetching:", end_point, body);
+    var options =  API_helper_call(end_point, body);
+    return options 
+}
+
 async function API_helper_call(end_point, body){
     try {
         let response = await fetch(end_point, {
@@ -233,34 +251,38 @@ async function API_helper_call(end_point, body){
             let data = await response.json();
             console.log("Received Data:", data);
             console.log(data);
-        
-            // Flat array of all values
-            let myArray = data.map(element => Object.values(element)).flat();
-            console.log("Flat array of all values:", myArray);
-        
-            // Check if any object has 'affiliation_id'
-            const hasAffiliation = data.some(element => 'affiliation_id' in element);
-        
-            /*if (hasAffiliation) {
-                // Create formatted array for affiliation data
-                let affiliationArray = data
-                    .filter(element => 'affiliation_id' in element)
-                    .map(element => {
-                        let program = element.program || '';
-                        let entity = element.entity || '';
-                        let department = element.department || '';
-                        let service = element.service || '';
-                        let role = element.role || '';;
-        
-                        return `${program}-${entity}-${department}-${service}-${role}`;
-                    });
-        
-                console.log("Affiliation formatted array:", affiliationArray);
-                return affiliationArray;
-            } else {
-                return myArray;
-            }*/
-            return data;
+            let myArray
+            if (body.event === "getDocTemplates1") {  myArray = data}
+            else{
+                 // Flat array of all values
+                myArray = data.map(element => Object.values(element)).flat();
+                console.log("Flat array of all values:", myArray);
+            
+                // Check if any object has 'affiliation_id'
+                const hasAffiliation = data.some(element => 'affiliation_id' in element);
+            
+                /*if (hasAffiliation) {
+                    // Create formatted array for affiliation data
+                    let affiliationArray = data
+                        .filter(element => 'affiliation_id' in element)
+                        .map(element => {
+                            let program = element.program || '';
+                            let entity = element.entity || '';
+                            let department = element.department || '';
+                            let service = element.service || '';
+                            let role = element.role || '';;
+            
+                            return `${program}-${entity}-${department}-${service}-${role}`;
+                        });
+            
+                    console.log("Affiliation formatted array:", affiliationArray);
+                    return affiliationArray;
+                } else {
+                    return myArray;
+                }*/
+                
+            }
+           return myArray;
         } else {
             console.error("Failed to fetch entity types.");
             return [];

@@ -17,7 +17,7 @@ from db_operations import *
 mydb = pymysql.connect(
   host="localhost",
   user="root",
-  password="Blr@2025",
+  password="root",
   database="event_scheduler2025",
   port=3306,
   cursorclass=pymysql.cursors.DictCursor
@@ -152,9 +152,6 @@ def create_entity():
     finally:
         cursor.close()
         connection.close()
-
-
-
 
 @app.route('/alive')
 def alive():
@@ -491,7 +488,7 @@ def event_delete():
     f=open('config/new/get_DB_data.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
-    where_data = data.get('where_data')
+    where_data = data.get('qry', {}).get('where_data', {})
     
     success = delete_entry( json_data['db_name'],json_data[data['tab']][data['type']],where_data)
     if success:
@@ -505,7 +502,7 @@ def event_update():
     f=open('config/new/get_DB_data.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
-    update_data = data.get("qry")
+    update_data = data.get("qry", {}).get("update")
     where_data = {"event_id":data.get('event_id')}
     print(">>",update_data,where_data) 
 
@@ -723,7 +720,7 @@ def subscriber_update():
     f=open('config/new/get_DB_data.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
-    update_data = data.get("qry")
+    update_data = data.get("qry", {}).get("update")
     where_data = {"subscriber_id":data.get('subscriber_id')}
     print(">>",update_data,where_data) 
 
@@ -741,9 +738,9 @@ def subscriber_delete():
     f=open('config/new/get_DB_data.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
-    where_data = data.get('where_data')
+    where_data = data.get('qry', {}).get('where_data', {})
 
-    success = delete_entry(json_data['general']['subscriber_table_name'], where_data,json_data['db_name'])
+    success = delete_entry(json_data['db_name'],json_data['general']['subscriber_table_name'], where_data)
     if success:
         return jsonify({"message": "Entry deleted successfully"}), 200
     else:
@@ -831,13 +828,6 @@ def appointment_new():
     f=open('config/new/get_DB_data.json');  json_data = json.load(f)
     print("db name: ",json_data)
     data = request.json
-    required_columns = ["subscriber_id", "name", "category", "phone_number", "email", "alert_url", "alert_preference", "status_poll_url"]
-    
-    # Check for missing columns
-    missing_columns = [col for col in required_columns if col not in data]
-    if missing_columns:
-        return jsonify({'error': f"Missing columns: {', '.join(missing_columns)}"}), 400
-    
     # Insert data into the entity table
     success, message = insert_ignore(json_data['db_name'], json_data['general']['appointment_table_name'], data.get("qry") )
     
@@ -871,7 +861,7 @@ def appointment_update():
     f=open('config/new/get_DB_data.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
-    update_data = data.get("qry")
+    update_data = data.get("qry", {}).get("update")
     where_data = {"appointment_id":data.get('appointment_id')}
     print(">>",update_data,where_data) 
 
@@ -889,9 +879,9 @@ def appointment_delete():
     f=open('config/new/get_DB_data.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
-    where_data = data.get('where_data')
+    where_data = data.get('qry', {}).get('where_data', {})
 
-    success = delete_entry(json_data['general']['appointment_table_name'], where_data,json_data['db_name'])
+    success = delete_entry(json_data['db_name'],json_data['general']['appointment_table_name'], where_data)
     if success:
         return jsonify({"message": "Entry deleted successfully"}), 200
     else:
