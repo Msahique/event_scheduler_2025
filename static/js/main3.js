@@ -1634,6 +1634,41 @@ function editModalCreation(response,selectedItemFromDropdown) {
                 let venueControl = document.getElementById(field.field);
             
             
+            } else if (field.control === "venue-location-control") {
+                console.log(3);
+                console.log("Raw venue data:", rowData[field.field]); // Debug
+                
+                input = document.createElement("venue-location-control");
+                input.id = field.field;
+
+                document.body.appendChild(input);
+
+                if (rowData[field.field]) {
+                    setTimeout(() => {
+                        try {
+                            let venueData = rowData[field.field];
+                            console.log("Venue data type:", typeof venueData); // Debug
+                            
+                            if (typeof venueData === "string") {
+                                venueData = JSON.parse(venueData);
+                            }
+                            
+                            console.log("Parsed venue data:", venueData); // Debug
+                            console.log("Setting value on element:", input); // Debug
+                            
+                            input.value = venueData;
+                            
+                            // Check if shadowRoot exists
+                            console.log("ShadowRoot exists:", !!input.shadowRoot); // Debug
+                            
+                        } catch (error) {
+                            console.error("Invalid venue data:", error);
+                        }
+                    }, 100);
+                }
+
+                let venueControl = document.getElementById(field.field);
+
             } else if (field.control === "checkbox") {
                 console.log(4);
                 input = document.createElement('input');
@@ -1774,50 +1809,82 @@ function editModalCreation(response,selectedItemFromDropdown) {
     editModal.show();
 
     document.getElementById('saveChanges').onclick = function () {
-        let updatedData = { "where_data": {}, "update": {} };
+        let updatedData = {
+            "where_data": {},
+            "update": {}
+        };
         
         console.log(fields);
-    
         fields.forEach(field => {
             if (!field.show) return;
-    
+            
             let input = form.elements[field.field];
             let currentValue = rowData[field.field]; // Original value from rowData
             let newValue;
+            
             console.log(input, currentValue);
+            
             if (field.field === "schedule") {
                 let scheduleElement = document.querySelector("schedule-control");
                 newValue = scheduleElement ? scheduleElement.value : "";
-            } else if (field.control === "checkbox") {
+            } else if (field.field === "venue") { // Add this condition for venue-location
+                let venueLocationElement = document.querySelector("venue-location-control");
+                newValue = venueLocationElement ? venueLocationElement.value : "";
+            } else if (input && field.control === "checkbox") {
                 newValue = input.checked ? 1 : 0;
-            } else {
+            } else if (input) {
                 newValue = input.value;
+            } else {
+                // Handle case where input is undefined (custom controls)
+                console.warn(`Input element not found for field: ${field.field}`);
+                newValue = currentValue; // Keep original value if input not found
             }
-    
+            
             // ✅ Only add changed fields to updatedData
-            if (currentValue !== newValue) {
+            // For JSON fields, we need to compare the parsed objects or strings
+            let hasChanged = false;
+            
+            if (field.field === "venue" || field.field === "schedule") {
+                // For JSON fields, compare as strings or parse and compare objects
+                try {
+                    // If currentValue is already a string, compare directly
+                    if (typeof currentValue === 'string') {
+                        hasChanged = currentValue !== newValue;
+                    } else {
+                        // If currentValue is an object, stringify it for comparison
+                        hasChanged = JSON.stringify(currentValue) !== newValue;
+                    }
+                } catch (e) {
+                    // Fallback to direct comparison
+                    hasChanged = currentValue !== newValue;
+                }
+            } else {
+                hasChanged = currentValue !== newValue;
+            }
+            
+            if (hasChanged) {
                 updatedData.update[field.field] = newValue;
             }
         });
-    
+        
         // ✅ Ensure at least one field is being updated
         if (Object.keys(updatedData.update).length === 0) {
             console.log("No changes detected. No update required.");
             editModal.hide();
             return;
         }
-    
+        
         // ✅ Set the `where_data` for the update query
-        updatedData.where_data[MainConfig[page_load_conf.tab][selectedItemFromDropdown].key] =
+        updatedData.where_data[MainConfig[page_load_conf.tab][selectedItemFromDropdown].key] = 
             rowData[MainConfig[page_load_conf.tab][selectedItemFromDropdown].key];
-    
+        
         console.log("Updated Data:", updatedData);
-    
+        
         updateEntry(
             rowData[MainConfig[page_load_conf.tab][selectedItemFromDropdown].key],
             updatedData
         );
-    
+        
         editModal.hide();
     };
     

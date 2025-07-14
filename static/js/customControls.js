@@ -2509,8 +2509,24 @@ class VenueLocationControl extends HTMLElement {
         this.mapId = 'leaflet-map-' + Math.random().toString(36).substring(7);
         this.map = null;
         this.markers = [];
+        this.poiMarkers = []; // New: Store POI markers separately
         this.selectedLocation = null;
+        this.selectedPOI = null; // New: Store selected POI data
         this.debugInfo = [];
+        
+        // New: POI categories configuration
+        this.poiCategories = {
+            'hotels': { name: 'Hotels', color: '#FF6B6B', query: 'hotel' },
+            'hospitals': { name: 'Hospitals', color: '#4ECDC4', query: 'hospital' },
+            'restaurants': { name: 'Restaurants', color: '#45B7D1', query: 'restaurant' },
+            'movie_theaters': { name: 'Movie Theaters', color: '#96CEB4', query: 'cinema' },
+            'gas_stations': { name: 'Gas Stations', color: '#FFEAA7', query: 'fuel' },
+            'banks': { name: 'Banks', color: '#DDA0DD', query: 'bank' },
+            'schools': { name: 'Schools', color: '#98D8C8', query: 'school' },
+            'shopping': { name: 'Shopping Malls', color: '#F7DC6F', query: 'mall' },
+            'parks': { name: 'Parks', color: '#82E0AA', query: 'park' },
+            'pharmacies': { name: 'Pharmacies', color: '#F1948A', query: 'pharmacy' }
+        };
     }
 
     log(message) {
@@ -2569,6 +2585,10 @@ class VenueLocationControl extends HTMLElement {
         this.render();
         this.debugLayout();
         this.loadLeaflet(() => this.initMap());
+    }
+
+    disconnectedCallback(){
+      this.destroyMap();
     }
 
     render() {
@@ -2646,6 +2666,52 @@ class VenueLocationControl extends HTMLElement {
                     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
                     z-index: 9999; /* Extremely high z-index */
                     position: relative; /* Ensure it stays in document flow */
+                }
+
+                /* New: POI controls styling */
+                .poi-controls {
+                    width: 100%;
+                    padding: 10px;
+                    background: #f8f9fa;
+                    border: 2px solid #28a745;
+                    border-radius: 5px;
+                    margin-bottom: 10px;
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 10px;
+                    align-items: center;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                    z-index: 9998;
+                    position: relative;
+                }
+                
+                .poi-controls select {
+                    padding: 6px 8px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    font-size: 14px;
+                    background: white;
+                    min-width: 150px;
+                }
+                
+                .poi-controls button {
+                    padding: 6px 12px;
+                    background: #28a745;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 12px;
+                    font-weight: 500;
+                }
+                
+                .poi-controls button:hover {
+                    background: #218838;
+                }
+                
+                .poi-controls button:disabled {
+                    background: #6c757d;
+                    cursor: not-allowed;
                 }
                 
                 /* Map container without controls inside */
@@ -2740,6 +2806,10 @@ class VenueLocationControl extends HTMLElement {
                 .map-controls * {
                     pointer-events: auto !important;
                 }
+
+                .poi-controls * {
+                    pointer-events: auto !important;
+                }
                 
                 .loading {
                     display: flex;
@@ -2783,6 +2853,25 @@ class VenueLocationControl extends HTMLElement {
                 .location-info strong {
                     color: #0066cc;
                 }
+
+                /* New: POI info styling */
+                .poi-info {
+                    background: #d4edda;
+                    padding: 10px;
+                    margin: 10px 0;
+                    border-radius: 5px;
+                    border: 1px solid #c3e6cb;
+                    font-size: 13px;
+                    display: none;
+                }
+                
+                .poi-info.show {
+                    display: block;
+                }
+                
+                .poi-info strong {
+                    color: #155724;
+                }
             </style>
             
             <div class="venue-location-container">
@@ -2804,6 +2893,12 @@ class VenueLocationControl extends HTMLElement {
                     <div class="location-info" id="location-info">
                         <strong>Selected Location:</strong><br>
                         <span id="location-display"></span>
+                    </div>
+
+                    <!-- New: POI Information Display -->
+                    <div class="poi-info" id="poi-info">
+                        <strong>Selected POI:</strong><br>
+                        <span id="poi-display"></span>
                     </div>
                 </div>
                 
@@ -2840,6 +2935,22 @@ class VenueLocationControl extends HTMLElement {
                         <button id="add-marker">Add Marker</button>
                         <button id="clear-markers">Clear All</button>
                         <button id="send-to-venue" class="send-button">📤 Send to Venue</button>
+                    </div>
+
+                    <!-- New: POI Controls -->
+                    <div class="poi-controls">
+                        <div class="control-group">
+                            <label>Find nearby:</label>
+                            <select id="poi-category">
+                                <option value="">Select category...</option>
+                                ${Object.entries(this.poiCategories).map(([key, category]) => 
+                                    `<option value="${key}">${category.name}</option>`
+                                ).join('')}
+                            </select>
+                        </div>
+                        <button id="search-poi">Search POIs</button>
+                        <button id="clear-poi">Clear POIs</button>
+                        <span id="poi-count" style="font-size: 12px; color: #666;"></span>
                     </div>
                 </div>
             </div>
@@ -2886,15 +2997,34 @@ class VenueLocationControl extends HTMLElement {
         }
     }
 
-    initMap() {
+   initMap(initialLat = null, initialLng = null) {
         try {
             this.log('Starting map initialization');
+            
+            // Check if map already exists and clean it up
+            if (this.map) {
+                this.log('Map already exists, cleaning up...');
+                try {
+                    this.map.remove();
+                    this.map = null;
+                    this.log('Existing map removed successfully');
+                } catch (cleanupError) {
+                    console.warn('Error cleaning up existing map:', cleanupError);
+                    this.log('Warning: Error during map cleanup');
+                }
+            }
             
             // Initialize map with confined space
             const mapElement = this.shadowRoot.getElementById(this.mapId);
             if (!mapElement) {
                 this.log('Error: Map element not found');
                 return;
+            }
+            
+            // Clear any existing Leaflet references on the container
+            if (mapElement._leaflet_id) {
+                this.log('Clearing existing Leaflet container references');
+                delete mapElement._leaflet_id;
             }
             
             mapElement.innerHTML = ''; // Clear loading message
@@ -2907,8 +3037,12 @@ class VenueLocationControl extends HTMLElement {
             
             this.log('Creating Leaflet map instance');
             
+            // Use initial coordinates if provided, otherwise use default or pending coordinates
+            let centerLat = initialLat || (this.pendingCoordinates?.lat) || 51.505;
+            let centerLng = initialLng || (this.pendingCoordinates?.lng) || -0.09;
+            
             this.map = L.map(mapElement, {
-                center: [51.505, -0.09],
+                center: [centerLat, centerLng],
                 zoom: 13,
                 zoomControl: true,
                 scrollWheelZoom: true,
@@ -2939,8 +3073,20 @@ class VenueLocationControl extends HTMLElement {
                     this.log('Invalidating map size');
                     this.map.invalidateSize();
                     this.constrainMapSize();
+                    
+                    // Handle pending coordinates after map is ready
+                    if (this.pendingCoordinates) {
+                        this.log(`Processing pending coordinates: ${this.pendingCoordinates.lat}, ${this.pendingCoordinates.lng}`);
+                        this.goToCoordinates(this.pendingCoordinates.lat, this.pendingCoordinates.lng);
+                        this.addMarker(this.pendingCoordinates.lat, this.pendingCoordinates.lng, 'Loaded Venue Location', 'purple');
+                        this.pendingCoordinates = null; // Clear pending coordinates
+                    }
+                    
+                    // Dispatch map-ready event after map is fully ready
+                    this.dispatchEvent(new CustomEvent('map-ready'));
+                    this.log('Map ready event dispatched');
                 }
-            }, 300); // CHANGE: from 100 to 300ms
+            }, 300);
 
             // Add event listeners for zoom to ensure map stays constrained
             this.map.on('zoomend', () => {
@@ -2950,9 +3096,6 @@ class VenueLocationControl extends HTMLElement {
             this.map.on('moveend', () => {
                 this.constrainMapSize();
             });
-
-            // Add initial marker
-            this.addMarker(51.505, -0.09, 'Default Location - London', 'blue');
 
             // Setup event listeners
             this.setupEventListeners();
@@ -2970,6 +3113,9 @@ class VenueLocationControl extends HTMLElement {
                     lng: parseFloat(lng),
                     address: `Coordinates: ${lat}, ${lng}`
                 };
+
+                this.selectedPOI = null;
+                this.shadowRoot.getElementById('poi-info').classList.remove('show');
             });
 
             // Handle tile loading
@@ -2994,6 +3140,21 @@ class VenueLocationControl extends HTMLElement {
             console.error('Error initializing map:', error);
             this.log('Error initializing map: ' + error.message);
             this.updateStatus('Error loading map: ' + error.message);
+        }
+    }
+
+    // Add this method to properly clean up the map
+    destroyMap() {
+        if (this.map) {
+            try {
+                this.log('Destroying map instance');
+                this.map.remove();
+                this.map = null;
+                this.log('Map destroyed successfully');
+            } catch (error) {
+                console.warn('Error destroying map:', error);
+                this.log('Warning: Error during map destruction');
+            }
         }
     }
 
@@ -3080,6 +3241,23 @@ class VenueLocationControl extends HTMLElement {
             this.sendToVenue();
         });
 
+        // New: POI search button
+        shadow.getElementById('search-poi').addEventListener('click', (e) => {
+            e.preventDefault();
+            const category = shadow.getElementById('poi-category').value;
+            if (category) {
+                this.searchPOIs(category);
+            } else {
+                this.updateStatus('Please select a POI category');
+            }
+        });
+
+        // New: Clear POI button
+        shadow.getElementById('clear-poi').addEventListener('click', (e) => {
+            e.preventDefault();
+            this.clearPOIMarkers();
+        });
+
         // Enter key support
         shadow.getElementById('lat-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
@@ -3103,10 +3281,328 @@ class VenueLocationControl extends HTMLElement {
         });
     }
 
+    async searchPOIs(category) {
+        if (!this.map) {
+            this.updateStatus('Map not ready for POI search');
+            return;
+        }
+
+        try {
+            this.updateStatus(`Searching for ${this.poiCategories[category].name}...`);
+            
+            // Get current map bounds
+            const bounds = this.map.getBounds();
+            const bbox = `${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`;
+            
+            // Search using Overpass API for better POI results
+            const query = this.buildOverpassQuery(category, bbox);
+            const response = await fetch('https://overpass-api.de/api/interpreter', {
+                method: 'POST',
+                body: query
+            });
+            
+            if (!response.ok) {
+                throw new Error('POI search failed');
+            }
+            
+            const data = await response.json();
+            
+            // Clear existing POI markers
+            this.clearPOIMarkers();
+            
+            // Add new POI markers
+            let addedCount = 0;
+            const maxMarkers = 100; // Limit to avoid performance issues
+            
+            for (const element of data.elements) {
+                if (addedCount >= maxMarkers) break;
+                
+                if (element.lat && element.lon) {
+                    const poi = {
+                        lat: element.lat,
+                        lng: element.lon,
+                        name: element.tags?.name || `${this.poiCategories[category].name} ${addedCount + 1}`,
+                        type: category,
+                        address: this.formatAddress(element.tags),
+                        phone: element.tags?.phone || '',
+                        website: element.tags?.website || '',
+                        opening_hours: element.tags?.opening_hours || '',
+                        amenity: element.tags?.amenity || '',
+                        brand: element.tags?.brand || '',
+                        cuisine: element.tags?.cuisine || '',
+                        tags: element.tags
+                    };
+                    
+                    this.addPOIMarker(poi);
+                    addedCount++;
+                }
+            }
+            
+            this.updateStatus(`Found ${addedCount} ${this.poiCategories[category].name.toLowerCase()}`);
+            this.shadowRoot.getElementById('poi-count').textContent = `${addedCount} items found`;
+            
+        } catch (error) {
+            console.error('POI search error:', error);
+            this.updateStatus('Error searching for POIs: ' + error.message);
+        }
+    }
+
+    // Add the missing buildOverpassQuery method
+    buildOverpassQuery(category, bbox) {
+        const categoryConfig = this.poiCategories[category];
+        let query = '';
+        
+        // Build different queries based on category
+        switch (category) {
+            case 'hotels':
+                query = `
+                    [out:json][timeout:25];
+                    (
+                      node["tourism"="hotel"](${bbox});
+                      way["tourism"="hotel"](${bbox});
+                      node["tourism"="motel"](${bbox});
+                      way["tourism"="motel"](${bbox});
+                    );
+                    out center;
+                `;
+                break;
+            case 'hospitals':
+                query = `
+                    [out:json][timeout:25];
+                    (
+                      node["amenity"="hospital"](${bbox});
+                      way["amenity"="hospital"](${bbox});
+                      node["amenity"="clinic"](${bbox});
+                      way["amenity"="clinic"](${bbox});
+                    );
+                    out center;
+                `;
+                break;
+            case 'restaurants':
+                query = `
+                    [out:json][timeout:25];
+                    (
+                      node["amenity"="restaurant"](${bbox});
+                      way["amenity"="restaurant"](${bbox});
+                      node["amenity"="fast_food"](${bbox});
+                      way["amenity"="fast_food"](${bbox});
+                    );
+                    out center;
+                `;
+                break;
+            case 'movie_theaters':
+                query = `
+                    [out:json][timeout:25];
+                    (
+                      node["amenity"="cinema"](${bbox});
+                      way["amenity"="cinema"](${bbox});
+                    );
+                    out center;
+                `;
+                break;
+            case 'gas_stations':
+                query = `
+                    [out:json][timeout:25];
+                    (
+                      node["amenity"="fuel"](${bbox});
+                      way["amenity"="fuel"](${bbox});
+                    );
+                    out center;
+                `;
+                break;
+            case 'banks':
+                query = `
+                    [out:json][timeout:25];
+                    (
+                      node["amenity"="bank"](${bbox});
+                      way["amenity"="bank"](${bbox});
+                      node["amenity"="atm"](${bbox});
+                    );
+                    out center;
+                `;
+                break;
+            case 'schools':
+                query = `
+                    [out:json][timeout:25];
+                    (
+                      node["amenity"="school"](${bbox});
+                      way["amenity"="school"](${bbox});
+                      node["amenity"="university"](${bbox});
+                      way["amenity"="university"](${bbox});
+                    );
+                    out center;
+                `;
+                break;
+            case 'shopping':
+                query = `
+                    [out:json][timeout:25];
+                    (
+                      node["shop"="mall"](${bbox});
+                      way["shop"="mall"](${bbox});
+                      node["shop"="supermarket"](${bbox});
+                      way["shop"="supermarket"](${bbox});
+                    );
+                    out center;
+                `;
+                break;
+            case 'parks':
+                query = `
+                    [out:json][timeout:25];
+                    (
+                      node["leisure"="park"](${bbox});
+                      way["leisure"="park"](${bbox});
+                      node["leisure"="garden"](${bbox});
+                      way["leisure"="garden"](${bbox});
+                    );
+                    out center;
+                `;
+                break;
+            case 'pharmacies':
+                query = `
+                    [out:json][timeout:25];
+                    (
+                      node["amenity"="pharmacy"](${bbox});
+                      way["amenity"="pharmacy"](${bbox});
+                    );
+                    out center;
+                `;
+                break;
+            default:
+                query = `
+                    [out:json][timeout:25];
+                    (
+                      node["amenity"="${categoryConfig.query}"](${bbox});
+                      way["amenity"="${categoryConfig.query}"](${bbox});
+                    );
+                    out center;
+                `;
+        }
+        
+        return query;
+    }
+
+    // Add the missing formatAddress method
+    formatAddress(tags) {
+        if (!tags) return '';
+        
+        const parts = [];
+        if (tags['addr:housenumber']) parts.push(tags['addr:housenumber']);
+        if (tags['addr:street']) parts.push(tags['addr:street']);
+        if (tags['addr:city']) parts.push(tags['addr:city']);
+        if (tags['addr:state']) parts.push(tags['addr:state']);
+        if (tags['addr:postcode']) parts.push(tags['addr:postcode']);
+        
+        return parts.join(', ') || '';
+    }
+
+    // Add the missing addPOIMarker method
+    addPOIMarker(poi) {
+        if (!this.map) return;
+        
+        const categoryConfig = this.poiCategories[poi.type];
+        const color = categoryConfig.color;
+        
+        // Create custom icon with category color
+        const poiIcon = L.divIcon({
+            className: 'poi-marker',
+            html: `<div style="background-color: ${color}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.5);"></div>`,
+            iconSize: [20, 20],
+            iconAnchor: [10, 10]
+        });
+        
+        const marker = L.marker([poi.lat, poi.lng], {
+            icon: poiIcon,
+            draggable: true
+        }).addTo(this.map);
+        
+        // Create popup content with POI details
+        const popupContent = `
+            <div style="min-width: 200px;">
+                <h4 style="margin: 0 0 8px 0; color: ${color};">${poi.name}</h4>
+                <p style="margin: 4px 0; font-size: 12px;"><strong>Type:</strong> ${categoryConfig.name}</p>
+                ${poi.address ? `<p style="margin: 4px 0; font-size: 12px;"><strong>Address:</strong> ${poi.address}</p>` : ''}
+                ${poi.phone ? `<p style="margin: 4px 0; font-size: 12px;"><strong>Phone:</strong> ${poi.phone}</p>` : ''}
+                ${poi.website ? `<p style="margin: 4px 0; font-size: 12px;"><strong>Website:</strong> <a href="${poi.website}" target="_blank">${poi.website}</a></p>` : ''}
+                ${poi.opening_hours ? `<p style="margin: 4px 0; font-size: 12px;"><strong>Hours:</strong> ${poi.opening_hours}</p>` : ''}
+                ${poi.cuisine ? `<p style="margin: 4px 0; font-size: 12px;"><strong>Cuisine:</strong> ${poi.cuisine}</p>` : ''}
+                ${poi.brand ? `<p style="margin: 4px 0; font-size: 12px;"><strong>Brand:</strong> ${poi.brand}</p>` : ''}
+                <p style="margin: 4px 0; font-size: 11px; color: #666;"><strong>Coordinates:</strong> ${poi.lat.toFixed(6)}, ${poi.lng.toFixed(6)}</p>
+            </div>
+        `;
+        
+        marker.bindPopup(popupContent);
+        
+        // Handle marker click
+        marker.on('click', () => {
+            this.selectedPOI = poi;
+            this.selectedLocation = {
+                lat: poi.lat,
+                lng: poi.lng,
+                address: poi.address || `${poi.name} - ${categoryConfig.name}`
+            };
+            
+            // Update coordinate inputs
+            this.shadowRoot.getElementById('lat-input').value = poi.lat.toFixed(6);
+            this.shadowRoot.getElementById('lng-input').value = poi.lng.toFixed(6);
+            
+            // Show POI info
+            this.showPOIInfo(poi);
+            
+            this.updateStatus(`Selected: ${poi.name} (${categoryConfig.name})`);
+        });
+        
+        // Store POI data with marker
+        marker.poiData = poi;
+        this.poiMarkers.push(marker);
+    }
+
+    // Add the missing showPOIInfo method
+    showPOIInfo(poi) {
+        const poiInfo = this.shadowRoot.getElementById('poi-info');
+        const poiDisplay = this.shadowRoot.getElementById('poi-display');
+        
+        const categoryConfig = this.poiCategories[poi.type];
+        
+        let infoHtml = `
+            <strong style="color: ${categoryConfig.color};">${poi.name}</strong><br>
+            <strong>Type:</strong> ${categoryConfig.name}<br>
+            <strong>Coordinates:</strong> ${poi.lat.toFixed(6)}, ${poi.lng.toFixed(6)}<br>
+        `;
+        
+        if (poi.address) infoHtml += `<strong>Address:</strong> ${poi.address}<br>`;
+        if (poi.phone) infoHtml += `<strong>Phone:</strong> ${poi.phone}<br>`;
+        if (poi.website) infoHtml += `<strong>Website:</strong> <a href="${poi.website}" target="_blank">${poi.website}</a><br>`;
+        if (poi.opening_hours) infoHtml += `<strong>Hours:</strong> ${poi.opening_hours}<br>`;
+        if (poi.cuisine) infoHtml += `<strong>Cuisine:</strong> ${poi.cuisine}<br>`;
+        if (poi.brand) infoHtml += `<strong>Brand:</strong> ${poi.brand}<br>`;
+        
+        poiDisplay.innerHTML = infoHtml;
+        poiInfo.classList.add('show');
+    }
+
+    // Add the missing clearPOIMarkers method
+    clearPOIMarkers() {
+        if (this.poiMarkers && this.poiMarkers.length > 0) {
+            this.poiMarkers.forEach(marker => {
+                this.map.removeLayer(marker);
+            });
+            this.poiMarkers = [];
+            this.selectedPOI = null;
+            this.shadowRoot.getElementById('poi-info').classList.remove('show');
+            this.shadowRoot.getElementById('poi-count').textContent = '';
+            this.updateStatus('POI markers cleared');
+        }
+    }
+
     sendToVenue() {
         const shadow = this.shadowRoot;
         const lat = shadow.getElementById('lat-input').value;
         const lng = shadow.getElementById('lng-input').value;
+        
+        console.log('=== SEND TO VENUE DEBUG ===');
+        console.log('Selected POI:', this.selectedPOI);
+        console.log('Latitude:', lat);
+        console.log('Longitude:', lng);
         
         if (!lat || !lng) {
             this.updateStatus('Please select a location first (click on map, search, or add marker)');
@@ -3116,31 +3612,58 @@ class VenueLocationControl extends HTMLElement {
         shadow.getElementById('latitude').value = lat;
         shadow.getElementById('longitude').value = lng;
         
-        if (this.selectedLocation && this.selectedLocation.searchResult) {
-            const result = this.selectedLocation.searchResult;
-            this.parseAndFillLocationData(result.display_name, result);
-        }
-        
-        const locationInfo = shadow.getElementById('location-info');
-        const locationDisplay = shadow.getElementById('location-display');
-        
-        let displayText = `Lat: ${lat}, Lng: ${lng}`;
-        if (this.selectedLocation && this.selectedLocation.address) {
-            displayText += `<br>Address: ${this.selectedLocation.address}`;
-        }
-        
-        locationDisplay.innerHTML = displayText;
-        locationInfo.classList.add('show');
-        
-        this.updateStatus(`Location data sent to venue form! Coordinates: ${lat}, ${lng}`);
-        
-        this.dispatchEvent(new CustomEvent('locationSentToVenue', {
-            detail: {
-                latitude: lat,
-                longitude: lng,
-                selectedLocation: this.selectedLocation
+        // Handle POI data - populate venue data with POI information
+        if (this.selectedPOI) {
+            const poi = this.selectedPOI;
+            console.log('Processing POI:', poi);
+            
+            // Set building name to POI name
+            const buildingValue = poi.name || '';
+            shadow.getElementById('building').value = buildingValue;
+            console.log('Set building to:', buildingValue);
+            
+            // Try to populate address fields from POI data
+            if (poi.address) {
+                console.log('POI address:', poi.address);
+                const addressParts = poi.address.split(', ');
+                console.log('Address parts:', addressParts);
+                
+                if (addressParts.length > 0) {
+                    const streetValue = addressParts[0] || '';
+                    const areaValue = addressParts[1] || '';
+                    const cityValue = addressParts[2] || '';
+                    
+                    shadow.getElementById('street').value = streetValue;
+                    shadow.getElementById('area').value = areaValue;
+                    shadow.getElementById('city').value = cityValue;
+                    
+                    console.log('Set street to:', streetValue);
+                    console.log('Set area to:', areaValue);
+                    console.log('Set city to:', cityValue);
+                }
             }
-        }));
+            
+            // Set website if available
+            if (poi.website) {
+                shadow.getElementById('url_address').value = poi.website;
+                console.log('Set website to:', poi.website);
+            }
+            
+            // Verify the fields were actually set
+            console.log('=== VERIFICATION ===');
+            console.log('Building field after setting:', shadow.getElementById('building').value);
+            console.log('Street field after setting:', shadow.getElementById('street').value);
+            console.log('Area field after setting:', shadow.getElementById('area').value);
+            console.log('City field after setting:', shadow.getElementById('city').value);
+            console.log('URL field after setting:', shadow.getElementById('url_address').value);
+            
+        } else {
+            console.log('No POI selected');
+        }
+        
+        console.log('=== END SEND TO VENUE DEBUG ===');
+        
+        this.updateStatus('Location data sent to venue form!');
     }
 
     parseAndFillLocationData(displayName, searchResult) {
@@ -3259,17 +3782,23 @@ class VenueLocationControl extends HTMLElement {
             draggable: true
         }).addTo(this.map);
         
-        if (popupText) {
-            marker.bindPopup(`
+        // Function to create popup content with current coordinates
+        const createPopupContent = (latitude, longitude, text) => {
+            return `
                 <div style="min-width: 200px;">
-                    <strong>${popupText}</strong><br>
+                    <strong>${text}</strong><br>
                     <strong>Position:</strong><br>
-                    Lat: ${lat.toFixed(6)}<br>
-                    Lng: ${lng.toFixed(6)}
+                    Lat: ${latitude.toFixed(6)}<br>
+                    Lng: ${longitude.toFixed(6)}
                 </div>
-            `);
+            `;
+        };
+        
+        if (popupText) {
+            marker.bindPopup(createPopupContent(lat, lng, popupText));
         }
 
+        // Handle marker click
         marker.on('click', (e) => {
             const pos = e.target.getLatLng();
             this.shadowRoot.getElementById('lat-input').value = pos.lat.toFixed(6);
@@ -3281,6 +3810,61 @@ class VenueLocationControl extends HTMLElement {
                 lng: pos.lng,
                 address: `Marker: ${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)}`
             };
+        });
+
+        // Handle drag start
+        marker.on('dragstart', (e) => {
+            this.log('Marker drag started');
+            this.updateStatus('Dragging marker...');
+        });
+
+        // Handle drag (real-time updates during dragging)
+        marker.on('drag', (e) => {
+            const newPos = e.target.getLatLng();
+            const newLat = newPos.lat;
+            const newLng = newPos.lng;
+            
+            // Update input fields in real-time
+            this.shadowRoot.getElementById('lat-input').value = newLat.toFixed(6);
+            this.shadowRoot.getElementById('lng-input').value = newLng.toFixed(6);
+            
+            // Update status
+            this.updateStatus(`Dragging: ${newLat.toFixed(6)}, ${newLng.toFixed(6)}`);
+        });
+
+        // Handle drag end
+        marker.on('dragend', (e) => {
+            const newPos = e.target.getLatLng();
+            const newLat = newPos.lat;
+            const newLng = newPos.lng;
+            
+            this.log(`Marker dragged to: ${newLat}, ${newLng}`);
+            
+            // Update input fields
+            this.shadowRoot.getElementById('lat-input').value = newLat.toFixed(6);
+            this.shadowRoot.getElementById('lng-input').value = newLng.toFixed(6);
+            
+            // Update the marker's popup content with new coordinates
+            if (popupText) {
+                const updatedContent = createPopupContent(newLat, newLng, popupText);
+                marker.setPopupContent(updatedContent);
+            }
+            
+            // Update selected location
+            this.selectedLocation = {
+                lat: newLat,
+                lng: newLng,
+                address: `Dragged to: ${newLat.toFixed(6)}, ${newLng.toFixed(6)}`
+            };
+            
+            // Update status
+            this.updateStatus(`Marker moved to: ${newLat.toFixed(6)}, ${newLng.toFixed(6)}`);
+            
+            // Update the latitude and longitude fields in the form as well
+            this.shadowRoot.getElementById('latitude').value = newLat.toFixed(6);
+            this.shadowRoot.getElementById('longitude').value = newLng.toFixed(6);
+            
+            this.log(`Updated marker popup and form fields with new coordinates`);
         });
 
         this.markers.push(marker);
@@ -3331,10 +3915,20 @@ class VenueLocationControl extends HTMLElement {
             if (!isNaN(lat) && !isNaN(lng)) {
                 shadow.getElementById("lat-input").value = lat;
                 shadow.getElementById("lng-input").value = lng;
+
+                // Store the coordinates to use when map is ready
+                this.pendingCoordinates = { lat, lng };
                 
                 if (this.map) {
+                    // Map exists, just update location and add marker
+                    this.log('Map exists, updating location and adding marker');
                     this.goToCoordinates(lat, lng);
                     this.addMarker(lat, lng, 'Loaded Venue Location', 'purple');
+                    this.pendingCoordinates = null;
+                } else {
+                    // Map doesn't exist, initialize it with these coordinates
+                    this.log('Map not ready, initializing with coordinates');
+                    this.initMap(lat, lng);
                 }
                 
                 this.selectedLocation = {
@@ -3348,7 +3942,9 @@ class VenueLocationControl extends HTMLElement {
 
     get value() {
         const shadow = this.shadowRoot;
-        return JSON.stringify({
+        
+        // Debug: Check what's actually in the form fields
+        const venueData = {
             building: shadow.getElementById("building").value,
             street: shadow.getElementById("street").value,
             area: shadow.getElementById("area").value,
@@ -3358,7 +3954,21 @@ class VenueLocationControl extends HTMLElement {
             url_address: shadow.getElementById("url_address").value,
             latitude: shadow.getElementById("latitude").value,
             longitude: shadow.getElementById("longitude").value
-        });
+        };
+        
+        // Debug logging
+        console.log('=== VENUE GET VALUE DEBUG ===');
+        console.log('Building field value:', venueData.building);
+        console.log('Street field value:', venueData.street);
+        console.log('Area field value:', venueData.area);
+        console.log('City field value:', venueData.city);
+        console.log('URL field value:', venueData.url_address);
+        console.log('Latitude field value:', venueData.latitude);
+        console.log('Longitude field value:', venueData.longitude);
+        console.log('Complete venue data object:', venueData);
+        console.log('=== END DEBUG ===');
+        
+        return JSON.stringify(venueData);
     }
 
     // **Public methods for external use**
