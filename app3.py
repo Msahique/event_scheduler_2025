@@ -502,13 +502,30 @@ def event_update():
     f=open('config/new/get_DB_data.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
+<<<<<<< HEAD
     update_data = data.get("qry", {}).get("update")
     where_data = {"event_id":data.get('event_id')}
     print(">>",update_data,where_data) 
+=======
+    qry_data = data.get("qry")
+    
+    print(">>", qry_data) 
+>>>>>>> 4a9e0827815764eded175d20cc3b4f4d6005aa10
 
-    if not update_data or not where_data:
-        return jsonify({"error": "Missing table_name, update_data or where_data"}), 400
-    success = update_entry(json_data['db_name'],json_data[data['tab']][data['type']], update_data,where_data,)
+    if not qry_data or 'update' not in qry_data or 'where_data' not in qry_data:
+        return jsonify({"error": "Missing qry data with update and where_data"}), 400
+    
+    # Extract the actual update and where data from the qry structure
+    update_data = qry_data['update']
+    where_data = qry_data['where_data']
+    
+    success = update_entry(
+        json_data['db_name'],
+        json_data[data['tab']][data['type']], 
+        update_data,
+        where_data
+    )
+    
     if success:
         return jsonify({"message": "Entry updated successfully"}), 200
     else:
