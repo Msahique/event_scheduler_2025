@@ -1343,6 +1343,7 @@ var MainConfig={
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
          {"type":"button","tag":"edit","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
          {"type":"button","tag":"delete","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
+         {"type":"button","tag":"maps","roles":["Admin"],"name":"<i class='bi bi-map-fill'><i> ","function":"collectSelectedData()","class":"btn btn-secondary btn-sm"},
          {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": [ "Event Schedule","Alert Schedule","Appointment Schedule","Event Log","Subscriber Registry","Subscriber Log"], "function": "","textContent": "Items"},
          {"type": "select", "tag": "entriesPerPage", "roles": ["Admin","Approver","User"], "name": "EntriesPerPage", "options": [2,3,5,10,15,20,25,30,35,40,45,50], "textContent": "Rows/Page"},
       ],
@@ -2631,11 +2632,11 @@ var MainConfig={
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
-         {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Document Registry","Document UI template","Document View Template","HTML Template","Trigger Functions","Helper Functions"],"textContent": "Items"},
+         {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Document Data Templates","Document UI template","Document View Template","HTML Template","Trigger Functions","Helper Functions"],"textContent": "Items"},
          {"type": "select", "tag": "entriesPerPage", "roles": ["Admin","Approver","User"], "name": "EntriesPerPage", "options": [2,3,5,10,15,20,25,30,35,40,45,50], "textContent": "Rows/Page"},
         ],
         "Roles":["Admin"],
-        "Document Registry":{
+        "Document Data Templates":{
             "doc_title":"Document Data Template",
             "getDataApi":"config/list_details",
             "key":"role_id",
@@ -3120,7 +3121,7 @@ var MainConfig={
             }
         }
     },
-    "Editor Config":{
+    "App Config":{
         "controls":[
          {"type":"button","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"editor_config_modal()","class":"btn btn-success btn-xs my-xs-btn"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},

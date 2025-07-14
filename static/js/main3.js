@@ -360,9 +360,39 @@ function createTable(responseData) {
     thead.className = 'table-dark sticky-top';
 
     let headerRow = document.createElement('tr');
-
-
+   
     let received_Data = responseData.fields.data[0];
+     // Add Select-All Column
+    if (received_Data.edit_option) {
+        let editTh = document.createElement('th');
+        editTh.className = "text-center";
+        editTh.setAttribute('scope', 'col');
+
+        // Create select-all checkbox
+        let selectAllCheckbox = document.createElement('input');
+        selectAllCheckbox.type = 'checkbox';
+        selectAllCheckbox.id = 'selectAllCheckbox';
+
+        // Label (optional text beside checkbox)
+        let label = document.createElement('label');
+        label.textContent = " Select";
+        label.setAttribute('for', 'selectAllCheckbox');
+        label.style.marginLeft = "5px";
+
+        // Append checkbox + label
+        editTh.appendChild(selectAllCheckbox);
+        editTh.appendChild(label);
+
+        // Add functionality to select/deselect all checkboxes
+        selectAllCheckbox.addEventListener('change', function () {
+            const checkboxes = document.querySelectorAll("input[name='editRowSelect[]']");
+            checkboxes.forEach(cb => {
+                cb.checked = selectAllCheckbox.checked;
+            });
+        });
+
+        headerRow.appendChild(editTh);
+    }
     let visibleFields = received_Data.fields.filter(field => field.show);
     const filterContainer = document.getElementById("tab_page_filter");
     // Ensure filterValues is initialized before use
@@ -1261,6 +1291,22 @@ function edit_data() {
         alert('Please select only one row to edit.');
     }
 }
+
+function collectSelectedData() {
+    const selectedCheckboxes = document.querySelectorAll('input[name="editRowSelect[]"]:checked');
+
+    if (selectedCheckboxes.length === 0) {
+        alert('No rows selected.');
+        return;
+    }
+
+    const selectedData = Array.from(selectedCheckboxes).map(cb => JSON.parse(cb.value));
+    console.log('Selected Rows Data:', selectedData);
+
+    // You can also show it in a modal, alert, or download as JSON if needed.
+}
+
+
 /*
 function print_document(){
     console.log(" Inside print_document function");
