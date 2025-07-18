@@ -1300,12 +1300,52 @@ function collectSelectedData() {
         return;
     }
 
-    const selectedData = Array.from(selectedCheckboxes).map(cb => JSON.parse(cb.value));
-    console.log('Selected Rows Data:', selectedData);
+    const selectedData = Array.from(selectedCheckboxes).map(cb => {
+        const row = JSON.parse(cb.value);
+        let venueData = {};
+        try {
+            venueData = JSON.parse(row.venue || '{}');
 
-    // You can also show it in a modal, alert, or download as JSON if needed.
+            // Normalize keys just in case
+            venueData.lat = parseFloat(venueData.lat || venueData.latitude);
+            venueData.lng = parseFloat(venueData.lng || venueData.long || venueData.longitude); // fallback
+        } catch (e) {
+            console.warn('Invalid venue JSON:', row.venue);
+            venueData.lat = NaN;
+            venueData.lng = NaN;
+        }
+
+        return {
+            lat: venueData.lat,
+            lng: venueData.lng,
+            building: venueData.building || '',
+            street: venueData.street || '',
+            area: venueData.area || '',
+            city: venueData.city || '',
+            state: venueData.state || '',
+            country: venueData.country || '',
+            url: venueData.url || '',
+            host_id: venueData.host_entity_id || '',
+            subscriber_limit: venueData.subscriber_limit || '',
+            terms: venueData.terms || '',
+            eventID: venueData.event_id || '',
+            name: row.name || '',
+            description: row.description || '',
+            category: row.category || '',
+            from: row.from_datime,
+            to: row.to_datime,
+        };
+    });
+
+    console.log('Mapped Venue Data:', selectedData);
+
+    const venueControl = document.querySelector('venue-location-control');
+    if (venueControl) {
+        venueControl.showMultiVenueModalSeparate(selectedData);
+    } else {
+        alert('VenueLocationControl not found. Please ensure the component is loaded.');
+    }
 }
-
 
 /*
 function print_document(){
