@@ -3071,7 +3071,7 @@ class VenueLocationControl extends HTMLElement {
         }
     }
 
-   initMap(initialLat = null, initialLng = null) {
+    initMap(initialLat = null, initialLng = null) {
         try {
             this.log('Starting map initialization');
             
@@ -3964,6 +3964,214 @@ class VenueLocationControl extends HTMLElement {
             statusElement.textContent = message;
         }
         this.log(`Status: ${message}`);
+    }
+
+    showMultiVenueModalSeparate(dataList) {
+        if (!Array.isArray(dataList) || dataList.length === 0) {
+            this.log('No data provided for multi-marker modal.');
+            return;
+        }
+
+        console.log('showMultiVenueModalSeparate called with data:', dataList);
+
+        // Get the separate map modal
+        let mapModal = document.getElementById('mapViewModal');
+        
+        // If the modal doesn't exist, create it dynamically
+        if (!mapModal) {
+            console.log('Creating map modal dynamically...');
+            
+            const modalHTML = `
+                <div class="modal fade" id="mapViewModal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Selected Locations Map</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="map-view-container" style="height: 500px; width: 100%; background-color: #f0f0f0; border: 1px solid #ccc;">
+                                    <div style="text-align: center; padding: 20px;">Loading map...</div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add modal to body
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            mapModal = document.getElementById('mapViewModal');
+        }
+
+        // Destroy existing map if it exists
+        if (this.modalMap) {
+            this.modalMap.remove();
+            this.modalMap = null;
+            console.log('Previous modal map destroyed');
+        }
+
+        // Show the modal
+        const bootstrapModal = new bootstrap.Modal(mapModal);
+        
+        // Listen for when modal is fully shown
+        const onModalShown = () => {
+            console.log('Map modal fully shown, loading Leaflet...');
+            
+            const mapContainer = document.getElementById('map-view-container');
+            if (!mapContainer) {
+                console.error('Map container not found');
+                return;
+            }
+            
+            // Use your existing loadLeaflet function
+            this.loadLeaflet(() => {
+                console.log('Leaflet loaded, initializing map...');
+                
+                try {
+                    // Clear loading message
+                    mapContainer.innerHTML = '';
+                    
+                    // Create new map instance
+                    this.modalMap = L.map('map-view-container', {
+                        preferCanvas: false,
+                        attributionControl: true,
+                        zoomControl: true
+                    }).setView([20.5937, 78.9629], 5);
+
+                    console.log('Map instance created');
+
+                    // Add tile layer
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© OpenStreetMap contributors',
+                        maxZoom: 19
+                    }).addTo(this.modalMap);
+
+                    console.log('Tile layer added');
+
+                    // Force map to recognize its container size
+                    setTimeout(() => {
+                        this.modalMap.invalidateSize();
+                        console.log('Map size invalidated');
+                        
+                        // Populate markers after map is ready
+                        this.populateModalMarkers(dataList);
+                    }, 200);
+
+                } catch (error) {
+                    console.error('Error initializing map:', error);
+                    mapContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: red;">Error loading map: ' + error.message + '</div>';
+                }
+            });
+        };
+
+        // Handle modal close event to cleanup
+        const onModalHidden = () => {
+            console.log('Map modal hidden, cleaning up...');
+            if (this.modalMap) {
+                this.modalMap.remove();
+                this.modalMap = null;
+                console.log('Modal map cleaned up');
+            }
+            
+            // Reset container content
+            const mapContainer = document.getElementById('map-view-container');
+            if (mapContainer) {
+                mapContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Loading map...</div>';
+            }
+            
+            // Remove event listeners
+            mapModal.removeEventListener('shown.bs.modal', onModalShown);
+            mapModal.removeEventListener('hidden.bs.modal', onModalHidden);
+        };
+
+        // Add event listeners
+        mapModal.addEventListener('shown.bs.modal', onModalShown, { once: true });
+        mapModal.addEventListener('hidden.bs.modal', onModalHidden, { once: true });
+
+        // Show the modal
+        bootstrapModal.show();
+        console.log('Map modal shown');
+    }
+
+    // Modified populateModalMarkers function
+    populateModalMarkers(dataList) {
+        if (!this.modalMap) {
+            console.warn('Modal map not initialized');
+            return;
+        }
+
+        console.log('Populating modal markers with data:', dataList);
+
+        // Clear existing markers if any
+        if (this.modalMarkers) {
+            this.modalMarkers.forEach(marker => this.modalMap.removeLayer(marker));
+        }
+        this.modalMarkers = [];
+
+        // Add markers for each item
+        const latlngs = [];
+        let validMarkers = 0;
+        
+        dataList.forEach((item, index) => {
+            const { lat, lng, ...meta } = item;
+            const latNum = parseFloat(lat);
+            const lngNum = parseFloat(lng);
+            
+            console.log(`Processing item ${index + 1}:`, { lat: latNum, lng: lngNum, valid: !isNaN(latNum) && !isNaN(lngNum) });
+            
+            if (!isNaN(latNum) && !isNaN(lngNum)) {
+                latlngs.push([latNum, lngNum]);
+                validMarkers++;
+                
+                // Create popup content
+                const popupContent = `
+                    <div style="max-width: 250px;">
+                        <strong>Name:</strong> ${meta.name || 'N/A'}<br>
+                        <strong>Category:</strong> ${meta.category || 'N/A'}<br>
+                        <strong>Location:</strong> ${latNum.toFixed(6)}, ${lngNum.toFixed(6)}<br>
+                        <strong>Address:</strong> ${meta.building || ''} ${meta.street || ''}<br>
+                        ${meta.area ? `<strong>Area:</strong> ${meta.area}<br>` : ''}
+                        ${meta.city ? `<strong>City:</strong> ${meta.city}<br>` : ''}
+                        ${meta.from ? `<strong>From:</strong> ${meta.from}<br>` : ''}
+                        ${meta.to ? `<strong>To:</strong> ${meta.to}<br>` : ''}
+                    </div>
+                `;
+                
+                        // <strong>Host ID:</strong> ${meta.host_id || 'N/A'}<br>
+                        // <strong>Subscriber Limit:</strong> ${meta.subscriber_limit || 'N/A'}<br>
+                        // <strong>Event IDS:</strong> ${meta.eventID || 'N/A'}<br></br>
+                try {
+                    // Create marker
+                    const marker = L.marker([latNum, lngNum])
+                        .addTo(this.modalMap)
+                        .bindPopup(popupContent);
+                    
+                    this.modalMarkers.push(marker);
+                    console.log(`Marker ${index + 1} added successfully`);
+                } catch (error) {
+                    console.error(`Error adding marker ${index + 1}:`, error);
+                }
+            }
+        });
+
+        console.log(`Total valid markers: ${validMarkers}`);
+
+        // Fit map to show all markers
+        if (latlngs.length > 0) {
+            try {
+                const bounds = L.latLngBounds(latlngs);
+                this.modalMap.fitBounds(bounds, { padding: [20, 20] });
+                console.log('Map bounds set to show all markers');
+            } catch (error) {
+                console.error('Error setting map bounds:', error);
+            }
+        } else {
+            console.warn('No valid coordinates found for markers');
+        }
     }
 
     // Venue control methods

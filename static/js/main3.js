@@ -1301,6 +1301,26 @@ function collectSelectedData() {
 }
 
 
+/*
+function print_document(){
+    console.log(" Inside print_document function");
+    let selectedRadio = document.querySelector('input[name="editRowSelect"]:checked');
+    console.log("Selected Radio Button:", selectedRadio);
+    if (selectedRadio) {
+        let rowData = JSON.parse(selectedRadio.value);
+        console.log('Selected Row Data for printing:', rowData);
+        // You can call any function or populate a form:
+        //editRow(rowData);
+        printing_document(
+            "🔒 Confidential Resource Report",
+            "🕒 Generated on: " + new Date().toLocaleString(),
+            rowData
+        );
+    } else {
+        alert('Please select a row first.');
+    }
+}*/
+
 function print_document() {
     console.log("Inside print_document function");
 
