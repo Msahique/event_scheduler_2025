@@ -1302,38 +1302,40 @@ function collectSelectedData() {
 
     const selectedData = Array.from(selectedCheckboxes).map(cb => {
         const row = JSON.parse(cb.value);
+        console.log("Raw Row Data:", row);
+
         let venueData = {};
         try {
             venueData = JSON.parse(row.venue || '{}');
-
-            // Normalize keys just in case
-            venueData.lat = parseFloat(venueData.lat || venueData.latitude);
-            venueData.lng = parseFloat(venueData.lng || venueData.long || venueData.longitude); // fallback
         } catch (e) {
             console.warn('Invalid venue JSON:', row.venue);
-            venueData.lat = NaN;
-            venueData.lng = NaN;
         }
 
+        // Normalize lat/lng
+        const lat = parseFloat(row.lat || venueData.lat || venueData.latitude || NaN);
+        const lng = parseFloat(row.lng || venueData.lng || venueData.longitude || venueData.long || NaN);
+
         return {
-            lat: venueData.lat,
-            lng: venueData.lng,
-            building: venueData.building || '',
-            street: venueData.street || '',
-            area: venueData.area || '',
-            city: venueData.city || '',
-            state: venueData.state || '',
-            country: venueData.country || '',
-            url: venueData.url || '',
-            host_id: venueData.host_entity_id || '',
-            subscriber_limit: venueData.subscriber_limit || '',
-            terms: venueData.terms || '',
-            eventID: venueData.event_id || '',
+            _originalRow: row,
+            lat,
+            lng,
+            building: row.building || venueData.building || '',
+            street: row.street || venueData.street || '',
+            area: row.area || venueData.area || '',
+            city: row.city || venueData.city || '',
+            state: row.state || venueData.state || '',
+            country: row.country || venueData.country || '',
+            url: row.url || venueData.url || venueData.url_address ||'',
+            host_id: row.host_id || row.host_entity_id || venueData.host_entity_id || '',
+            subscriber_limit: row.subscriber_limit || venueData.subscriber_limit || '',
+            terms: row.terms || venueData.terms || '',
+            event_id: row.event_id || '',
+            event_ids: row.event_ids || '',
             name: row.name || '',
             description: row.description || '',
             category: row.category || '',
-            from: row.from_datime,
-            to: row.to_datime,
+            from: row.from || row.from_datime || '',
+            to: row.to || row.to_datime || '',
         };
     });
 
@@ -1346,6 +1348,7 @@ function collectSelectedData() {
         alert('VenueLocationControl not found. Please ensure the component is loaded.');
     }
 }
+
 
 /*
 function print_document(){

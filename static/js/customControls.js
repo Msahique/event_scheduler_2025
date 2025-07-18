@@ -3974,6 +3974,19 @@ class VenueLocationControl extends HTMLElement {
 
         console.log('showMultiVenueModalSeparate called with data:', dataList);
 
+        const dropdown = document.getElementById('columnDropdown');
+        if (dropdown && dataList.length > 0) {
+            const rawRow = dataList[0]._originalRow || {};
+            console.log("RawRow:",rawRow);
+            const keys = Object.keys(rawRow);
+
+            dropdown.innerHTML = keys.map(key => 
+                `<option value="${key}">${key}</option>`
+            ).join('');
+
+            console.log('Dropdown populated with DB column keys:', keys);
+        }
+
         // Get the separate map modal
         let mapModal = document.getElementById('mapViewModal');
         
@@ -4020,7 +4033,7 @@ class VenueLocationControl extends HTMLElement {
         // Listen for when modal is fully shown
         const onModalShown = () => {
             console.log('Map modal fully shown, loading Leaflet...');
-            
+            const selectedColumn = document.getElementById('columnDropdown')?.value || '';
             const mapContainer = document.getElementById('map-view-container');
             if (!mapContainer) {
                 console.error('Map container not found');
@@ -4058,7 +4071,7 @@ class VenueLocationControl extends HTMLElement {
                         console.log('Map size invalidated');
                         
                         // Populate markers after map is ready
-                        this.populateModalMarkers(dataList);
+                        this.populateModalMarkers(dataList,selectedColumn);
                     }, 200);
 
                 } catch (error) {
@@ -4067,6 +4080,13 @@ class VenueLocationControl extends HTMLElement {
                 }
             });
         };
+
+        if (dropdown) {
+            dropdown.onchange = () => {
+                const selectedCol = dropdown.value;
+                this.populateModalMarkers(dataList, selectedCol);
+            };
+        }
 
         // Handle modal close event to cleanup
         const onModalHidden = () => {
@@ -4098,79 +4118,67 @@ class VenueLocationControl extends HTMLElement {
     }
 
     // Modified populateModalMarkers function
-    populateModalMarkers(dataList) {
-        if (!this.modalMap) {
-            console.warn('Modal map not initialized');
-            return;
-        }
+    populateModalMarkers(dataList, selectedColumn) {
+        if (!this.modalMap) return;
 
-        console.log('Populating modal markers with data:', dataList);
-
-        // Clear existing markers if any
         if (this.modalMarkers) {
             this.modalMarkers.forEach(marker => this.modalMap.removeLayer(marker));
         }
         this.modalMarkers = [];
 
-        // Add markers for each item
+        // Build unique color map
+        const colorMap = {};
+        const usedColors = new Set();
+        const getColor = () => {
+            let color;
+            do {
+                color = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+            } while (usedColors.has(color));
+            usedColors.add(color);
+            return color;
+        };
+
         const latlngs = [];
-        let validMarkers = 0;
-        
+
         dataList.forEach((item, index) => {
-            const { lat, lng, ...meta } = item;
+            const { lat, lng, _originalRow = {}, ...meta } = item;
             const latNum = parseFloat(lat);
             const lngNum = parseFloat(lng);
-            
-            console.log(`Processing item ${index + 1}:`, { lat: latNum, lng: lngNum, valid: !isNaN(latNum) && !isNaN(lngNum) });
-            
-            if (!isNaN(latNum) && !isNaN(lngNum)) {
-                latlngs.push([latNum, lngNum]);
-                validMarkers++;
-                
-                // Create popup content
-                const popupContent = `
-                    <div style="max-width: 250px;">
-                        <strong>Name:</strong> ${meta.name || 'N/A'}<br>
-                        <strong>Category:</strong> ${meta.category || 'N/A'}<br>
-                        <strong>Location:</strong> ${latNum.toFixed(6)}, ${lngNum.toFixed(6)}<br>
-                        <strong>Address:</strong> ${meta.building || ''} ${meta.street || ''}<br>
-                        ${meta.area ? `<strong>Area:</strong> ${meta.area}<br>` : ''}
-                        ${meta.city ? `<strong>City:</strong> ${meta.city}<br>` : ''}
-                        ${meta.from ? `<strong>From:</strong> ${meta.from}<br>` : ''}
-                        ${meta.to ? `<strong>To:</strong> ${meta.to}<br>` : ''}
-                    </div>
-                `;
-                
-                        // <strong>Host ID:</strong> ${meta.host_id || 'N/A'}<br>
-                        // <strong>Subscriber Limit:</strong> ${meta.subscriber_limit || 'N/A'}<br>
-                        // <strong>Event IDS:</strong> ${meta.eventID || 'N/A'}<br></br>
-                try {
-                    // Create marker
-                    const marker = L.marker([latNum, lngNum])
-                        .addTo(this.modalMap)
-                        .bindPopup(popupContent);
-                    
-                    this.modalMarkers.push(marker);
-                    console.log(`Marker ${index + 1} added successfully`);
-                } catch (error) {
-                    console.error(`Error adding marker ${index + 1}:`, error);
-                }
+            if (isNaN(latNum) || isNaN(lngNum)) return;
+
+            const keyValueRaw = _originalRow[selectedColumn];
+            const keyValue = (keyValueRaw || '').toString().toLowerCase().trim();
+
+            if (!colorMap[keyValue]) {
+                colorMap[keyValue] = getColor();
             }
+
+            const color = colorMap[keyValue];
+            latlngs.push([latNum, lngNum]);
+
+            // Build popup
+            let popupContent = `<div style="max-width: 250px;">`;
+            for (const [key, value] of Object.entries(meta)) {
+                popupContent += `<strong>${key}:</strong> ${value || 'N/A'}<br>`;
+            }
+            popupContent += `<strong>${selectedColumn}:</strong> ${keyValueRaw || 'N/A'}<br>`;
+            popupContent += `<strong>Location:</strong> ${latNum.toFixed(6)}, ${lngNum.toFixed(6)}</div>`;
+
+            const marker = L.circleMarker([latNum, lngNum], {
+                radius: 8,
+                fillColor: color,
+                color: '#222',
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.85
+            }).addTo(this.modalMap);
+
+            marker.bindPopup(popupContent);
+            this.modalMarkers.push(marker);
         });
 
-        console.log(`Total valid markers: ${validMarkers}`);
-
-        // Fit map to show all markers
         if (latlngs.length > 0) {
-            try {
-                const bounds = L.latLngBounds(latlngs);
-                this.modalMap.fitBounds(bounds, { padding: [20, 20] });
-                console.log('Map bounds set to show all markers');
-            } catch (error) {
-                console.error('Error setting map bounds:', error);
-            }
-        } else {
-            console.warn('No valid coordinates found for markers');
+            this.modalMap.fitBounds(L.latLngBounds(latlngs), { padding: [20, 20] });
         }
     }
 
