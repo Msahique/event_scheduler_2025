@@ -375,7 +375,7 @@ function createTable(responseData) {
 
         // Label (optional text beside checkbox)
         let label = document.createElement('label');
-        label.textContent = "Select";
+        label.textContent = " Select";
         label.setAttribute('for', 'selectAllCheckbox');
         label.style.marginLeft = "5px";
 
@@ -393,15 +393,7 @@ function createTable(responseData) {
 
         headerRow.appendChild(editTh);
     }
-    //let visibleFields = received_Data.fields.filter(field => field.show);
-    let visibleFields = received_Data.fields
-    .filter(field => field.show)
-    .sort((a, b) => {
-        const aSeq = parseInt(a.seqno || "9999", 10);
-        const bSeq = parseInt(b.seqno || "9999", 10);
-        return aSeq - bSeq;
-    });
-
+    let visibleFields = received_Data.fields.filter(field => field.show);
     const filterContainer = document.getElementById("tab_page_filter");
     // Ensure filterValues is initialized before use
     if (typeof filterValues === "undefined") {
@@ -601,13 +593,13 @@ function createTable(responseData) {
 
 
     // Add Edit Column if applicable
-   /* if (received_Data.edit_option) {
+    if (received_Data.edit_option) {
         let editTh = document.createElement('th');
         editTh.className = "text-center";
         editTh.textContent = "Select";
         editTh.setAttribute('scope', 'col');
         headerRow.appendChild(editTh);
-    }*/
+    }
 
    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1272,9 +1264,23 @@ function previewCreateTable(responseData) {
 
     console.log("Preview table structure created successfully");
 }
+/*
+CODE FOR SELECTING A ROW BASED ON RADIO BUTTONs
+function edit_data(){
+    let selectedRadio = document.querySelector('input[name="editRowSelect"]:checked');
+    if (selectedRadio) {
+        let rowData = JSON.parse(selectedRadio.value);
+        console.log('Selected Row Data:', rowData);
+        // You can call any function or populate a form:
+        editRow(rowData);
+    } else {
+        alert('Please select a row first.');
+    }
+}*/
 
 function edit_data() {
     const selectedCheckboxes = document.querySelectorAll('input[name="editRowSelect[]"]:checked');
+
     if (selectedCheckboxes.length === 1) {
         const rowData = JSON.parse(selectedCheckboxes[0].value);
         console.log('Selected Row Data:', rowData);
@@ -1341,7 +1347,6 @@ function collectSelectedData() {
     }
 }
 
-
 /*
 function print_document(){
     console.log(" Inside print_document function");
@@ -1385,6 +1390,18 @@ function print_document() {
     }
 }
 
+/*
+function delete_data(){
+    let selectedRadio = document.querySelector('input[name="editRowSelect"]:checked');
+    if (selectedRadio) {
+        let rowData = JSON.parse(selectedRadio.value);
+        console.log('Selected Row Data:', rowData);
+        // You can call any function or populate a form:
+        deleteRow(rowData);
+    } else {
+        alert('Please select a row first.');
+    }
+}*/
 
 function delete_data() {
     const selectedCheckboxes = document.querySelectorAll('input[name="editRowSelect[]"]:checked');
@@ -1593,7 +1610,7 @@ function deleteRow(rowData) {
     });
 }
 
-/*function editRow(rowData, action) {
+function editRow(rowData) {
     console.log(selectedItemFromDropdown);
     console.log("Edit Clicked:", rowData);
     page_load_conf.role = localStorage.getItem("u_role");
@@ -1608,7 +1625,6 @@ function deleteRow(rowData) {
         "request_token": "",
         "type": selectedItemFromDropdown,
         "tab":page_load_conf.tab,
-        "affiliations": JSON.parse(sessionStorage.getItem("userAffiliations")),
         "qry": {
             "select_fields": ["*"],
             "where_data": { [key_val]: rowData[key_val] }
@@ -1632,67 +1648,12 @@ function deleteRow(rowData) {
     .then(response => response.json())
     .then(data => {
         console.log("Received Data:", data);
-        if (action === 'create') {
-            return data;  // Just return the fetched data
-        } else {
-            editModalCreation(data, selectedItemFromDropdown);  // Proceed as normal
-        }
+        editModalCreation(data,selectedItemFromDropdown);
     })
     .catch(error => console.error("Error fetching data:", error));
-}*/
-
-async function editRow(rowData, action) {
-    console.log("Selected Item:", selectedItemFromDropdown);
-    console.log("Edit Clicked:", rowData);
-    
-    page_load_conf.role = localStorage.getItem("u_role");
-
-    // Extract API and key config
-    const key_val = MainConfig[page_load_conf.tab][selectedItemFromDropdown].key;
-    const api = MainConfig[page_load_conf.tab][selectedItemFromDropdown].getDataApi;
-
-    // Construct request body
-    const modal_body = {
-        requestor_id: "",
-        request_token: "",
-        type: selectedItemFromDropdown,
-        tab: page_load_conf.tab,
-        affiliations: JSON.parse(sessionStorage.getItem("userAffiliations")),
-        qry: {
-            select_fields: ["*"],
-            where_data: { [key_val]: rowData[key_val] }
-        }
-    };
-
-    const end_point = `http://127.0.0.1:5000/${api}`;
-    const send_data = JSON.stringify(modal_body);
-
-    console.log("Sending API Request:", send_data);
-
-    try {
-        const response = await fetch(end_point, {
-            method: "POST",
-            body: send_data,
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        });
-
-        const data = await response.json();
-        console.log("Received Data:", data);
-
-        if (action === 'create') {
-            return data;  // Just return the fetched data
-        } else {
-            editModalCreation(data, selectedItemFromDropdown);  // Proceed as normal
-        }
-    } catch (error) {
-        console.error("Error fetching data:", error);
-    }
 }
 
-/*function editModalCreation(response,selectedItemFromDropdown) {
+function editModalCreation(response,selectedItemFromDropdown) {
     var rowData = response[0];
     console.log(rowData,selectedItemFromDropdown);
     let form = document.getElementById('editForm');
@@ -1910,22 +1871,7 @@ async function editRow(rowData, action) {
                         input.value = dateObj.toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:MM
                     }
                 }
-            }if (field.control === "field-attribute-control") {
-            input = document.createElement("field-attribute-control");
-            input.id = field.field;
-            input.className = 'form-control';
-
-            try {
-                const parsedValue = typeof rowData[field.field] === "string"
-                    ? JSON.parse(rowData[field.field])
-                    : rowData[field.field];
-                input.value = parsedValue;
-            } catch (error) {
-                console.error("Error parsing field-attribute-control data:", error);
-            }
-        }
-
-            else {
+            } else {
                 console.log(7);
                 console.log(label, field.field, field.control, rowData[field.field]);
                 
@@ -1940,7 +1886,11 @@ async function editRow(rowData, action) {
 
             formGroup.appendChild(label);
             formGroup.appendChild(input);
-            form.appendChild(formGroup); 
+            form.appendChild(formGroup);
+
+      
+       
+       
     });
     
     document.getElementById("venueForm").onsubmit = function (e) {
@@ -2104,179 +2054,7 @@ async function editRow(rowData, action) {
         editModal.hide();
     };
     
-}*/
-async function handleCreateActionFromSelection() {
-    const checkedRow = getCheckedRowData(); // implement this logic
-    if (checkedRow) {
-        const data = await editRow(checkedRow, 'create');
-        console.log("Data from DB:", data);
-        // use the data to prefill your modal or form
-    }
 }
-function editModalCreation(response, selectedItemFromDropdown) {
-  const rowData = selectedItemFromDropdown == null ? response[0] : response[0][0];
-  const form = document.getElementById("editForm");
-  if (!form) return console.error("Form element not found!");
-  form.innerHTML = "";
-
-  let config_path = selectedItemFromDropdown == null
-    ? MainConfig[page_load_conf.tab]
-    : MainConfig[page_load_conf.tab][selectedItemFromDropdown];
-
-  let data;
-  if (role === "Admin") data = config_path.job.update;
-  else if (role === "Approver") data = config_path.job.approver;
-  else return console.error("Role not defined");
-
-  const modal = document.getElementById("editModalBody");
-  if (modal) modal.innerHTML = "";
-
-  data.data.forEach((section, sectionIndex) => {
-    let fields = section.fields || [];
-
-    // Sort fields based on seqno
-    fields = fields.sort((a, b) => {
-      const aSeq = parseInt(a.seqno || "9999", 10);
-      const bSeq = parseInt(b.seqno || "9999", 10);
-      return aSeq - bSeq;
-    });
-
-    console.log(`\n[Section ${sectionIndex + 1}] Helper: ${section.helper}`);
-
-    fields.forEach(field => {
-      if (!field.show) return;
-
-      const fieldId = `edit_${field.field}`;
-      const currentValue = rowData[field.field] || field.default || "";
-
-      const formGroup = document.createElement("div");
-      formGroup.className = "form-group mb-3";
-
-      const label = document.createElement("label");
-      label.htmlFor = fieldId;
-      label.textContent = field.field.replace(/_/g, " ").toUpperCase();
-      label.className = "form-label";
-
-      let input;
-      switch (field.control) {
-        case "text":
-        case "number":
-        case "datetime-local":
-          input = document.createElement("input");
-          input.type = field.control;
-          input.value = field.control === "datetime-local" && currentValue
-            ? new Date(currentValue).toISOString().slice(0, 16)
-            : currentValue;
-          break;
-        case "checkbox":
-          input = document.createElement("input");
-          input.type = "checkbox";
-          input.checked = currentValue == "true" || currentValue == 1;
-          break;
-        case "dropdown":
-          input = document.createElement("select");
-          input.className = "form-control";
-          (field.values || []).forEach(val => {
-            const option = document.createElement("option");
-            option.value = val;
-            option.textContent = val;
-            if (val === currentValue) option.selected = true;
-            input.appendChild(option);
-          });
-          break;
-        case "schedule-control":
-        case "venue-control":
-        case "venue-location-control":
-        case "field-attribute-control":
-          input = document.createElement(field.control);
-          try {
-            input.value = typeof currentValue === "string"
-              ? JSON.parse(currentValue)
-              : currentValue;
-          } catch (err) {
-            console.warn("Invalid JSON for field:", field.field, err);
-          }
-          break;
-        default:
-          input = document.createElement("input");
-          input.value = currentValue;
-      }
-
-      input.id = fieldId;
-      input.name = field.field;
-      input.className ||= "form-control";
-      if (!field.edit) input.disabled = true;
-
-      // Attach event triggers if defined
-      if (field.trigger && Array.isArray(field.trigger)) {
-        field.trigger.forEach(trig => {
-          input.addEventListener(trig.event, function (e) {
-            if (typeof window[trig.function] === "function") {
-              window[trig.function](e);
-            } else {
-              console.warn(`Trigger function ${trig.function} not defined.`);
-            }
-          });
-        });
-      }
-
-      formGroup.appendChild(label);
-      formGroup.appendChild(input);
-      form.appendChild(formGroup);
-    });
-  });
-
-  // Setup modal
-  const editModalElement = document.getElementById("myModal");
-  if (!editModalElement) return console.error("Modal not found in the DOM!");
-  editModalElement.removeAttribute("aria-hidden");
-  const editModal = new bootstrap.Modal(editModalElement, { backdrop: "static" });
-  document.getElementById("modal_title").innerHTML = `${page_load_conf.tab} Details`;
-  editModal.show();
-
-  document.getElementById("saveChanges").onclick = function () {
-    const updatedData = { where_data: {}, update: {} };
-
-    data.data.forEach(section => {
-      section.fields.forEach(field => {
-        if (!field.show) return;
-
-        const input = form.elements[field.field];
-        const oldValue = rowData[field.field];
-        let newValue;
-
-        if (field.control === "checkbox") {
-          newValue = input.checked ? 1 : 0;
-        } else if (["schedule-control", "venue-location-control", "venue-control", "field-attribute-control"].includes(field.control)) {
-          const element = document.querySelector(field.control);
-          newValue = element ? element.value : oldValue;
-        } else {
-          newValue = input ? input.value : oldValue;
-        }
-
-        const changed = (typeof oldValue === "object" || typeof newValue === "object")
-          ? JSON.stringify(oldValue) !== JSON.stringify(newValue)
-          : oldValue !== newValue;
-
-        if (changed) {
-          updatedData.update[field.field] = newValue;
-        }
-      });
-    });
-
-    if (Object.keys(updatedData.update).length === 0) {
-      console.log("No changes detected. No update required.");
-      editModal.hide();
-      return;
-    }
-
-    updatedData.where_data[config_path.key] = rowData[config_path.key];
-    console.log("Updated Data:", updatedData);
-    updateEntry(rowData[config_path.key], updatedData);
-    editModal.hide();
-  };
-}
-
 
 // ✅ Function to properly format DateTime for "datetime-local"
 function formatDateTime(dateString) {
@@ -2290,25 +2068,13 @@ function formatDateTime(dateString) {
 
 async function Registration_modal() {
     console.log("Create New  Modal Opened");
-    const selectedCheckboxes = document.querySelectorAll('input[name="editRowSelect[]"]:checked');
-    console.log("Selected Checkboxes:", selectedCheckboxes);
-    let fetchedData 
-    console.log(selectedCheckboxes.length)
-    if (selectedCheckboxes.length >= 2){
-        alert('Please select only one row or none to create the document.'); return;
-    } else if(selectedCheckboxes.length === 1) {
-        const rowData = JSON.parse(selectedCheckboxes[0].value);
-        console.log('Selected Row Data:', rowData, ">>", )
-        fetchedData =await  editRow(rowData, "create")
-        console.log(">>>>>>>>>>>>>>",fetchedData)
-
-    } else{(console.log("creating new form"))}
 
     let form = document.getElementById('createForm');
     if (!form) {
         console.error("Form element not found!");
         return;
     }
+
     form.innerHTML = ""; // Clear previous inputs
     let data = {};
     console.log(selectedItemFromDropdown)
@@ -2325,49 +2091,24 @@ async function Registration_modal() {
         return;
     }
 
-    let allFields = [];
-
-    console.log("👉 Raw Config Data:", data);
+    let fields = [];
 
     for (const entry of data) {
-        console.log(`📁 Processing Entry with helper: ${entry.helper || "none"}`);
-
         for (const field of entry.fields) {
-            console.log("🔍 Original Field:", field);
-
             if (field.control === "dropdown") {
                 if (Array.isArray(field.values) && field.values.length > 0) {
                     field.dropdownValues = field.values;
-                    console.log("✅ Using static dropdown values:", field.values);
                 } else if (entry.helper !== "none") {
                     const fetchedData = await fetchHelperData(entry.helper);
-                    console.log("📥 Fetched helper data:", fetchedData);
-
-                    field.dropdownValues = Array.isArray(fetchedData) && fetchedData.length > 0
-                        ? fetchedData
-                        : (field.default ? [field.default] : []);
-                    console.log("✅ Using helper or default dropdown values:", field.dropdownValues);
+                    console.log("Fetched Data:", fetchedData);
+                    field.dropdownValues = Array.isArray(fetchedData) && fetchedData.length > 0 ? fetchedData : (field.default ? [field.default] : []);
                 } else {
                     field.dropdownValues = field.default ? [field.default] : [];
-                    console.log("⚠️ No values/helper found. Using default:", field.dropdownValues);
                 }
             }
-
-            allFields.push(field);
         }
+        fields = fields.concat(entry.fields);
     }
-
-    console.log("🧮 All Fields Before Sort:", allFields);
-
-    // Sort by seqno (numerically); fallback to Infinity to keep unsequenced items at end
-    const fields = allFields.sort((a, b) => {
-        const aSeq = a.seqno !== undefined ? parseInt(a.seqno) : Infinity;
-        const bSeq = b.seqno !== undefined ? parseInt(b.seqno) : Infinity;
-        return aSeq - bSeq;
-    });
-
-    console.log("✅ Final Fields After Sorting by seqno:", fields);
-
 
     console.log(fields);
 
@@ -2376,7 +2117,7 @@ async function Registration_modal() {
         return;
     }
 
-    /*fields.forEach(field => {
+    fields.forEach(field => {
         console.log(field);
         if (!field.show) return;
 
@@ -2482,7 +2223,7 @@ async function Registration_modal() {
         if (field.onchange !== null) { 
             console.log("field.onchange");
             input.onchange = window[field.onchange];
-            //input.onchange = field.onchange;
+            /*input.onchange = field.onchange;*/
         }
         
        
@@ -2491,112 +2232,7 @@ async function Registration_modal() {
         formGroup.appendChild(label);
         formGroup.appendChild(input);
         form.appendChild(formGroup);
-    });*/
-
-    fields.forEach(field => {
-        console.log(field);
-        if (!field.show) return;
-
-        let formGroup = document.createElement('div');
-        formGroup.className = 'form-group mb-3';
-
-        let label = document.createElement('label');
-        label.textContent = field.field.replace(/_/g, ' ').toUpperCase();
-        label.className = 'form-label';
-
-        let input;
-        const fieldId = field.field;
-        const currentValue = fetchedData?.[0]?.[0]?.[fieldId] ?? field.default ?? "";
-
-        // Control types
-        if (field.control === "dropdown") {
-            input = document.createElement('select');
-            input.className = 'form-control';
-            input.name = fieldId;
-            input.id = fieldId;
-
-            if (field.trigger !== "none" && typeof window[field.trigger] === "function") {
-                window[field.trigger](field.field);
-            }
-
-            if (field.mandatory) input.required = true;
-
-            if (Array.isArray(field.dropdownValues)) {
-                field.dropdownValues.forEach(value => {
-                    let option = document.createElement('option');
-                    option.value = value;
-                    option.textContent = value;
-                    if (value === currentValue) option.selected = true;
-                    input.appendChild(option);
-                });
-            }
-
-            if (field.onchange && typeof window[field.onchange] === "function") {
-                input.addEventListener("change", (e) => window[field.onchange](e));
-            }
-
-        } else if (["schedule-control", "venue-control", "doc-template-control", "attachment-control", "field-attribute-control", "maps-control", "venue-location-control"].includes(field.control)) {
-            input = document.createElement(field.control);
-            input.id = fieldId;
-            if (currentValue) {
-                try {
-                    input.value = typeof currentValue === "string" ? JSON.parse(currentValue) : currentValue;
-                } catch (e) {
-                    console.warn(`Failed to parse value for ${fieldId}`, e);
-                }
-            }
-            if (field.control === "attachment-control" && input.handleSelection) {
-                input.handleSelection(field.type);
-            }
-
-        } else if (field.control === "checkbox") {
-            input = document.createElement('input');
-            input.type = 'checkbox';
-            input.className = 'form-check-input';
-            input.name = fieldId;
-            input.id = fieldId;
-            input.checked = currentValue == "true" || currentValue == 1;
-
-        } else if (field.control === "button") {
-            input = document.createElement('button');
-            input.type = 'button';
-            input.id = field.btn_id || fieldId;
-            input.textContent = field.name || "Button";
-            if (field.class) input.className = field.class;
-
-        } else if (field.control === "file") {
-            input = document.createElement('input');
-            input.type = 'file';
-            input.className = 'form-control';
-            input.name = fieldId;
-            input.id = fieldId;
-            if (field.accept) input.accept = field.accept;
-            if (field.multiple) input.multiple = true;
-
-        } else {
-            // Default input (text, number, datetime, etc.)
-            input = document.createElement('input');
-            input.className = 'form-control';
-            input.name = fieldId;
-            input.id = fieldId;
-            input.value = field.control === "datetime-local" && currentValue
-                ? new Date(currentValue).toISOString().slice(0, 16)
-                : currentValue;
-            input.type = field.control || 'text';
-            if (field.mandatory) input.required = true;
-        }
-
-        if (field.onchange && typeof window[field.onchange] === "function") {
-            input.onchange = window[field.onchange];
-        }
-
-        if (!field.edit) input.setAttribute('disabled', 'true');
-
-        formGroup.appendChild(label);
-        formGroup.appendChild(input);
-        form.appendChild(formGroup);
     });
-
 
     let editModalElement = document.getElementById('registrationModal');
     if (!editModalElement) {
@@ -2711,10 +2347,10 @@ async function Registration_modal() {
             if (!field.show) continue;
             let input = form.elements[field.field];
     
-           /* if (!input && field.control !== 'schedule-control' && field.control !== 'venue-control' && field.control !== 'file') {
+            if (!input && field.control !== 'schedule-control' && field.control !== 'venue-control' && field.control !== 'file') {
                 console.warn(`Field ${field.field} is missing in the form.`);
                 continue;
-            }*/
+            }
     
             if (field.control === 'checkbox') {
                 newData[field.field] = input.checked ? 1 : 0;
