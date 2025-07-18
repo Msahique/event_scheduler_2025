@@ -32,273 +32,298 @@
 
     <!-- Custom Styles -->
     <style>
-        /* Right Sidebar Styles */
-        #show_columns_panel {
-            position: fixed;
-            top: 0;
-            right: -300px; /* Initially hidden */
-            width: 300px;
-            height: 100vh;
-            background-color: #f8f9fa;
-            transition: right 0.3s ease-in-out;
-            z-index: 1050;
-            box-shadow: -2px 0 5px rgba(0,0,0,0.2);
-            padding: 15px;
+    /* Right Sidebar Styles */
+    #show_columns_panel {
+        position: fixed;
+        top: 0;
+        right: -300px;
+        width: 300px;
+        height: 100vh;
+        background-color: #f8f9fa;
+        transition: right 0.3s ease-in-out;
+        z-index: 1050;
+        box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+        padding: 15px;
+    }
+
+    #show_columns_panel.open {
+        right: 0;
+    }
+
+    .show-columns-toggle {
+        position: fixed;
+        top: 60%;
+        right: 0;
+        transform: translateY(-50%);
+        background: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        z-index: 1100;
+        transition: right 0.3s ease-in-out;
+        border-radius: 5px 0 0 5px;
+    }
+
+    .show-columns-toggle.open {
+        right: 300px;
+    }
+
+    #tab_page_filter {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 300px;
+        height: 100vh;
+        background-color: #f8f9fa;
+        transition: left 0.3s ease-in-out;
+        z-index: 1050;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+        padding: 15px;
+    }
+
+    #tab_page_filter.open {
+        left: 0;
+    }
+
+    .filter-toggle {
+        position: fixed;
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+        background: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        z-index: 1100;
+        transition: left 0.3s ease-in-out;
+        border-radius: 0 5px 5px 0;
+    }
+
+    .filter-toggle.open {
+        left: 300px;
+    }
+
+    #calendar {
+        max-width: 100%;
+        height: 80vh;
+        margin: auto;
+    }
+
+    #myCalendar .modal-dialog {
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+
+    #myCalendar .modal-content {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        border-radius: 0;
+    }
+
+    #myCalendar .modal-body {
+        flex-grow: 1;
+        overflow: auto;
+    }
+
+    #myCalendar .modal-footer {
+        border-top: none;
+    }
+
+    #calendar {
+        height: calc(100% - 50px);
+    }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f8f9fa;
+    }
+
+    #title_header {
+        background-color: #007bff;
+        color: white;
+        padding: 20px 0;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    h2 {
+        margin: 0;
+        font-weight: bold;
+    }
+
+    .nav-tabs {
+        border-bottom: 2px solid #007bff;
+    }
+
+    .nav-tabs > li > a {
+        color: #007bff;
+        font-weight: bold;
+    }
+
+    .nav-tabs > li.active > a,
+    .nav-tabs > li.active > a:focus,
+    .nav-tabs > li.active > a:hover {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .tab-content {
+        background-color: white;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-top: none;
+        border-radius: 0 0 5px 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background-color: white;
+        padding: 30px;
+        width: 60%;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+        animation: animatetop 0.4s ease-out;
+        position: relative;
+    }
+
+    .modal-header {
+        border-bottom: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .close-btn {
+        float: right;
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close-btn:hover {
+        color: #000;
+    }
+
+    @keyframes animatetop {
+        from {
+            transform: translateY(-50px);
+            opacity: 0;
         }
-
-        /* Open state */
-        #show_columns_panel.open {
-            right: 0;
+        to {
+            transform: translateY(0);
+            opacity: 1;
         }
+    }
 
-        /* Toggle button */
-        .show-columns-toggle {
-            position: fixed;
-            top: 60%;
-            right: 0;
-            transform: translateY(-50%);
-            background: #007bff;
-            color: #fff;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-            z-index: 1100;
-            transition: right 0.3s ease-in-out;
-            border-radius: 5px 0 0 5px;
-        }
+    #div_iframe {
+        margin-top: 20px;
+    }
 
-        /* Button moves with sidebar */
-        .show-columns-toggle.open {
-            right: 300px;
-        }
-         /* Sidebar Styles */
-         #tab_page_filter {
-            position: fixed;
-            top: 0;
-            left: -300px; /* Initially hidden */
-            width: 300px;
-            height: 100vh;
-            background-color: #f8f9fa;
-            transition: left 0.3s ease-in-out;
-            z-index: 1050;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.2);
-            padding: 15px;
-        }
+    iframe {
+        border: none;
+        border-radius: 5px;
+    }
 
-        /* Open state */
-        #tab_page_filter.open {
-            left: 0;
-        }
+    #footer {
+        background-color: #343a40;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    }
 
-        /* Toggle button */
-        .filter-toggle {
-            position: fixed;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-            background: #007bff;
-            color: #fff;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-            z-index: 1100;
-            transition: left 0.3s ease-in-out;
-            border-radius: 0 5px 5px 0;
-        }
+    #footer a {
+        color: #007bff;
+        text-decoration: none;
+    }
 
-        /* Button moves with sidebar */
-        .filter-toggle.open {
-            left: 300px;
-        }
+    #footer a:hover {
+        text-decoration: underline;
+    }
 
-        /* Sidebar Styles */
-       
+    .dropdown-select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        width: 100%;
+        padding: 10px;
+        padding-right: 30px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: white;
+        cursor: pointer;
+    }
 
+    .custom-dropdown {
+        position: relative;
+        display: inline-block;
+        width: 20%;
+    }
 
+    .custom-dropdown::after {
+        content: "▼";
+        font-size: 14px;
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        pointer-events: none;
+        color: #666;
+    }
 
+    /* === NEW: Fullscreen modal support === */
+    .modal.modal-fullscreen {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        width: 100vw !important;
+        height: 100vh !important;
+        margin: 0 !important;
+        z-index: 1060 !important;
+    }
 
-        #calendar {
-            max-width: 100%;
-            height: 80vh; /* Set height dynamically */
-            margin: auto;
-        }
+    .modal-fullscreen .modal-dialog {
+        width: 100vw !important;
+        height: 100vh !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+    }
 
-        /* Make only this modal fullscreen */
-        #myCalendar .modal-dialog {
-            width: 100%;
-            max-width: 100%;
-            height: 100%;
-            margin: 0;
-        }
+    .modal-fullscreen .modal-content {
+        height: 100% !important;
+        display: flex;
+        flex-direction: column;
+        border-radius: 0;
+    }
 
-        #myCalendar .modal-content {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            border-radius: 0; /* Remove rounded corners */
-        }
+    .modal-fullscreen .modal-body {
+        flex-grow: 1;
+        overflow: auto;
+    }
+</style>
 
-        #myCalendar .modal-body {
-            flex-grow: 1; /* Make body take up remaining space */
-            overflow: auto;
-        }
-
-        #myCalendar .modal-footer {
-            border-top: none;
-        }
-
-        /* Ensure FullCalendar adjusts properly */
-        #calendar {
-            height: calc(100% - 50px); /* Adjust height to fit */
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-        }
-
-        #title_header {
-            background-color: #007bff;
-            color: white;
-            padding: 20px 0;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        h2 {
-            margin: 0;
-            font-weight: bold;
-        }
-
-        .nav-tabs {
-            border-bottom: 2px solid #007bff;
-        }
-
-        .nav-tabs > li > a {
-            color: #007bff;
-            font-weight: bold;
-        }
-
-        .nav-tabs > li.active > a,
-        .nav-tabs > li.active > a:focus,
-        .nav-tabs > li.active > a:hover {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .tab-content {
-            background-color: white;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-top: none;
-            border-radius: 0 0 5px 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-       
-
-        .modal {
-            display: none;
-            position: fixed;
-            padding-top: 50px;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-        }
-
-        .modal-content {
-            background-color: white;
-            padding: 30px;
-            margin: auto;
-            width: 60%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
-            border-radius: 10px;
-            animation: animatetop 0.4s;
-        }
-
-        .modal-header {
-            border-bottom: none;
-        }
-
-        .close-btn {
-            float: right;
-            color: #aaa;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close-btn:hover {
-            color: #000;
-        }
-
-        @keyframes animatetop {
-            from { top: -300px; opacity: 0; }
-            to { top: 0; opacity: 1; }
-        }
-
-        #div_iframe {
-            margin-top: 20px;
-        }
-
-        iframe {
-            border: none;
-            border-radius: 5px;
-        }
-
-        #footer {
-            background-color: #343a40;
-            color: white;
-            text-align: center;
-            padding: 10px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        #footer a {
-            color: #007bff;
-            text-decoration: none;
-        }
-
-        #footer a:hover {
-            text-decoration: underline;
-        }
-
-     
-
-        .dropdown-select {
-            appearance: none; /* Hide default dropdown arrow */
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            width: 100%;
-            padding: 10px;
-            padding-right: 30px; /* Space for arrow */
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: white;
-            cursor: pointer;
-        }
-        .custom-dropdown {
-            position: relative;
-            display: inline-block;
-            width: 20%;
-        }
-        /* Custom dropdown arrow */
-        .custom-dropdown::after {
-            content: "▼"; /* Unicode for dropdown arrow */
-            font-size: 14px;
-            position: absolute;
-            top: 50%;
-            right: 10px;
-            transform: translateY(-50%);
-            pointer-events: none; /* Prevent interaction with the arrow */
-            color: #666;
-        }
-
-    </style>
 </head>
 
 <body>
@@ -609,6 +634,7 @@
 
     
     
+
         <!-- Modal -->
         <div class="modal" id="myModal" tabindex="-1" role="dialog">
             <div class="modal-dialog">
@@ -617,6 +643,9 @@
                     <div class="modal-header">
                         <h4 id="modal_title" class="modal-title"></h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleModalFullscreen(this)">
+                            <i class="fa fa-expand"></i>
+                        </button>
                     </div>
         
                     <!-- Modal Body -->
@@ -643,6 +672,9 @@
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">Registration</h4>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleModalFullscreen(this)">
+                            <i class="fa fa-expand"></i>
+                        </button>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
         
@@ -706,6 +738,9 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 id="calendarModalLabel" class="modal-title">Workdays</h4>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleModalFullscreen(this)">
+                            <i class="fa fa-expand"></i>
+                        </button>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -764,6 +799,9 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Event Details</h5>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleModalFullscreen(this)">
+                            <i class="fa fa-expand"></i>
+                        </button>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -1186,8 +1224,25 @@
         button.innerHTML = sidebar.classList.contains('open') ? '▶' : '◀';
     }
     </script>
+    <script>
+        function toggleModalFullscreen(button) {
+            const modal = button.closest('.modal');
+            modal.classList.toggle('modal-fullscreen');
+
+            const icon = button.querySelector('i');
+            if (modal.classList.contains('modal-fullscreen')) {
+            icon.classList.remove('fa-expand');
+            icon.classList.add('fa-compress');
+            } else {
+            icon.classList.remove('fa-compress');
+            icon.classList.add('fa-expand');
+            }
+        }
+    </script>
+<!DOCTYPE html>
     <!-- Scripts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
      <!-- FullCalendar JS -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js" defer></script>
     <script src="{{ url_for('static', filename='js/main3.js') }}"></script>

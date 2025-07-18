@@ -1,6 +1,7 @@
 var global_settings={"language":"english", }
 
 var MainConfig={
+   "default_fields":{},
     "Entity Config":{
         "controls":[
          {"type":"button","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
@@ -2665,8 +2666,8 @@ var MainConfig={
                     }
                 ],
                 "api":"config/new",
-                "onSuccess":"Role_created()"
-                
+                "onSuccess":"Role_created()",
+                "default_entries":{}
                 },
                 "list":{
                 "roles":["Admin"],  

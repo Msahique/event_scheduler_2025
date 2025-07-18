@@ -633,6 +633,62 @@ class Doc_template_Control extends HTMLElement {
     this.render();
   }
 
+  /*renderFields() {
+  const fieldsList = this.shadowRoot.getElementById("fields-list");
+  fieldsList.innerHTML = "";
+
+  this.fields.forEach((field, index) => {
+    const fieldGroup = document.createElement("div");
+    fieldGroup.className = "field-group";
+
+    const isProtected = ["log", "status", "affiliation", "remarks"].includes(field.name);
+
+    fieldGroup.innerHTML = `
+      <input type="text" class="field-name" placeholder="Enter field name" value="${field.name}">
+      <select class="field-datatype">
+        <option value="string" ${field.datatype === 'string' ? 'selected' : ''}>String</option>
+        <option value="number" ${field.datatype === 'number' ? 'selected' : ''}>Number</option>
+        <option value="boolean" ${field.datatype === 'boolean' ? 'selected' : ''}>Boolean</option>
+        <option value="date" ${field.datatype === 'date' ? 'selected' : ''}>Date</option>
+      </select>
+      <select class="field-unique">
+        <option value="true" ${field.unique === 'true' ? 'selected' : ''}>Yes</option>
+        <option value="false" ${field.unique === 'false' ? 'selected' : ''}>No</option>
+      </select>
+      <select class="field-notnull">
+        <option value="true" ${field.not_null === 'true' ? 'selected' : ''}>Yes</option>
+        <option value="false" ${field.not_null === 'false' ? 'selected' : ''}>No</option>
+      </select>
+      ${isProtected ? '' : `<button class="delete-btn" data-index="${index}">Delete</button>`}
+    `;
+
+    const addListener = (selector, property) => {
+      fieldGroup.querySelector(selector).addEventListener("change", (e) => {
+        this.fields[index][property] = e.target.value;
+        this.dispatchEvent(new CustomEvent('change', { bubbles: true, composed: true }));
+      });
+    };
+
+    fieldGroup.querySelector(".field-name").addEventListener("input", (e) => {
+      this.fields[index].name = e.target.value;
+      this.renderFields(); // re-render to update delete button visibility
+      this.dispatchEvent(new CustomEvent('change', { bubbles: true, composed: true }));
+    });
+
+    addListener(".field-datatype", "datatype");
+    addListener(".field-unique", "unique");
+    addListener(".field-notnull", "not_null");
+
+    if (!isProtected) {
+      fieldGroup.querySelector(".delete-btn").addEventListener("click", () => {
+        this.deleteField(index);
+      });
+    }
+
+    fieldsList.appendChild(fieldGroup);
+  });
+}*/
+  
   render() {
     this.shadowRoot.innerHTML = `
       <style>
@@ -742,8 +798,15 @@ class Doc_template_Control extends HTMLElement {
         <button class="add-btn" id="add-field">+ Add Field</button>
       </div>
     `;
-
+    this.fields.push({ name: "log",unique: "false",datatype: "string",not_null: "false"});
+    this.fields.push({ name: "status",unique: "false",datatype: "string",not_null: "false"});
+    this.fields.push({ name: "affiliation",unique: "false",datatype: "string",not_null: "false"});
+    this.fields.push({ name: "remarks",unique: "false",datatype: "string",not_null: "false"});
+   
+    
+    
     this.shadowRoot.getElementById("add-field").addEventListener("click", () => this.addField());
+    this.dispatchEvent(new CustomEvent('change', { bubbles: true, composed: true }));
     this.renderFields();
   }
 
