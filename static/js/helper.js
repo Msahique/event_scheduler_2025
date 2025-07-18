@@ -91,7 +91,7 @@ async function getDocTemplates1(data) {
         "request_token": "", 
         "tab":"Document Config",
         "event": "getDocTemplates1",
-        "type":"Document Registry",
+        "type":"Document Data Templates",
         "qry": {
             "select_fields": ["doc_type","doc_template"], 
             "where_data": {}

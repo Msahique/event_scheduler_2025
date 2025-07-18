@@ -14,7 +14,7 @@ from db_operations import *
 
 
 # global variables
-mydb = pymysql.connect(
+db = pymysql.connect(
   host="localhost",
   user="root",
   password="root",
@@ -26,7 +26,7 @@ mydb = pymysql.connect(
 db_name = 'event_scheduler2025'
 
 try:
-    mycursor = mydb.cursor()
+    mycursor = db.cursor()
     print("DB connected")
 except:
     print("DB not connected")
@@ -913,7 +913,7 @@ def entityConfig_new():
 @app.route('/config/list_details', methods=['POST', 'GET'])
 def entityConfig_list():
     f=open('config/new/get_DB_data.json');  json_data = json.load(f)
-    print("db name: ",json_data)
+    #print("db name: ",json_data)
     data = json.loads(request.data); print(data)
     
     try:
@@ -1522,7 +1522,7 @@ import requests
 
 def execute_query(query, params=None):
     try:
-        with mydb.cursor() as cursor:
+        with db.cursor() as cursor:
             cursor.execute(query, params)
             return cursor.fetchall()
     except Exception as e:
@@ -1531,9 +1531,9 @@ def execute_query(query, params=None):
 
 def execute_non_query(query, params=None):
     try:
-        with mydb.cursor() as cursor:
+        with db.cursor() as cursor:
             cursor.execute(query, params)
-        mydb.commit()
+        db.commit()
         return True
     except Exception as e:
         print(f"Non-query error: {e}")
@@ -1560,9 +1560,9 @@ def execute_non_query(query, params=None):
 
 def execute_insert(query, params=None):
     try:
-        with mydb.cursor() as cursor:
+        with db.cursor() as cursor:
             cursor.execute(query, params)
-        mydb.commit()
+        db.commit()
         return True
     except Exception as e:
         print(f"❌ Insert Error: {e}")

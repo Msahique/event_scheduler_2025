@@ -7,11 +7,12 @@ var MainConfig={
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
-         {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Role Registry","Affiliation Registry","Resource Category","Resource Registry","Event Category","Message Template","Application Registry","Entity log" ],"textContent": "Items"},
+         {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Role Registry","Affiliation Registry","Resource Category","Resource Registry","Event Category","Message Template","Application Registry","Entity log" ],"trigger":"none","helper":"none","textContent": "Items"},
          {"type": "select", "tag": "entriesPerPage", "roles": ["Admin","Approver","User"], "name": "EntriesPerPage", "options": [2,3,5,10,15,20,25,30,35,40,45,50], "textContent": "Rows/Page"},
         ],
         "Roles":["Admin"],
         "Role Registry":{
+            "doc_title":"",
             "getDataApi":"config/list_details",
             "key":"role_id",
             "attchment_files_path":"",
@@ -21,9 +22,9 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                            {"field":"role_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"entity_id","name":"Entity Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"role_name","name":"Role Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"seqno":"","field":"role_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"entity_id","name":"Entity Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"role_name","name":"Role Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -38,9 +39,9 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                            {"field":"role_id","name":"Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Role Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"entity_id","name":"Entity Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"role_name","name":"Role Name","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"seqno":"","field":"role_id","name":"Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Role Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"entity_id","name":"Entity Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"role_name","name":"Role Name","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -54,9 +55,9 @@ var MainConfig={
                     "data":[
                         {  "helper":"none",
                             "fields":[
-                                {"field":"role_id","name":"Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                                {"field":"entity_id","name":"Entity Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                                {"field":"role_name","name":"Role Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                                {"seqno":"","field":"role_id","name":"Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                                {"seqno":"","field":"entity_id","name":"Entity Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                                {"seqno":"","field":"role_name","name":"Role Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                             ],
                             "edit_option":true,
                             "delete_option":true
@@ -74,12 +75,12 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[    
-                        {"field":"entity_id","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                        {"field":"entity_name","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                        {"field":"entity_type","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                        {"field":"entry_status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["suspended","approved"]},
-                        {"field":"remark","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                        {"field":"change_log","edit":false,"show":false,"control":"text","mandatory":false,"default":""}
+                        {"seqno":"","field":"entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                        {"seqno":"","field":"entity_name","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                        {"seqno":"","field":"entity_type","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                        {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["suspended","approved"]},
+                        {"seqno":"","field":"remark","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                        {"seqno":"","field":"change_log","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":""}
     
                         ],
                         "edit_option":true,
@@ -98,7 +99,7 @@ var MainConfig={
             }
         },
         "Affiliation Registry":{
-            "getDataApi":"affiliation/list_details",
+             "doc_title":"","getDataApi":"affiliation/list_details",
             "key":"affiliation_id",
             "attchment_files_path":"",
             "job":{
@@ -107,13 +108,13 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                            {"field":"affiliation_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Affiliation Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"resource_name","name":"Resource Name","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Resource Name","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"program","name":"Program","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Program","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"entity","name":"Entity","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"department","name":"Department","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Department","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"service","name":"Service","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Service","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"role","name":"Role","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"seqno":"","field":"affiliation_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Affiliation Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"resource_name","name":"Resource Name","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Resource Name","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"program","name":"Program","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Program","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"entity","name":"Entity","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"department","name":"Department","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Department","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"service","name":"Service","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Service","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"role","name":"Role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -128,13 +129,13 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                            {"field":"affiliation_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Affiliation Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"resource_name","name":"Resource Name","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Resource Name","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"program","name":"Program","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Program","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"entity","name":"Entity","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"department","name":"Department","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Department","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"service","name":"Service","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Service","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"role","name":"Role","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"seqno":"","field":"affiliation_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Affiliation Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"resource_name","name":"Resource Name","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Resource Name","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"program","name":"Program","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Program","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"entity","name":"Entity","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"department","name":"Department","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Department","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"service","name":"Service","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Service","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"role","name":"Role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -148,13 +149,13 @@ var MainConfig={
                     "data":[
                         {  "helper":"none",
                            "fields":[
-                            {"field":"affiliation_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Affiliation Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"resource_name","name":"resource_name","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Resource Name","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"program","name":"Program","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Program","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"entity","name":"Entity","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"department","name":"Department","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Department","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"service","name":"Service","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Service","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"role","name":"Role","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"seqno":"","field":"affiliation_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Affiliation Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"resource_name","name":"resource_name","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Resource Name","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"program","name":"Program","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Program","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"entity","name":"Entity","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"department","name":"Department","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Department","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"service","name":"Service","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Service","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"role","name":"Role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                            ],
                             "edit_option":true,
                             "delete_option":true
@@ -172,13 +173,13 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                            {"field":"affiliation_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Affiliation Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"resource_name","name":"Resource Name","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Resource Name","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"program","name":"Program","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Program","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"entity","name":"Entity","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"department","name":"Department","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Department","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"service","name":"Service","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Service","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"role","name":"Role","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"seqno":"","field":"affiliation_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Affiliation Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"resource_name","name":"Resource Name","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Resource Name","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"program","name":"Program","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Program","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"entity","name":"Entity","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"department","name":"Department","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Department","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"service","name":"Service","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Service","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"role","name":"Role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                         ],
                         "edit_option":true,
                         "delete_option":false
@@ -191,7 +192,7 @@ var MainConfig={
             }
         },
         "Event Category":{
-            "getDataApi":"config/list_details",
+             "doc_title":"","getDataApi":"config/list_details",
             "key":"event_type_id",
             "job":{
                 "create":{
@@ -199,9 +200,9 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                            {"field":"event_type_id","name":"Event Type Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Event Type Id","german":"Ereignistyp-ID","arabic":"معرف نوع الحدث","french":"ID du type d'événement"}},
-                            {"field":"entity_id","name":"Entity Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"event_type_name","name":"Event Type Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Event Type Name","german":"Ereignistypname","arabic":"اسم نوع الحدث","french":"Nom du type d'événement"}}
+                            {"seqno":"","field":"event_type_id","name":"Event Type Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Event Type Id","german":"Ereignistyp-ID","arabic":"معرف نوع الحدث","french":"ID du type d'événement"}},
+                            {"seqno":"","field":"entity_id","name":"Entity Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"event_type_name","name":"Event Type Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Event Type Name","german":"Ereignistypname","arabic":"اسم نوع الحدث","french":"Nom du type d'événement"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -214,9 +215,9 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                            {"field":"event_type_id","name":"Event Type Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Event Type Id","german":"Ereignistyp-ID","arabic":"معرف نوع الحدث","french":"ID du type d'événement"}},
-                            {"field":"entity_id","name":"Entity Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"event_type_name","name":"Event Type Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_helper":"getEventType","filter_default_value":"","lang":{"english":"Event Type Name","german":"Ereignistypname","arabic":"اسم نوع الحدث","french":"Nom du type d'événement"}}
+                            {"seqno":"","field":"event_type_id","name":"Event Type Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Event Type Id","german":"Ereignistyp-ID","arabic":"معرف نوع الحدث","french":"ID du type d'événement"}},
+                            {"seqno":"","field":"entity_id","name":"Entity Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"event_type_name","name":"Event Type Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_helper":"getEventType","filter_default_value":"","lang":{"english":"Event Type Name","german":"Ereignistypname","arabic":"اسم نوع الحدث","french":"Nom du type d'événement"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -229,9 +230,9 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                            {"field":"event_type_id","name":"Event Type Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Event Type Id","german":"Ereignistyp-ID","arabic":"معرف نوع الحدث","french":"ID du type d'événement"}},
-                            {"field":"entity_id","name":"Entity Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"event_type_name","name":"Event Type Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Event Type Name","german":"Ereignistypname","arabic":"اسم نوع الحدث","french":"Nom du type d'événement"}}
+                            {"seqno":"","field":"event_type_id","name":"Event Type Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Event Type Id","german":"Ereignistyp-ID","arabic":"معرف نوع الحدث","french":"ID du type d'événement"}},
+                            {"seqno":"","field":"entity_id","name":"Entity Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"event_type_name","name":"Event Type Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Event Type Name","german":"Ereignistypname","arabic":"اسم نوع الحدث","french":"Nom du type d'événement"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -244,12 +245,12 @@ var MainConfig={
                     "data":[
                         {  "helper":"none",
                             "fields":[    
-                            {"field":"entity_id","edit":false,"show":false,"control":"text","mandatory":true,"default":""},
-                            {"field":"entity_name","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                            {"field":"entity_type","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                            {"field":"entry_status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["suspended","approved"]},
-                            {"field":"remark","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                            {"field":"change_log","edit":false,"show":false,"control":"text","mandatory":false,"default":""}
+                            {"seqno":"","field":"entity_id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                            {"seqno":"","field":"entity_name","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                            {"seqno":"","field":"entity_type","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                            {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["suspended","approved"]},
+                            {"seqno":"","field":"remark","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                            {"seqno":"","field":"change_log","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":""}
         
                             ],
                             "edit_option":true,
@@ -263,7 +264,7 @@ var MainConfig={
             }
         },
         "Resource Category":{
-            "getDataApi":"config/list_details",
+             "doc_title":"","getDataApi":"config/list_details",
             "key":"resource_type_id",        
             "job":{
                 "create":{
@@ -271,9 +272,9 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                            {"field":"resource_type_id","name":"Resource Type Id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Resource Type Id","german":"Ereignistyp-ID","arabic":"معرف نوع الحدث","french":"ID du type d'événement"}},
-                            {"field":"entity_id","name":"Entity Id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"resource_type_name","name":"Resource Type Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Resource Type Name","german":"Ereignistypname","arabic":"اسم نوع الحدث","french":"Nom du type d'événement"}}
+                            {"seqno":"","field":"resource_type_id","name":"Resource Type Id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Resource Type Id","german":"Ereignistyp-ID","arabic":"معرف نوع الحدث","french":"ID du type d'événement"}},
+                            {"seqno":"","field":"entity_id","name":"Entity Id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"resource_type_name","name":"Resource Type Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Resource Type Name","german":"Ereignistypname","arabic":"اسم نوع الحدث","french":"Nom du type d'événement"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -286,9 +287,9 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                            {"field":"resource_type_id","name":"Resource Type Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Resource Type Id","german":"Ereignistyp-ID","arabic":"معرف نوع الحدث","french":"ID du type d'événement"}},
-                            {"field":"entity_id","name":"Entity Id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"resource_type_name","name":"Resource Type Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Resource Type Name","german":"Ereignistypname","arabic":"اسم نوع الحدث","french":"Nom du type d'événement"}}
+                            {"seqno":"","field":"resource_type_id","name":"Resource Type Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Resource Type Id","german":"Ereignistyp-ID","arabic":"معرف نوع الحدث","french":"ID du type d'événement"}},
+                            {"seqno":"","field":"entity_id","name":"Entity Id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"resource_type_name","name":"Resource Type Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Resource Type Name","german":"Ereignistypname","arabic":"اسم نوع الحدث","french":"Nom du type d'événement"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -301,9 +302,9 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                            {"field":"resource_type_id","name":"Resource Type Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Resource Type Id","german":"Ereignistyp-ID","arabic":"معرف نوع الحدث","french":"ID du type d'événement"}},
-                            {"field":"entity_id","name":"Entity Id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"resource_type_name","name":"Resource Type Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Resource Type Name","german":"Ereignistypname","arabic":"اسم نوع الحدث","french":"Nom du type d'événement"}}
+                            {"seqno":"","field":"resource_type_id","name":"Resource Type Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Resource Type Id","german":"Ereignistyp-ID","arabic":"معرف نوع الحدث","french":"ID du type d'événement"}},
+                            {"seqno":"","field":"entity_id","name":"Entity Id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"resource_type_name","name":"Resource Type Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Resource Type Name","german":"Ereignistypname","arabic":"اسم نوع الحدث","french":"Nom du type d'événement"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -316,12 +317,12 @@ var MainConfig={
                     "data":[
                         {  "helper":"none",
                             "fields":[    
-                            {"field":"entity_id","edit":false,"show":false,"control":"text","mandatory":true,"default":""},
-                            {"field":"entity_name","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                            {"field":"entity_type","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                            {"field":"entry_status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["suspended","approved"]},
-                            {"field":"remark","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                            {"field":"change_log","edit":false,"show":false,"control":"text","mandatory":false,"default":""}
+                            {"seqno":"","field":"entity_id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                            {"seqno":"","field":"entity_name","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                            {"seqno":"","field":"entity_type","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                            {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["suspended","approved"]},
+                            {"seqno":"","field":"remark","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                            {"seqno":"","field":"change_log","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":""}
         
                             ],
                             "edit_option":true,
@@ -336,6 +337,7 @@ var MainConfig={
         "Resource Registry":{
             "db_name":"event_scheduler2025",
             "table_name":"resource_profile",
+            "doc_title":"",
             "getDataApi":"resource/list_details",
             "key":"resource_id",
             "attchment_files_path":"",
@@ -355,45 +357,45 @@ var MainConfig={
                      "data":[
                         {"helper":"getcurrentuserdetails",
                         "fields":[
-                              {"field":"entity_id","edit":false,"show":true,"control":"text","mandatory":false,"default":"4"},
-                              {"field":"entityname","edit":false,"show":false,"control":"text","mandatory":false,"default":""}
+                              {"seqno":"1","field":"entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"4"},
+                              {"seqno":"3","field":"entityname","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":""}
                            ]
                         },
                         {"helper":"getresorceCategories",
                         "fields":[
-                           {"field":"resource_category","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["cat1","cat2"]}
+                           {"seqno":"5","field":"resource_category","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["cat1","cat2"]}
                            ]
                         },
                         {"helper":"get_affiliation",
                            "fields":[
-                              {"field":"affiliation_id","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":"get_affiliation"}
+                              {"seqno":"7","field":"affiliation_id","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":"get_affiliation"}
                               ]
                            },
                         {  "helper":"none",
                            "fields":[    
-                              {"field":"person_id","edit":false,"show":true,"control":"text","mandatory":false,"default":""},
-                              {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":false,"default":""},
-                              {"field":"details","edit":true,"show":true,"control":"text","mandatory":false,"default":""},
-                              {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":false,"default":""},
-                              {"field":"email","edit":true,"show":true,"control":"text","mandatory":false,"default":""},
-                              {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":false,"default":""},
-                              {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":false,"default":""},
-                              {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":false,"default":""}, 
-                              {"field":"entry_status","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"role","edit":true,"show":true,"control":"text","mandatory":false,"default":""},
-                              {"field":"archive","edit":false,"show":true,"control":"text","mandatory":false,"default":""},
-                              {"field":"photo","edit":true,"show":true,"control":"file","type":"image","formats":"jpg,bmp,pdf,png","mandatory":true,"default":""},
-                              {"field":"photo1","edit":true,"show":true,"control":"attachment-control","type":"image","formats":"jpg,bmp,pdf,png","mandatory":true,"default":""},
-                              {"field":"Audio","edit":true,"show":true,"control":"attachment-control","type":"audio","formats":"jpg,bmp,pdf,png","mandatory":true,"default":""},
-                              {"field":"video","edit":true,"show":true,"control":"attachment-control","type":"video","formats":"jpg,bmp,pdf,png","mandatory":true,"default":""},
-                              {"field":"certificate","edit":true,"show":true,"control":"attachment-control","type":"document","formats":"jpg,bmp,pdf,png","mandatory":true,"default":""},
-                              {"field":"schedule","edit":true,"show":true,"control":"schedule-control","mandatory":true,"default":""}
+                              {"seqno":"9","field":"person_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":""},
+                              {"seqno":"11","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":""},
+                              {"seqno":"13","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":""},
+                              {"seqno":"15","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":""},
+                              {"seqno":"2","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":""},
+                              {"seqno":"4","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":""},
+                              {"seqno":"6","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":""},
+                              {"seqno":"8","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":""}, 
+                              {"seqno":"10","field":"entry_status","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"12","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":""},
+                              {"seqno":"14","field":"archive","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":""},
+                              {"seqno":"16","field":"photo","edit":true,"show":true,"control":"file","type":"image","formats":"jpg,bmp,pdf,png","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"17","field":"photo1","edit":true,"show":true,"control":"attachment-control","type":"image","formats":"jpg,bmp,pdf,png","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"21","field":"Audio","edit":true,"show":true,"control":"attachment-control","type":"audio","formats":"jpg,bmp,pdf,png","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"18","field":"video","edit":true,"show":true,"control":"attachment-control","type":"video","formats":"jpg,bmp,pdf,png","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"20","field":"certificate","edit":true,"show":true,"control":"attachment-control","type":"document","formats":"jpg,bmp,pdf,png","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"19","field":"schedule","edit":true,"show":true,"control":"schedule-control","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                               
-                              //{"field":"Passport Photo","edit":true,"show":true,"control":"AttachmentControl","type":"image","formats":"jpg,bmp,pdf,png","mandatory":true,"default":""},
-                              //{"field":"Voice Consent","edit":true,"show":true,"control":"AttachmentControl","type":"audio","formats":"mp3,wav","mandatory":true,"default":""}, [Complete the types]
-                              //{"field":"Video Consent","edit":true,"show":true,"control":"AttachmentControl","type":"video","formats":"mp4,mpeg,flv","mandatory":true,"default":""},
-                              //{"field":"Bank Statement","edit":true,"show":true,"control":"AttachmentControl","type":"file","formats":"jpg,bmp,pdf,xlxs,doc,docx","mandatory":true,"default":""},
-                              //{"field":"Degree Certificate","edit":true,"show":true,"control":"QRControl","type":"file","formats":"jpg,bmp,pdf,xlxs,doc,docx","mode":"link/encoding","encrypt":"true/false","mandatory":true,"default":""},
+                              //{"seqno":"","field":"Passport Photo","edit":true,"show":true,"control":"AttachmentControl","type":"image","formats":"jpg,bmp,pdf,png","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              //{"seqno":"","field":"Voice Consent","edit":true,"show":true,"control":"AttachmentControl","type":"audio","formats":"mp3,wav","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, [Complete the types]
+                              //{"seqno":"","field":"Video Consent","edit":true,"show":true,"control":"AttachmentControl","type":"video","formats":"mp4,mpeg,flv","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              //{"seqno":"","field":"Bank Statement","edit":true,"show":true,"control":"AttachmentControl","type":"file","formats":"jpg,bmp,pdf,xlxs,doc,docx","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              //{"seqno":"","field":"Degree Certificate","edit":true,"show":true,"control":"QRControl","type":"file","formats":"jpg,bmp,pdf,xlxs,doc,docx","mode":"link/encoding","encrypt":"true/false","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
                               // json structure all attchment 
                               /**
                                *  attachment={
@@ -408,7 +410,7 @@ var MainConfig={
                                     *     "algorithm":"aes-256-cbc",
                                     *     "iv":"1234567890123456"
                                     *  }]
-                                    "mandatory":true
+                                    "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true
                                *  }
                                */
                            ]
@@ -422,29 +424,29 @@ var MainConfig={
                      "data":[
                         {  "helper":"none",
                            "fields":[
-                              {"field": "person_id", "edit": false, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Person ID", "german": "Personalausweis", "arabic": "معرف الشخص", "french": "ID de personne"}},
-                              {"field": "resource_name", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Resource Name", "german": "Ressourcenname", "arabic": "اسم المورد", "french": "Nom de la ressource"}},
-                              {"field": "affiliation_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Affiliation ID", "german": "Ressourcenname", "arabic": "اسم المورد", "french": "Nom de la ressource"}},
-                              {"field": "entity_id", "edit": false, "show": true, "control": "text", "mandatory": false, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Entity ID", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID d'entité"}},
-                              {"field": "resource_category", "edit": false, "show": true, "control": "text", "mandatory": false, "default": "", "filter_type":"dropdown","filter_helper":"getResourceCateory","filter_default_value":["Doctor","Teacher","Admin"],"lang": {"english": "Category", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID d'entité"}},
-                              {"field": "details", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Details", "german": "Einzelheiten", "arabic": "تفاصيل", "french": "Détails"}},
-                              {"field": "phone_number", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Phone Number", "german": "Telefonnummer", "arabic": "رقم الهاتف", "french": "Numéro de téléphone"}},
-                              {"field": "email", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Email", "german": "E-Mail", "arabic": "البريد الإلكتروني", "french": "E-mail"}},
-                              {"field": "alert_url", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert URL", "german": "Alarm-URL", "arabic": "رابط التنبيه", "french": "URL d'alerte"}},
-                              {"field": "alert_preference", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert Preference", "german": "Alarmpräferenz", "arabic": "تفضيل التنبيه", "french": "Préférence d'alerte"}},
-                              {"field": "status_poll_url", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Status Poll URL", "german": "Status-Abfrage-URL", "arabic": "رابط استعلام الحالة", "french": "URL de sondage de statut"}},
-                              {"field": "entry_status", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Entry Status", "german": "Eintragsstatus", "arabic": "حالة الإدخال", "french": "Statut d'entrée"}},
-                              {"field": "role", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"dropdown","filter_helper":"getRole","lang": {"english": "Role", "german": "Rolle", "arabic": "الدور", "french": "Rôle"}},
-                              {"field": "archive", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Archive", "german": "Archiv", "arabic": "أرشيف", "french": "Archive"}},
-                              {"field": "photo", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Photo", "german": "", "arabic": "", "french": ""}},
-                              {"field": "schedule", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Schedule", "german": "", "arabic": "", "french": ""}}
+                              {"seqno":"1","field": "person_id", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Person ID", "german": "Personalausweis", "arabic": "معرف الشخص", "french": "ID de personne"}},
+                              {"seqno":"4","field": "resource_name", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Resource Name", "german": "Ressourcenname", "arabic": "اسم المورد", "french": "Nom de la ressource"}},
+                              {"seqno":"5","field": "affiliation_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Affiliation ID", "german": "Ressourcenname", "arabic": "اسم المورد", "french": "Nom de la ressource"}},
+                              {"seqno":"7","field": "entity_id", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Entity ID", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID d'entité"}},
+                              {"seqno":"9","field": "resource_category", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"dropdown","filter_helper":"getResourceCateory","filter_default_value":["Doctor","Teacher","Admin"],"lang": {"english": "Category", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID d'entité"}},
+                              {"seqno":"11","field": "details", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Details", "german": "Einzelheiten", "arabic": "تفاصيل", "french": "Détails"}},
+                              {"seqno":"13","field": "phone_number", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Phone Number", "german": "Telefonnummer", "arabic": "رقم الهاتف", "french": "Numéro de téléphone"}},
+                              {"seqno":"15","field": "email", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Email", "german": "E-Mail", "arabic": "البريد الإلكتروني", "french": "E-mail"}},
+                              {"seqno":"2","field": "alert_url", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert URL", "german": "Alarm-URL", "arabic": "رابط التنبيه", "french": "URL d'alerte"}},
+                              {"seqno":"3","field": "alert_preference", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert Preference", "german": "Alarmpräferenz", "arabic": "تفضيل التنبيه", "french": "Préférence d'alerte"}},
+                              {"seqno":"6","field": "status_poll_url", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Status Poll URL", "german": "Status-Abfrage-URL", "arabic": "رابط استعلام الحالة", "french": "URL de sondage de statut"}},
+                              {"seqno":"8","field": "entry_status", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Entry Status", "german": "Eintragsstatus", "arabic": "حالة الإدخال", "french": "Statut d'entrée"}},
+                              {"seqno":"10","field": "role", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"dropdown","filter_helper":"getRole","lang": {"english": "Role", "german": "Rolle", "arabic": "الدور", "french": "Rôle"}},
+                              {"seqno":"12","field": "archive", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Archive", "german": "Archiv", "arabic": "أرشيف", "french": "Archive"}},
+                              {"seqno":"14","field": "photo", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Photo", "german": "", "arabic": "", "french": ""}},
+                              {"seqno":"16","field": "schedule", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Schedule", "german": "", "arabic": "", "french": ""}}
                            ],
                            "edit_option":true,
                            "delete_option":true
                         },
                         {  "helper":"getentityname",
                            "fields":[
-                              {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                              {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ],
                            "edit_option":true,
                            "delete_option":true
@@ -456,24 +458,24 @@ var MainConfig={
                      "data":[
                         {  "helper":"none",
                            "fields":[    
-                              {"field":"person_id","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":" entity_id","edit":false,"show":false,"control":"number","mandatory":false, "default":""},
-                              {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                              {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"schedule","edit":true,"show":true,"control":"schedule-control","mandatory":true,"default":""}
+                              {"seqno":"1","field":"person_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"3","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"5","field":" entity_id","edit":false,"show":false,"control":"number","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false, "default":""},
+                              {"seqno":"2","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"4","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"6","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"7","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"9","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"11","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                              {"seqno":"8","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"10","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"12","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"13","field":"schedule","edit":true,"show":true,"control":"schedule-control","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         },
                         {"helper":"getentityname",
                            "fields":[
-                                 {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                                 {"seqno":"14","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                               ]
                         }
                      ],
@@ -497,29 +499,29 @@ var MainConfig={
                      "data":[
                         {"helper":"getcurrentuserdetails",
                         "fields":[
-                              {"field":"entityid","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                              {"seqno":"","field":"entityid","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         },
                         {"helper":"getresorceCategories",
                         "fields":[
-                           {"field":"resource_category","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":""}
+                           {"seqno":"","field":"resource_category","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         },
                         {  "helper":"none",
                            "fields":[    
-                              {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                              {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                              {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                              {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         }
                      ]
@@ -529,25 +531,25 @@ var MainConfig={
                      "data":[
                         {"helper":"getentityname",
                         "fields":[
-                              {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                              {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         },
                         {  "helper":"none",
                         
                            "fields":[    
-                              {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":" entity_id","edit":false,"show":true,"control":"text","mandatory":true, "default":""},
-                              {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                              {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                              {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":" entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true, "default":""},
+                              {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                              {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         }
                      ]
@@ -557,25 +559,25 @@ var MainConfig={
                      "data":[
                         {"helper":"getentityname",
                         "fields":[
-                              {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                              {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         },
                         {  "helper":"none",
                         
                            "fields":[    
-                              {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":" entity_id","edit":false,"show":true,"control":"text","mandatory":true, "default":""},
-                              {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                              {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                              {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":" entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true, "default":""},
+                              {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                              {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         }
                      ]
@@ -591,7 +593,7 @@ var MainConfig={
          "Message Template":{
             "db_name":"event_scheduler2025",
             "table_name":"message_details",
-            "getDataApi":"message/list_details",
+             "doc_title":"","getDataApi":"message/list_details",
             "key":"message_id",
             "controls": [
                {"type": "button", "tag": "create", "roles": ["Admin"], "name": "<i class='fa fa-plus'></i> ", "function": "Registration_modal()", "class": "btn btn-success btn-xs my-xs-btn"},
@@ -608,10 +610,10 @@ var MainConfig={
                   "data":[
                      {  "helper":"none",
                         "fields": [
-                           {"field": "message_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert ID", "german": "Alarm-ID", "arabic": "معرف التنبيه", "french": "ID d'alerte"}},
-                           {"field": "entity_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
-                           {"field": "category", "edit": true, "show": true, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Target Category", "german": "Zielkategorie", "arabic": "فئة الهدف", "french": "Catégorie cible"}},
-                           {"field": "message_body", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Message Body", "german": "Nachrichtenkörper", "arabic": "نص الرسالة", "french": "Corps du message"}}
+                           {"seqno":"","field": "message_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert ID", "german": "Alarm-ID", "arabic": "معرف التنبيه", "french": "ID d'alerte"}},
+                           {"seqno":"","field": "entity_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
+                           {"seqno":"","field": "category", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Target Category", "german": "Zielkategorie", "arabic": "فئة الهدف", "french": "Catégorie cible"}},
+                           {"seqno":"","field": "message_body", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Message Body", "german": "Nachrichtenkörper", "arabic": "نص الرسالة", "french": "Corps du message"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -625,10 +627,10 @@ var MainConfig={
                      "data":[
                         {  "helper":"none",
                            "fields": [
-                              {"field": "message_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Alert ID", "german": "Alarm-ID", "arabic": "معرف التنبيه", "french": "ID d'alerte"}},
-                              {"field": "entity_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
-                              {"field": "category", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Target Category", "german": "Zielkategorie", "arabic": "فئة الهدف", "french": "Catégorie cible"}},
-                              {"field": "message_body", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Message Body", "german": "Nachrichtenkörper", "arabic": "نص الرسالة", "french": "Corps du message"}}
+                              {"seqno":"","field": "message_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Alert ID", "german": "Alarm-ID", "arabic": "معرف التنبيه", "french": "ID d'alerte"}},
+                              {"seqno":"","field": "entity_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
+                              {"seqno":"","field": "category", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Target Category", "german": "Zielkategorie", "arabic": "فئة الهدف", "french": "Catégorie cible"}},
+                              {"seqno":"","field": "message_body", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Message Body", "german": "Nachrichtenkörper", "arabic": "نص الرسالة", "french": "Corps du message"}}
                            ],
                            "edit_option":true,
                            "delete_option":true
@@ -642,10 +644,10 @@ var MainConfig={
                   "data":[
                      {  "helper":"none",
                         "fields": [
-                           {"field": "message_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert ID", "german": "Alarm-ID", "arabic": "معرف التنبيه", "french": "ID d'alerte"}},
-                           {"field": "entity_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
-                           {"field": "category", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Target Category", "german": "Zielkategorie", "arabic": "فئة الهدف", "french": "Catégorie cible"}},
-                           {"field": "message_body", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Message Body", "german": "Nachrichtenkörper", "arabic": "نص الرسالة", "french": "Corps du message"}}
+                           {"seqno":"","field": "message_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert ID", "german": "Alarm-ID", "arabic": "معرف التنبيه", "french": "ID d'alerte"}},
+                           {"seqno":"","field": "entity_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
+                           {"seqno":"","field": "category", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Target Category", "german": "Zielkategorie", "arabic": "فئة الهدف", "french": "Catégorie cible"}},
+                           {"seqno":"","field": "message_body", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Message Body", "german": "Nachrichtenkörper", "arabic": "نص الرسالة", "french": "Corps du message"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -673,29 +675,29 @@ var MainConfig={
                      "data":[
                         {"helper":"getcurrentuserdetails",
                         "fields":[
-                              {"field":"entityid","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                              {"seqno":"","field":"entityid","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         },
                         {"helper":"getresorceCategories",
                         "fields":[
-                           {"field":"resource_category","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":""}
+                           {"seqno":"","field":"resource_category","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         },
                         {  "helper":"none",
                            "fields":[    
-                              {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                              {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                              {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                              {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         }
                      ]
@@ -705,25 +707,25 @@ var MainConfig={
                      "data":[
                         {"helper":"getentityname",
                         "fields":[
-                              {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                              {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         },
                         {  "helper":"none",
                         
                            "fields":[    
-                              {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":" entity_id","edit":false,"show":true,"control":"text","mandatory":true, "default":""},
-                              {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                              {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                              {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":" entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true, "default":""},
+                              {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                              {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         }
                      ]
@@ -733,25 +735,25 @@ var MainConfig={
                      "data":[
                         {"helper":"getentityname",
                         "fields":[
-                              {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                              {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         },
                         {  "helper":"none",
                         
                            "fields":[    
-                              {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":" entity_id","edit":false,"show":true,"control":"text","mandatory":true, "default":""},
-                              {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                              {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                              {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":" entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true, "default":""},
+                              {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                              {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         }
                      ]
@@ -765,7 +767,7 @@ var MainConfig={
          "Application Registry":{
             "db_name":"event_scheduler2025",
             "table_name":"application_registry",
-            "getDataApi":"app_registry/list_details",
+             "doc_title":"","getDataApi":"app_registry/list_details",
             "key":"app_registry_id",
             "attchment_files_path":"",
             "controls": [
@@ -784,10 +786,10 @@ var MainConfig={
                      "data":[
                         {  "helper":"none",
                            "fields":[
-                              {"field": "app_registry_id", "edit": false, "show": false, "control": "text", "mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "App Registry ID", "german": "Personalausweis", "arabic": "معرف الشخص", "french": "ID de personne"}},
-                              {"field": "app_name", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "App Name", "german": "Ressourcenname", "arabic": "اسم المورد", "french": "Nom de la ressource"}},
-                              {"field": "app_lisence", "edit": true, "show": true, "control": "text", "mandatory": false, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "App Lisence", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID d'entité"}},
-                              {"field": "app_apis", "edit": true, "show": true, "control": "text", "mandatory": false, "default": "", "filter_type":"","filter_helper":"getResourceCateory","filter_default_value":["Doctor","Teacher","Admin"],"lang": {"english": "App APIs", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID d'entité"}}
+                              {"seqno":"","field": "app_registry_id", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "App Registry ID", "german": "Personalausweis", "arabic": "معرف الشخص", "french": "ID de personne"}},
+                              {"seqno":"","field": "app_name", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "App Name", "german": "Ressourcenname", "arabic": "اسم المورد", "french": "Nom de la ressource"}},
+                              {"seqno":"","field": "app_lisence", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "App Lisence", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID d'entité"}},
+                              {"seqno":"","field": "app_apis", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"","filter_helper":"getResourceCateory","filter_default_value":["Doctor","Teacher","Admin"],"lang": {"english": "App APIs", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID d'entité"}}
                            ]
                         }
                         
@@ -799,10 +801,10 @@ var MainConfig={
                      "data":[
                         {  "helper":"none",
                            "fields":[
-                              {"field": "app_registry_id", "edit": false, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "App Registry ID", "german": "Personalausweis", "arabic": "معرف الشخص", "french": "ID de personne"}},
-                              {"field": "app_name", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "App Name", "german": "Ressourcenname", "arabic": "اسم المورد", "french": "Nom de la ressource"}},
-                              {"field": "app_lisence", "edit": false, "show": true, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "App Lisence", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID d'entité"}},
-                              {"field": "app_apis", "edit": false, "show": true, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_helper":"getResourceCateory","filter_default_value":["Doctor","Teacher","Admin"],"lang": {"english": "App APIs", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID d'entité"}}
+                              {"seqno":"","field": "app_registry_id", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "App Registry ID", "german": "Personalausweis", "arabic": "معرف الشخص", "french": "ID de personne"}},
+                              {"seqno":"","field": "app_name", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "App Name", "german": "Ressourcenname", "arabic": "اسم المورد", "french": "Nom de la ressource"}},
+                              {"seqno":"","field": "app_lisence", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "App Lisence", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID d'entité"}},
+                              {"seqno":"","field": "app_apis", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_helper":"getResourceCateory","filter_default_value":["Doctor","Teacher","Admin"],"lang": {"english": "App APIs", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID d'entité"}}
                            ],
                            "edit_option":true,
                            "delete_option":true
@@ -815,10 +817,10 @@ var MainConfig={
                      "data":[
                         {  "helper":"none",
                            "fields":[
-                              {"field": "app_registry_id", "edit": false, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "App Registry ID", "german": "Personalausweis", "arabic": "معرف الشخص", "french": "ID de personne"}},
-                              {"field": "app_name", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "App Name", "german": "Ressourcenname", "arabic": "اسم المورد", "french": "Nom de la ressource"}},
-                              {"field": "app_lisence", "edit": false, "show": true, "control": "text", "mandatory": false, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "App Lisence", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID d'entité"}},
-                              {"field": "app_apis", "edit": false, "show": true, "control": "text", "mandatory": false, "default": "", "filter_type":"","filter_helper":"getResourceCateory","filter_default_value":["Doctor","Teacher","Admin"],"lang": {"english": "App APIs", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID d'entité"}}
+                              {"seqno":"","field": "app_registry_id", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "App Registry ID", "german": "Personalausweis", "arabic": "معرف الشخص", "french": "ID de personne"}},
+                              {"seqno":"","field": "app_name", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "App Name", "german": "Ressourcenname", "arabic": "اسم المورد", "french": "Nom de la ressource"}},
+                              {"seqno":"","field": "app_lisence", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "App Lisence", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID d'entité"}},
+                              {"seqno":"","field": "app_apis", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"","filter_helper":"getResourceCateory","filter_default_value":["Doctor","Teacher","Admin"],"lang": {"english": "App APIs", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID d'entité"}}
                            ],
                         }
                        
@@ -843,29 +845,29 @@ var MainConfig={
                      "data":[
                         {"helper":"getcurrentuserdetails",
                         "fields":[
-                              {"field":"entityid","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                              {"seqno":"","field":"entityid","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         },
                         {"helper":"getresorceCategories",
                         "fields":[
-                           {"field":"resource_category","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":""}
+                           {"seqno":"","field":"resource_category","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         },
                         {  "helper":"none",
                            "fields":[    
-                              {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                              {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                              {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                              {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         }
                      ]
@@ -875,25 +877,25 @@ var MainConfig={
                      "data":[
                         {"helper":"getentityname",
                         "fields":[
-                              {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                              {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         },
                         {  "helper":"none",
                         
                            "fields":[    
-                              {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":" entity_id","edit":false,"show":true,"control":"text","mandatory":true, "default":""},
-                              {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                              {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                              {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":" entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true, "default":""},
+                              {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                              {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         }
                      ]
@@ -903,25 +905,25 @@ var MainConfig={
                      "data":[
                         {"helper":"getentityname",
                         "fields":[
-                              {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                              {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         },
                         {  "helper":"none",
                         
                            "fields":[    
-                              {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":" entity_id","edit":false,"show":true,"control":"text","mandatory":true, "default":""},
-                              {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                              {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                              {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                              {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":" entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true, "default":""},
+                              {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                              {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                              {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                            ]
                         }
                      ]
@@ -951,7 +953,7 @@ var MainConfig={
         "db_name":"event_scheduler2025",
         "tab_name":"Entity Category",
         "table_name":"entity_categories",
-        "getDataApi":"config/list_details",
+         "doc_title":"","getDataApi":"config/list_details",
         "key": "entity_id",
         "controls":[
            {"type":"button","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
@@ -968,10 +970,10 @@ var MainConfig={
               "data":[
                  {  "helper":"none",
                     "fields":[   
-                       {"field":"entity_type_id","edit":true,"show":false,"control":"text","mandatory":true,"default":""},
-                       {"field":"entity_type","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"status","edit":false,"show":true,"control":"text","mandatory":true,"default":"draft"},
-                       {"field":"log","edit":false,"show":true,"control":"text","mandatory":true,"default":" "}
+                       {"seqno":"","field":"entity_type_id","edit":true,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"entity_type","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"status","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"draft"},
+                       {"seqno":"","field":"log","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":" "}
                     ]
                  }
               ],
@@ -983,10 +985,10 @@ var MainConfig={
               "data":[
                  {  "helper":"none",
                      "fields":[
-                        {"field":"entity_type_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Entity Category ID","german":"Entitätskategorie-ID","arabic":"معرف فئة الكيان","french":"ID de catégorie d'entité"}},
-                        {"field":"entity_type","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Entity Category Name","german":"Entitätskategoriename","arabic":"اسم فئة الكيان","french":"Nom de catégorie d'entité"}},
-                        {"field":"status","name":"Type","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
-                        {"field":"log","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"filter_type":"","filter_default_value":"","lang":{"english":"Log Status","german":"Protokollstatus","arabic":"حالة السجل","french":"Statut du journal"}}
+                        {"seqno":"","field":"entity_type_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Entity Category ID","german":"Entitätskategorie-ID","arabic":"معرف فئة الكيان","french":"ID de catégorie d'entité"}},
+                        {"seqno":"","field":"entity_type","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Entity Category Name","german":"Entitätskategoriename","arabic":"اسم فئة الكيان","french":"Nom de catégorie d'entité"}},
+                        {"seqno":"","field":"status","name":"Type","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
+                        {"seqno":"","field":"log","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"filter_type":"","filter_default_value":"","lang":{"english":"Log Status","german":"Protokollstatus","arabic":"حالة السجل","french":"Statut du journal"}}
                      ],
                     "edit_option":true,
                     "delete_option":true
@@ -1000,10 +1002,10 @@ var MainConfig={
             "data":[
                {  "helper":"none",
                    "fields":[
-                      {"field":"entity_type_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Category ID","german":"Entitätskategorie-ID","arabic":"معرف فئة الكيان","french":"ID de catégorie d'entité"}},
-                      {"field":"entity_type","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Category Name","german":"Entitätskategoriename","arabic":"اسم فئة الكيان","french":"Nom de catégorie d'entité"}},
-                      {"field":"status","name":"Type","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
-                      {"field":"log","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"filter_type":"textbox","filter_default_value":"","lang":{"english":"Log Status","german":"Protokollstatus","arabic":"حالة السجل","french":"Statut du journal"}}
+                      {"seqno":"","field":"entity_type_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Category ID","german":"Entitätskategorie-ID","arabic":"معرف فئة الكيان","french":"ID de catégorie d'entité"}},
+                      {"seqno":"","field":"entity_type","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Category Name","german":"Entitätskategoriename","arabic":"اسم فئة الكيان","french":"Nom de catégorie d'entité"}},
+                      {"seqno":"","field":"status","name":"Type","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
+                      {"seqno":"","field":"log","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"filter_type":"textbox","filter_default_value":"","lang":{"english":"Log Status","german":"Protokollstatus","arabic":"حالة السجل","french":"Statut du journal"}}
                    ],
                   "edit_option":true,
                   "delete_option":true
@@ -1017,10 +1019,10 @@ var MainConfig={
             "data":[
                {  "helper":"none",
                    "fields":[
-                      {"field":"entity_type_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Category ID","german":"Entitätskategorie-ID","arabic":"معرف فئة الكيان","french":"ID de catégorie d'entité"}},
-                      {"field":"entity_type","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Category Name","german":"Entitätskategoriename","arabic":"اسم فئة الكيان","french":"Nom de catégorie d'entité"}},
-                      {"field":"status","name":"Type","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
-                      {"field":"log","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"filter_type":"textbox","filter_default_value":"","lang":{"english":"Log Status","german":"Protokollstatus","arabic":"حالة السجل","french":"Statut du journal"}}
+                      {"seqno":"","field":"entity_type_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Category ID","german":"Entitätskategorie-ID","arabic":"معرف فئة الكيان","french":"ID de catégorie d'entité"}},
+                      {"seqno":"","field":"entity_type","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Category Name","german":"Entitätskategoriename","arabic":"اسم فئة الكيان","french":"Nom de catégorie d'entité"}},
+                      {"seqno":"","field":"status","name":"Type","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
+                      {"seqno":"","field":"log","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"filter_type":"textbox","filter_default_value":"","lang":{"english":"Log Status","german":"Protokollstatus","arabic":"حالة السجل","french":"Statut du journal"}}
                    ],
                   "edit_option":true,
                   "delete_option":true
@@ -1040,7 +1042,7 @@ var MainConfig={
         "db_name":"event_scheduler2025",
         "tab_name":"Entity",
         "table_name":"entity",
-        "getDataApi":"entity/list_details",
+         "doc_title":"","getDataApi":"entity/list_details",
         "key": "entity_id",
         "controls":[
            {"type":"button","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
@@ -1057,18 +1059,18 @@ var MainConfig={
               "data":[
                  {  "helper":"none",
                     "fields":[    
-                       {"field":"entity_id","edit":true,"show":false,"control":"text","mandatory":true,"default":""},
-                       {"field":"entity_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"entry_status","edit":false,"show":true,"control":"text","mandatory":true,"default":"draft"},
-                       {"field":"ftp_path","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"username","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"password","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"affiliation_id","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":""}
+                       {"seqno":"","field":"entity_id","edit":true,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"entity_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"entry_status","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"draft"},
+                       {"seqno":"","field":"ftp_path","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"username","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"password","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"affiliation_id","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                      ]
                  },
                  {"helper":"getEntityTypes",
                     "fields":[
-                       {"field":"entity_type","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":"entityTypes"}
+                       {"seqno":"","field":"entity_type","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":"entityTypes"}
   
                     ]
                  }
@@ -1080,16 +1082,16 @@ var MainConfig={
               "data":[
                  {  "helper":"none",
                     "fields":[    
-                       {"field":"entity_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english": "Id", "german": "Ausweis", "arabic": "هوية", "french": "Identifiant"}},
-                       {"field":"entity_name","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english": "Name", "german": "Name", "arabic": "اسم", "french": "Nom"}},
-                       {"field":"entity_type","name":"Type","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english": "Type", "german": "Typ", "arabic": "نوع", "french": "Type"}},
-                       {"field":"entry_status","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english": "Status", "german": "Status", "arabic": "حالة", "french": "Statut"}},
-                       {"field":"remark","name":"Remarks","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english": "Remarks", "german": "Bemerkungen", "arabic": "تعليقات", "french": "Remarques"}},
-                       {"field":"change_log","name":"Log","edit":true,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english": "Log", "german": "Protokoll", "arabic": "سجل", "french": "Journal"}},
-                       {"field":"ftp_path","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english": "FTP Path", "german": "Name", "arabic": "اسم", "french": "Nom"}},
-                       {"field":"username","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english": "Username", "german": "Name", "arabic": "اسم", "french": "Nom"}},
-                       {"field":"password","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english": "Password", "german": "Name", "arabic": "اسم", "french": "Nom"}},
-                       {"field":"affiliation_id","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english": "Affiliation Id", "german": "Name", "arabic": "اسم", "french": "Nom"}}
+                       {"seqno":"","field":"entity_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english": "Id", "german": "Ausweis", "arabic": "هوية", "french": "Identifiant"}},
+                       {"seqno":"","field":"entity_name","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english": "Name", "german": "Name", "arabic": "اسم", "french": "Nom"}},
+                       {"seqno":"","field":"entity_type","name":"Type","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english": "Type", "german": "Typ", "arabic": "نوع", "french": "Type"}},
+                       {"seqno":"","field":"entry_status","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english": "Status", "german": "Status", "arabic": "حالة", "french": "Statut"}},
+                       {"seqno":"","field":"remark","name":"Remarks","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english": "Remarks", "german": "Bemerkungen", "arabic": "تعليقات", "french": "Remarques"}},
+                       {"seqno":"","field":"change_log","name":"Log","edit":true,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english": "Log", "german": "Protokoll", "arabic": "سجل", "french": "Journal"}},
+                       {"seqno":"","field":"ftp_path","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english": "FTP Path", "german": "Name", "arabic": "اسم", "french": "Nom"}},
+                       {"seqno":"","field":"username","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english": "Username", "german": "Name", "arabic": "اسم", "french": "Nom"}},
+                       {"seqno":"","field":"password","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english": "Password", "german": "Name", "arabic": "اسم", "french": "Nom"}},
+                       {"seqno":"","field":"affiliation_id","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english": "Affiliation Id", "german": "Name", "arabic": "اسم", "french": "Nom"}}
                        
                     ],
                     "edit_option":true,
@@ -1104,20 +1106,20 @@ var MainConfig={
               "data":[
                  {  "helper":"none",
                     "fields":[    
-                       {"field":"entity_id","edit":false,"show":false,"control":"text","mandatory":true,"default":""},
-                       {"field":"entity_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"entity_type","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"entry_status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"]},
-                       {"field":"remark","edit":true,"show":true,"control":"text","mandatory":false,"default":""},
-                       {"field":"change_log","edit":true,"show":true,"control":"text","mandatory":false,"default":""},
-                       {"field":"ftp_path","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"username","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"password","edit":true,"show":true,"control":"text","mandatory":true,"default":""}
+                       {"seqno":"","field":"entity_id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"entity_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"entity_type","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"]},
+                       {"seqno":"","field":"remark","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":""},
+                       {"seqno":"","field":"change_log","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":""},
+                       {"seqno":"","field":"ftp_path","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"username","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"password","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                     ]
                  },
                  {"helper":"getEntityTypes",
                     "fields":[
-                       {"field":"entity_type","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":"entityTypes"}
+                       {"seqno":"","field":"entity_type","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":"entityTypes"}
   
                     ]
                  }
@@ -1129,16 +1131,16 @@ var MainConfig={
                  "data":[
                     {  "helper":"none",
                        "fields":[    
-                          {"field":"entity_id","edit":false,"show":false,"control":"text","mandatory":true,"default":""},
-                          {"field":"entity_name","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"entity_type","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"entry_status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["suspended","approved"]},
-                          {"field":"remark","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"change_log","edit":false,"show":false,"control":"text","mandatory":false,"default":""},
-                          {"field":"ftp_path","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"username","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"password","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"affiliation_id","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":""}
+                          {"seqno":"","field":"entity_id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"entity_name","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"entity_type","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["suspended","approved"]},
+                          {"seqno":"","field":"remark","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"change_log","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":""},
+                          {"seqno":"","field":"ftp_path","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"username","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"password","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"affiliation_id","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
   
                        ],
                        "edit_option":true,
@@ -1166,7 +1168,7 @@ var MainConfig={
       ],
       "Roles":["Admin"],
       "Doc_status_type":{
-        "getDataApi":"config/list_details",
+         "doc_title":"","getDataApi":"config/list_details",
         "key": "doc_status_type_id",
         "controls":[
            {"type":"button","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
@@ -1183,9 +1185,9 @@ var MainConfig={
               "data":[
                  {  "helper":"none",
                     "fields":[   
-                       {"field":"doc_status_type_id","edit":true,"show":false,"control":"text","mandatory":true,"default":""},
-                       {"field":"doc_status_type","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"log","edit":false,"show":true,"control":"text","mandatory":true,"default":"draft"}
+                       {"seqno":"","field":"doc_status_type_id","edit":true,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"doc_status_type","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"log","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"draft"}
                     ]
                  }
               ],
@@ -1197,9 +1199,9 @@ var MainConfig={
               "data":[
                  {  "helper":"none",
                     "fields":[
-                     {"field":"doc_status_type_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Document Status Type ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
-                     {"field":"doc_status_type","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Document Status Type","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
-                     {"field":"log","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Status Log","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
+                     {"seqno":"","field":"doc_status_type_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Document Status Type ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
+                     {"seqno":"","field":"doc_status_type","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Document Status Type","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
+                     {"seqno":"","field":"log","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Status Log","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
                   ],
                     "edit_option":true,
                     "delete_option":true
@@ -1213,9 +1215,9 @@ var MainConfig={
             "data":[
                {  "helper":"none",
                    "fields":[
-                     {"field":"doc_status_type_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Document Status Type ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
-                     {"field":"doc_status_type","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Document Status Type","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
-                     {"field":"log","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"filter_type":"textbox","filter_default_value":"","lang":{"english":"Status Log","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
+                     {"seqno":"","field":"doc_status_type_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Document Status Type ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
+                     {"seqno":"","field":"doc_status_type","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Document Status Type","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
+                     {"seqno":"","field":"log","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"filter_type":"textbox","filter_default_value":"","lang":{"english":"Status Log","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
                   ],
                   "edit_option":true,
                   "delete_option":true
@@ -1229,9 +1231,9 @@ var MainConfig={
             "data":[
                {  "helper":"none",
                    "fields":[
-                     {"field":"doc_status_type_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Document Status Type ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
-                     {"field":"doc_status_type","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Document Status Type","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
-                     {"field":"log","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"filter_type":"textbox","filter_default_value":"","lang":{"english":"Status Log","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
+                     {"seqno":"","field":"doc_status_type_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Document Status Type ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
+                     {"seqno":"","field":"doc_status_type","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Document Status Type","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
+                     {"seqno":"","field":"log","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"filter_type":"textbox","filter_default_value":"","lang":{"english":"Status Log","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
                   ],
                   "edit_option":true,
                   "delete_option":true
@@ -1250,7 +1252,7 @@ var MainConfig={
       "Com Settings":{},
       "system log":{} ,
       "API Queue":{
-        "getDataApi":"config/list_details",
+         "doc_title":"","getDataApi":"config/list_details",
         "key": "id",
         "controls":[
            {"type":"button","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
@@ -1267,9 +1269,9 @@ var MainConfig={
               "data":[
                  {  "helper":"none",
                     "fields":[   
-                       {"field":"doc_status_type_id","edit":true,"show":false,"control":"text","mandatory":true,"default":""},
-                       {"field":"doc_status_type","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"log","edit":false,"show":true,"control":"text","mandatory":true,"default":"draft"}
+                       {"seqno":"","field":"doc_status_type_id","edit":true,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"doc_status_type","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"log","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"draft"}
                     ]
                  }
               ],
@@ -1281,12 +1283,12 @@ var MainConfig={
               "data":[
                  {  "helper":"none",
                     "fields":[
-                     {"field":"id","name":"Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
-                     {"field":"domain","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Domain","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
-                     {"field":"body","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Body","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
-                     {"field":"endpoint","name":"Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Endpoint","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
-                     {"field":"method","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Method","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
-                     {"field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Status ","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
+                     {"seqno":"","field":"id","name":"Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
+                     {"seqno":"","field":"domain","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Domain","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
+                     {"seqno":"","field":"body","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Body","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
+                     {"seqno":"","field":"endpoint","name":"Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Endpoint","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
+                     {"seqno":"","field":"method","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Method","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
+                     {"seqno":"","field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Status ","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
 
                   ],
                     "edit_option":true,
@@ -1302,9 +1304,9 @@ var MainConfig={
             "data":[
                {  "helper":"none",
                    "fields":[
-                     {"field":"doc_status_type_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Document Status Type ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
-                     {"field":"doc_status_type","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Document Status Type","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
-                     {"field":"log","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"filter_type":"textbox","filter_default_value":"","lang":{"english":"Status Log","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
+                     {"seqno":"","field":"doc_status_type_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Document Status Type ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
+                     {"seqno":"","field":"doc_status_type","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Document Status Type","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
+                     {"seqno":"","field":"log","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"filter_type":"textbox","filter_default_value":"","lang":{"english":"Status Log","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
                   ],
                   "edit_option":true,
                   "delete_option":true
@@ -1318,9 +1320,9 @@ var MainConfig={
             "data":[
                {  "helper":"none",
                    "fields":[
-                     {"field":"doc_status_type_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Document Status Type ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
-                     {"field":"doc_status_type","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Document Status Type","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
-                     {"field":"log","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"filter_type":"textbox","filter_default_value":"","lang":{"english":"Status Log","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
+                     {"seqno":"","field":"doc_status_type_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Document Status Type ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
+                     {"seqno":"","field":"doc_status_type","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Document Status Type","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
+                     {"seqno":"","field":"log","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"filter_type":"textbox","filter_default_value":"","lang":{"english":"Status Log","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
                   ],
                   "edit_option":true,
                   "delete_option":true
@@ -1351,7 +1353,7 @@ var MainConfig={
       "Event Schedule":{
         "db_name":"event_scheduler2025",
         "table_name":"resource_profile",
-        "getDataApi":"event/list_details",
+         "doc_title":"","getDataApi":"event/list_details",
         "key":"event_id",
         "controls": [
            {"type": "button", "tag": "create", "roles": ["Admin"], "name": "<i class='fa fa-plus'></i> ", "function": "Registration_modal()", "class": "btn btn-success btn-xs my-xs-btn"},
@@ -1369,17 +1371,17 @@ var MainConfig={
                
                 {  "helper":"none",
                    "fields":[
-                      {"field": "event_id", "edit": false, "show": false, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
-                      {"field": "name", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Name", "german": "Name", "arabic": "الاسم", "french": "Nom"}},
-                      {"field": "description", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
-                      {"field": "category", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Category", "german": "Kategorie", "arabic": "الفئة", "french": "Catégorie"}},
-                      {"field": "host_entity_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Host Entity ID", "german": "Host-Entitäts-ID", "arabic": "معرف الكيان المضيف", "french": "ID d'entité hôte"}},
-                      {"field": "subscriber_limit", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Subscriber Limit", "german": "Teilnehmerlimit", "arabic": "حد المشتركين", "french": "Limite d'abonnés"}},
-                      {"field": "terms", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Terms", "german": "Bedingungen", "arabic": "الشروط", "french": "Conditions"}},
-                      {"field": "event_ids", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Related Event IDs", "german": "Verwandte Ereignis-IDs", "arabic": "معرفات الأحداث المرتبطة", "french": "ID d'événements associés"}},
-                      {"field": "from_datime", "edit": true, "show": true, "control": "datetime-local", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Start DateTime", "german": "Startdatum und -zeit", "arabic": "تاريخ ووقت البدء", "french": "Date et heure de début"}},
-                      {"field": "to_datime", "edit": true, "show": true, "control": "datetime-local", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "End DateTime", "german": "Enddatum und -zeit", "arabic": "تاريخ ووقت الانتهاء", "french": "Date et heure de fin"}},
-                      {"field": "venue", "edit": true, "show": true, "control": "venue-location-control", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Venue", "german": "Veranstaltungsort", "arabic": "مكان الحدث", "french": "Lieu"}}
+                      {"seqno":"","field": "event_id", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
+                      {"seqno":"","field": "name", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Name", "german": "Name", "arabic": "الاسم", "french": "Nom"}},
+                      {"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                      {"seqno":"","field": "category", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Category", "german": "Kategorie", "arabic": "الفئة", "french": "Catégorie"}},
+                      {"seqno":"","field": "host_entity_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Host Entity ID", "german": "Host-Entitäts-ID", "arabic": "معرف الكيان المضيف", "french": "ID d'entité hôte"}},
+                      {"seqno":"","field": "subscriber_limit", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Subscriber Limit", "german": "Teilnehmerlimit", "arabic": "حد المشتركين", "french": "Limite d'abonnés"}},
+                      {"seqno":"","field": "terms", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Terms", "german": "Bedingungen", "arabic": "الشروط", "french": "Conditions"}},
+                      {"seqno":"","field": "event_ids", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Related Event IDs", "german": "Verwandte Ereignis-IDs", "arabic": "معرفات الأحداث المرتبطة", "french": "ID d'événements associés"}},
+                      {"seqno":"","field": "from_datime", "edit": true, "show": true, "control": "datetime-local", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Start DateTime", "german": "Startdatum und -zeit", "arabic": "تاريخ ووقت البدء", "french": "Date et heure de début"}},
+                      {"seqno":"","field": "to_datime", "edit": true, "show": true, "control": "datetime-local", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "End DateTime", "german": "Enddatum und -zeit", "arabic": "تاريخ ووقت الانتهاء", "french": "Date et heure de fin"}},
+                      {"seqno":"","field": "venue", "edit": true, "show": true, "control": "venue-location-control", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Venue", "german": "Veranstaltungsort", "arabic": "مكان الحدث", "french": "Lieu"}}
                    ]
                    ,
                    "edit_option":true,
@@ -1394,17 +1396,17 @@ var MainConfig={
               "data":[
                  {  "helper":"none",
                     "fields":[
-                        {"field": "event_id", "edit": false, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
-                        {"field": "name", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Name", "german": "Name", "arabic": "الاسم", "french": "Nom"}},
-                        {"field": "description", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
-                        {"field": "category", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"dropdown","filter_helper":"getEventType","filter_default_value":"","lang": {"english": "Category", "german": "Kategorie", "arabic": "الفئة", "french": "Catégorie"}},
-                        {"field": "host_entity_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Host Entity ID", "german": "Host-Entitäts-ID", "arabic": "معرف الكيان المضيف", "french": "ID d'entité hôte"}},
-                        {"field": "subscriber_limit", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Subscriber Limit", "german": "Teilnehmerlimit", "arabic": "حد المشتركين", "french": "Limite d'abonnés"}},
-                        {"field": "terms", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Terms", "german": "Bedingungen", "arabic": "الشروط", "french": "Conditions"}},
-                        {"field": "event_ids", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Related Event IDs", "german": "Verwandte Ereignis-IDs", "arabic": "معرفات الأحداث المرتبطة", "french": "ID d'événements associés"}},
-                        {"field": "from_datime", "edit": true, "show": true, "control": "datetime-local", "mandatory": true, "default": "", "filter_type":"datetime","filter_default_value":"","lang": {"english": "Start DateTime", "german": "Startdatum und -zeit", "arabic": "تاريخ ووقت البدء", "french": "Date et heure de début"}},
-                        {"field": "to_datime", "edit": true, "show": true, "control": "datetime-local", "mandatory": true, "default": "", "filter_type":"datetime","filter_default_value":"","lang": {"english": "End DateTime", "german": "Enddatum und -zeit", "arabic": "تاريخ ووقت الانتهاء", "french": "Date et heure de fin"}},
-                        {"field": "venue", "edit": true, "show": true, "control": "venue-location-control", "mandatory": true, "default": "", "filter_type":"address","filter_default_value":"","lang": {"english": "Venue", "german": "Veranstaltungsort", "arabic": "مكان الحدث", "french": "Lieu"}}
+                        {"seqno":"","field": "event_id", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
+                        {"seqno":"","field": "name", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Name", "german": "Name", "arabic": "الاسم", "french": "Nom"}},
+                        {"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field": "category", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"dropdown","filter_helper":"getEventType","filter_default_value":"","lang": {"english": "Category", "german": "Kategorie", "arabic": "الفئة", "french": "Catégorie"}},
+                        {"seqno":"","field": "host_entity_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Host Entity ID", "german": "Host-Entitäts-ID", "arabic": "معرف الكيان المضيف", "french": "ID d'entité hôte"}},
+                        {"seqno":"","field": "subscriber_limit", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Subscriber Limit", "german": "Teilnehmerlimit", "arabic": "حد المشتركين", "french": "Limite d'abonnés"}},
+                        {"seqno":"","field": "terms", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Terms", "german": "Bedingungen", "arabic": "الشروط", "french": "Conditions"}},
+                        {"seqno":"","field": "event_ids", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Related Event IDs", "german": "Verwandte Ereignis-IDs", "arabic": "معرفات الأحداث المرتبطة", "french": "ID d'événements associés"}},
+                        {"seqno":"","field": "from_datime", "edit": true, "show": true, "control": "datetime-local", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"datetime","filter_default_value":"","lang": {"english": "Start DateTime", "german": "Startdatum und -zeit", "arabic": "تاريخ ووقت البدء", "french": "Date et heure de début"}},
+                        {"seqno":"","field": "to_datime", "edit": true, "show": true, "control": "datetime-local", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"datetime","filter_default_value":"","lang": {"english": "End DateTime", "german": "Enddatum und -zeit", "arabic": "تاريخ ووقت الانتهاء", "french": "Date et heure de fin"}},
+                        {"seqno":"","field": "venue", "edit": true, "show": true, "control": "venue-location-control", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"address","filter_default_value":"","lang": {"english": "Venue", "german": "Veranstaltungsort", "arabic": "مكان الحدث", "french": "Lieu"}}
                       ]
                     ,
                     "edit_option":true,
@@ -1412,7 +1414,7 @@ var MainConfig={
                  },
                  {  "helper":"getentityname",
                     "fields":[
-                       {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                       {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                     ],
                     "edit_option":true,
                     "delete_option":true
@@ -1425,17 +1427,17 @@ var MainConfig={
           "data":[
              {  "helper":"none",
                 "fields":[
-                    {"field": "event_id", "edit": false, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
-                    {"field": "name", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Name", "german": "Name", "arabic": "الاسم", "french": "Nom"}},
-                    {"field": "description", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
-                    {"field": "category", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Category", "german": "Kategorie", "arabic": "الفئة", "french": "Catégorie"}},
-                    {"field": "host_entity_id", "edit": false, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Host Entity ID", "german": "Host-Entitäts-ID", "arabic": "معرف الكيان المضيف", "french": "ID d'entité hôte"}},
-                    {"field": "subscriber_limit", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Subscriber Limit", "german": "Teilnehmerlimit", "arabic": "حد المشتركين", "french": "Limite d'abonnés"}},
-                    {"field": "terms", "edit": false, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Terms", "german": "Bedingungen", "arabic": "الشروط", "french": "Conditions"}},
-                    {"field": "event_ids", "edit": false, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Related Event IDs", "german": "Verwandte Ereignis-IDs", "arabic": "معرفات الأحداث المرتبطة", "french": "ID d'événements associés"}},
-                    {"field": "from_datime", "edit": false, "show": true, "control": "datetime-local", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Start DateTime", "german": "Startdatum und -zeit", "arabic": "تاريخ ووقت البدء", "french": "Date et heure de début"}},
-                    {"field": "to_datime", "edit": false, "show": true, "control": "datetime-local", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "End DateTime", "german": "Enddatum und -zeit", "arabic": "تاريخ ووقت الانتهاء", "french": "Date et heure de fin"}},
-                    {"field": "venue", "edit": true, "show": true, "control": "venue-location-control", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Venue", "german": "Veranstaltungsort", "arabic": "مكان الحدث", "french": "Lieu"}}
+                    {"seqno":"","field": "event_id", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
+                    {"seqno":"","field": "name", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Name", "german": "Name", "arabic": "الاسم", "french": "Nom"}},
+                    {"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                    {"seqno":"","field": "category", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Category", "german": "Kategorie", "arabic": "الفئة", "french": "Catégorie"}},
+                    {"seqno":"","field": "host_entity_id", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Host Entity ID", "german": "Host-Entitäts-ID", "arabic": "معرف الكيان المضيف", "french": "ID d'entité hôte"}},
+                    {"seqno":"","field": "subscriber_limit", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Subscriber Limit", "german": "Teilnehmerlimit", "arabic": "حد المشتركين", "french": "Limite d'abonnés"}},
+                    {"seqno":"","field": "terms", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Terms", "german": "Bedingungen", "arabic": "الشروط", "french": "Conditions"}},
+                    {"seqno":"","field": "event_ids", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Related Event IDs", "german": "Verwandte Ereignis-IDs", "arabic": "معرفات الأحداث المرتبطة", "french": "ID d'événements associés"}},
+                    {"seqno":"","field": "from_datime", "edit": false, "show": true, "control": "datetime-local", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Start DateTime", "german": "Startdatum und -zeit", "arabic": "تاريخ ووقت البدء", "french": "Date et heure de début"}},
+                    {"seqno":"","field": "to_datime", "edit": false, "show": true, "control": "datetime-local", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "End DateTime", "german": "Enddatum und -zeit", "arabic": "تاريخ ووقت الانتهاء", "french": "Date et heure de fin"}},
+                    {"seqno":"","field": "venue", "edit": true, "show": true, "control": "venue-location-control", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Venue", "german": "Veranstaltungsort", "arabic": "مكان الحدث", "french": "Lieu"}}
                   ]
                 ,
                 "edit_option":true,
@@ -1443,7 +1445,7 @@ var MainConfig={
              },
              {  "helper":"getentityname",
                 "fields":[
-                   {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                   {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                 ],
                 "edit_option":true,
                 "delete_option":true
@@ -1469,29 +1471,29 @@ var MainConfig={
               "data":[
                  {"helper":"getcurrentuserdetails",
                  "fields":[
-                       {"field":"entityid","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                       {"seqno":"","field":"entityid","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                     ]
                  },
                  {"helper":"getresorceCategories",
                  "fields":[
-                    {"field":"resource_category","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":""}
+                    {"seqno":"","field":"resource_category","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                     ]
                  },
                  {  "helper":"none",
                     "fields":[    
-                       {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                       {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                       {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                       {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                     ]
                  }
               ]
@@ -1501,25 +1503,25 @@ var MainConfig={
               "data":[
                  {"helper":"getentityname",
                  "fields":[
-                       {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                       {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                     ]
                  },
                  {  "helper":"none",
                  
                     "fields":[    
-                       {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":" entity_id","edit":false,"show":true,"control":"text","mandatory":true, "default":""},
-                       {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                       {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                       {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":" entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true, "default":""},
+                       {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                       {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                     ]
                  }
               ]
@@ -1529,25 +1531,25 @@ var MainConfig={
               "data":[
                  {"helper":"getentityname",
                  "fields":[
-                       {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                       {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                     ]
                  },
                  {  "helper":"none",
                  
                     "fields":[    
-                       {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":" entity_id","edit":false,"show":true,"control":"text","mandatory":true, "default":""},
-                       {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                       {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                       {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":" entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true, "default":""},
+                       {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                       {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                     ]
                  }
               ]
@@ -1562,7 +1564,7 @@ var MainConfig={
       "Alert Schedule":{
         "db_name":"event_scheduler2025",
         "table_name":"alert",
-        "getDataApi":"alert/list_details",
+         "doc_title":"","getDataApi":"alert/list_details",
         "key":"alert_id",
         "controls": [
            {"type": "button", "tag": "create", "roles": ["Admin"], "name": "<i class='fa fa-plus'></i> ", "function": "Registration_modal()", "class": "btn btn-success btn-xs my-xs-btn"},
@@ -1579,18 +1581,18 @@ var MainConfig={
               "data":[
                  {  "helper":"none",
                     "fields":[
-                        {"field": "alert_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert ID", "german": "Alarm-ID", "arabic": "معرف التنبيه", "french": "ID d'alerte"}},
-                        {"field": "event_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
-                        {"field": "target_category", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Target Category", "german": "Zielkategorie", "arabic": "فئة الهدف", "french": "Catégorie cible"}},
-                        {"field": "message_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Message ID", "german": "Nachrichten-ID", "arabic": "معرف الرسالة", "french": "ID du message"}},
-                        {"field": "alert_datetime", "edit": true, "show": true, "control": "datetime-local", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert DateTime", "german": "Alarmdatum und -zeit", "arabic": "تاريخ ووقت التنبيه", "french": "Date et heure d'alerte"}}
+                        {"seqno":"","field": "alert_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert ID", "german": "Alarm-ID", "arabic": "معرف التنبيه", "french": "ID d'alerte"}},
+                        {"seqno":"","field": "event_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
+                        {"seqno":"","field": "target_category", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Target Category", "german": "Zielkategorie", "arabic": "فئة الهدف", "french": "Catégorie cible"}},
+                        {"seqno":"","field": "message_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Message ID", "german": "Nachrichten-ID", "arabic": "معرف الرسالة", "french": "ID du message"}},
+                        {"seqno":"","field": "alert_datetime", "edit": true, "show": true, "control": "datetime-local", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert DateTime", "german": "Alarmdatum und -zeit", "arabic": "تاريخ ووقت التنبيه", "french": "Date et heure d'alerte"}}
                     ],
                     "edit_option":true,
                     "delete_option":true
                  },
                  {  "helper":"getentityname",
                     "fields":[
-                       {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                       {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                     ],
                     "edit_option":true,
                     "delete_option":true
@@ -1603,18 +1605,18 @@ var MainConfig={
               "data":[
                  {  "helper":"none",
                     "fields":[
-                        {"field": "alert_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Alert ID", "german": "Alarm-ID", "arabic": "معرف التنبيه", "french": "ID d'alerte"}},
-                        {"field": "event_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
-                        {"field": "target_category", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Target Category", "german": "Zielkategorie", "arabic": "فئة الهدف", "french": "Catégorie cible"}},
-                        {"field": "message_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Message ID", "german": "Nachrichten-ID", "arabic": "معرف الرسالة", "french": "ID du message"}},
-                        {"field": "alert_datetime", "edit": true, "show": true, "control": "datetime-local", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert DateTime", "german": "Alarmdatum und -zeit", "arabic": "تاريخ ووقت التنبيه", "french": "Date et heure d'alerte"}}
+                        {"seqno":"","field": "alert_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Alert ID", "german": "Alarm-ID", "arabic": "معرف التنبيه", "french": "ID d'alerte"}},
+                        {"seqno":"","field": "event_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
+                        {"seqno":"","field": "target_category", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Target Category", "german": "Zielkategorie", "arabic": "فئة الهدف", "french": "Catégorie cible"}},
+                        {"seqno":"","field": "message_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Message ID", "german": "Nachrichten-ID", "arabic": "معرف الرسالة", "french": "ID du message"}},
+                        {"seqno":"","field": "alert_datetime", "edit": true, "show": true, "control": "datetime-local", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert DateTime", "german": "Alarmdatum und -zeit", "arabic": "تاريخ ووقت التنبيه", "french": "Date et heure d'alerte"}}
                     ],
                     "edit_option":true,
                     "delete_option":true
                  },
                  {  "helper":"getentityname",
                     "fields":[
-                       {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                       {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                     ],
                     "edit_option":true,
                     "delete_option":true
@@ -1627,18 +1629,18 @@ var MainConfig={
               "data":[
                  {  "helper":"none",
                     "fields":[
-                        {"field": "alert_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert ID", "german": "Alarm-ID", "arabic": "معرف التنبيه", "french": "ID d'alerte"}},
-                        {"field": "event_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
-                        {"field": "target_category", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Target Category", "german": "Zielkategorie", "arabic": "فئة الهدف", "french": "Catégorie cible"}},
-                        {"field": "message_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Message ID", "german": "Nachrichten-ID", "arabic": "معرف الرسالة", "french": "ID du message"}},
-                        {"field": "alert_datetime", "edit": true, "show": true, "control": "datetime-local", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert DateTime", "german": "Alarmdatum und -zeit", "arabic": "تاريخ ووقت التنبيه", "french": "Date et heure d'alerte"}}
+                        {"seqno":"","field": "alert_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert ID", "german": "Alarm-ID", "arabic": "معرف التنبيه", "french": "ID d'alerte"}},
+                        {"seqno":"","field": "event_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
+                        {"seqno":"","field": "target_category", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Target Category", "german": "Zielkategorie", "arabic": "فئة الهدف", "french": "Catégorie cible"}},
+                        {"seqno":"","field": "message_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Message ID", "german": "Nachrichten-ID", "arabic": "معرف الرسالة", "french": "ID du message"}},
+                        {"seqno":"","field": "alert_datetime", "edit": true, "show": true, "control": "datetime-local", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert DateTime", "german": "Alarmdatum und -zeit", "arabic": "تاريخ ووقت التنبيه", "french": "Date et heure d'alerte"}}
                     ],
                     "edit_option":true,
                     "delete_option":true
                  },
                  {  "helper":"getentityname",
                     "fields":[
-                       {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                       {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                     ],
                     "edit_option":true,
                     "delete_option":true
@@ -1664,29 +1666,29 @@ var MainConfig={
               "data":[
                  {"helper":"getcurrentuserdetails",
                  "fields":[
-                       {"field":"entityid","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                       {"seqno":"","field":"entityid","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                     ]
                  },
                  {"helper":"getresorceCategories",
                  "fields":[
-                    {"field":"resource_category","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":""}
+                    {"seqno":"","field":"resource_category","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                     ]
                  },
                  {  "helper":"none",
                     "fields":[    
-                       {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                       {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                       {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                       {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                     ]
                  }
               ]
@@ -1696,25 +1698,25 @@ var MainConfig={
               "data":[
                  {"helper":"getentityname",
                  "fields":[
-                       {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                       {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                     ]
                  },
                  {  "helper":"none",
                  
                     "fields":[    
-                       {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":" entity_id","edit":false,"show":true,"control":"text","mandatory":true, "default":""},
-                       {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                       {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                       {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":" entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true, "default":""},
+                       {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                       {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                     ]
                  }
               ]
@@ -1724,25 +1726,25 @@ var MainConfig={
               "data":[
                  {"helper":"getentityname",
                  "fields":[
-                       {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                       {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                     ]
                  },
                  {  "helper":"none",
                  
                     "fields":[    
-                       {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":" entity_id","edit":false,"show":true,"control":"text","mandatory":true, "default":""},
-                       {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                       {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                       {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                       {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":" entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true, "default":""},
+                       {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                       {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                       {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                     ]
                  }
               ]
@@ -1756,7 +1758,7 @@ var MainConfig={
       "Appointment Schedule":{
         "db_name":"event_scheduler2025",
         "table_name":"appointment",
-        "getDataApi":"appointment/list_details",
+         "doc_title":"","getDataApi":"appointment/list_details",
         "key":"appointment_id",
         "controls": [
            {"type": "button", "tag": "create", "roles": ["Admin"], "name": "<i class='fa fa-plus'></i> ", "function": "Registration_modal()", "class": "btn btn-success btn-xs my-xs-btn"},
@@ -1773,34 +1775,34 @@ var MainConfig={
               "data":[
                     {  "helper":"getEventList",
                        "fields":[
-                          {"field": "events", "edit": true, "show": true, "control": "dropdown", "mandatory": true, "default": "","onchange":"handleEventSelection","filter_type":"textbox","filter_default_value":"","lang": {"english": "Appointment ID", "german": "Termin-ID", "arabic": "معرف الموعد", "french": "ID de rendez-vous"}},
+                          {"seqno":"","field": "events", "edit": true, "show": true, "control": "dropdown", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "","onchange":"handleEventSelection","filter_type":"textbox","filter_default_value":"","lang": {"english": "Appointment ID", "german": "Termin-ID", "arabic": "معرف الموعد", "french": "ID de rendez-vous"}},
                        ],
                        "edit_option":true,
                        "delete_option":true
                     },
                     {  "helper":"ResourceType",
                        "fields":[
-                          {"field": "events", "edit": true, "show": true, "control": "dropdown", "mandatory": true, "default": "","onchange":"handleEventSelection","filter_type":"textbox","filter_default_value":"","lang": {"english": "Appointment ID", "german": "Termin-ID", "arabic": "معرف الموعد", "french": "ID de rendez-vous"}},
+                          {"seqno":"","field": "events", "edit": true, "show": true, "control": "dropdown", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "","onchange":"handleEventSelection","filter_type":"textbox","filter_default_value":"","lang": {"english": "Appointment ID", "german": "Termin-ID", "arabic": "معرف الموعد", "french": "ID de rendez-vous"}},
                        ],
                        "edit_option":true,
                        "delete_option":true
                     },
                     {  "helper":"none",
                        "fields":[
-                          {"field": "resource", "edit": true, "show": true, "control": "dropdown", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Appointment ID", "german": "Termin-ID", "arabic": "معرف الموعد", "french": "ID de rendez-vous"}},
+                          {"seqno":"","field": "resource", "edit": true, "show": true, "control": "dropdown", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Appointment ID", "german": "Termin-ID", "arabic": "معرف الموعد", "french": "ID de rendez-vous"}},
                        ],
                        "edit_option":true,
                        "delete_option":true
                     },
                  {  "helper":"none",
                     "fields":[
-                       {"field": "appointment_id", "edit": true, "show": false, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Appointment ID", "german": "Termin-ID", "arabic": "معرف الموعد", "french": "ID de rendez-vous"}},
-                       {"field": "exclusive", "edit": true, "show": true, "control": "dropdown", "mandatory": true, "default": "","values":["YES","NO"], "filter_type":"dropdown","filter_default_value":["0","1"],"lang": {"english": "Exclusive", "german": "Exklusiv", "arabic": "حصري", "french": "Exclusif"}},
-                       {"field": "event_id", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
-                       {"field": "participant_type", "edit": true, "show": true, "control": "dropdown", "mandatory": true, "default": "","values":["Student","patient","user"], "filter_type":"textbox","filter_default_value":"","lang": {"english": "Participant Type", "german": "Teilnehmertyp", "arabic": "نوع المشارك", "french": "Type de participant"}},
-                       {"field": "participant_id", "edit": true, "show": false, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Participant ID", "german": "Teilnehmer-ID", "arabic": "معرف المشارك", "french": "ID du participant"}},
-                       {"field": "status", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Status", "german": "Status", "arabic": "الحالة", "french": "Statut"}},
-                       {"field": "participant_entity_id", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Participant Entity ID", "german": "Teilnehmer-Entitäts-ID", "arabic": "معرف كيان المشارك", "french": "ID d'entité du participant"}}
+                       {"seqno":"","field": "appointment_id", "edit": true, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Appointment ID", "german": "Termin-ID", "arabic": "معرف الموعد", "french": "ID de rendez-vous"}},
+                       {"seqno":"","field": "exclusive", "edit": true, "show": true, "control": "dropdown", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "","values":["YES","NO"], "filter_type":"dropdown","filter_default_value":["0","1"],"lang": {"english": "Exclusive", "german": "Exklusiv", "arabic": "حصري", "french": "Exclusif"}},
+                       {"seqno":"","field": "event_id", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
+                       {"seqno":"","field": "participant_type", "edit": true, "show": true, "control": "dropdown", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "","values":["Student","patient","user"], "filter_type":"textbox","filter_default_value":"","lang": {"english": "Participant Type", "german": "Teilnehmertyp", "arabic": "نوع المشارك", "french": "Type de participant"}},
+                       {"seqno":"","field": "participant_id", "edit": true, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Participant ID", "german": "Teilnehmer-ID", "arabic": "معرف المشارك", "french": "ID du participant"}},
+                       {"seqno":"","field": "status", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Status", "german": "Status", "arabic": "الحالة", "french": "Statut"}},
+                       {"seqno":"","field": "participant_entity_id", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Participant Entity ID", "german": "Teilnehmer-Entitäts-ID", "arabic": "معرف كيان المشارك", "french": "ID d'entité du participant"}}
                     ],
                     "edit_option":true,
                     "delete_option":true
@@ -1813,13 +1815,13 @@ var MainConfig={
                  "data":[
                     {  "helper":"none",
                        "fields": [
-                          {"field": "appointment_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Appointment ID", "german": "Termin-ID", "arabic": "معرف الموعد", "french": "ID de rendez-vous"}},
-                          {"field": "exclusive", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"dropdown","filter_default_value":["0","1"],"lang": {"english": "Exclusive", "german": "Exklusiv", "arabic": "حصري", "french": "Exclusif"}},
-                          {"field": "event_id", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
-                          {"field": "participant_type", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Participant Type", "german": "Teilnehmertyp", "arabic": "نوع المشارك", "french": "Type de participant"}},
-                          {"field": "participant_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Participant ID", "german": "Teilnehmer-ID", "arabic": "معرف المشارك", "french": "ID du participant"}},
-                          {"field": "status", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang": {"english": "Status", "german": "Status", "arabic": "الحالة", "french": "Statut"}},
-                          {"field": "participant_entity_id", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Participant Entity ID", "german": "Teilnehmer-Entitäts-ID", "arabic": "معرف كيان المشارك", "french": "ID d'entité du participant"}}
+                          {"seqno":"","field": "appointment_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Appointment ID", "german": "Termin-ID", "arabic": "معرف الموعد", "french": "ID de rendez-vous"}},
+                          {"seqno":"","field": "exclusive", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"dropdown","filter_default_value":["0","1"],"lang": {"english": "Exclusive", "german": "Exklusiv", "arabic": "حصري", "french": "Exclusif"}},
+                          {"seqno":"","field": "event_id", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
+                          {"seqno":"","field": "participant_type", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Participant Type", "german": "Teilnehmertyp", "arabic": "نوع المشارك", "french": "Type de participant"}},
+                          {"seqno":"","field": "participant_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Participant ID", "german": "Teilnehmer-ID", "arabic": "معرف المشارك", "french": "ID du participant"}},
+                          {"seqno":"","field": "status", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang": {"english": "Status", "german": "Status", "arabic": "الحالة", "french": "Statut"}},
+                          {"seqno":"","field": "participant_entity_id", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Participant Entity ID", "german": "Teilnehmer-Entitäts-ID", "arabic": "معرف كيان المشارك", "french": "ID d'entité du participant"}}
                        ],
                        "edit_option":true,
                        "delete_option":true
@@ -1831,13 +1833,13 @@ var MainConfig={
               "data":[
                  {  "helper":"none",
                     "fields": [
-                       {"field": "appointment_id", "edit": false, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Appointment ID", "german": "Termin-ID", "arabic": "معرف الموعد", "french": "ID de rendez-vous"}},
-                       {"field": "exclusive", "edit": false, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Exclusive", "german": "Exklusiv", "arabic": "حصري", "french": "Exclusif"}},
-                       {"field": "event_id", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
-                       {"field": "participant_type", "edit": false, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Participant Type", "german": "Teilnehmertyp", "arabic": "نوع المشارك", "french": "Type de participant"}},
-                       {"field": "participant_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Participant ID", "german": "Teilnehmer-ID", "arabic": "معرف المشارك", "french": "ID du participant"}},
-                       {"field": "status", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Status", "german": "Status", "arabic": "الحالة", "french": "Statut"}},
-                       {"field": "participant_entity_id", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Participant Entity ID", "german": "Teilnehmer-Entitäts-ID", "arabic": "معرف كيان المشارك", "french": "ID d'entité du participant"}}
+                       {"seqno":"","field": "appointment_id", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Appointment ID", "german": "Termin-ID", "arabic": "معرف الموعد", "french": "ID de rendez-vous"}},
+                       {"seqno":"","field": "exclusive", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Exclusive", "german": "Exklusiv", "arabic": "حصري", "french": "Exclusif"}},
+                       {"seqno":"","field": "event_id", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Event ID", "german": "Ereignis-ID", "arabic": "معرف الحدث", "french": "ID d'événement"}},
+                       {"seqno":"","field": "participant_type", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Participant Type", "german": "Teilnehmertyp", "arabic": "نوع المشارك", "french": "Type de participant"}},
+                       {"seqno":"","field": "participant_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Participant ID", "german": "Teilnehmer-ID", "arabic": "معرف المشارك", "french": "ID du participant"}},
+                       {"seqno":"","field": "status", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Status", "german": "Status", "arabic": "الحالة", "french": "Statut"}},
+                       {"seqno":"","field": "participant_entity_id", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Participant Entity ID", "german": "Teilnehmer-Entitäts-ID", "arabic": "معرف كيان المشارك", "french": "ID d'entité du participant"}}
                     ],
                     "edit_option":true,
                     "delete_option":true
@@ -1871,29 +1873,29 @@ var MainConfig={
                  "data":[
                     {"helper":"getcurrentuserdetails",
                     "fields":[
-                          {"field":"entityid","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                          {"seqno":"","field":"entityid","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                        ]
                     },
                     {"helper":"getresorceCategories",
                     "fields":[
-                       {"field":"resource_category","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":""}
+                       {"seqno":"","field":"resource_category","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                        ]
                     },
                     {  "helper":"none",
                        "fields":[    
-                          {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                          {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                          {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                          {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                        ]
                     }
                  ]
@@ -1903,25 +1905,25 @@ var MainConfig={
                  "data":[
                     {"helper":"getentityname",
                     "fields":[
-                          {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                          {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                        ]
                     },
                     {  "helper":"none",
                     
                        "fields":[    
-                          {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":" entity_id","edit":false,"show":true,"control":"text","mandatory":true, "default":""},
-                          {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                          {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                          {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":" entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true, "default":""},
+                          {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                          {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                        ]
                     }
                  ]
@@ -1931,25 +1933,25 @@ var MainConfig={
                  "data":[
                     {"helper":"getentityname",
                     "fields":[
-                          {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                          {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                        ]
                     },
                     {  "helper":"none",
                     
                        "fields":[    
-                          {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":" entity_id","edit":false,"show":true,"control":"text","mandatory":true, "default":""},
-                          {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                          {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                          {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                          {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":" entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true, "default":""},
+                          {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                          {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                          {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                        ]
                     }
                  ]
@@ -1964,7 +1966,7 @@ var MainConfig={
      "Subscriber Registry":{
         "db_name":"event_scheduler2025",
         "table_name":"message_details",
-        "getDataApi":"subscriber/list_details",
+         "doc_title":"","getDataApi":"subscriber/list_details",
         "key":"subscriber_id",
         "controls": [
            {"type": "button", "tag": "create", "roles": ["Admin"], "name": "<i class='fa fa-plus'></i> ", "function": "Registration_modal()", "class": "btn btn-success btn-xs my-xs-btn"},
@@ -1981,15 +1983,15 @@ var MainConfig={
              "data":[
                 {  "helper":"none",
                    "fields": [
-                         {"field": "subscriber_id", "edit": true, "show": false, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Subscriber ID", "german": "Abonnenten-ID", "arabic": "معرف المشترك", "french": "ID d'abonné"}},
-                         {"field": "name", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Name", "german": "Name", "arabic": "الاسم", "french": "Nom"}},
-                         {"field": "category", "edit": true, "show": true, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Category", "german": "Kategorie", "arabic": "الفئة", "french": "Catégorie"}},
-                         {"field": "phone_number", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Phone Number", "german": "Telefonnummer", "arabic": "رقم الهاتف", "french": "Numéro de téléphone"}},
-                         {"field": "email", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Email", "german": "E-Mail", "arabic": "البريد الإلكتروني", "french": "E-mail"}},
-                         {"field": "alert_url", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert URL", "german": "Alarm-URL", "arabic": "رابط التنبيه", "french": "URL d'alerte"}},
-                         {"field": "alert_preference", "edit": true, "show": true, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert Preference", "german": "Alarmpräferenz", "arabic": "تفضيل التنبيه", "french": "Préférence d'alerte"}},
-                         {"field": "status_poll_url", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Status Poll URL", "german": "Statusabfrage-URL", "arabic": "رابط استعلام الحالة", "french": "URL de sondage de statut"}},
-                         {"field": "log", "edit": true, "show":false, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}}
+                         {"seqno":"","field": "subscriber_id", "edit": true, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Subscriber ID", "german": "Abonnenten-ID", "arabic": "معرف المشترك", "french": "ID d'abonné"}},
+                         {"seqno":"","field": "name", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Name", "german": "Name", "arabic": "الاسم", "french": "Nom"}},
+                         {"seqno":"","field": "category", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Category", "german": "Kategorie", "arabic": "الفئة", "french": "Catégorie"}},
+                         {"seqno":"","field": "phone_number", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Phone Number", "german": "Telefonnummer", "arabic": "رقم الهاتف", "french": "Numéro de téléphone"}},
+                         {"seqno":"","field": "email", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Email", "german": "E-Mail", "arabic": "البريد الإلكتروني", "french": "E-mail"}},
+                         {"seqno":"","field": "alert_url", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert URL", "german": "Alarm-URL", "arabic": "رابط التنبيه", "french": "URL d'alerte"}},
+                         {"seqno":"","field": "alert_preference", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert Preference", "german": "Alarmpräferenz", "arabic": "تفضيل التنبيه", "french": "Préférence d'alerte"}},
+                         {"seqno":"","field": "status_poll_url", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Status Poll URL", "german": "Statusabfrage-URL", "arabic": "رابط استعلام الحالة", "french": "URL de sondage de statut"}},
+                         {"seqno":"","field": "log", "edit": true, "show":false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}}
                    ],
                    "edit_option":true,
                    "delete_option":true
@@ -2002,15 +2004,15 @@ var MainConfig={
                 "data":[
                    {  "helper":"none",
                       "fields": [
-                         {"field": "subscriber_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Subscriber ID", "german": "Abonnenten-ID", "arabic": "معرف المشترك", "french": "ID d'abonné"}},
-                         {"field": "name", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Name", "german": "Name", "arabic": "الاسم", "french": "Nom"}},
-                         {"field": "category", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Category", "german": "Kategorie", "arabic": "الفئة", "french": "Catégorie"}},
-                         {"field": "phone_number", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Phone Number", "german": "Telefonnummer", "arabic": "رقم الهاتف", "french": "Numéro de téléphone"}},
-                         {"field": "email", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Email", "german": "E-Mail", "arabic": "البريد الإلكتروني", "french": "E-mail"}},
-                         {"field": "alert_url", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert URL", "german": "Alarm-URL", "arabic": "رابط التنبيه", "french": "URL d'alerte"}},
-                         {"field": "alert_preference", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert Preference", "german": "Alarmpräferenz", "arabic": "تفضيل التنبيه", "french": "Préférence d'alerte"}},
-                         {"field": "status_poll_url", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Status Poll URL", "german": "Statusabfrage-URL", "arabic": "رابط استعلام الحالة", "french": "URL de sondage de statut"}},
-                         {"field": "log", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}}
+                         {"seqno":"","field": "subscriber_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Subscriber ID", "german": "Abonnenten-ID", "arabic": "معرف المشترك", "french": "ID d'abonné"}},
+                         {"seqno":"","field": "name", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Name", "german": "Name", "arabic": "الاسم", "french": "Nom"}},
+                         {"seqno":"","field": "category", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Category", "german": "Kategorie", "arabic": "الفئة", "french": "Catégorie"}},
+                         {"seqno":"","field": "phone_number", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Phone Number", "german": "Telefonnummer", "arabic": "رقم الهاتف", "french": "Numéro de téléphone"}},
+                         {"seqno":"","field": "email", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Email", "german": "E-Mail", "arabic": "البريد الإلكتروني", "french": "E-mail"}},
+                         {"seqno":"","field": "alert_url", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert URL", "german": "Alarm-URL", "arabic": "رابط التنبيه", "french": "URL d'alerte"}},
+                         {"seqno":"","field": "alert_preference", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert Preference", "german": "Alarmpräferenz", "arabic": "تفضيل التنبيه", "french": "Préférence d'alerte"}},
+                         {"seqno":"","field": "status_poll_url", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Status Poll URL", "german": "Statusabfrage-URL", "arabic": "رابط استعلام الحالة", "french": "URL de sondage de statut"}},
+                         {"seqno":"","field": "log", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}}
                       ],
                       "edit_option":true,
                       "delete_option":true
@@ -2022,15 +2024,15 @@ var MainConfig={
              "data":[
                 {  "helper":"none",
                    "fields": [
-                         {"field": "subscriber_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Subscriber ID", "german": "Abonnenten-ID", "arabic": "معرف المشترك", "french": "ID d'abonné"}},
-                         {"field": "name", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Name", "german": "Name", "arabic": "الاسم", "french": "Nom"}},
-                         {"field": "category", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Category", "german": "Kategorie", "arabic": "الفئة", "french": "Catégorie"}},
-                         {"field": "phone_number", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Phone Number", "german": "Telefonnummer", "arabic": "رقم الهاتف", "french": "Numéro de téléphone"}},
-                         {"field": "email", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Email", "german": "E-Mail", "arabic": "البريد الإلكتروني", "french": "E-mail"}},
-                         {"field": "alert_url", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert URL", "german": "Alarm-URL", "arabic": "رابط التنبيه", "french": "URL d'alerte"}},
-                         {"field": "alert_preference", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert Preference", "german": "Alarmpräferenz", "arabic": "تفضيل التنبيه", "french": "Préférence d'alerte"}},
-                         {"field": "status_poll_url", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Status Poll URL", "german": "Statusabfrage-URL", "arabic": "رابط استعلام الحالة", "french": "URL de sondage de statut"}},
-                         {"field": "log", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}}
+                         {"seqno":"","field": "subscriber_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Subscriber ID", "german": "Abonnenten-ID", "arabic": "معرف المشترك", "french": "ID d'abonné"}},
+                         {"seqno":"","field": "name", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Name", "german": "Name", "arabic": "الاسم", "french": "Nom"}},
+                         {"seqno":"","field": "category", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Category", "german": "Kategorie", "arabic": "الفئة", "french": "Catégorie"}},
+                         {"seqno":"","field": "phone_number", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Phone Number", "german": "Telefonnummer", "arabic": "رقم الهاتف", "french": "Numéro de téléphone"}},
+                         {"seqno":"","field": "email", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Email", "german": "E-Mail", "arabic": "البريد الإلكتروني", "french": "E-mail"}},
+                         {"seqno":"","field": "alert_url", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert URL", "german": "Alarm-URL", "arabic": "رابط التنبيه", "french": "URL d'alerte"}},
+                         {"seqno":"","field": "alert_preference", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert Preference", "german": "Alarmpräferenz", "arabic": "تفضيل التنبيه", "french": "Préférence d'alerte"}},
+                         {"seqno":"","field": "status_poll_url", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Status Poll URL", "german": "Statusabfrage-URL", "arabic": "رابط استعلام الحالة", "french": "URL de sondage de statut"}},
+                         {"seqno":"","field": "log", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}}
                    ],
                    "edit_option":true,
                    "delete_option":true
@@ -2056,29 +2058,29 @@ var MainConfig={
                 "data":[
                    {"helper":"getcurrentuserdetails",
                    "fields":[
-                         {"field":"entityid","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                         {"seqno":"","field":"entityid","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                       ]
                    },
                    {"helper":"getresorceCategories",
                    "fields":[
-                      {"field":"resource_category","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":""}
+                      {"seqno":"","field":"resource_category","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                       ]
                    },
                    {  "helper":"none",
                       "fields":[    
-                         {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                         {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                         {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                         {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                       ]
                    }
                 ]
@@ -2088,25 +2090,25 @@ var MainConfig={
                 "data":[
                    {"helper":"getentityname",
                    "fields":[
-                         {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                         {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                       ]
                    },
                    {  "helper":"none",
                    
                       "fields":[    
-                         {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":" entity_id","edit":false,"show":true,"control":"text","mandatory":true, "default":""},
-                         {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                         {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                         {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":" entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true, "default":""},
+                         {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                         {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                       ]
                    }
                 ]
@@ -2116,25 +2118,25 @@ var MainConfig={
                 "data":[
                    {"helper":"getentityname",
                    "fields":[
-                         {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                         {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                       ]
                    },
                    {  "helper":"none",
                    
                       "fields":[    
-                         {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":" entity_id","edit":false,"show":true,"control":"text","mandatory":true, "default":""},
-                         {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                         {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                         {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":" entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true, "default":""},
+                         {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                         {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                       ]
                    }
                 ]
@@ -2160,7 +2162,7 @@ var MainConfig={
       ],
       "Roles":["Admin"],
       "Program Registry":{
-        "getDataApi":"program_registry/list_details",
+         "doc_title":"","getDataApi":"program_registry/list_details",
         "key": "program_registry_id",
         "controls":[
            {"type":"button","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
@@ -2177,15 +2179,15 @@ var MainConfig={
               "data":[
                  {  "helper":"none",
                     "fields":[
-                     {"field":"program_registry_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Program Registry ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
-                     {"field":"program_name","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Program Name","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
-                     {"field":"program_owner_entity","name":"Status","edit":true,"show":true,"control":"text","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"filtertype":"textbox","filter_default_value":"","lang":{"english":"Program Owner Entity","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
+                     {"seqno":"","field":"program_registry_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Program Registry ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
+                     {"seqno":"","field":"program_name","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Program Name","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
+                     {"seqno":"","field":"program_owner_entity","name":"Status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"filtertype":"textbox","filter_default_value":"","lang":{"english":"Program Owner Entity","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
                      
                   ],
                  },
                  {"helper":"get_program_services",
                   "fields":[
-                     {"field":"program_services","name":"program_services","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Program Services","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
+                     {"seqno":"","field":"program_services","name":"program_services","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Program Services","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
                      ]
                  }
               ],
@@ -2197,10 +2199,10 @@ var MainConfig={
               "data":[
                  {  "helper":"none",
                     "fields":[
-                     {"field":"program_registry_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Program Registry ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
-                     {"field":"program_name","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Program Name","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
-                     {"field":"program_owner_entity","name":"Status","edit":true,"show":true,"control":"text","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Program Owner Entity","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
-                     {"field":"program_services","name":"Status","edit":true,"show":true,"control":"text","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Program Services","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
+                     {"seqno":"","field":"program_registry_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Program Registry ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
+                     {"seqno":"","field":"program_name","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Program Name","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
+                     {"seqno":"","field":"program_owner_entity","name":"Status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Program Owner Entity","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
+                     {"seqno":"","field":"program_services","name":"Status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Program Services","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
                   ],
                     "edit_option":true,
                     "delete_option":true
@@ -2214,10 +2216,10 @@ var MainConfig={
             "data":[
                {  "helper":"none",
                   "fields":[
-                     {"field":"program_registry_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Program Registry ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
-                     {"field":"program_name","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Program Name","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
-                     {"field":"program_owner_entity","name":"Status","edit":true,"show":true,"control":"text","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Program Owner Entity","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
-                     {"field":"program_services","name":"Status","edit":true,"show":true,"control":"text","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Program Services","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
+                     {"seqno":"","field":"program_registry_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Program Registry ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
+                     {"seqno":"","field":"program_name","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Program Name","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
+                     {"seqno":"","field":"program_owner_entity","name":"Status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Program Owner Entity","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
+                     {"seqno":"","field":"program_services","name":"Status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Program Services","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
                   ],
                   "edit_option":true,
                   "delete_option":true
@@ -2231,10 +2233,10 @@ var MainConfig={
             "data":[
                {  "helper":"none",
                    "fields":[
-                     {"field":"program_registry_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Program Registry ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
-                     {"field":"program_name","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Program Name","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
-                     {"field":"program_owner_entity","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Program Owner Entity","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
-                     {"field":"program_services","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Program Services","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
+                     {"seqno":"","field":"program_registry_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Program Registry ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
+                     {"seqno":"","field":"program_name","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Program Name","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
+                     {"seqno":"","field":"program_owner_entity","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Program Owner Entity","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
+                     {"seqno":"","field":"program_services","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Program Services","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
                   ],
                   "edit_option":true,
                   "delete_option":true
@@ -2263,7 +2265,7 @@ var MainConfig={
       ],
       "Roles":["Admin"],
       "Service Registry":{
-        "getDataApi":"service_registry/list_details",
+         "doc_title":"","getDataApi":"service_registry/list_details",
         "key": "gov_srevice_id",
         "controls":[
            {"type":"button","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
@@ -2280,12 +2282,12 @@ var MainConfig={
               "data":[
                  {  "helper":"none",
                      "fields":[
-                        {"field":"gov_service_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Service Registry ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
-                        {"field":"gov_service_name","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Service Name","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
-                        {"field":"description","name":"Status","edit":true,"show":true,"control":"text","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Description","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
-                        {"field":"terms&conditions","name":"Status","edit":true,"show":true,"control":"text","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Terms&Conditions","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
-                        {"field":"policy","name":"Status","edit":true,"show":true,"control":"text","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"policy","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
-                        {"field":"role","name":"Status","edit":true,"show":true,"control":"venue-location-control","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"role","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
+                        {"seqno":"","field":"gov_service_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Service Registry ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
+                        {"seqno":"","field":"gov_service_name","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Service Name","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
+                        {"seqno":"","field":"description","name":"Status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Description","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
+                        {"seqno":"","field":"terms&conditions","name":"Status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Terms&Conditions","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
+                        {"seqno":"","field":"policy","name":"Status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"policy","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
+                        {"seqno":"","field":"role","name":"Status","edit":true,"show":true,"control":"venue-location-control","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"role","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
                      ]
                  }
               ],
@@ -2297,12 +2299,12 @@ var MainConfig={
               "data":[
                  {  "helper":"none",
                     "fields":[
-                     {"field":"gov_service_id","name":"Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Service Registry ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
-                     {"field":"gov_service_name","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Service Name","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
-                     {"field":"description","name":"Status","edit":true,"show":true,"control":"text","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Description","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
-                     {"field":"terms&conditions","name":"Status","edit":true,"show":true,"control":"text","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Terms&Conditions","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
-                     {"field":"policy","name":"Status","edit":true,"show":true,"control":"text","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"policy","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
-                     {"field":"role","name":"Status","edit":true,"show":true,"control":"text","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"role","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
+                     {"seqno":"","field":"gov_service_id","name":"Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Service Registry ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
+                     {"seqno":"","field":"gov_service_name","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Service Name","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
+                     {"seqno":"","field":"description","name":"Status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Description","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
+                     {"seqno":"","field":"terms&conditions","name":"Status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Terms&Conditions","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
+                     {"seqno":"","field":"policy","name":"Status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"policy","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
+                     {"seqno":"","field":"role","name":"Status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"role","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
                   ],
                     "edit_option":true,
                     "delete_option":true
@@ -2316,12 +2318,12 @@ var MainConfig={
             "data":[
                {  "helper":"none",
                   "fields":[
-                     {"field":"gov_service_id","name":"Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Service Registry ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
-                     {"field":"gov_service_name","name":"Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Service Name","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
-                     {"field":"description","name":"Status","edit":true,"show":true,"control":"text","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Description","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
-                     {"field":"terms&conditions","name":"Status","edit":true,"show":true,"control":"text","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Terms&Conditions","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
-                     {"field":"policy","name":"Status","edit":true,"show":true,"control":"text","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"policy","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
-                     {"field":"role","name":"Status","edit":true,"show":true,"control":"text","mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"role","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
+                     {"seqno":"","field":"gov_service_id","name":"Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Service Registry ID","german":"Dokumentenstatus-Typ-ID","arabic":"معرف نوع حالة المستند","french":"ID du type de statut du document"}},
+                     {"seqno":"","field":"gov_service_name","name":"Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"dropdown","filter_helper":"getStatus","filter_default_value":"","lang":{"english":"Service Name","german":"Dokumentenstatus-Typ","arabic":"نوع حالة المستند","french":"Type de statut du document"}},
+                     {"seqno":"","field":"description","name":"Status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Description","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
+                     {"seqno":"","field":"terms&conditions","name":"Status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"Terms&Conditions","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
+                     {"seqno":"","field":"policy","name":"Status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"policy","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}},
+                     {"seqno":"","field":"role","name":"Status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["draft","submitted","canceled","suspended","approved"],"":"textbox","filter_default_value":"","lang":{"english":"role","german":"Statusprotokoll","arabic":"سجل الحالة","french":"Journal des statuts"}}
                   ],
                   "edit_option":true,
                   "delete_option":true
@@ -2352,7 +2354,7 @@ var MainConfig={
       "Subscriber Registry":{
         "db_name":"event_scheduler2025",
         "table_name":"message_details",
-        "getDataApi":"subscriber/list_details",
+         "doc_title":"","getDataApi":"subscriber/list_details",
         "key":"subscriber_id",
         "controls": [
            {"type": "button", "tag": "create", "roles": ["Admin"], "name": "<i class='fa fa-plus'></i> ", "function": "Registration_modal()", "class": "btn btn-success btn-xs my-xs-btn"},
@@ -2369,15 +2371,15 @@ var MainConfig={
              "data":[
                 {  "helper":"none",
                    "fields": [
-                         {"field": "subscriber_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Subscriber ID", "german": "Abonnenten-ID", "arabic": "معرف المشترك", "french": "ID d'abonné"}},
-                         {"field": "name", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Name", "german": "Name", "arabic": "الاسم", "french": "Nom"}},
-                         {"field": "category", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Category", "german": "Kategorie", "arabic": "الفئة", "french": "Catégorie"}},
-                         {"field": "phone_number", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Phone Number", "german": "Telefonnummer", "arabic": "رقم الهاتف", "french": "Numéro de téléphone"}},
-                         {"field": "email", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Email", "german": "E-Mail", "arabic": "البريد الإلكتروني", "french": "E-mail"}},
-                         {"field": "alert_url", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert URL", "german": "Alarm-URL", "arabic": "رابط التنبيه", "french": "URL d'alerte"}},
-                         {"field": "alert_preference", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert Preference", "german": "Alarmpräferenz", "arabic": "تفضيل التنبيه", "french": "Préférence d'alerte"}},
-                         {"field": "status_poll_url", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Status Poll URL", "german": "Statusabfrage-URL", "arabic": "رابط استعلام الحالة", "french": "URL de sondage de statut"}},
-                         {"field": "log", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}}
+                         {"seqno":"","field": "subscriber_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Subscriber ID", "german": "Abonnenten-ID", "arabic": "معرف المشترك", "french": "ID d'abonné"}},
+                         {"seqno":"","field": "name", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Name", "german": "Name", "arabic": "الاسم", "french": "Nom"}},
+                         {"seqno":"","field": "category", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Category", "german": "Kategorie", "arabic": "الفئة", "french": "Catégorie"}},
+                         {"seqno":"","field": "phone_number", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Phone Number", "german": "Telefonnummer", "arabic": "رقم الهاتف", "french": "Numéro de téléphone"}},
+                         {"seqno":"","field": "email", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Email", "german": "E-Mail", "arabic": "البريد الإلكتروني", "french": "E-mail"}},
+                         {"seqno":"","field": "alert_url", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert URL", "german": "Alarm-URL", "arabic": "رابط التنبيه", "french": "URL d'alerte"}},
+                         {"seqno":"","field": "alert_preference", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert Preference", "german": "Alarmpräferenz", "arabic": "تفضيل التنبيه", "french": "Préférence d'alerte"}},
+                         {"seqno":"","field": "status_poll_url", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Status Poll URL", "german": "Statusabfrage-URL", "arabic": "رابط استعلام الحالة", "french": "URL de sondage de statut"}},
+                         {"seqno":"","field": "log", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}}
                    ],
                    "edit_option":true,
                    "delete_option":true
@@ -2390,15 +2392,15 @@ var MainConfig={
                 "data":[
                    {  "helper":"none",
                       "fields": [
-                         {"field": "subscriber_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Subscriber ID", "german": "Abonnenten-ID", "arabic": "معرف المشترك", "french": "ID d'abonné"}},
-                         {"field": "name", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Name", "german": "Name", "arabic": "الاسم", "french": "Nom"}},
-                         {"field": "category", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Category", "german": "Kategorie", "arabic": "الفئة", "french": "Catégorie"}},
-                         {"field": "phone_number", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Phone Number", "german": "Telefonnummer", "arabic": "رقم الهاتف", "french": "Numéro de téléphone"}},
-                         {"field": "email", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Email", "german": "E-Mail", "arabic": "البريد الإلكتروني", "french": "E-mail"}},
-                         {"field": "alert_url", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert URL", "german": "Alarm-URL", "arabic": "رابط التنبيه", "french": "URL d'alerte"}},
-                         {"field": "alert_preference", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert Preference", "german": "Alarmpräferenz", "arabic": "تفضيل التنبيه", "french": "Préférence d'alerte"}},
-                         {"field": "status_poll_url", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Status Poll URL", "german": "Statusabfrage-URL", "arabic": "رابط استعلام الحالة", "french": "URL de sondage de statut"}},
-                         {"field": "log", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}}
+                         {"seqno":"","field": "subscriber_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Subscriber ID", "german": "Abonnenten-ID", "arabic": "معرف المشترك", "french": "ID d'abonné"}},
+                         {"seqno":"","field": "name", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Name", "german": "Name", "arabic": "الاسم", "french": "Nom"}},
+                         {"seqno":"","field": "category", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Category", "german": "Kategorie", "arabic": "الفئة", "french": "Catégorie"}},
+                         {"seqno":"","field": "phone_number", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Phone Number", "german": "Telefonnummer", "arabic": "رقم الهاتف", "french": "Numéro de téléphone"}},
+                         {"seqno":"","field": "email", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Email", "german": "E-Mail", "arabic": "البريد الإلكتروني", "french": "E-mail"}},
+                         {"seqno":"","field": "alert_url", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert URL", "german": "Alarm-URL", "arabic": "رابط التنبيه", "french": "URL d'alerte"}},
+                         {"seqno":"","field": "alert_preference", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert Preference", "german": "Alarmpräferenz", "arabic": "تفضيل التنبيه", "french": "Préférence d'alerte"}},
+                         {"seqno":"","field": "status_poll_url", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Status Poll URL", "german": "Statusabfrage-URL", "arabic": "رابط استعلام الحالة", "french": "URL de sondage de statut"}},
+                         {"seqno":"","field": "log", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}}
                       ],
                       "edit_option":true,
                       "delete_option":true
@@ -2410,15 +2412,15 @@ var MainConfig={
              "data":[
                 {  "helper":"none",
                    "fields": [
-                         {"field": "subscriber_id", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Subscriber ID", "german": "Abonnenten-ID", "arabic": "معرف المشترك", "french": "ID d'abonné"}},
-                         {"field": "name", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Name", "german": "Name", "arabic": "الاسم", "french": "Nom"}},
-                         {"field": "category", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Category", "german": "Kategorie", "arabic": "الفئة", "french": "Catégorie"}},
-                         {"field": "phone_number", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Phone Number", "german": "Telefonnummer", "arabic": "رقم الهاتف", "french": "Numéro de téléphone"}},
-                         {"field": "email", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Email", "german": "E-Mail", "arabic": "البريد الإلكتروني", "french": "E-mail"}},
-                         {"field": "alert_url", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert URL", "german": "Alarm-URL", "arabic": "رابط التنبيه", "french": "URL d'alerte"}},
-                         {"field": "alert_preference", "edit": false, "show": false, "control": "text", "mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert Preference", "german": "Alarmpräferenz", "arabic": "تفضيل التنبيه", "french": "Préférence d'alerte"}},
-                         {"field": "status_poll_url", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Status Poll URL", "german": "Statusabfrage-URL", "arabic": "رابط استعلام الحالة", "french": "URL de sondage de statut"}},
-                         {"field": "log", "edit": true, "show": true, "control": "text", "mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}}
+                         {"seqno":"","field": "subscriber_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Subscriber ID", "german": "Abonnenten-ID", "arabic": "معرف المشترك", "french": "ID d'abonné"}},
+                         {"seqno":"","field": "name", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Name", "german": "Name", "arabic": "الاسم", "french": "Nom"}},
+                         {"seqno":"","field": "category", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Category", "german": "Kategorie", "arabic": "الفئة", "french": "Catégorie"}},
+                         {"seqno":"","field": "phone_number", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Phone Number", "german": "Telefonnummer", "arabic": "رقم الهاتف", "french": "Numéro de téléphone"}},
+                         {"seqno":"","field": "email", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Email", "german": "E-Mail", "arabic": "البريد الإلكتروني", "french": "E-mail"}},
+                         {"seqno":"","field": "alert_url", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert URL", "german": "Alarm-URL", "arabic": "رابط التنبيه", "french": "URL d'alerte"}},
+                         {"seqno":"","field": "alert_preference", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Alert Preference", "german": "Alarmpräferenz", "arabic": "تفضيل التنبيه", "french": "Préférence d'alerte"}},
+                         {"seqno":"","field": "status_poll_url", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Status Poll URL", "german": "Statusabfrage-URL", "arabic": "رابط استعلام الحالة", "french": "URL de sondage de statut"}},
+                         {"seqno":"","field": "log", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}}
                    ],
                    "edit_option":true,
                    "delete_option":true
@@ -2443,29 +2445,29 @@ var MainConfig={
                 "data":[
                    {"helper":"getcurrentuserdetails",
                    "fields":[
-                         {"field":"entityid","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                         {"seqno":"","field":"entityid","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                       ]
                    },
                    {"helper":"getresorceCategories",
                    "fields":[
-                      {"field":"resource_category","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":""}
+                      {"seqno":"","field":"resource_category","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                       ]
                    },
                    {  "helper":"none",
                       "fields":[    
-                         {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                         {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                         {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                         {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                       ]
                    }
                 ]
@@ -2475,25 +2477,25 @@ var MainConfig={
                 "data":[
                    {"helper":"getentityname",
                    "fields":[
-                         {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                         {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                       ]
                    },
                    {  "helper":"none",
                    
                       "fields":[    
-                         {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":" entity_id","edit":false,"show":true,"control":"text","mandatory":true, "default":""},
-                         {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                         {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                         {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":" entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true, "default":""},
+                         {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                         {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                       ]
                    }
                 ]
@@ -2503,25 +2505,25 @@ var MainConfig={
                 "data":[
                    {"helper":"getentityname",
                    "fields":[
-                         {"field":"entityname","edit":false,"show":true,"control":"text","mandatory":true,"default":""}
+                         {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                       ]
                    },
                    {  "helper":"none",
                    
                       "fields":[    
-                         {"field":"person_id","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"resource_name","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":" entity_id","edit":false,"show":true,"control":"text","mandatory":true, "default":""},
-                         {"field":"details","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"phone_number","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"email","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"alert_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"alert_preference","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"status_poll_url","edit":true,"show":true,"control":"text","mandatory":true,"default":""}, 
-                         {"field":"entry_status","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"role","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"archive","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                         {"field":"work_days","edit":true,"show":true,"control":"datetime-local","mandatory":true,"default":""}
+                         {"seqno":"","field":"person_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":" entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true, "default":""},
+                         {"seqno":"","field":"details","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"phone_number","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"email","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"alert_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"alert_preference","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"status_poll_url","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}, 
+                         {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"role","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"archive","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                         {"seqno":"","field":"work_days","edit":true,"show":true,"control":"datetime-local","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                       ]
                    }
                 ]
@@ -2547,7 +2549,7 @@ var MainConfig={
         ],
         "Roles":["Admin"],
         "Notifications":{
-            "getDataApi":"config/list_details",
+             "doc_title":"","getDataApi":"config/list_details",
             "key":"notification_id",
             "attchment_files_path":"",
             "job":{
@@ -2556,10 +2558,10 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                            {"field":"notification_id","name":"Id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"resource_id","name":"Entity Id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"role","name":"Role Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"message","name":"Role Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"seqno":"","field":"notification_id","name":"Id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"resource_id","name":"Entity Id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"role","name":"Role Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"message","name":"Role Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -2574,9 +2576,9 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                            {"field":"role_id","name":"Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Role Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"entity_id","name":"Entity Id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"role_name","name":"Role Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"seqno":"","field":"role_id","name":"Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Role Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"entity_id","name":"Entity Id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"role_name","name":"Role Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -2590,9 +2592,9 @@ var MainConfig={
                     "data":[
                         {  "helper":"none",
                             "fields":[
-                                {"field":"role_id","name":"Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                                {"field":"entity_id","name":"Entity Id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                                {"field":"role_name","name":"Role Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                                {"seqno":"","field":"role_id","name":"Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                                {"seqno":"","field":"entity_id","name":"Entity Id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                                {"seqno":"","field":"role_name","name":"Role Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                             ],
                             "edit_option":true,
                             "delete_option":true
@@ -2606,12 +2608,12 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[    
-                        {"field":"entity_id","edit":false,"show":false,"control":"text","mandatory":true,"default":""},
-                        {"field":"entity_name","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                        {"field":"entity_type","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                        {"field":"entry_status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["suspended","approved"]},
-                        {"field":"remark","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                        {"field":"change_log","edit":false,"show":false,"control":"text","mandatory":false,"default":""}
+                        {"seqno":"","field":"entity_id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                        {"seqno":"","field":"entity_name","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                        {"seqno":"","field":"entity_type","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                        {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["suspended","approved"]},
+                        {"seqno":"","field":"remark","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                        {"seqno":"","field":"change_log","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":""}
     
                         ],
                         "edit_option":true,
@@ -2630,15 +2632,15 @@ var MainConfig={
         "controls":[
          {"type":"button","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
          {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
-         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
-         {"type":"button","tag":"print","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
-         {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Document Data Templates","Document UI template","Document View Template","HTML Template","Trigger Functions","Helper Functions"],"textContent": "Items"},
+         {"type":"button","tag":"edit","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
+         {"type":"button","tag":"delete","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
+         {"type": "select", "tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Document Data Templates","Document UI Templates","Document View Templates","HTML Template","Trigger Functions","Helper Functions"],"textContent": "Items"},
          {"type": "select", "tag": "entriesPerPage", "roles": ["Admin","Approver","User"], "name": "EntriesPerPage", "options": [2,3,5,10,15,20,25,30,35,40,45,50], "textContent": "Rows/Page"},
         ],
         "Roles":["Admin"],
         "Document Data Templates":{
             "doc_title":"Document Data Template",
-            "getDataApi":"config/list_details",
+             "doc_title":"","getDataApi":"config/list_details",
             "key":"role_id",
             "attchment_files_path":"",
             "job":{
@@ -2647,16 +2649,16 @@ var MainConfig={
                 "data":[
                   {"helper":"getDocTemplates",
                      "fields":[
-                        {"field":"doc_type","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document type","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}}
+                        {"seqno":"","field":"doc_type","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document type","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}}
                         ]
                    },
                     {  "helper":"none",
                         "fields":[
-                            {"field":"doc_affiliation_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Affiliation ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"affiliation_id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"doc_description","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"doc_template","edit":true,"show":true,"control":"doc-template-control","mandatory":true,"default":"","filter_type":"textbox","lang":{"english":"Doc Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"ui_template","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"seqno":"","field":"doc_affiliation_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Affiliation ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"affiliation_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"doc_description","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"doc_template","edit":true,"show":true,"control":"doc-template-control","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","lang":{"english":"Doc Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"ui_template","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -2671,12 +2673,12 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                            {"field":"doc_templates_id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"doc_type","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document type","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"affiliation_id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"doc_description","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"doc_template","edit":false,"show":true,"control":"file","type":"file","mandatory":true,"default":"","filter_type":"","lang":{"english":"Doc Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"ui_template","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"seqno":"","field":"doc_templates_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"doc_type","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document type","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"affiliation_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"doc_description","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"doc_template","edit":false,"show":true,"control":"file","type":"file","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Doc Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"ui_template","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                            
                         ],
                         "edit_option":true,
@@ -2691,9 +2693,9 @@ var MainConfig={
                     "data":[
                         {  "helper":"none",
                             "fields":[
-                                {"field":"role_id","name":"Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                                {"field":"entity_id","name":"Entity Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                                {"field":"role_name","name":"Role Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                                {"seqno":"","field":"role_id","name":"Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                                {"seqno":"","field":"entity_id","name":"Entity Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                                {"seqno":"","field":"role_name","name":"Role Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                             ],
                             "edit_option":true,
                             "delete_option":true
@@ -2711,12 +2713,12 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[    
-                        {"field":"entity_id","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                        {"field":"entity_name","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                        {"field":"entity_type","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                        {"field":"entry_status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["suspended","approved"]},
-                        {"field":"remark","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                        {"field":"change_log","edit":false,"show":false,"control":"text","mandatory":false,"default":""}
+                        {"seqno":"","field":"entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                        {"seqno":"","field":"entity_name","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                        {"seqno":"","field":"entity_type","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                        {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["suspended","approved"]},
+                        {"seqno":"","field":"remark","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                        {"seqno":"","field":"change_log","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":""}
     
                         ],
                         "edit_option":true,
@@ -2729,8 +2731,8 @@ var MainConfig={
                 "cancel":{"api":"config","onSuccess":"Role_canceled()"}
             }
         },
-        "Document UI template":{
-            "getDataApi":"config/list_details",
+        "Document UI Templates":{
+             "doc_title":"","getDataApi":"config/list_details",
             "key":"doc_ui_template_id",
             "attchment_files_path":"",
             "job":{
@@ -2739,15 +2741,15 @@ var MainConfig={
                 "data":[
                       {"helper":"getDocTemplates",
                         "fields":[
-                           {"field":"doc_type","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"",}
+                           {"seqno":"","field":"doc_type","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"",}
                            ]
                      },
                     {  "helper":"none",
                         "fields":[
-                            {"field":"doc_ui_template_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"doc_ui_template_id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"affiliation_id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"description","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"ui_template","edit":true,"show":true,"control":"field-attribute-control","mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"seqno":"","field":"doc_ui_template_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"doc_ui_template_id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"affiliation_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"description","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"ui_template","edit":true,"show":true,"control":"field-attribute-control","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -2762,11 +2764,11 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                            {"field":"doc_ui_template_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"doc_ui_template_id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"doc_type","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Type","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"affiliation_id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"description","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"ui_template","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"seqno":"","field":"doc_ui_template_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"doc_ui_template_id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"doc_type","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Type","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"affiliation_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"description","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"ui_template","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -2780,11 +2782,11 @@ var MainConfig={
                     "data":[
                         {  "helper":"none",
                             "fields":[
-                            {"field":"doc_ui_template_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"doc_ui_template_id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"doc_type","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Type","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"affiliation_id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"description","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"ui_template","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"seqno":"","field":"doc_ui_template_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"doc_ui_template_id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"doc_type","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Type","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"affiliation_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"description","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"ui_template","edit":true,"show":true,"control":"field-attribute-control","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                         ],
                             "edit_option":true,
                             "delete_option":true
@@ -2802,11 +2804,11 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                            {"field":"doc_ui_template_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"doc_ui_template_id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"doc_type","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Type","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"affiliation_id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"description","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"ui_template","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"seqno":"","field":"doc_ui_template_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"doc_ui_template_id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"doc_type","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Type","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"affiliation_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"description","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"ui_template","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                         ],  
                         "edit_option":true,
                         "delete_option":false
@@ -2818,8 +2820,8 @@ var MainConfig={
                 "cancel":{"api":"config","onSuccess":"Role_canceled()"}
             }
         },
-        "Document View Template":{
-            "getDataApi":"config/list_details",
+        "Document View Templates":{
+             "doc_title":"","getDataApi":"config/list_details",
             "key":"id",
             "attchment_files_path":"",
             "job":{
@@ -2828,10 +2830,10 @@ var MainConfig={
                 "data":[
                      {"helper":"none",
                         "fields":[
-                           {"field":"id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"ID","german":"Kennung","arabic":"معرف","french":"ID"}},
-                           {"field":"template_name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template Name","german":"Vorlagenname","arabic":"اسم القالب","french":"Nom du modèle"}},
-                           {"field":"doc_view_html","edit":true,"show":true,"control":"textarea","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document View HTML","german":"HTML-Ansicht","arabic":"عرض المستند HTML","french":"Vue HTML du document"}},
-                           {"field":"doc_type","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document Type","german":"Dokumenttyp","arabic":"نوع المستند","french":"Type de document"}}
+                           {"seqno":"","field":"id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"ID","german":"Kennung","arabic":"معرف","french":"ID"}},
+                           {"seqno":"","field":"template_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template Name","german":"Vorlagenname","arabic":"اسم القالب","french":"Nom du modèle"}},
+                           {"seqno":"","field":"doc_view_html","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document View HTML","german":"HTML-Ansicht","arabic":"عرض المستند HTML","french":"Vue HTML du document"}},
+                           {"seqno":"","field":"doc_type","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document Type","german":"Dokumenttyp","arabic":"نوع المستند","french":"Type de document"}}
                         ],
                         "edit_option":true,
                         "delete_option":true}
@@ -2844,10 +2846,10 @@ var MainConfig={
                   "data":[
                      {"helper":"none",
                         "fields":[
-                           {"field":"id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"ID","german":"Kennung","arabic":"معرف","french":"ID"}},
-                           {"field":"template_name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template Name","german":"Vorlagenname","arabic":"اسم القالب","french":"Nom du modèle"}},
-                           {"field":"doc_view_html","edit":true,"show":true,"control":"textarea","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document View HTML","german":"HTML-Ansicht","arabic":"عرض المستند HTML","french":"Vue HTML du document"}},
-                           {"field":"doc_type","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document Type","german":"Dokumenttyp","arabic":"نوع المستند","french":"Type de document"}}
+                           {"seqno":"","field":"id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"ID","german":"Kennung","arabic":"معرف","french":"ID"}},
+                           {"seqno":"","field":"template_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template Name","german":"Vorlagenname","arabic":"اسم القالب","french":"Nom du modèle"}},
+                           {"seqno":"","field":"doc_view_html","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document View HTML","german":"HTML-Ansicht","arabic":"عرض المستند HTML","french":"Vue HTML du document"}},
+                           {"seqno":"","field":"doc_type","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document Type","german":"Dokumenttyp","arabic":"نوع المستند","french":"Type de document"}}
                         ],
                         "edit_option":true,
                         "delete_option":true}
@@ -2860,10 +2862,10 @@ var MainConfig={
                     "data":[
                      {"helper":"none",
                         "fields":[
-                           {"field":"id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"ID","german":"Kennung","arabic":"معرف","french":"ID"}},
-                           {"field":"template_name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template Name","german":"Vorlagenname","arabic":"اسم القالب","french":"Nom du modèle"}},
-                           {"field":"doc_view_html","edit":true,"show":true,"control":"textarea","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document View HTML","german":"HTML-Ansicht","arabic":"عرض المستند HTML","french":"Vue HTML du document"}},
-                           {"field":"doc_type","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document Type","german":"Dokumenttyp","arabic":"نوع المستند","french":"Type de document"}}
+                           {"seqno":"","field":"id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"ID","german":"Kennung","arabic":"معرف","french":"ID"}},
+                           {"seqno":"","field":"template_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template Name","german":"Vorlagenname","arabic":"اسم القالب","french":"Nom du modèle"}},
+                           {"seqno":"","field":"doc_view_html","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document View HTML","german":"HTML-Ansicht","arabic":"عرض المستند HTML","french":"Vue HTML du document"}},
+                           {"seqno":"","field":"doc_type","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document Type","german":"Dokumenttyp","arabic":"نوع المستند","french":"Type de document"}}
                         ],
                         "edit_option":true,
                         "delete_option":true}
@@ -2878,10 +2880,10 @@ var MainConfig={
                "data":[
                      {"helper":"none",
                         "fields":[
-                           {"field":"id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"ID","german":"Kennung","arabic":"معرف","french":"ID"}},
-                           {"field":"template_name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template Name","german":"Vorlagenname","arabic":"اسم القالب","french":"Nom du modèle"}},
-                           {"field":"doc_view_html","edit":true,"show":true,"control":"textarea","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document View HTML","german":"HTML-Ansicht","arabic":"عرض المستند HTML","french":"Vue HTML du document"}},
-                           {"field":"doc_type","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document Type","german":"Dokumenttyp","arabic":"نوع المستند","french":"Type de document"}}
+                           {"seqno":"","field":"id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"ID","german":"Kennung","arabic":"معرف","french":"ID"}},
+                           {"seqno":"","field":"template_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template Name","german":"Vorlagenname","arabic":"اسم القالب","french":"Nom du modèle"}},
+                           {"seqno":"","field":"doc_view_html","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document View HTML","german":"HTML-Ansicht","arabic":"عرض المستند HTML","french":"Vue HTML du document"}},
+                           {"seqno":"","field":"doc_type","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document Type","german":"Dokumenttyp","arabic":"نوع المستند","french":"Type de document"}}
                         ],
                         "edit_option":true,
                         "delete_option":true}
@@ -2894,7 +2896,7 @@ var MainConfig={
             }
         },
         "Trigger Functions":{
-            "getDataApi":"config/list_details",
+             "doc_title":"","getDataApi":"config/list_details",
             "key":"id",
             "attchment_files_path":"",
             "job":{
@@ -2903,23 +2905,23 @@ var MainConfig={
                 "data":[
                   {  "helper":"getHelperFunction",
                         "fields":[
-                           {"field":"helper_function","name":"Helper Function","edit":true,"show":true,"control":"dropdown","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
+                           {"seqno":"","field":"helper_function","name":"Helper Function","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
                         ],
                         "edit_option":true,
                         "delete_option":true
                     },
                     {  "helper":"none",
                         "fields":[
-                           {"field":"id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
-                           {"field":"trigger_name","name":"Trigger Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Trigger Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
-                           {"field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
-                           {"field":"trigger_condition","name":"UI Template ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Trigger Condition","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
-                           {"field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
-                           {"field":"trigger_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Trigger Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
-                           {"field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
-                           {"field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","german":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
-                           {"field":"version","name":"Version","edit":false,"show":false,"control":"text","mandatory":true,"default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
-                           {"field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","mandatory":false,"default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}}
+                           {"seqno":"","field":"id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
+                           {"seqno":"","field":"trigger_name","name":"Trigger Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Trigger Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
+                           {"seqno":"","field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
+                           {"seqno":"","field":"trigger_condition","name":"UI Template ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Trigger Condition","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
+                           {"seqno":"","field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
+                           {"seqno":"","field":"trigger_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Trigger Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
+                           {"seqno":"","field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
+                           {"seqno":"","field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","german":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
+                           {"seqno":"","field":"version","name":"Version","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
+                           {"seqno":"","field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}}
 
                         ],
                         "edit_option":true,
@@ -2935,17 +2937,17 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                           {"field":"id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
-                           {"field":"trigger_name","name":"Trigger Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Trigger Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
-                           {"field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
-                           {"field":"trigger_condition","name":"UI Template ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Trigger Condition","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
-                           {"field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
-                           {"field":"trigger_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Trigger Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
-                           {"field":"helper_function","name":"Helper Function","edit":true,"show":true,"control":"text","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
-                           {"field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
-                           {"field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","german":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
-                           {"field":"version","name":"Version","edit":false,"show":false,"control":"text","mandatory":true,"default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
-                           {"field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","mandatory":false,"default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}}
+                           {"seqno":"","field":"id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
+                           {"seqno":"","field":"trigger_name","name":"Trigger Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Trigger Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
+                           {"seqno":"","field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
+                           {"seqno":"","field":"trigger_condition","name":"UI Template ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Trigger Condition","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
+                           {"seqno":"","field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
+                           {"seqno":"","field":"trigger_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Trigger Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
+                           {"seqno":"","field":"helper_function","name":"Helper Function","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
+                           {"seqno":"","field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
+                           {"seqno":"","field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","german":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
+                           {"seqno":"","field":"version","name":"Version","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
+                           {"seqno":"","field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}}
     
                         ],
                         "edit_option":true,
@@ -2960,17 +2962,17 @@ var MainConfig={
                     "data":[
                         {  "helper":"none",
                             "fields":[
-                              {"field":"id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
-                              {"field":"trigger_name","name":"Trigger Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Trigger Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
-                              {"field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
-                              {"field":"trigger_condition","name":"UI Template ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Trigger Condition","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
-                              {"field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
-                              {"field":"trigger_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Trigger Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
-                              {"field":"helper_function","name":"Helper Function","edit":true,"show":true,"control":"text","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
-                              {"field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
-                              {"field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","german":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
-                              {"field":"version","name":"Version","edit":false,"show":false,"control":"text","mandatory":true,"default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
-                              {"field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","mandatory":false,"default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}}
+                              {"seqno":"","field":"id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
+                              {"seqno":"","field":"trigger_name","name":"Trigger Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Trigger Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
+                              {"seqno":"","field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
+                              {"seqno":"","field":"trigger_condition","name":"UI Template ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Trigger Condition","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
+                              {"seqno":"","field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
+                              {"seqno":"","field":"trigger_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Trigger Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
+                              {"seqno":"","field":"helper_function","name":"Helper Function","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
+                              {"seqno":"","field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
+                              {"seqno":"","field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","german":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
+                              {"seqno":"","field":"version","name":"Version","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
+                              {"seqno":"","field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}}
 
                            ],
                             "edit_option":true,
@@ -2989,17 +2991,17 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                           {"field":"id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
-                           {"field":"trigger_name","name":"Trigger Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Trigger Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
-                           {"field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
-                           {"field":"trigger_condition","name":"UI Template ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Trigger Condition","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
-                           {"field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
-                           {"field":"trigger_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Trigger Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
-                           {"field":"helper_function","name":"Helper Function","edit":true,"show":true,"control":"text","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
-                           {"field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
-                           {"field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","german":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
-                           {"field":"version","name":"Version","edit":false,"show":false,"control":"text","mandatory":true,"default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
-                           {"field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","mandatory":false,"default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}}
+                           {"seqno":"","field":"id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
+                           {"seqno":"","field":"trigger_name","name":"Trigger Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Trigger Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
+                           {"seqno":"","field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
+                           {"seqno":"","field":"trigger_condition","name":"UI Template ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Trigger Condition","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
+                           {"seqno":"","field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
+                           {"seqno":"","field":"trigger_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Trigger Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
+                           {"seqno":"","field":"helper_function","name":"Helper Function","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
+                           {"seqno":"","field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
+                           {"seqno":"","field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","german":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
+                           {"seqno":"","field":"version","name":"Version","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
+                           {"seqno":"","field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}}
                         ],  
                         "edit_option":true,
                         "delete_option":false
@@ -3012,7 +3014,7 @@ var MainConfig={
             }
         },
         "Helper Functions":{
-            "getDataApi":"config/list_details",
+             "doc_title":"","getDataApi":"config/list_details",
             "key":"id",
             "attchment_files_path":"",
             "job":{
@@ -3021,17 +3023,17 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                           {"field":"id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
-                           {"field":"helper_functions_name","name":"Trigger Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Helper Functions Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
-                           {"field":"type","name":"Helper Function","edit":true,"show":true,"control":"dropdown","mandatory":false,"default":"","options":["source","deposit","process"],"filter_type":"","filter_default_value":"","lang":{"english":"Type","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
-                           {"field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
-                           {"field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
-                           {"field":"helper_functions_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
-                           {"field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
-                           {"field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","g111erman":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
-                           {"field":"version","name":"Version","edit":false,"show":false,"control":"text","mandatory":true,"default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
-                           {"field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","mandatory":false,"default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}},
-                           {"field":"log","name":"Helper Function","edit":true,"show":true,"control":"text","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}}
+                           {"seqno":"","field":"id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
+                           {"seqno":"","field":"helper_functions_name","name":"Trigger Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Helper Functions Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
+                           {"seqno":"","field":"type","name":"Helper Function","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","options":["source","deposit","process"],"filter_type":"","filter_default_value":"","lang":{"english":"Type","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
+                           {"seqno":"","field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
+                           {"seqno":"","field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
+                           {"seqno":"","field":"helper_functions_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
+                           {"seqno":"","field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
+                           {"seqno":"","field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","g111erman":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
+                           {"seqno":"","field":"version","name":"Version","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
+                           {"seqno":"","field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}},
+                           {"seqno":"","field":"log","name":"Helper Function","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -3046,17 +3048,17 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                           {"field":"id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
-                           {"field":"helper_functions_name","name":"Trigger Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Helper Functions Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
-                           {"field":"type","name":"Helper Function","edit":true,"show":true,"control":"dropdown","mandatory":false,"default":"","options":["source","deposit","process"],"filter_type":"","filter_default_value":"","lang":{"english":"Type","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
-                           {"field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
-                           {"field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
-                           {"field":"helper_functions_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
-                           {"field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
-                           {"field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","g111erman":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
-                           {"field":"version","name":"Version","edit":false,"show":false,"control":"text","mandatory":true,"default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
-                           {"field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","mandatory":false,"default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}},
-                           {"field":"log","name":"Helper Function","edit":true,"show":true,"control":"text","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}}
+                           {"seqno":"","field":"id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
+                           {"seqno":"","field":"helper_functions_name","name":"Trigger Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Helper Functions Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
+                           {"seqno":"","field":"type","name":"Helper Function","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","options":["source","deposit","process"],"filter_type":"","filter_default_value":"","lang":{"english":"Type","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
+                           {"seqno":"","field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
+                           {"seqno":"","field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
+                           {"seqno":"","field":"helper_functions_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
+                           {"seqno":"","field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
+                           {"seqno":"","field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","g111erman":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
+                           {"seqno":"","field":"version","name":"Version","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
+                           {"seqno":"","field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}},
+                           {"seqno":"","field":"log","name":"Helper Function","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -3070,17 +3072,17 @@ var MainConfig={
                     "data":[
                         {  "helper":"none",
                             "fields":[
-                           {"field":"id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
-                           {"field":"helper_functions_name","name":"Trigger Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Helper Functions Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
-                           {"field":"type","name":"Helper Function","edit":true,"show":true,"control":"dropdown","mandatory":false,"default":"","options":["source","deposit","process"],"filter_type":"","filter_default_value":"","lang":{"english":"Type","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
-                           {"field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
-                           {"field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
-                           {"field":"helper_functions_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
-                           {"field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
-                           {"field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","g111erman":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
-                           {"field":"version","name":"Version","edit":false,"show":false,"control":"text","mandatory":true,"default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
-                           {"field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","mandatory":false,"default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}},
-                           {"field":"log","name":"Helper Function","edit":true,"show":true,"control":"text","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}}
+                           {"seqno":"","field":"id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
+                           {"seqno":"","field":"helper_functions_name","name":"Trigger Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Helper Functions Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
+                           {"seqno":"","field":"type","name":"Helper Function","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","options":["source","deposit","process"],"filter_type":"","filter_default_value":"","lang":{"english":"Type","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
+                           {"seqno":"","field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
+                           {"seqno":"","field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
+                           {"seqno":"","field":"helper_functions_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
+                           {"seqno":"","field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
+                           {"seqno":"","field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","g111erman":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
+                           {"seqno":"","field":"version","name":"Version","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
+                           {"seqno":"","field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}},
+                           {"seqno":"","field":"log","name":"Helper Function","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}}
                         ],
                             "edit_option":true,
                             "delete_option":true
@@ -3098,17 +3100,17 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                           {"field":"id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
-                           {"field":"helper_functions_name","name":"Trigger Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Helper Functions Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
-                           {"field":"type","name":"Helper Function","edit":true,"show":true,"control":"dropdown","mandatory":false,"default":"","options":["source","deposit","process"],"filter_type":"","filter_default_value":"","lang":{"english":"Type","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
-                           {"field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
-                           {"field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
-                           {"field":"helper_functions_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
-                           {"field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
-                           {"field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","g111erman":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
-                           {"field":"version","name":"Version","edit":false,"show":false,"control":"text","mandatory":true,"default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
-                           {"field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","mandatory":false,"default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}},
-                           {"field":"log","name":"Helper Function","edit":true,"show":true,"control":"text","mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}}
+                           {"seqno":"","field":"id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
+                           {"seqno":"","field":"helper_functions_name","name":"Trigger Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Helper Functions Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
+                           {"seqno":"","field":"type","name":"Helper Function","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","options":["source","deposit","process"],"filter_type":"","filter_default_value":"","lang":{"english":"Type","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
+                           {"seqno":"","field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
+                           {"seqno":"","field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
+                           {"seqno":"","field":"helper_functions_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
+                           {"seqno":"","field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
+                           {"seqno":"","field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","g111erman":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
+                           {"seqno":"","field":"version","name":"Version","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
+                           {"seqno":"","field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}},
+                           {"seqno":"","field":"log","name":"Helper Function","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}}
                         ],  
                         "edit_option":true,
                         "delete_option":false
@@ -3132,7 +3134,7 @@ var MainConfig={
         ],
         "Roles":["Admin"],
         "Final Templates":{
-            "getDataApi":"config/list_details",
+             "doc_title":"","getDataApi":"config/list_details",
             "key":"role_id",
             "attchment_files_path":"",
             "job":{
@@ -3141,17 +3143,18 @@ var MainConfig={
                 "data":[
                    {"helper":"getTabs",
                      "fields":[
-                        {"field":"Select tab","edit":true,"show":true,"control":"dropdown","onchange":"tab_onchange_trigger","mandatory":true,"default":""}
+                        {"seqno":"","field":"Select tab","edit":true,"show":true,"control":"dropdown","onchange":"tab_onchange_trigger","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                        //{"seqno":"","field":"Select tab","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                         ]
                    },
                     {  "helper":"none",
                         "fields":[
-                            {"field":"doc_final_templates_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Affiliation ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"doc_type","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Type","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"affiliation_id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"doc_description","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"doc_template","edit":true,"show":true,"control":"doc-template-control","mandatory":true,"default":"","filter_type":"","lang":{"english":"Doc Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"ui_template","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"seqno":"","field":"doc_final_templates_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Affiliation ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"doc_type","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Type","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"affiliation_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"doc_description","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"doc_template","edit":true,"show":true,"control":"doc-template-control","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Doc Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"ui_template","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -3166,12 +3169,12 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                            {"field":"doc_final_templates_id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"affiliation_id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"template","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Final Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"status","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Status","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"log","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Log","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"remarks","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Remarks","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"doc_final_templates_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"affiliation_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"template","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Final Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"status","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Status","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"log","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Log","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"remarks","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Remarks","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
                             
                            
                         ],
@@ -3187,9 +3190,9 @@ var MainConfig={
                     "data":[
                         {  "helper":"none",
                             "fields":[
-                                {"field":"role_id","name":"Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                                {"field":"entity_id","name":"Entity Id","edit":false,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                                {"field":"role_name","name":"Role Name","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                                {"seqno":"","field":"role_id","name":"Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                                {"seqno":"","field":"entity_id","name":"Entity Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                                {"seqno":"","field":"role_name","name":"Role Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                             ],
                             "edit_option":true,
                             "delete_option":true
@@ -3207,12 +3210,12 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[    
-                        {"field":"entity_id","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                        {"field":"entity_name","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                        {"field":"entity_type","edit":false,"show":true,"control":"text","mandatory":true,"default":""},
-                        {"field":"entry_status","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":"","values":["suspended","approved"]},
-                        {"field":"remark","edit":true,"show":true,"control":"text","mandatory":true,"default":""},
-                        {"field":"change_log","edit":false,"show":false,"control":"text","mandatory":false,"default":""}
+                        {"seqno":"","field":"entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                        {"seqno":"","field":"entity_name","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                        {"seqno":"","field":"entity_type","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                        {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","values":["suspended","approved"]},
+                        {"seqno":"","field":"remark","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""},
+                        {"seqno":"","field":"change_log","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"default":""}
     
                         ],
                         "edit_option":true,
@@ -3226,7 +3229,7 @@ var MainConfig={
             }
         },
         "Document UI template":{
-            "getDataApi":"config/list_details",
+            "doc_title":"","getDataApi":"config/list_details",
             "key":"doc_ui_template_id",
             "attchment_files_path":"",
             "job":{
@@ -3235,15 +3238,15 @@ var MainConfig={
                 "data":[
                       {"helper":"getDocTemplates",
                      "fields":[
-                        {"field":"doc_type","edit":true,"show":true,"control":"dropdown","mandatory":true,"default":""}
+                        {"seqno":"","field":"doc_type","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":""}
                         ]
                    },
                     {  "helper":"none",
                         "fields":[
-                            {"field":"doc_ui_template_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"doc_ui_template_id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"affiliation_id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"description","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"ui_template","edit":true,"show":true,"control":"field-attribute-control","mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"seqno":"","field":"doc_ui_template_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"doc_ui_template_id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"affiliation_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"description","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"ui_template","edit":true,"show":true,"control":"field-attribute-control","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -3258,11 +3261,11 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                            {"field":"doc_ui_template_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"doc_ui_template_id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"doc_type","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Type","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"affiliation_id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"description","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"ui_template","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"seqno":"","field":"doc_ui_template_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"doc_ui_template_id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"doc_type","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Type","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"affiliation_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"description","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"ui_template","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -3276,11 +3279,11 @@ var MainConfig={
                     "data":[
                         {  "helper":"none",
                             "fields":[
-                            {"field":"doc_ui_template_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"doc_ui_template_id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"doc_type","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Type","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"affiliation_id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"description","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"ui_template","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"seqno":"","field":"doc_ui_template_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"doc_ui_template_id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"doc_type","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Type","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"affiliation_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"description","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"ui_template","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                         ],
                             "edit_option":true,
                             "delete_option":true
@@ -3298,11 +3301,11 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-                            {"field":"doc_ui_template_id","name":"Id","edit":false,"show":false,"control":"text","mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"doc_ui_template_id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"field":"doc_type","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Type","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"affiliation_id","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"field":"description","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"field":"ui_template","edit":true,"show":true,"control":"text","mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"seqno":"","field":"doc_ui_template_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"doc_ui_template_id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"doc_type","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Type","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"affiliation_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"description","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"ui_template","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                         ],  
                         "edit_option":true,
                         "delete_option":false
@@ -3336,12 +3339,5 @@ program
 
 */
     
-    
-
-
-
    
-    
-    
-
 

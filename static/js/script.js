@@ -703,3 +703,51 @@ async function general_data_fetch(domain, endpoint, body, method) {
         return `Error: ${error.message}`;
     }
 }
+
+
+/**
+ * Refreshes the content of any HTML control by its id.
+ * Supports: select (dropdown), input, textarea, etc.
+ * @param {string} controlId - The id of the control to refresh.
+ * @param {object} options - Options for refresh. For dropdown: {values: [{value, text} or string]}.
+ *                           For input/textarea: {value: string}.
+ */
+function refreshControlContent(controlId, options = {}) {
+    const control = document.getElementById(controlId);
+    if (!control) return;
+
+    switch (control.tagName.toLowerCase()) {
+        case 'select':
+            // Remove all options
+            while (control.options.length > 0) {
+                control.remove(0);
+            }
+            // Add new options if provided
+            if (Array.isArray(options.values)) {
+                options.values.forEach(opt => {
+                    const option = document.createElement('option');
+                    if (typeof opt === 'object') {
+                        option.value = opt.value;
+                        option.text = opt.text;
+                    } else {
+                        option.value = opt;
+                        option.text = opt;
+                    }
+                    control.add(option);
+                });
+            }
+            break;
+        case 'input':
+        case 'textarea':
+            if (typeof options.value !== 'undefined') {
+                control.value = options.value;
+            }
+            break;
+        default:
+            // For other controls, set innerHTML if provided
+            if (typeof options.html !== 'undefined') {
+                control.innerHTML = options.html;
+            }
+            break;
+    }
+}
