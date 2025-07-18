@@ -17,7 +17,7 @@ from db_operations import *
 db = pymysql.connect(
   host="localhost",
   user="root",
-  password="Blr@2025",
+  password="root",
   database="event_scheduler2025",
   port=3306,
   cursorclass=pymysql.cursors.DictCursor
