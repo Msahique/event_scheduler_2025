@@ -9,7 +9,7 @@
     <!-- Bootstrap CSS -->
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
+ 
     <!-- Bootstrap Icons (optional, if you need icons) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
@@ -32,297 +32,319 @@
 
     <!-- Custom Styles -->
     <style>
-    /* Right Sidebar Styles */
-    #show_columns_panel {
-        position: fixed;
-        top: 0;
-        right: -300px;
-        width: 300px;
-        height: 100vh;
-        background-color: #f8f9fa;
-        transition: right 0.3s ease-in-out;
-        z-index: 1050;
-        box-shadow: -2px 0 5px rgba(0,0,0,0.2);
-        padding: 15px;
-    }
-
-    #show_columns_panel.open {
-        right: 0;
-    }
-
-    .show-columns-toggle {
-        position: fixed;
-        top: 60%;
-        right: 0;
-        transform: translateY(-50%);
-        background: #007bff;
-        color: #fff;
-        border: none;
-        padding: 10px;
-        cursor: pointer;
-        z-index: 1100;
-        transition: right 0.3s ease-in-out;
-        border-radius: 5px 0 0 5px;
-    }
-
-    .show-columns-toggle.open {
-        right: 300px;
-    }
-
-    #tab_page_filter {
-        position: fixed;
-        top: 0;
-        left: -300px;
-        width: 300px;
-        height: 100vh;
-        background-color: #f8f9fa;
-        transition: left 0.3s ease-in-out;
-        z-index: 1050;
-        box-shadow: 2px 0 5px rgba(0,0,0,0.2);
-        padding: 15px;
-    }
-
-    #tab_page_filter.open {
-        left: 0;
-    }
-
-    .filter-toggle {
-        position: fixed;
-        top: 50%;
-        left: 0;
-        transform: translateY(-50%);
-        background: #007bff;
-        color: #fff;
-        border: none;
-        padding: 10px;
-        cursor: pointer;
-        z-index: 1100;
-        transition: left 0.3s ease-in-out;
-        border-radius: 0 5px 5px 0;
-    }
-
-    .filter-toggle.open {
-        left: 300px;
-    }
-
-    #calendar {
-        max-width: 100%;
-        height: 80vh;
-        margin: auto;
-    }
-
-    #myCalendar .modal-dialog {
-        width: 100%;
-        max-width: 100%;
-        height: 100%;
-        margin: 0;
-    }
-
-    #myCalendar .modal-content {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        border-radius: 0;
-    }
-
-    #myCalendar .modal-body {
-        flex-grow: 1;
-        overflow: auto;
-    }
-
-    #myCalendar .modal-footer {
-        border-top: none;
-    }
-
-    #calendar {
-        height: calc(100% - 50px);
-    }
-
-    body {
-        font-family: 'Arial', sans-serif;
-        background-color: #f8f9fa;
-    }
-
-    #title_header {
-        background-color: #007bff;
-        color: white;
-        padding: 20px 0;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-    h2 {
-        margin: 0;
-        font-weight: bold;
-    }
-
-    .nav-tabs {
-        border-bottom: 2px solid #007bff;
-    }
-
-    .nav-tabs > li > a {
-        color: #007bff;
-        font-weight: bold;
-    }
-
-    .nav-tabs > li.active > a,
-    .nav-tabs > li.active > a:focus,
-    .nav-tabs > li.active > a:hover {
-        background-color: #007bff;
-        color: white;
-    }
-
-    .tab-content {
-        background-color: white;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-top: none;
-        border-radius: 0 0 5px 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.6);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-    }
-
-    .modal-content {
-        background-color: white;
-        padding: 30px;
-        width: 60%;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-        border-radius: 10px;
-        animation: animatetop 0.4s ease-out;
-        position: relative;
-    }
-
-    .modal-header {
-        border-bottom: none;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .close-btn {
-        float: right;
-        color: #aaa;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .close-btn:hover {
-        color: #000;
-    }
-
-    @keyframes animatetop {
-        from {
-            transform: translateY(-50px);
-            opacity: 0;
+        /* Right Sidebar Styles */
+        #show_columns_panel {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background-color: #f8f9fa;
+            transition: right 0.3s ease-in-out;
+            z-index: 1050;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+            padding: 15px;
         }
-        to {
-            transform: translateY(0);
-            opacity: 1;
+
+        #show_columns_panel.open {
+            right: 0;
         }
-    }
 
-    #div_iframe {
-        margin-top: 20px;
-    }
+        .show-columns-toggle {
+            position: fixed;
+            top: 60%;
+            right: 0;
+            transform: translateY(-50%);
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 1100;
+            transition: right 0.3s ease-in-out;
+            border-radius: 5px 0 0 5px;
+        }
 
-    iframe {
-        border: none;
-        border-radius: 5px;
-    }
+        .show-columns-toggle.open {
+            right: 300px;
+        }
 
-    #footer {
-        background-color: #343a40;
-        color: white;
-        text-align: center;
-        padding: 10px;
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    }
+        #tab_page_filter {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100vh;
+            background-color: #f8f9fa;
+            transition: left 0.3s ease-in-out;
+            z-index: 1050;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+            padding: 15px;
+        }
 
-    #footer a {
-        color: #007bff;
-        text-decoration: none;
-    }
+        #tab_page_filter.open {
+            left: 0;
+        }
 
-    #footer a:hover {
-        text-decoration: underline;
-    }
+        .filter-toggle {
+            position: fixed;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 1100;
+            transition: left 0.3s ease-in-out;
+            border-radius: 0 5px 5px 0;
+        }
 
-    .dropdown-select {
-        appearance: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        width: 100%;
-        padding: 10px;
-        padding-right: 30px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        background-color: white;
-        cursor: pointer;
-    }
+        .filter-toggle.open {
+            left: 300px;
+        }
 
-    .custom-dropdown {
-        position: relative;
-        display: inline-block;
-        width: 20%;
-    }
+        #calendar {
+            max-width: 100%;
+            height: 80vh;
+            margin: auto;
+        }
 
-    .custom-dropdown::after {
-        content: "▼";
-        font-size: 14px;
-        position: absolute;
-        top: 50%;
-        right: 10px;
-        transform: translateY(-50%);
-        pointer-events: none;
-        color: #666;
-    }
+        #myCalendar .modal-dialog {
+            width: 100%;
+            max-width: 100%;
+            height: 100%;
+            margin: 0;
+        }
 
-    /* === NEW: Fullscreen modal support === */
-    .modal.modal-fullscreen {
-        position: fixed !important;
-        top: 0;
-        left: 0;
-        width: 100vw !important;
-        height: 100vh !important;
-        margin: 0 !important;
-        z-index: 1060 !important;
-    }
+        #myCalendar .modal-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border-radius: 0;
+        }
 
-    .modal-fullscreen .modal-dialog {
-        width: 100vw !important;
-        height: 100vh !important;
-        margin: 0 !important;
-        max-width: 100% !important;
-    }
+        #myCalendar .modal-body {
+            flex-grow: 1;
+            overflow: auto;
+        }
 
-    .modal-fullscreen .modal-content {
-        height: 100% !important;
-        display: flex;
-        flex-direction: column;
-        border-radius: 0;
-    }
+        #myCalendar .modal-footer {
+            border-top: none;
+        }
 
-    .modal-fullscreen .modal-body {
-        flex-grow: 1;
-        overflow: auto;
-    }
-</style>
+        #calendar {
+            height: calc(100% - 50px);
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        #title_header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid #007bff;
+        }
+
+        .nav-tabs > li > a {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .nav-tabs > li.active > a,
+        .nav-tabs > li.active > a:focus,
+        .nav-tabs > li.active > a:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .tab-content {
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* MODAL BASE STYLES */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            width: 60%;
+            max-width: 100%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            animation: animatetop 0.4s ease-out;
+            position: relative;
+        }
+
+        /* Fullscreen override */
+        .modal.modal-fullscreen {
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            width: 100vw !important;
+            height: 100vh !important;
+            margin: 0 !important;
+            z-index: 1060 !important;
+        }
+
+        .modal-fullscreen .modal-dialog {
+            width: 100vw !important;
+            height: 100vh !important;
+            margin: 0 !important;
+            max-width: 100% !important;
+        }
+
+        .modal-fullscreen .modal-content {
+            width: 100% !important;
+            height: 100% !important;
+            padding: 30px;
+            border-radius: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-fullscreen .modal-body {
+            flex-grow: 1;
+            overflow: auto;
+        }
+
+        /* Modal header */
+        .modal-header {
+            border-bottom: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Wrap fullscreen & close buttons */
+        .modal-header .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Fullscreen toggle */
+        .btn-toggle-fullscreen {
+            background: transparent;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* Close button */
+        .close-btn {
+            float: right;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #000;
+        }
+
+        @keyframes animatetop {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        #div_iframe {
+            margin-top: 20px;
+        }
+
+        iframe {
+            border: none;
+            border-radius: 5px;
+        }
+
+        #footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        #footer a:hover {
+            text-decoration: underline;
+        }
+
+        .dropdown-select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 100%;
+            padding: 10px;
+            padding-right: 30px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .custom-dropdown {
+            position: relative;
+            display: inline-block;
+            width: 20%;
+        }
+
+        .custom-dropdown::after {
+            content: "▼";
+            font-size: 14px;
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #666;
+        }
+    </style>
+
 
 </head>
 
@@ -631,6 +653,7 @@
         
         
     </div>
+   
 
     
     
@@ -672,10 +695,12 @@
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">Registration</h4>
-                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleModalFullscreen(this)">
-                            <i class="fa fa-expand"></i>
-                        </button>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <div class="modal-header-buttons d-flex align-items-center gap-1">
+                            <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
+                                <i class="fa fa-expand"></i>
+                            </button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
                     </div>
         
                     <!-- Modal Body -->
@@ -758,7 +783,12 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="addEventModalLabel">Schedule Work Days</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <div class="modal-header-buttons d-flex align-items-center gap-1">
+                            <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
+                                <i class="fa fa-expand"></i>
+                            </button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
                     </div>
                     <div class="modal-body">
                         <form id="eventForm_new">
@@ -799,10 +829,12 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Event Details</h5>
-                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleModalFullscreen(this)">
-                            <i class="fa fa-expand"></i>
-                        </button>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <div class="modal-header-buttons d-flex align-items-center gap-1">
+                            <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
+                                <i class="fa fa-expand"></i>
+                            </button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
                     </div>
                     <div class="modal-body">
                         <p><strong>Title:</strong> <span id="eventTitle"></span></p>
@@ -824,7 +856,12 @@
             <div class="modal-content">
                 <div class="modal-header">
                 <h5 class="modal-title" id="venueModalLabel">Enter Venue Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header-buttons d-flex align-items-center gap-1">
+                    <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
+                        <i class="fa fa-expand"></i>
+                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
                 </div>
                 <div class="modal-body">
                 <form id="venueForm">
@@ -877,7 +914,12 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="previewModalLabel">File Preview</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal-header-buttons d-flex align-items-center gap-1">
+                        <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
+                            <i class="fa fa-expand"></i>
+                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                 </div>
                 <div class="modal-body">
                     <div id="filePreviewContainer"></div><br>
@@ -896,7 +938,12 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fas fa-cog"></i> Document Configuration</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <div class="modal-header-buttons d-flex align-items-center gap-1">
+                        <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
+                            <i class="fa fa-expand"></i>
+                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                 </div>
                 <div class="modal-body">
                     <div class="row">
@@ -996,7 +1043,12 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">UI Template Preview</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <div class="modal-header-buttons d-flex align-items-center gap-1">
+                        <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
+                            <i class="fa fa-expand"></i>
+                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                 </div>
                 <div class="modal-body">
                     <div id="templatePreviewContent" class="preview-json"></div>
@@ -1014,7 +1066,12 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">UI Form Preview</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <div class="modal-header-buttons d-flex align-items-center gap-1">
+                        <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
+                            <i class="fa fa-expand"></i>
+                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                 </div>
                 <div class="modal-body">
                     <div id="uiPreviewContent" class="preview-json"></div>
@@ -1032,7 +1089,12 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fas fa-eye"></i> Live App Preview</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="submitConfig()"></button>
+                    <div class="modal-header-buttons d-flex align-items-center gap-1">
+                        <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
+                            <i class="fa fa-expand"></i>
+                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                 </div>
                 <!-- <div class="modal-body p-0">
                     <iframe
@@ -1056,7 +1118,12 @@
         <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title"><i class="fas fa-eye"></i> Document Preview</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal-header-buttons d-flex align-items-center gap-1">
+                <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
+                    <i class="fa fa-expand"></i>
+                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
         </div>
 
         <!-- 
@@ -1081,6 +1148,12 @@
         -->
         <div class="modal-body p-4" id="printPreviewContent">
             <h3 id="previewHeaderText" class="text-center mb-4">🧾 Default Header</h3>
+            <div class="modal-header-buttons d-flex align-items-center gap-1">
+                <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
+                    <i class="fa fa-expand"></i>
+                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
 
             <div class="table-responsive">
                 <table class="table table-bordered table-striped" id="printPreviewTable">
@@ -1105,8 +1178,59 @@
         </div>
     </div>
     </div>
+
+    <!-- Modal Structure -->
+    <div class="modal fade" id="mappingModal" tabindex="-1" aria-labelledby="mappingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="mappingModalLabel">Template Field Mapping</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+            <div class="col-12 d-flex">
+                <div style="flex: 0 0 30%; max-width: 30%; padding-right: 15px;">
+                <h5>📄 Document Fields</h5>
+                <ul id="jsonFieldsContainer" class="list-group"></ul>
+                </div>
+                <div style="flex: 0 0 70%; max-width: 70%;">
+                <template-mapping-control></template-mapping-control>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+    </div>
     
-    
+    <div id="triggerModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Configure Triggers</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table" id="triggerTable">
+                <thead>
+                    <tr><th>Event</th><th>Function</th><th>Action</th></tr>
+                </thead>
+                <tbody></tbody>
+                </table>
+                <button class="btn btn-primary" id="addTriggerRow">Add Trigger</button>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" id="saveTrigger">Save</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
+        </div>
+
 
 
     <!-- Iframe Section -->
@@ -1200,8 +1324,6 @@
             }
         }
 
-
-
         function toggleFilter() {
             const sidebar = document.getElementById('tab_page_filter');
             const button = document.querySelector('.filter-toggle');
@@ -1245,6 +1367,8 @@
     
      <!-- FullCalendar JS -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
     <script src="{{ url_for('static', filename='js/main3.js') }}"></script>
     <script src="{{ url_for('static', filename='js/helper.js') }}"></script>
     <script src="{{ url_for('static', filename='js/entity.js') }}"></script>

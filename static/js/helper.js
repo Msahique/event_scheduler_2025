@@ -1,6 +1,6 @@
 
-
 async function getEntityTypes(data) {
+    console.log("helper called. DATA:", data);
     var end_point = domain +"options";
     var body={
         "requestor_id":"", 
@@ -13,6 +13,7 @@ async function getEntityTypes(data) {
             "where_data": {}
             }
     }
+    if (data=="dropdown") {body.qry.select_fields.push("description")}
     console.log("Fetching:", end_point, body);
     var options =  API_helper_call(end_point, body);
     return options
@@ -79,6 +80,8 @@ async function getDocTemplates(data) {
     /*body.array.forEach(element => {
         console.log(element);
     });*/
+    if (data=="dropdown") {body.qry.select_fields.push("description")}
+    console.log("Fetching:", end_point, body);
     var options =  API_helper_call(end_point, body);
     console.log(options)
     return options
@@ -101,6 +104,8 @@ async function getDocTemplates1(data) {
     /*body.array.forEach(element => {
         console.log(element);
     });*/
+    if (data=="dropdown") {body.qry.select_fields.push("description")}
+    console.log("Fetching:", end_point, body);
     var options =  API_helper_call(end_point, body);
     console.log(options)
     return options
@@ -126,8 +131,8 @@ async function getTabs(data) {
     return options
 }
 
-async function getResourceCateory(entity_id) {
-    console.log("helper called")
+async function getResourceCateory(data) {
+     console.log("helper called. DATA:", data);
     var end_point = domain +"options";
     var body={
         "requestor_id":"",
@@ -139,6 +144,27 @@ async function getResourceCateory(entity_id) {
             "where_data":{}
         }
     }
+    console.log("Fetching:", end_point, body);
+    if (data=="dropdown") {body.qry.select_fields.push("description")}
+    var options =  API_helper_call(end_point, body);
+    return options
+}
+
+async function getHtmlTemplates(data) {
+    console.log("helper called. DATA:", data);
+    var end_point = domain +"options";
+    var body={
+        "requestor_id":"", 
+        "request_token": "", 
+        "tab":"Document Config",
+        "event": "getHtmlTemplates",
+        "type": "Document View Templates",
+        "qry": {
+            "select_fields": ["html"], 
+            "where_data": {}
+            }
+    }
+    if (data=="dropdown") {body.qry.select_fields.push("description")}
     console.log("Fetching:", end_point, body);
     var options =  API_helper_call(end_point, body);
     return options
@@ -251,9 +277,10 @@ async function API_helper_call(end_point, body){
             let data = await response.json();
             console.log("Received Data:", data);
             console.log(data);
-            let myArray
+
+            let myArray =data
             if (body.event === "getDocTemplates1") {  myArray = data}
-            else{
+            /*else{
                  // Flat array of all values
                 myArray = data.map(element => Object.values(element)).flat();
                 console.log("Flat array of all values:", myArray);
@@ -279,10 +306,10 @@ async function API_helper_call(end_point, body){
                     return affiliationArray;
                 } else {
                     return myArray;
-                }*/
+                }
                 
-            }
-           return myArray;
+            }*/
+            return myArray;
         } else {
             console.error("Failed to fetch entity types.");
             return [];
@@ -294,24 +321,16 @@ async function API_helper_call(end_point, body){
     }
 }
 
-async function fetchHelperData(helper) {
+async function fetchHelperData(helper, control) {
+    console.log("Calling helper:", helper, "with control:", control);
     if (typeof window[helper] === "function") {
-        return await window[helper](helper);
+        return await window[helper](control);  // Spread control
     } else {
         console.error(`Helper function '${helper}' not found!`);
         return [];
     }
 }
-/*
-async function tab_onchange_trigger(id) {
-    console.log("Tab changed to:", id);
-    const tabSelect = document.getElementById(id);
-        
-        tabSelect.addEventListener('change', function() {
-            const value = this.value;
-            alert(`Selected value: ${value}`);
-        });
-}*/
+
 
 function tab_onchange_trigger(  ) {
     setTimeout(() => {
@@ -327,7 +346,21 @@ function tab_onchange_trigger(  ) {
     }, 0); // Delay until DOM update completes
 }
 
+function autoSplitDescriptionAndFirstField(data) {
+  if (!data.length) return { descriptions: "[]", otherFieldValues: "[]" };
 
+  // Identify the first field key that is not 'description'
+  const sample = data[0];
+  const otherKey = Object.keys(sample).find(key => key !== 'description');
+
+  const descriptions = data.map(item => item.description || "");
+  const otherFieldValues = data.map(item => item[otherKey] || "");
+
+  return {
+    descriptions,
+    otherFieldValues
+  };
+}
 
 /*
 async function fetchEntityName1(entity_id){ 

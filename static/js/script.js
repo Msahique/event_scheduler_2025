@@ -17,7 +17,6 @@ function get_data_list(selected_item,where_data){
         "requestor_id":"",
         "request_token":"",
         "affiliations": JSON.parse(sessionStorage.getItem("userAffiliations")),
-
         "qry":{
             "select_fields":["*"],
             "where_data":where_data
