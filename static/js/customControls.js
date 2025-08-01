@@ -4029,6 +4029,70 @@ class VenueLocationControl extends HTMLElement {
         this.log(`Status: ${message}`);
     }
 
+    addModalMarker(lat, lng, popupText = '', color = 'blue',iconStyle = 'default') {
+        // const iconStyle = document.getElementById('iconDropdown')?.value || 'default';
+
+        let html = '';
+
+        switch (iconStyle) {
+            case 'circle':
+                html = `<div style="
+                    background-color: ${color};
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    border: 2px solid white;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                </div>`;
+                break;
+            case 'square':
+                html = `<div style="
+                    background-color: ${color};
+                    width: 20px;
+                    height: 20px;
+                    border: 2px solid white;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                </div>`;
+                break;
+            case 'star':
+                html = `<div style="
+                    font-size: 20px;
+                    color: ${color};">
+                    ⭐
+                </div>`;
+                break;
+            case 'emoji':
+                html = `<div style="font-size: 22px;">🚩</div>`;
+                break;
+            default: // default pin style
+                html = `<div style="
+                    background-color: ${color};
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50% 50% 50% 0;
+                    border: 2px solid white;
+                    transform: rotate(-45deg);
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                </div>`;
+                break;
+        }
+
+        const icon = L.divIcon({
+            html,
+            iconSize: [20, 20],
+            iconAnchor: [10, 20],
+            className: 'custom-marker'
+        });
+
+        const marker = L.marker([lat, lng], {
+            icon,
+            draggable: false
+        }).addTo(this.modalMap);
+
+        if (popupText) marker.bindPopup(popupText);
+        return marker;
+    }
+    
     showMultiVenueModalSeparate(dataList) {
         if (!Array.isArray(dataList) || dataList.length === 0) {
             this.log('No data provided for multi-marker modal.');
@@ -4049,6 +4113,18 @@ class VenueLocationControl extends HTMLElement {
 
             console.log('Dropdown populated with DB column keys:', keys);
         }
+        const dropdown1 = document.getElementById('columnIconDropdown');
+        if (dropdown1 && dataList.length > 0) {
+            const rawRow = dataList[0]._originalRow || {};
+            console.log("RawRow:",rawRow);
+            const keys = Object.keys(rawRow);
+
+            dropdown1.innerHTML = keys.map(key => 
+                `<option value="${key}">${key}</option>`
+            ).join('');
+
+            console.log('Dropdown1 populated with DB column keys:', keys);
+        }
 
         // Get the separate map modal
         let mapModal = document.getElementById('mapViewModal');
@@ -4057,21 +4133,85 @@ class VenueLocationControl extends HTMLElement {
         if (!mapModal) {
             console.log('Creating map modal dynamically...');
             
+            // Updated modal creation section in showMultiVenueModalSeparate function
             const modalHTML = `
                 <div class="modal fade" id="mapViewModal" tabindex="-1" role="dialog">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">Selected Locations Map</h4>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <div class="w-100">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h4 class="modal-title mb-0">Selected Locations Map</h4>
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleModalFullscreen(this)">
+                                                <i class="fa fa-expand"></i>
+                                            </button>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Dropdown Controls Section -->
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold small">Color Map</label>
+                                            <select id="columnDropdown" class="form-select form-select-sm">
+                                                <option value="">Select column for colors...</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold small">Icon Map</label>
+                                            <select id="columnIconDropdown" class="form-select form-select-sm">
+                                                <option value="">Select column for icons...</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                            
                             <div class="modal-body">
                                 <div id="map-view-container" style="height: 500px; width: 100%; background-color: #f0f0f0; border: 1px solid #ccc;">
                                     <div style="text-align: center; padding: 20px;">Loading map...</div>
                                 </div>
                             </div>
+                            
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <div class="w-100">
+                                    <!-- Color Code Panel -->
+                                    <div class="mb-3">
+                                        <h6 class="fw-bold mb-2">Color & Icon Legend</h6>
+                                        <div class="row g-2">
+                                            <div class="col-md-6">
+                                                <div class="card">
+                                                    <div class="card-header py-1">
+                                                        <small class="fw-bold">Color Mapping</small>
+                                                    </div>
+                                                    <div class="card-body p-2">
+                                                        <div id="colorLegend" style="max-height: 120px; overflow-y: auto; font-size: 11px;">
+                                                            <small class="text-muted">Select a color column to view mappings</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="card">
+                                                    <div class="card-header py-1">
+                                                        <small class="fw-bold">Icon Mapping</small>
+                                                    </div>
+                                                    <div class="card-body p-2">
+                                                        <div id="iconLegend" style="max-height: 120px; overflow-y: auto; font-size: 11px;">
+                                                            <small class="text-muted">Select an icon column to view mappings</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Close Button -->
+                                    <div class="text-end">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -4093,10 +4233,28 @@ class VenueLocationControl extends HTMLElement {
         // Show the modal
         const bootstrapModal = new bootstrap.Modal(mapModal);
         
+        let selectedColorColumn = null;
+        let selectedIconColumn = null;
+
+        if (dropdown) {
+            dropdown.onchange = () => {
+                selectedColorColumn = dropdown.value;
+                this.populateModalMarkers(dataList, selectedColorColumn, selectedIconColumn);
+            };
+            selectedColorColumn = dropdown.value; // Initial
+        }
+
+        if (dropdown1) {
+            dropdown1.onchange = () => {
+                selectedIconColumn = dropdown1.value;
+                this.populateModalMarkers(dataList, selectedColorColumn, selectedIconColumn);
+            };
+            selectedIconColumn = dropdown1.value; // Initial
+        }
+
         // Listen for when modal is fully shown
         const onModalShown = () => {
             console.log('Map modal fully shown, loading Leaflet...');
-            const selectedColumn = document.getElementById('columnDropdown')?.value || '';
             const mapContainer = document.getElementById('map-view-container');
             if (!mapContainer) {
                 console.error('Map container not found');
@@ -4134,7 +4292,7 @@ class VenueLocationControl extends HTMLElement {
                         console.log('Map size invalidated');
                         
                         // Populate markers after map is ready
-                        this.populateModalMarkers(dataList,selectedColumn);
+                        this.populateModalMarkers(dataList,selectedColorColumn,selectedIconColumn);
                     }, 200);
 
                 } catch (error) {
@@ -4144,12 +4302,14 @@ class VenueLocationControl extends HTMLElement {
             });
         };
 
-        if (dropdown) {
-            dropdown.onchange = () => {
-                const selectedCol = dropdown.value;
-                this.populateModalMarkers(dataList, selectedCol);
-            };
-        }
+        // const iconDropdown = document.getElementById('iconDropdown');
+        // if (iconDropdown) {
+        //     iconDropdown.onchange = () => {
+        //         if (latestSelectedColumn) {
+        //             this.populateModalMarkers(dataList, latestSelectedColumn);
+        //         }
+        //     };
+        // }
 
         // Handle modal close event to cleanup
         const onModalHidden = () => {
@@ -4180,8 +4340,8 @@ class VenueLocationControl extends HTMLElement {
         console.log('Map modal shown');
     }
 
-    // Modified populateModalMarkers function
-    populateModalMarkers(dataList, selectedColumn) {
+    // Updated populateModalMarkers function with legend updates
+    populateModalMarkers(dataList, colorColumn, iconColumn) {
         if (!this.modalMap) return;
 
         if (this.modalMarkers) {
@@ -4189,59 +4349,310 @@ class VenueLocationControl extends HTMLElement {
         }
         this.modalMarkers = [];
 
-        // Build unique color map
-        const colorMap = {};
-        const usedColors = new Set();
+        // Initialize persistent color and icon maps if they don't exist or if colorColumn changed
+        if (!this.persistentColorMap || this.lastColorColumn !== colorColumn) {
+            this.persistentColorMap = {};
+            this.usedColors = new Set();
+            this.lastColorColumn = colorColumn;
+            console.log('Initialized new color mapping for column:', colorColumn);
+        }
+
+        // Initialize persistent icon map if it doesn't exist or if iconColumn changed
+        if (!this.persistentIconMap || this.lastIconColumn !== iconColumn) {
+            this.persistentIconMap = {};
+            this.lastIconColumn = iconColumn;
+            console.log('Initialized new icon mapping for column:', iconColumn);
+        }
+
+        // Extended icon options with Font Awesome icons
+        const iconShapes = [
+            'circle', 'square', 'triangle', 'diamond', 'star',
+            'fa-heart', 'fa-bolt', 'fa-fire', 'fa-hospital', 'fa-school',
+            'fa-building', 'fa-truck', 'fa-car', 'fa-tree', 'fa-user',
+            'fa-users', 'fa-wrench', 'fa-shopping-cart', 'fa-dog','fa-plus', 'fa-times'
+        ];
+
         const getColor = () => {
-            let color;
-            do {
-                color = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
-            } while (usedColors.has(color));
-            usedColors.add(color);
-            return color;
+            // Predefined colors with their names
+            const namedColors = [
+                { hex: '#FF6B6B', name: 'Coral Red' },
+                { hex: '#4ECDC4', name: 'Turquoise' },
+                { hex: '#45B7D1', name: 'Sky Blue' },
+                { hex: '#96CEB4', name: 'Mint Green' },
+                { hex: '#FFEAA7', name: 'Light Yellow' },
+                { hex: '#DDA0DD', name: 'Plum' },
+                { hex: '#98D8C8', name: 'Aqua' },
+                { hex: '#F7DC6F', name: 'Banana Yellow' },
+                { hex: '#BB8FCE', name: 'Light Purple' },
+                { hex: '#85C1E9', name: 'Light Blue' },
+                { hex: '#F8C471', name: 'Peach' },
+                { hex: '#82E0AA', name: 'Light Green' },
+                { hex: '#F1948A', name: 'Salmon' },
+                { hex: '#D2B4DE', name: 'Lavender' },
+                { hex: '#AED6F1', name: 'Powder Blue' },
+                { hex: '#A3E4D7', name: 'Sea Green' },
+                { hex: '#F9E79F', name: 'Cream' },
+                { hex: '#FADBD8', name: 'Rose' },
+                { hex: '#FF8C69', name: 'Orange' },
+                { hex: '#20B2AA', name: 'Teal' }
+            ];
+
+            // Find available colors (not used yet)
+            const availableColors = namedColors.filter(colorObj => !this.usedColors.has(colorObj.hex));
+            
+            let selectedColor;
+            
+            if (availableColors.length > 0) {
+                // Pick a random color from available named colors
+                selectedColor = availableColors[Math.floor(Math.random() * availableColors.length)];
+            } else {
+                // Fallback to random color generation if all named colors are used
+                let randomHex;
+                do {
+                    randomHex = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0').toUpperCase();
+                } while (this.usedColors.has(randomHex));
+                
+                selectedColor = { hex: randomHex, name: 'Custom Color' };
+            }
+            
+            this.usedColors.add(selectedColor.hex);
+            return selectedColor;
+        };
+
+        const createDivIcon = (color, shape) => {
+            let html = '';
+            
+            // Check if it's a Font Awesome icon
+            if (shape.startsWith('fa-')) {
+                html = `<div style="color: ${color}; font-size: 16px; text-shadow: 1px 1px 1px #333; display: flex; align-items: center; justify-content: center; width: 20px; height: 20px;"><i class="fas ${shape}"></i></div>`;
+            } else {
+                // Original geometric shapes
+                switch (shape) {
+                    case 'circle':
+                        html = `<div style="background-color: ${color}; width: 16px; height: 16px; border-radius: 50%; border: 2px solid #333;"></div>`;
+                        break;
+                    case 'square':
+                        html = `<div style="background-color: ${color}; width: 16px; height: 16px; border: 2px solid #333;"></div>`;
+                        break;
+                    case 'triangle':
+                        html = `<div style="width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 16px solid ${color}; border-top: 2px solid #333;"></div>`;
+                        break;
+                    case 'diamond':
+                        html = `<div style="background-color: ${color}; width: 12px; height: 12px; transform: rotate(45deg); border: 2px solid #333; margin: 2px;"></div>`;
+                        break;
+                    case 'star':
+                        html = `<div style="color: ${color}; font-size: 16px; text-shadow: 1px 1px 1px #333;">★</div>`;
+                        break;
+                    default:
+                        html = `<div style="background-color: ${color}; width: 16px; height: 16px; border-radius: 50%; border: 2px solid #333;"></div>`;
+                }
+            }
+
+            return L.divIcon({
+                html,
+                className: '',
+                iconSize: [20, 20],
+                iconAnchor: [10, 10],
+                popupAnchor: [0, -10]
+            });
+        };
+
+        // Helper function to create legend icon HTML
+        const createLegendIcon = (color, shape, size = '14px') => {
+            // Check if it's a Font Awesome icon
+            if (shape.startsWith('fa-')) {
+                return `<div style="display: inline-block; color: ${color}; font-size: 14px; text-shadow: 1px 1px 1px #333; margin-right: 8px; vertical-align: middle; width: 16px; text-align: center;"><i class="fas ${shape}"></i></div>`;
+            } else {
+                // Original geometric shapes
+                switch (shape) {
+                    case 'circle':
+                        return `<div style="display: inline-block; background-color: ${color}; width: ${size}; height: ${size}; border-radius: 50%; border: 1px solid #333; margin-right: 8px; vertical-align: middle;"></div>`;
+                    case 'square':
+                        return `<div style="display: inline-block; background-color: ${color}; width: ${size}; height: ${size}; border: 1px solid #333; margin-right: 8px; vertical-align: middle;"></div>`;
+                    case 'triangle':
+                        return `<div style="display: inline-block; width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-bottom: 14px solid ${color}; margin-right: 8px; vertical-align: middle;"></div>`;
+                    case 'diamond':
+                        return `<div style="display: inline-block; background-color: ${color}; width: 10px; height: 10px; transform: rotate(45deg); border: 1px solid #333; margin-right: 12px; margin-left: 4px; vertical-align: middle;"></div>`;
+                    case 'star':
+                        return `<div style="display: inline-block; color: ${color}; font-size: 14px; text-shadow: 1px 1px 1px #333; margin-right: 8px; vertical-align: middle;">★</div>`;
+                    default:
+                        return `<div style="display: inline-block; background-color: ${color}; width: ${size}; height: ${size}; border-radius: 50%; border: 1px solid #333; margin-right: 8px; vertical-align: middle;"></div>`;
+                }
+            }
         };
 
         const latlngs = [];
 
-        dataList.forEach((item, index) => {
+        // Get unique values for icon mapping (only assign new shapes if not already mapped)
+        const iconKeys = Array.from(new Set(dataList.map(item => (item._originalRow?.[iconColumn] || '').toString().toLowerCase().trim())));
+        
+        // Assign shapes to icon keys that don't already have them
+        iconKeys.forEach(key => {
+            if (!this.persistentIconMap[key]) {
+                const existingShapes = Object.values(this.persistentIconMap);
+                // Find the first available shape or cycle through them
+                const availableShape = iconShapes.find(shape => !existingShapes.includes(shape)) || 
+                                      iconShapes[Object.keys(this.persistentIconMap).length % iconShapes.length];
+                this.persistentIconMap[key] = availableShape;
+                console.log(`Assigned shape "${availableShape}" to icon key "${key}"`);
+            }
+        });
+
+        dataList.forEach((item) => {
             const { lat, lng, _originalRow = {}, ...meta } = item;
             const latNum = parseFloat(lat);
             const lngNum = parseFloat(lng);
             if (isNaN(latNum) || isNaN(lngNum)) return;
 
-            const keyValueRaw = _originalRow[selectedColumn];
-            const keyValue = (keyValueRaw || '').toString().toLowerCase().trim();
+            const colorKeyRaw = _originalRow[colorColumn];
+            const iconKeyRaw = _originalRow[iconColumn];
+            const colorKey = (colorKeyRaw || '').toString().toLowerCase().trim();
+            const iconKey = (iconKeyRaw || '').toString().toLowerCase().trim();
 
-            if (!colorMap[keyValue]) {
-                colorMap[keyValue] = getColor();
+            // Assign color if not already mapped
+            if (!this.persistentColorMap[colorKey]) {
+                this.persistentColorMap[colorKey] = getColor();
+                console.log(`Assigned color "${this.persistentColorMap[colorKey].name}" (${this.persistentColorMap[colorKey].hex}) to color key "${colorKey}"`);
             }
 
-            const color = colorMap[keyValue];
+            const color = this.persistentColorMap[colorKey].hex;
+            const shape = this.persistentIconMap[iconKey] || 'circle'; // fallback shape
+            const icon = createDivIcon(color, shape);
             latlngs.push([latNum, lngNum]);
 
-            // Build popup
             let popupContent = `<div style="max-width: 250px;">`;
             for (const [key, value] of Object.entries(meta)) {
                 popupContent += `<strong>${key}:</strong> ${value || 'N/A'}<br>`;
             }
-            popupContent += `<strong>${selectedColumn}:</strong> ${keyValueRaw || 'N/A'}<br>`;
+            popupContent += `<strong>${colorColumn}:</strong> ${colorKeyRaw || 'N/A'} <span style="display: inline-block; width: 12px; height: 12px; background-color: ${color}; border-radius: 50%; margin-left: 5px;"></span><br>`;
+            popupContent += `<strong>${iconColumn}:</strong> ${iconKeyRaw || 'N/A'} (${shape})<br>`;
             popupContent += `<strong>Location:</strong> ${latNum.toFixed(6)}, ${lngNum.toFixed(6)}</div>`;
 
-            const marker = L.circleMarker([latNum, lngNum], {
-                radius: 8,
-                fillColor: color,
-                color: '#222',
-                weight: 1,
-                opacity: 1,
-                fillOpacity: 0.85
-            }).addTo(this.modalMap);
-
-            marker.bindPopup(popupContent);
+            const marker = L.marker([latNum, lngNum], { icon }).bindPopup(popupContent).addTo(this.modalMap);
             this.modalMarkers.push(marker);
         });
 
         if (latlngs.length > 0) {
             this.modalMap.fitBounds(L.latLngBounds(latlngs), { padding: [20, 20] });
+        }
+
+        // Update Color Legend
+        const colorLegendElement = document.getElementById('colorLegend');
+        if (colorLegendElement && colorColumn && this.persistentColorMap) {
+            // Group values by their colors
+            const colorGroups = {};
+            Object.entries(this.persistentColorMap)
+                .forEach(([key, colorObj]) => {
+                    const colorKey = colorObj.hex;
+                    if (!colorGroups[colorKey]) {
+                        colorGroups[colorKey] = {
+                            name: colorObj.name,
+                            values: []
+                        };
+                    }
+                    // Get all original case versions from data for this key
+                    const matchingItems = dataList.filter(item => 
+                        (item._originalRow?.[colorColumn] || '').toString().toLowerCase().trim() === key
+                    );
+                    
+                    matchingItems.forEach(item => {
+                        const originalKey = item._originalRow?.[colorColumn] || key || 'N/A';
+                        colorGroups[colorKey].values.push(originalKey);
+                    });
+                });
+            
+            if (Object.keys(colorGroups).length > 0) {
+                colorLegendElement.innerHTML = Object.entries(colorGroups)
+                    .sort(([, a], [, b]) => a.values[0].localeCompare(b.values[0]))
+                    .map(([colorHex, colorData]) => {
+                        const sortedValues = colorData.values.sort();
+                        return `
+                            <div style="margin-bottom: 8px; font-size: 12px;">
+                                <div style="margin-bottom: 2px;">
+                                    <span style="display: inline-block; width: 16px; height: 16px; background-color: ${colorHex}; border-radius: 50%; border: 1px solid #333; margin-right: 8px; vertical-align: middle;"></span>
+                                    <span style="font-weight: bold;">${colorData.name}</span>
+                                </div>
+                                <div style="margin-left: 24px; font-size: 11px; color: #666;">
+                                    ${sortedValues.map(value => `<div style="margin-bottom: 1px;">${value}</div>`).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+            } else {
+                colorLegendElement.innerHTML = '<small class="text-muted">No color mappings found</small>';
+            }
+        }
+
+        // Update Icon Legend - Group by icon but show all entries
+        const iconLegendElement = document.getElementById('iconLegend');
+        if (iconLegendElement && iconColumn && this.persistentIconMap) {
+            // Group values by their icons
+            const iconGroups = {};
+            Object.entries(this.persistentIconMap)
+                .forEach(([key, shape]) => {
+                    if (!iconGroups[shape]) {
+                        iconGroups[shape] = [];
+                    }
+                    // Get all original case versions from data for this key
+                    const matchingItems = dataList.filter(item => 
+                        (item._originalRow?.[iconColumn] || '').toString().toLowerCase().trim() === key
+                    );
+                    
+                    matchingItems.forEach(item => {
+                        const originalKey = item._originalRow?.[iconColumn] || key || 'N/A';
+                        iconGroups[shape].push(originalKey);
+                    });
+                });
+            
+            if (Object.keys(iconGroups).length > 0) {
+                iconLegendElement.innerHTML = Object.entries(iconGroups)
+                    .sort(([, valuesA], [, valuesB]) => valuesA[0].localeCompare(valuesB[0])) // Sort by first value
+                    .map(([shape, values]) => {
+                        // Use default color for legend icons
+                        const defaultColor = '#666';
+                        const iconHtml = createLegendIcon(defaultColor, shape);
+                        
+                        // Get readable name for the icon
+                        const getIconDisplayName = (shape) => {
+                            const iconNames = {
+                                'fa-heart': 'Heart',
+                                'fa-bolt': 'Bolt',
+                                'fa-fire': 'Fire',
+                                'fa-hospital': 'Hospital',
+                                'fa-school': 'School',
+                                'fa-building': 'Building',
+                                'fa-truck': 'Truck',
+                                'fa-car': 'Car',
+                                'fa-tree': 'Tree',
+                                'fa-user': 'Person',
+                                'fa-users': 'Users',
+                                'fa-wrench': 'Wrench',
+                                'fa-shopping-cart': 'Shopping Cart',
+                                'fa-dog': 'Dog',
+                                'fa-plus': 'Plus',
+                                'fa-times': 'Times'
+                            };
+                            return iconNames[shape] || shape;
+                        };
+                        
+                        // Sort values within each icon group
+                        const sortedValues = values.sort();
+                        
+                        return `
+                            <div style="margin-bottom: 8px; font-size: 12px;">
+                                <div style="margin-bottom: 2px;">
+                                    ${iconHtml}
+                                    <span style="font-weight: bold;">${getIconDisplayName(shape)}</span>
+                                </div>
+                                <div style="margin-left: 24px; font-size: 11px; color: #666;">
+                                    ${sortedValues.map(value => `<div style="margin-bottom: 1px;">${value}</div>`).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+            } else {
+                iconLegendElement.innerHTML = '<small class="text-muted">No icon mappings found</small>';
+            }
         }
     }
 
@@ -4401,3 +4812,202 @@ class VenueLocationControl extends HTMLElement {
 
 // **Register the custom element**
 customElements.define("venue-location-control", VenueLocationControl);
+
+
+class GraphsControl extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+
+        this.shadowRoot.innerHTML = `
+            <style>
+                .graphs-container {
+                    padding: 10px;
+                    border: 1px solid #ccc;
+                    border-radius: 5px;
+                    background: #f9f9f9;
+                }
+                .graphs-menu {
+                    display: flex;
+                    gap: 10px;
+                    margin-bottom: 15px;
+                }
+                .graphs-menu button {
+                    padding: 10px;
+                    border: none;
+                    border-radius: 5px;
+                    background: #007bff;
+                    color: white;
+                    cursor: pointer;
+                }
+                .graphs-menu button:hover {
+                    background: #0056b3;
+                }
+                .graphs-menu button.active {
+                    background: #0056b3;
+                }
+                #graphCanvas {
+                    width: 100%;
+                    height: 400px;
+                }
+                .modal {
+                    display: none;
+                    position: fixed;
+                    z-index: 1050;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    overflow: auto;
+                    background-color: rgba(0, 0, 0, 0.5);
+                }
+                .modal-content {
+                    background-color: #fefefe;
+                    margin: 10% auto;
+                    padding: 20px;
+                    border: 1px solid #888;
+                    width: 80%;
+                    border-radius: 10px;
+                }
+                .close {
+                    color: #aaa;
+                    float: right;
+                    font-size: 28px;
+                    font-weight: bold;
+                    cursor: pointer;
+                }
+                .close:hover,
+                .close:focus {
+                    color: black;
+                    text-decoration: none;
+                    cursor: pointer;
+                }
+            </style>
+            <div class="modal" id="graphsModal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <div class="graphs-container">
+                        <div class="graphs-menu">
+                            <button data-type="scatter" class="active">Scatter Plot</button>
+                            <button data-type="bar">Bar Chart</button>
+                            <button data-type="line">Line Chart</button>
+                            <button data-type="pie">Pie Chart</button>
+                        </div>
+                        <canvas id="graphCanvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        this.graphCanvas = this.shadowRoot.getElementById("graphCanvas");
+        this.graphType = "scatter";
+        this.chart = null;
+        this.rowData = []; // Store row data
+
+        this.shadowRoot.querySelectorAll(".graphs-menu button").forEach((button) => {
+            button.addEventListener("click", () => {
+                this.changeGraphType(button.dataset.type);
+            });
+        });
+
+        this.shadowRoot.querySelector(".close").addEventListener("click", () => {
+            this.closeModal();
+        });
+
+        this.shadowRoot.getElementById("graphsModal").addEventListener("click", (event) => {
+            if (event.target === this.shadowRoot.getElementById("graphsModal")) {
+                this.closeModal();
+            }
+        });
+    }
+
+    connectedCallback() {
+        this.initializeChart();
+    }
+
+    changeGraphType(type) {
+        this.graphType = type;
+        this.shadowRoot.querySelectorAll(".graphs-menu button").forEach((button) => {
+            button.classList.toggle("active", button.dataset.type === type);
+        });
+        this.updateChart();
+    }
+
+    initializeChart() {
+        if (!window.Chart) {
+            const script = document.createElement("script");
+            script.src = "https://cdn.jsdelivr.net/npm/chart.js";
+            script.onload = () => this.updateChart();
+            document.head.appendChild(script);
+        } else {
+            this.updateChart();
+        }
+    }
+
+    updateChart() {
+        if (this.chart) {
+            this.chart.destroy();
+        }
+
+        const data = this.prepareData();
+        const config = this.getChartConfig(data);
+
+        this.chart = new Chart(this.graphCanvas, config);
+    }
+
+    prepareData() {
+        // Use the row data to prepare labels and dataset
+        const labels = this.rowData.map((row, index) => `Row ${index + 1}`);
+        const dataset = this.rowData.map((row) => row.value || 0); // Replace 'value' with the actual key in your data
+
+        return { labels, dataset };
+    }
+
+    getChartConfig(data) {
+        const { labels, dataset } = data;
+
+        const config = {
+            type: this.graphType,
+            data: {
+                labels,
+                datasets: [
+                    {
+                        label: "Row Data",
+                        data: dataset,
+                        backgroundColor: "rgba(75, 192, 192, 0.2)",
+                        borderColor: "rgba(75, 192, 192, 1)",
+                        borderWidth: 1,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: "top",
+                    },
+                },
+            },
+        };
+
+        return config;
+    }
+
+    openModal() {
+        this.shadowRoot.getElementById("graphsModal").style.display = "block";
+    }
+
+    closeModal() {
+        this.shadowRoot.getElementById("graphsModal").style.display = "none";
+    }
+
+    initializeAndOpenModal(rowData) {
+        console.log("Row data received:", rowData);
+        this.rowData = rowData; // Store the row data
+        this.initializeChart();
+        this.openModal();
+    }
+}
+
+// Register the custom element
+customElements.define("graphs-control", GraphsControl);

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Scatterplot with Draggable Thresholds</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+  <h3>Scatterplot with Draggable Upper and Lower Threshold Lines</h3>
+  <div id="plot" style="width:80%;height:600px;"></div>
+
+  <script>
+    const N = 50;
+    const x = Array.from({ length: N }, (_, i) => i);
+    const y = Array.from({ length: N }, () => Math.random() * 100);
+
+    const upperThreshold = 80;
+    const lowerThreshold = 20;
+
+    const layout = {
+      title: 'Scatterplot with Thresholds',
+      dragmode: 'drawline',
+      shapes: [
+        {
+          type: 'line',
+          xref: 'paper',
+          x0: 0, x1: 1,
+          y0: upperThreshold, y1: upperThreshold,
+          line: { color: 'red', width: 2, dash: 'dash' },
+          editable: true
+        },
+        {
+          type: 'line',
+          xref: 'paper',
+          x0: 0, x1: 1,
+          y0: lowerThreshold, y1: lowerThreshold,
+          line: { color: 'green', width: 2, dash: 'dash' },
+          editable: true
+        }
+      ]
+    };
+
+    const data = [{
+      x: x,
+      y: y,
+      mode: 'markers',
+      type: 'scatter',
+      marker: { size: 8, color: 'blue' }
+    }];
+
+    Plotly.newPlot('plot', data, layout).then(gd => {
+      gd.on('plotly_relayout', function(eventdata) {
+        const shapes = gd.layout.shapes;
+        let upperY = shapes[0].y0;
+        let lowerY = shapes[1].y0;
+
+        console.log(`Upper Threshold: ${upperY}, Lower Threshold: ${lowerY}`);
+      });
+    });
+  </script>
+</body>
+</html>

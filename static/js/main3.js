@@ -1349,6 +1349,24 @@ function collectSelectedData() {
     }
 }
 
+function graphInitialization() {
+    console.log("Inside graphInitialization function");
+    const selectedCheckboxes = document.querySelectorAll('input[name="editRowSelect[]"]:checked');
+
+    if (selectedCheckboxes.length === 0) {
+        alert('No rows selected.');
+        return;
+    }
+
+    const selectedData = Array.from(selectedCheckboxes).map(cb => JSON.parse(cb.value));
+
+    const graphsControl = document.querySelector("graphs-control");
+    if (graphsControl) {
+        graphsControl.initializeAndOpenModal(selectedData); // Call the method to handle data and open modal
+    } else {
+        alert("GraphsControl not found. Please ensure the component is loaded.");
+    }
+}
 
 /*
 function print_document(){
