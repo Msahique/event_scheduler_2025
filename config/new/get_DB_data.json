@@ -1,14 +1,5 @@
 {
     "db_name":"event_scheduler2025",
-    "general":{
-        "entity_table_name":"entity",
-        "event_table_name":"event_new",
-        "alert_table_name":"alert",
-        "message_table_name":"message_details",
-        "subscriber_table_name":"subscriber",
-        "log_table_name":"log",
-        "appointment_table_name":"appointment"
-    },
     "Entity Config":{
         "Role Registry":"roles",
         "Affiliation Registry":"affiliation",
