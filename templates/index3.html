@@ -595,7 +595,7 @@
     <!-- ✅ Bootstrap JS Bundle (required for dropdowns) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <div class="position-relative px-4 py-3 " style="background-color: #007bff; height: 60px;">
-        <h2 class="mb-0 text-white position-absolute top-50 start-50 translate-middle">APCOG Scheduler</h2>
+        <h2 id="header-title" class="mb-0 text-white position-absolute top-50 start-50 translate-middle">APCOG Scheduler</h2>
     
         <!-- Dropdown Menu -->
         <div  class="dropdown position-absolute start-0 top-50 translate-middle-y ps-3">
@@ -669,7 +669,7 @@
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 id="modal_title" class="modal-title"></h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="contextSwitch('list')" "></button>
                         <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleModalFullscreen(this)">
                             <i class="fa fa-expand"></i>
                         </button>
@@ -703,7 +703,7 @@
                             <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
                                 <i class="fa fa-expand"></i>
                             </button>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="contextSwitch('list')"></button>
                         </div>
                     </div>
         
@@ -737,7 +737,7 @@
                                     <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleModalFullscreen(this)">
                                         <i class="fa fa-expand"></i>
                                     </button>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="contextSwitch('list')"></button>
                                 </div>
                             </div>
                             
@@ -830,7 +830,7 @@
                         <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleModalFullscreen(this)">
                             <i class="fa fa-expand"></i>
                         </button>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="contextSwitch('list')"></button>
                     </div>
                     <div class="modal-body">
                         <div id="calendar"></div> <!-- FullCalendar container -->
@@ -851,7 +851,7 @@
                             <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
                                 <i class="fa fa-expand"></i>
                             </button>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="contextSwitch('list')"></button>
                         </div>
                     </div>
                     <div class="modal-body">
@@ -897,7 +897,7 @@
                             <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
                                 <i class="fa fa-expand"></i>
                             </button>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="contextSwitch('list')"></button>
                         </div>
                     </div>
                     <div class="modal-body">
@@ -924,7 +924,7 @@
                     <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
                         <i class="fa fa-expand"></i>
                     </button>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="contextSwitch('list')"></button>
                 </div>
                 </div>
                 <div class="modal-body">
@@ -982,7 +982,7 @@
                         <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
                             <i class="fa fa-expand"></i>
                         </button>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="contextSwitch('list')"></button>
                     </div>
                 </div>
                 <div class="modal-body">
@@ -1006,7 +1006,7 @@
                         <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
                             <i class="fa fa-expand"></i>
                         </button>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="contextSwitch('list')"></button>
                     </div>
                 </div>
                 <div class="modal-body">
@@ -1111,7 +1111,7 @@
                         <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
                             <i class="fa fa-expand"></i>
                         </button>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="contextSwitch('list')"></button>
                     </div>
                 </div>
                 <div class="modal-body">
@@ -1134,7 +1134,7 @@
                         <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
                             <i class="fa fa-expand"></i>
                         </button>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="contextSwitch('list')"></button>
                     </div>
                 </div>
                 <div class="modal-body">
@@ -1157,7 +1157,7 @@
                         <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
                             <i class="fa fa-expand"></i>
                         </button>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="contextSwitch('list')"></button>
                     </div>
                 </div>
                 <!-- <div class="modal-body p-0">
@@ -1186,7 +1186,7 @@
                 <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
                     <i class="fa fa-expand"></i>
                 </button>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="contextSwitch('list')"></button>
             </div>
         </div>
 
@@ -1216,7 +1216,7 @@
                 <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
                     <i class="fa fa-expand"></i>
                 </button>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="contextSwitch('list')"></button>
             </div>
 
             <div class="table-responsive">
@@ -1249,7 +1249,7 @@
         <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="mappingModalLabel">Template Field Mapping</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="contextSwitch('list')"></button>
         </div>
         <div class="modal-body">
             <div class="row">
@@ -1444,7 +1444,7 @@
     <script src="{{ url_for('static', filename='js/helper.js') }}"></script>
     <script src="{{ url_for('static', filename='js/entity.js') }}"></script>
     <script src="{{ url_for('static', filename='js/config/Config.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/triggers.js') }}"></script>
+    <!-- <script src="{{ url_for('static', filename='js/triggers.js') }}"></script>  -->
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script src="{{ url_for('static', filename='js/customControls.js') }}"></script>
     <script src="{{ url_for('static', filename='js/editor_config.js') }}"></script>
