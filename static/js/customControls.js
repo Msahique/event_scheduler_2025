@@ -1069,13 +1069,17 @@ class FieldAttributeControl extends HTMLElement {
                   if (parsed.fields && Array.isArray(parsed.fields)) {
                       parsed.fields.forEach(field => {
                           if (field.name && field.datatype) {
-                              result.push({
-                                  name: field.name,
-                                  datatype: field.datatype
-                              });
+                              const exists = result.some(r => r.name === field.name);
+                              if (!exists) {
+                                  result.push({
+                                      name: field.name,
+                                      datatype: field.datatype
+                                  });
+                              }
                           }
                       });
                   }
+
               } catch (e) {
                   console.error("Invalid JSON in doc_template", e);
               }

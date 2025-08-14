@@ -2590,7 +2590,34 @@ async function Registration_modal() {
             } else if (field.control === "field-attribute-control") {
                 let fieldElement = document.querySelector("field-attribute-control");
                 if (fieldElement) {
-                    newData[field.field] = fieldElement.value;
+                    try {
+                        let rawValue = fieldElement.value;
+                        let parsedValue;
+
+                        if (typeof rawValue === "string") {
+                            try {
+                                parsedValue = JSON.parse(rawValue);
+                            } catch (parseErr) {
+                                console.warn("Value is not valid JSON, using raw string instead:", parseErr);
+                                parsedValue = rawValue;
+                            }
+                        } else {
+                            parsedValue = rawValue; // Already an object or array
+                        }
+
+                            console.log("Parsed field-attribute-control:", parsedValue);
+
+                            // Store as stringified JSON if it's an object, else store as-is
+                            newData[field.field] = typeof parsedValue === "object"
+                                ? JSON.stringify(parsedValue)
+                                : parsedValue;
+
+                        } catch (e) {
+                            console.error("Failed to process field-attribute-control value:", e);
+                        }
+
+                } else {
+                    console.warn(`field-attribute-control element not found.`);
                 }
             } else if (field.control === "maps-control") {
                 let mapElement = document.querySelector("maps-control");
