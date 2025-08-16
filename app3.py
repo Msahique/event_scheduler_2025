@@ -17,7 +17,7 @@ from db_operations import *
 db = pymysql.connect(
   host="localhost",
   user="root",
-  password="Blr@2025",
+  password="root",
   database="event_scheduler2025",
   port=3306,
   cursorclass=pymysql.cursors.DictCursor
@@ -222,7 +222,7 @@ def get_user_tabs():
     f=open('config/new/user_tabs.json')
     tab_data = json.load(f)
     if (y['role']=="Admin"):
-        response=tab_data['Admin']
+        response=tab_data['Admin1']
     elif (y['role']=="User"):
         response=tab_data['User']
     elif (y['role']=="Finance_admin"):

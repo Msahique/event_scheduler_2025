@@ -73,18 +73,35 @@ function get_data_list(selected_item,where_data){
         else{present_Data({})}
 }
 
-function present_Data(data,item) {
+async function present_Data(data,item) {
     console.log(data, item);
     console.log(selectedItemFromDropdown)
     var display_data;
-    var field_data = {}; // Ensure it's initialized properly
+    var field_data,field_datatype = {}; // Ensure it's initialized properly
     var config_path;
     console.log(page_load_conf.tab)
+     var body={
+        "requestor_id":"", 
+        "request_token": "", 
+        "tab":"Document Config",
+        "event": "getdocumentuitemplate",
+        "type": "Document UI Templates",
+        "qry": {
+            "select_fields": ["id","ui_template"], 
+            "where_data": {"doc_type":item}
+            }
+    }
+    var get_config = await API_helper_call(domain+"options",body)
+    console.log("=======>>>>>>*****>>>>>",get_config)
+    var ui_template_config = JSON.parse(get_config[0].ui_template);
+    console.log("UI Template Config:", ui_template_config);
+   // var get_config=  API_call(domain, MainConfig[page_load_conf.tab][selected_item].getDataApi, data_list_body, "POST");
     if (item !== undefined){display_data=data[0];  
         
         config_path=MainConfig[page_load_conf.tab][item]; 
         selectedItemFromDropdown=item;  
-        field_data = config_path.job.list
+        field_datatype = ui_template_config[item].field || []
+        field_data = ui_template_config[item].job.list
         console.log(2)
     }
     else{
@@ -115,7 +132,8 @@ function present_Data(data,item) {
         tab_name: page_load_conf.tab,
         controls: config_path.controls,
         data: display_data,
-        fields: field_data
+        fields: field_data,
+        field_datatype : field_datatype
     };
 
     console.log("Data List: ",data_list);
@@ -750,3 +768,4 @@ function refreshControlContent(controlId, options = {}) {
             break;
     }
 }
+

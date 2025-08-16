@@ -26,33 +26,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+let contextState = {
+    previous: null,
+    current: null
+};
+/**
+ * Switch UI context
+ * @param {string} newContext - The new context name
+ * @param {Object} config - Mapping of context => elements to enable/disable
+ */
+function contextSwitch(newContext) {
+    // Save old context
+    contextState.previous = contextState.current;
+    contextState.current = newContext;
 
-/*document.addEventListener('DOMContentLoaded', () => {
-    //const affiliations = [1, 2, 3, 4];
-    const affiliations = window.affiliation || [];
-    console.log("Affiliations:", affiliations);
-    const submenu = document.getElementById('affiliationMenu');
-    console.log(affiliations);
-    affiliations.forEach(aff => {
-      const li = document.createElement('li');
-      const a = document.createElement('a');
-      a.className = 'dropdown-item';
-      a.href = '#';
-      a.textContent = ` ${aff.program+" - "+aff.entity+" - "+aff.department+" - "+aff.service+" - "+aff.role}`;
-      li.appendChild(a);
-      submenu.appendChild(li);
-      console.log(li.outerHTML);
-    });
-  });
-  */
+    if(contextState.current == "list"){
+        document.getElementById("filter_btn").style.display = "block";
+        document.getElementById("show_btn").style.display = "block";
+    } else {
+        document.getElementById("filter_btn").style.display = "none";
+        document.getElementById("show_btn").style.display = "none";
+    }
 
- /* document.addEventListener('DOMContentLoaded', () => {
-    const affiliations = window.affiliations || [];
-    console.log("Affiliations:", affiliations);
-  });*/
-  
 
-  var page_load_conf={
+}
+
+
+
+var page_load_conf={
     rows_PP:null,
     sort_col:null,
     page_count:0,
@@ -76,9 +77,27 @@ console.log(page_load_conf);
 document.addEventListener("DOMContentLoaded", function () {
     if (tabStatus==1){load_tabs();}
     else{load_preview_tabs();}
-    
 });
 //load_tabs()
+
+const headerTranslations = {
+  english: "APCOG Scheduler",
+  hindi: "एपीसीओजी अनुसूचक",
+  kannada: "ಎಪಿಸಿಒಜಿ ಶೆಡ್ಯುಲರ್",
+  german: "APCOG-Planer",
+  french: "Planificateur APCOG",
+  arabic: "مجدول APCOG"
+};
+
+function updateHeaderFromSettings() {
+  const lang = global_settings.language.toLowerCase();
+  const headerText = headerTranslations[lang] || headerTranslations["english"];
+  document.getElementById("header-title").textContent = headerText;
+}
+
+// Call on page load
+document.addEventListener("DOMContentLoaded", updateHeaderFromSettings);
+
 
 function load_tabs() {
     var ul = document.getElementById("tab_list");
@@ -110,7 +129,7 @@ function load_tabs() {
         tab_list = data.tab_list;
         console.log(tab_list[0]);
 
-        for (var i = 0; i < tab_list.length; i++) {
+        /*for (var i = 0; i < tab_list.length; i++) {
             var li = document.createElement("li");
             li.className = "nav-item";
 
@@ -137,6 +156,51 @@ function load_tabs() {
             ul.appendChild(li);
 
             tab_status[tab_list[i].Name] = 0;
+        }*/
+
+        for (var i = 0; i < tab_list.length; i++) {
+            var tab = tab_list[i];
+            var lang = global_settings.language.toLowerCase();
+            var tabLabel = tab.Name[lang] || tab.Name["english"];  // Fallback to English if translation missing
+
+            // Create a safe ID (remove spaces, convert to lowercase)
+            var tabId = tab.Name["english"].replace(/\s+/g, '-').toLowerCase(); 
+
+            var li = document.createElement("li");
+            li.className = "nav-item";
+
+            var a = document.createElement("a");
+            a.setAttribute('data-bs-toggle', 'tab');
+            a.href = `#${tabId}`;
+            a.innerHTML = tabLabel;
+            a.className = 'nav-link';
+
+            a.addEventListener('click', function () {
+                const clickedLabel = this.innerHTML.trim();
+
+                // Match tab by translated name to English tab name
+                const tabKey = tab_list.find(tab =>
+                    (tab.Name[lang] || tab.Name["english"]) === clickedLabel
+                );
+
+                const englishName = tabKey ? tabKey.Name["english"] : clickedLabel;
+
+                page_load_conf.tab = englishName;
+                tab_status[englishName] = 0;
+                get_data_list();
+            });
+
+            var tab_href_div = document.createElement('div');
+            tab_href_div.id = tabId;
+            tab_href_div.className = "tab-pane fade";
+            tab_href_div.innerHTML = "This is tab page: " + tabLabel;
+
+            tab_pg_content.append(tab_href_div);
+            li.appendChild(a);
+            ul.appendChild(li);
+
+            // Use English key as identifier
+            tab_status[tab.Name["english"]] = 0;
         }
 
         // Activate Bootstrap tab functionality
@@ -245,6 +309,7 @@ function API_call(domain,endpoint,body,method){
 
 function createTable(responseData) {
     caldata=responseData;
+    contextSwitch("list")
     var status="";
     console.log(selectedItemFromDropdown)
     console.log(responseData);
@@ -425,8 +490,6 @@ function createTable(responseData) {
         // Clear existing filter inputs before adding new ones
         filterForm.innerHTML = "";
         var hasField = false;
-        document.getElementById("filter_btn").style.display = "block";
-        document.getElementById("show_btn").style.display = "block";
         
         //console.log("page_load_conf:", page_load_conf);
         //console.log("page_load_conf.tab:", page_load_conf?.tab);
@@ -445,9 +508,18 @@ function createTable(responseData) {
     
         // Create input fields for each visible column
         console.log(visibleFields);
+        let field_datatype = responseData.field_datatype || {};
+        /*let field_datatype= {
+            "fields": [
+                {"name": "role_name","datatype": "string"},
+                {"name": "entity_id","datatype": "bigint"},
+                {"name": "id","datatype": "string"}
+         ]}*/
         visibleFields.forEach(element => {
+            let field_datatype_val = field_datatype.find(f => f.name === element.field)?.datatype;
+            console.log("field_datatype_val: ", field_datatype_val, ", element: ", element);
             try {
-                console.log(element.filter_type, element);
+                console.log("element.filter_type: ",element.filter_type, ", element: ",element);
                 
                 let fieldWrapper = document.createElement("div");
                 fieldWrapper.className = "mb-3"; // Ensures proper spacing and alignment
@@ -490,7 +562,7 @@ function createTable(responseData) {
                     fieldWrapper.appendChild(label1);
                     fieldWrapper.appendChild(input1);
                     fieldWrapper.appendChild(label2);
-                    fieldWrapper.appendChild(input2);   fieldWrapper.appendChild(document.createElement('br'));
+                    fieldWrapper.appendChild(input2);   //fieldWrapper.appendChild(document.createElement('br'));
                 } 
                 else if (element.filter_type === "dropdown") {
                     let label = document.createElement("label");
@@ -533,9 +605,9 @@ function createTable(responseData) {
                     });
         
                     //fieldWrapper.appendChild(label);
-                    fieldWrapper.appendChild(select);   fieldWrapper.appendChild(document.createElement('br'));
+                    fieldWrapper.appendChild(select);   //fieldWrapper.appendChild(document.createElement('br'));
                 } 
-                else if (element.filter_type === "textbox" || element.filter_type === "lable") {
+                else if (field_datatype_val === "string") {
                     let label = document.createElement("label");
                     label.innerHTML = element.label || element.field;
                     label.className = "form-label";
@@ -554,9 +626,38 @@ function createTable(responseData) {
                     });
         
                     //fieldWrapper.appendChild(label);
-                    fieldWrapper.appendChild(input);    fieldWrapper.appendChild(document.createElement('br'));
+                    fieldWrapper.appendChild(input);    //fieldWrapper.appendChild(document.createElement('br'));
                 }
-                
+                else if (field_datatype_val === "bigint") {
+                    let label = document.createElement("label");
+                    label.innerHTML = element.label || element.field;
+                    label.className = "form-label";
+
+                    let input = document.createElement("input");
+                    input.setAttribute("type", "number");
+                    input.setAttribute("placeholder", element.label || element.field);
+                    input.className = "form-control";
+
+                    // Pre-fill value if available
+                    input.value = filterValues[element.key || element.field] || element.filter_default_value || "";
+
+                    // Prevent decimal points for bigint
+                    input.addEventListener("input", function () {
+                        this.value = this.value.replace(/\D/g, ''); // Only allow digits
+                        filterValues[element.key || element.field] = this.value;
+                    });
+
+                    // Make read-only if filter_type is label
+                    if (element.filter_type === "lable") {
+                        input.setAttribute("readonly", true);
+                    }
+
+                    // Append elements
+                    //fieldWrapper.appendChild(label);
+                    fieldWrapper.appendChild(input);
+                    //fieldWrapper.appendChild(document.createElement('br'));
+                }
+               
                 filterForm.appendChild(fieldWrapper);
                 hasField = true;
             } catch (err) {
@@ -948,7 +1049,7 @@ function createTable(responseData) {
     }
     contentContainer.appendChild(searchInput);
     contentContainer.appendChild(tableWrapper);
-    trigger( page_load_conf.tab, "list", status)
+    //trigger( page_load_conf.tab, "list", status)
     // Initialize Pagination
     createPaginationControls();
     displayPage(1);
@@ -1278,6 +1379,7 @@ function previewCreateTable(responseData) {
 }
 
 function edit_data() {
+    contextSwitch("edit")
     const selectedCheckboxes = document.querySelectorAll('input[name="editRowSelect[]"]:checked');
     if (selectedCheckboxes.length === 1) {
         const rowData = JSON.parse(selectedCheckboxes[0].value);
@@ -1366,19 +1468,7 @@ function graphInitialization() {
     }
 }
 
-/*function collectSelectedData() {
-    const selectedCheckboxes = document.querySelectorAll('input[name="editRowSelect[]"]:checked');
 
-    if (selectedCheckboxes.length === 0) {
-        alert('No rows selected.');
-        return;
-    }
-
-    const selectedData = Array.from(selectedCheckboxes).map(cb => JSON.parse(cb.value));
-    console.log('Selected Rows Data:', selectedData);
-
-    // You can also show it in a modal, alert, or download as JSON if needed.
-}*/
 
 
 /*
@@ -1412,7 +1502,7 @@ function print_document() {
         const rowData = JSON.parse(selectedCheckboxes[0].value);
         console.log('Selected Row Data for printing:', rowData);
 
-        printing_document(
+        printing_document2(
             "🔒 Confidential Resource Report",
             "🕒 Generated on: " + new Date().toLocaleString(),
             rowData
@@ -1424,8 +1514,31 @@ function print_document() {
     }
 }
 
+function download_document() {
+    console.log("Inside download_document function");
+
+    // Select all checked checkboxes
+    const selectedCheckboxes = document.querySelectorAll('input[name="editRowSelect[]"]:checked');
+    console.log("Selected Checkboxes:", selectedCheckboxes);
+
+    if (selectedCheckboxes.length === 1) {
+        const rowData = JSON.parse(selectedCheckboxes[0].value);
+        console.log('Selected Row Data for downloading:', rowData);
+
+        downloadPDF3(
+            "🔒 Confidential Resource Report",
+            "🕒 Generated on: " + new Date().toLocaleString(),
+            rowData
+        );
+    } else if (selectedCheckboxes.length === 0) {
+        alert('Please select one row to download.');
+    } else {
+        alert('Please select only one row to download.');
+    }
+}
 
 function delete_data() {
+    contextSwitch("delete")
     const selectedCheckboxes = document.querySelectorAll('input[name="editRowSelect[]"]:checked');
 
     if (selectedCheckboxes.length === 1) {
@@ -1632,58 +1745,9 @@ function deleteRow(rowData) {
     });
 }
 
-/*function editRow(rowData, action) {
-    console.log(selectedItemFromDropdown);
-    console.log("Edit Clicked:", rowData);
-    page_load_conf.role = localStorage.getItem("u_role");
-    
-    // Define a mapping for tab names to API details
-    var apiConfigKey="";
-    let modal_body = {};
-    var key_val =MainConfig[page_load_conf.tab][selectedItemFromDropdown].key
-    var api = MainConfig[page_load_conf.tab][selectedItemFromDropdown].getDataApi
-    modal_body = {
-        "requestor_id": "",
-        "request_token": "",
-        "type": selectedItemFromDropdown,
-        "tab":page_load_conf.tab,
-        "affiliations": JSON.parse(sessionStorage.getItem("userAffiliations")),
-        "qry": {
-            "select_fields": ["*"],
-            "where_data": { [key_val]: rowData[key_val] }
-        }
-    };
-    console.log(modal_body);
-    const end_point = `http://127.0.0.1:5000/${api}`;
-    const send_data = JSON.stringify(modal_body);
-
-    console.log("Sending API Request:", send_data);
-
-    // Fetch data from the server
-    fetch(end_point, {
-        method: "POST",
-        body: send_data,
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log("Received Data:", data);
-        if (action === 'create') {
-            return data;  // Just return the fetched data
-        } else {
-            editModalCreation(data, selectedItemFromDropdown);  // Proceed as normal
-        }
-    })
-    .catch(error => console.error("Error fetching data:", error));
-}*/
-
 async function editRow(rowData, action) {
     console.log("Selected Item:", selectedItemFromDropdown);
     console.log("Edit Clicked:", rowData);
-    
     page_load_conf.role = localStorage.getItem("u_role");
 
     // Extract API and key config
@@ -1731,419 +1795,6 @@ async function editRow(rowData, action) {
     }
 }
 
-/*function editModalCreation(response,selectedItemFromDropdown) {
-    var rowData = response[0];
-    console.log(rowData,selectedItemFromDropdown);
-    let form = document.getElementById('editForm');
-    if (!form) {
-        console.error("Form element not found!");
-        return;
-    }
-
-    form.innerHTML = ""; // Clear previous inputs
-
-    let data = {};
-    var config_path;
-    if (selectedItemFromDropdown==null){config_path=MainConfig[page_load_conf.tab]; }
-    else{config_path=MainConfig[page_load_conf.tab][selectedItemFromDropdown]; rowData = response[0][0]; }
-    console.log("rowData:", rowData);
-    console.log(config_path.job);
-    if(role == "Admin"){data=config_path.job.update.data[0];}
-    else if(role == "Admin"){data=config_path.job.approver.data[0];}
-    else{console.log("Role not defined")}
-
-  
-    let fields = data.fields || [];
-    if (!fields.length) {
-        console.error("No fields found in configuration!");
-        return;
-    }
-
-    fields.forEach(field => {
-        if (!field.show) return;
-
-        let formGroup = document.createElement('div');
-        formGroup.className = 'form-group mb-3';
-
-        let label = document.createElement('label');
-        label.textContent = field.field.replace(/_/g, ' ').toUpperCase();
-        label.className = 'form-label';
-
-        let input;
-      
-        console.log(label, field.field, field.control);
-    
-            if (field.field === "work_days") {
-                console.log(1);
-                input = document.createElement('input');
-                input.className = 'form-control';
-                input.name = field.field;
-                input.id = 'work_days';
-                input.readOnly = true;
-                input.value = rowData[field.field] || "{}";
-                formGroup.appendChild(input);
-            
-                let eventButton = document.createElement('button');
-                eventButton.type = 'button';
-                eventButton.textContent = "Open";
-                eventButton.className = 'btn btn-primary mt-2';
-                
-                eventButton.onclick = function () {
-                    console.log("Raw work_days value:", input.value);
-                    
-                    try {
-                        let workDaysData = JSON.parse(input.value || "{}");
-                        console.log("Parsed Work Days Data:", workDaysData);
-                        
-                        // Populate modal fields
-                        document.getElementById('eventName').value = workDaysData.title || "";
-                        document.getElementById('eventDescription').value = workDaysData.description || "";
-                        document.getElementById('eventStartDate').value = workDaysData.start_date || ""; 
-                        document.getElementById('eventEndDate').value = workDaysData.end_date || "";
-            
-                        // Clear previous entries
-                        let scheduleContainer = document.getElementById('scheduleContainer');
-                        scheduleContainer.innerHTML = "";
-
-                        // Populate existing schedule
-                        let daysOfWeek = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
-
-                        daysOfWeek.forEach(day => {
-                            console.log(day, workDaysData[day]); // Debugging log
-                        
-                            if (workDaysData[day]) {  
-                                let timingsArray = workDaysData[day]; // Already an array
-                        
-                                if (Array.isArray(timingsArray)) {
-                                    timingsArray.forEach((timeSlot, index) => {
-                                        if (Array.isArray(timeSlot) && timeSlot.length === 2) {
-                                            addScheduleRow_edit(day, timeSlot[0], timeSlot[1], index); // Pass day name & start/end times
-                                        }
-                                    });
-                                }
-                            }
-                        });
-                        // Show modal
-                        let addEventModal = new bootstrap.Modal(document.getElementById('addEventModal'));
-                        addEventModal.show();
-            
-                    } catch (error) {
-                        console.error("Error parsing workDays JSON:", error);
-                    }
-                };
-            
-                formGroup.appendChild(eventButton);
-            } else if (field.control === "schedule-control") {
-                console.log(2);
-                input = document.createElement("schedule-control");
-                input.id = field.field;
-            
-                // Ensure rowData[field.field] contains a valid schedule JSON string
-                if (rowData[field.field]) {
-                    try {
-                        const scheduleData = JSON.parse(rowData[field.field]);
-                        input.value = scheduleData; // Assign parsed data to the custom element
-                    } catch (error) {
-                        console.error("Invalid schedule data:", error);
-                    }
-                }
-            
-                // Append input to the DOM if necessary (if inside a form or specific container)
-                document.body.appendChild(input); // Change this according to your structure
-            
-                // Select and use the schedule-control element after appending it
-                let scheduleControl = document.getElementById(field.field);
-            
-            
-            } else if (field.control === "venue-control") {
-                
-                console.log(3);
-                input = document.createElement("venue-control");
-                input.id = field.field;
-            
-                // Ensure rowData[field.field] contains a valid schedule JSON string
-                if (rowData[field.field]) {
-                    try {
-                        const scheduleData = JSON.parse(rowData[field.field]);
-                        input.value = scheduleData; // Assign parsed data to the custom element
-                    } catch (error) {
-                        console.error("Invalid venue data:", error);
-                    }
-                }
-            
-                // Append input to the DOM if necessary (if inside a form or specific container)
-                document.body.appendChild(input); // Change this according to your structure
-            
-                // Select and use the schedule-control element after appending it
-                let venueControl = document.getElementById(field.field);
-            
-            
-            } else if (field.control === "venue-location-control") {
-                console.log(3);
-                console.log("Raw venue data:", rowData[field.field]); // Debug
-                
-                input = document.createElement("venue-location-control");
-                input.id = field.field;
-
-                document.body.appendChild(input);
-
-                if (rowData[field.field]) {
-                    setTimeout(() => {
-                        try {
-                            let venueData = rowData[field.field];
-                            console.log("Venue data type:", typeof venueData); // Debug
-                            
-                            if (typeof venueData === "string") {
-                                venueData = JSON.parse(venueData);
-                            }
-                            
-                            console.log("Parsed venue data:", venueData); // Debug
-                            console.log("Setting value on element:", input); // Debug
-                            
-                            input.value = venueData;
-                            
-                            // Check if shadowRoot exists
-                            console.log("ShadowRoot exists:", !!input.shadowRoot); // Debug
-                            
-                        } catch (error) {
-                            console.error("Invalid venue data:", error);
-                        }
-                    }, 100);
-                }
-
-                let venueControl = document.getElementById(field.field);
-
-            } else if (field.control === "checkbox") {
-                console.log(4);
-                input = document.createElement('input');
-                input.type = 'checkbox';
-                input.className = 'form-check-input';
-                input.name = field.field;
-                input.checked = rowData[field.field] == "true" || rowData[field.field] == 1;
-            } else if (field.control === "dropdown" && field.values) {
-                console.log(5);
-                input = document.createElement('select');
-                input.className = 'form-control';
-                input.name = field.field;
-
-                field.values.forEach(value => {
-                    let option = document.createElement('option');
-                    option.value = value;
-                    option.textContent = value;
-                    if (rowData[field.field] === value) {
-                        option.selected = true;
-                    }
-                    input.appendChild(option);
-                });
-            } else if (field.control === "datetime-local") {
-                console.log(6);
-                input = document.createElement('input');
-                input.type = 'datetime-local';
-                input.className = 'form-control';
-                input.name = field.field;
-            
-                // Convert stored date into proper format for datetime-local input
-                if (rowData[field.field]) {
-                    let dateObj = new Date(rowData[field.field]);
-                    if (!isNaN(dateObj)) {
-                        input.value = dateObj.toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:MM
-                    }
-                }
-            }if (field.control === "field-attribute-control") {
-            input = document.createElement("field-attribute-control");
-            input.id = field.field;
-            input.className = 'form-control';
-
-            try {
-                const parsedValue = typeof rowData[field.field] === "string"
-                    ? JSON.parse(rowData[field.field])
-                    : rowData[field.field];
-                input.value = parsedValue;
-            } catch (error) {
-                console.error("Error parsing field-attribute-control data:", error);
-            }
-        }
-
-            else {
-                console.log(7);
-                console.log(label, field.field, field.control, rowData[field.field]);
-                
-                input = document.createElement('input');
-                input.className = 'form-control';
-                input.name = field.field;
-                input.value = rowData[field.field] || "";
-            }
-            console.log(8)
-
-            if (!field.edit) input.setAttribute('disabled', 'true');
-
-            formGroup.appendChild(label);
-            formGroup.appendChild(input);
-            form.appendChild(formGroup); 
-    });
-    
-    document.getElementById("venueForm").onsubmit = function (e) {
-        e.preventDefault();
-    
-        let isValid = true;
-        let errorMessage = "";
-    
-        // Get form values
-        let building = document.getElementById('building').value.trim();
-        let street = document.getElementById('street').value.trim();
-        let area = document.getElementById('area').value.trim();
-        let city = document.getElementById('city').value.trim();
-        let state = document.getElementById('state').value.trim();
-        let country = document.getElementById('country').value.trim();
-        let url = document.getElementById('url_address').value.trim();
-        let lat = document.getElementById('latitude').value.trim();
-        let long = document.getElementById('longitude').value.trim();
-    
-        // Validation checks
-        if (!building || !street || !area || !city || !state || !country) {
-            isValid = false;
-            errorMessage += "All text fields are required.\n";
-        }
-    
-        // Validate latitude & longitude (must be numbers)
-        if (lat && isNaN(lat)) {
-            isValid = false;
-            errorMessage += "Latitude must be a valid number.\n";
-        }
-    
-        if (long && isNaN(long)) {
-            isValid = false;
-            errorMessage += "Longitude must be a valid number.\n";
-        }
-    
-        // Validate URL (if provided)
-        if (url && !/^https?:\/\/[\w\-]+(\.[\w\-]+)+[/#?]?.*$/.test(url)) {
-            isValid = false;
-            errorMessage += "Please enter a valid URL.\n";
-        }
-    
-        if (!isValid) {
-            alert(errorMessage); // Show validation errors
-            return;
-        }
-    
-        // Construct JSON in the required format
-        let venueData = {
-            building: building,
-            street: street,
-            area: area,
-            city: city,
-            state: state,
-            country: country,
-            url: url,
-            lat: lat,
-            long: long
-        };
-    
-        console.log("Updated Venue JSON:", venueData);
-    
-        // Store JSON as a string in the hidden input field
-        document.getElementById('venue').value = JSON.stringify(venueData);
-    
-        // Hide the modal after submission
-        bootstrap.Modal.getInstance(document.getElementById('venueModal')).hide();
-    };
-    
-
-    let editModalElement = document.getElementById('myModal');
-    document.getElementById("modal_title").innerHTML = page_load_conf.tab + " Details";
-
-    if (!editModalElement) {
-        console.error("Modal not found in the DOM!");
-        return;
-    }
-
-    editModalElement.removeAttribute("aria-hidden");
-
-    let editModal = new bootstrap.Modal(editModalElement, { backdrop: 'static' });
-    editModal.show();
-
-    document.getElementById('saveChanges').onclick = function () {
-        let updatedData = {
-            "where_data": {},
-            "update": {}
-        };
-        
-        console.log(fields);
-        fields.forEach(field => {
-            if (!field.show) return;
-            
-            let input = form.elements[field.field];
-            let currentValue = rowData[field.field]; // Original value from rowData
-            let newValue;
-            
-            console.log(input, currentValue);
-            
-            if (field.field === "schedule") {
-                let scheduleElement = document.querySelector("schedule-control");
-                newValue = scheduleElement ? scheduleElement.value : "";
-            } else if (field.field === "venue") { // Add this condition for venue-location
-                let venueLocationElement = document.querySelector("venue-location-control");
-                newValue = venueLocationElement ? venueLocationElement.value : "";
-            } else if (input && field.control === "checkbox") {
-                newValue = input.checked ? 1 : 0;
-            } else if (input) {
-                newValue = input.value;
-            } else {
-                // Handle case where input is undefined (custom controls)
-                console.warn(`Input element not found for field: ${field.field}`);
-                newValue = currentValue; // Keep original value if input not found
-            }
-            
-            // ✅ Only add changed fields to updatedData
-            // For JSON fields, we need to compare the parsed objects or strings
-            let hasChanged = false;
-            
-            if (field.field === "venue" || field.field === "schedule") {
-                // For JSON fields, compare as strings or parse and compare objects
-                try {
-                    // If currentValue is already a string, compare directly
-                    if (typeof currentValue === 'string') {
-                        hasChanged = currentValue !== newValue;
-                    } else {
-                        // If currentValue is an object, stringify it for comparison
-                        hasChanged = JSON.stringify(currentValue) !== newValue;
-                    }
-                } catch (e) {
-                    // Fallback to direct comparison
-                    hasChanged = currentValue !== newValue;
-                }
-            } else {
-                hasChanged = currentValue !== newValue;
-            }
-            
-            if (hasChanged) {
-                updatedData.update[field.field] = newValue;
-            }
-        });
-        
-        // ✅ Ensure at least one field is being updated
-        if (Object.keys(updatedData.update).length === 0) {
-            console.log("No changes detected. No update required.");
-            editModal.hide();
-            return;
-        }
-        
-        // ✅ Set the `where_data` for the update query
-        updatedData.where_data[MainConfig[page_load_conf.tab][selectedItemFromDropdown].key] = 
-            rowData[MainConfig[page_load_conf.tab][selectedItemFromDropdown].key];
-        
-        console.log("Updated Data:", updatedData);
-        
-        updateEntry(
-            rowData[MainConfig[page_load_conf.tab][selectedItemFromDropdown].key],
-            updatedData
-        );
-        
-        editModal.hide();
-    };
-    
-}*/
 async function handleCreateActionFromSelection() {
     const checkedRow = getCheckedRowData(); // implement this logic
     if (checkedRow) {
@@ -2152,170 +1803,6 @@ async function handleCreateActionFromSelection() {
         // use the data to prefill your modal or form
     }
 }
-/* work for me but not tejas (maps)
-function editModalCreation(response, selectedItemFromDropdown) {
-  const rowData = selectedItemFromDropdown == null ? response[0] : response[0][0];
-  const form = document.getElementById("editForm");
-  if (!form) return console.error("Form element not found!");
-  form.innerHTML = "";
-
-  let config_path = selectedItemFromDropdown == null
-    ? MainConfig[page_load_conf.tab]
-    : MainConfig[page_load_conf.tab][selectedItemFromDropdown];
-
-  let data;
-  if (role === "Admin") data = config_path.job.update;
-  else if (role === "Approver") data = config_path.job.approver;
-  else return console.error("Role not defined");
-
-  const modal = document.getElementById("editModalBody");
-  if (modal) modal.innerHTML = "";
-
-  data.data.forEach((section, sectionIndex) => {
-    let fields = section.fields || [];
-
-    // Sort fields based on seqno
-    fields = fields.sort((a, b) => {
-      const aSeq = parseInt(a.seqno || "9999", 10);
-      const bSeq = parseInt(b.seqno || "9999", 10);
-      return aSeq - bSeq;
-    });
-
-    console.log(`\n[Section ${sectionIndex + 1}] Helper: ${section.helper}`);
-
-    fields.forEach(field => {
-      if (!field.show) return;
-
-      const fieldId = `edit_${field.field}`;
-      const currentValue = rowData[field.field] || field.default || "";
-
-      const formGroup = document.createElement("div");
-      formGroup.className = "form-group mb-3";
-
-      const label = document.createElement("label");
-      label.htmlFor = fieldId;
-      label.textContent = field.field.replace(/_/g, " ").toUpperCase();
-      label.className = "form-label";
-
-      let input;
-      switch (field.control) {
-        case "text":
-        case "number":
-        case "datetime-local":
-          input = document.createElement("input");
-          input.type = field.control;
-          input.value = field.control === "datetime-local" && currentValue
-            ? new Date(currentValue).toISOString().slice(0, 16)
-            : currentValue;
-          break;
-        case "checkbox":
-          input = document.createElement("input");
-          input.type = "checkbox";
-          input.checked = currentValue == "true" || currentValue == 1;
-          break;
-        case "dropdown":
-          input = document.createElement("select");
-          input.className = "form-control";
-          (field.values || []).forEach(val => {
-            const option = document.createElement("option");
-            option.value = val;
-            option.textContent = val;
-            if (val === currentValue) option.selected = true;
-            input.appendChild(option);
-          });
-          break;
-        case "schedule-control":
-        case "venue-control":
-        case "venue-location-control":
-        case "field-attribute-control":
-          input = document.createElement(field.control);
-          try {
-            input.value = typeof currentValue === "string"
-              ? JSON.parse(currentValue)
-              : currentValue;
-          } catch (err) {
-            console.warn("Invalid JSON for field:", field.field, err);
-          }
-          break;
-        default:
-          input = document.createElement("input");
-          input.value = currentValue;
-      }
-
-      input.id = fieldId;
-      input.name = field.field;
-      input.className ||= "form-control";
-      if (!field.edit) input.disabled = true;
-
-      // Attach event triggers if defined
-      if (field.trigger && Array.isArray(field.trigger)) {
-        field.trigger.forEach(trig => {
-          input.addEventListener(trig.event, function (e) {
-            if (typeof window[trig.function] === "function") {
-              window[trig.function](e);
-            } else {
-              console.warn(`Trigger function ${trig.function} not defined.`);
-            }
-          });
-        });
-      }
-
-      formGroup.appendChild(label);
-      formGroup.appendChild(input);
-      form.appendChild(formGroup);
-    });
-  });
-
-  // Setup modal
-  const editModalElement = document.getElementById("myModal");
-  if (!editModalElement) return console.error("Modal not found in the DOM!");
-  editModalElement.removeAttribute("aria-hidden");
-  const editModal = new bootstrap.Modal(editModalElement, { backdrop: "static" });
-  document.getElementById("modal_title").innerHTML = `${page_load_conf.tab} Details`;
-  editModal.show();
-
-  document.getElementById("saveChanges").onclick = function () {
-    const updatedData = { where_data: {}, update: {} };
-
-    data.data.forEach(section => {
-      section.fields.forEach(field => {
-        if (!field.show) return;
-
-        const input = form.elements[field.field];
-        const oldValue = rowData[field.field];
-        let newValue;
-
-        if (field.control === "checkbox") {
-          newValue = input.checked ? 1 : 0;
-        } else if (["schedule-control", "venue-location-control", "venue-control", "field-attribute-control"].includes(field.control)) {
-          const element = document.querySelector(field.control);
-          newValue = element ? element.value : oldValue;
-        } else {
-          newValue = input ? input.value : oldValue;
-        }
-
-        const changed = (typeof oldValue === "object" || typeof newValue === "object")
-          ? JSON.stringify(oldValue) !== JSON.stringify(newValue)
-          : oldValue !== newValue;
-
-        if (changed) {
-          updatedData.update[field.field] = newValue;
-        }
-      });
-    });
-
-    if (Object.keys(updatedData.update).length === 0) {
-      console.log("No changes detected. No update required.");
-      editModal.hide();
-      return;
-    }
-
-    updatedData.where_data[config_path.key] = rowData[config_path.key];
-    console.log("Updated Data:", updatedData);
-    updateEntry(rowData[config_path.key], updatedData);
-    editModal.hide();
-  };
-}*/
 
 function editModalCreation(response,selectedItemFromDropdown) {
     var rowData = response[0];
@@ -2563,7 +2050,25 @@ function editModalCreation(response,selectedItemFromDropdown) {
 
                 let attrControl = document.getElementById(field.field);
  
-            } else {
+            } else if (field.control === "doc-template-control") {
+                input = document.createElement("doc-template-control");
+                input.id = field.field;
+                document.body.appendChild(input); // Ensure it's in DOM
+
+                if (rowData[field.field]) {
+                    setTimeout(() => {
+                        try {
+                            let attrData = rowData[field.field];
+                            if (typeof attrData === "string") attrData = JSON.parse(attrData);
+                            input.value = attrData;
+                            input.populateFromTemplate(attrData);
+                        } catch (e) {
+                            console.error("Failed to populate doc-template-control", e);
+                        }
+                    }, 100);
+                }
+            }
+            else {
                 console.log(7);
                 console.log(label, field.field, field.control, rowData[field.field]);
                 
@@ -2578,11 +2083,7 @@ function editModalCreation(response,selectedItemFromDropdown) {
 
             formGroup.appendChild(label);
             formGroup.appendChild(input);
-            form.appendChild(formGroup);
-
-      
-       
-       
+            form.appendChild(formGroup);   
     });
     
     document.getElementById("venueForm").onsubmit = function (e) {
@@ -2695,7 +2196,10 @@ function editModalCreation(response,selectedItemFromDropdown) {
             } else if (field.field === "ui_template") {
                 let fieldAttrControl = document.querySelector("field-attribute-control");
                 newValue = fieldAttrControl ? fieldAttrControl.value : ""; 
-            }
+            } else if (field.field === "doc_template") {
+                let doctemplatecontrol = document.querySelector("doc-template-control");
+                newValue = doctemplatecontrol ? doctemplatecontrol.value : ""; 
+            } 
             else {
                 // Handle case where input is undefined (custom controls)
                 console.warn(`Input element not found for field: ${field.field}`);
@@ -2764,6 +2268,7 @@ function formatDateTime(dateString) {
 }
 
 async function Registration_modal() {
+    contextSwitch("create");
     console.log("Create New  Modal Opened");
     const selectedCheckboxes = document.querySelectorAll('input[name="editRowSelect[]"]:checked');
     console.log("Selected Checkboxes:", selectedCheckboxes);
@@ -3055,12 +2560,31 @@ async function Registration_modal() {
                 let doc_template_Element = document.querySelector("doc-template-control");
                 if (doc_template_Element) {
                     try {
-                        let parsedValue = JSON.parse(doc_template_Element.value);
-                        console.log("Parsed doc-template value:", parsedValue);
-                        newData[field.field] = parsedValue;
-                    } catch (e) {
-                        console.error("Failed to parse doc-template-control value:", e);
-                    }
+                        let rawValue = doc_template_Element.value;
+                        let parsedValue;
+
+                        if (typeof rawValue === "string") {
+                            try {
+                                parsedValue = JSON.parse(rawValue);
+                            } catch (parseErr) {
+                                console.warn("Value is not valid JSON, using raw string instead:", parseErr);
+                                parsedValue = rawValue;
+                            }
+                        } else {
+                            parsedValue = rawValue; // Already an object or array
+                        }
+
+                            console.log("Parsed doc-template value:", parsedValue);
+
+                            // Store as stringified JSON if it's an object, else store as-is
+                            newData[field.field] = typeof parsedValue === "object"
+                                ? JSON.stringify(parsedValue)
+                                : parsedValue;
+
+                        } catch (e) {
+                            console.error("Failed to process doc-template-control value:", e);
+                        }
+
                 } else {
                     console.warn(`doc_template control element not found.`);
                 }
@@ -3068,7 +2592,34 @@ async function Registration_modal() {
             } else if (field.control === "field-attribute-control") {
                 let fieldElement = document.querySelector("field-attribute-control");
                 if (fieldElement) {
-                    newData[field.field] = fieldElement.value;
+                    try {
+                        let rawValue = fieldElement.value;
+                        let parsedValue;
+
+                        if (typeof rawValue === "string") {
+                            try {
+                                parsedValue = JSON.parse(rawValue);
+                            } catch (parseErr) {
+                                console.warn("Value is not valid JSON, using raw string instead:", parseErr);
+                                parsedValue = rawValue;
+                            }
+                        } else {
+                            parsedValue = rawValue; // Already an object or array
+                        }
+
+                            console.log("Parsed field-attribute-control:", parsedValue);
+
+                            // Store as stringified JSON if it's an object, else store as-is
+                            newData[field.field] = typeof parsedValue === "object"
+                                ? JSON.stringify(parsedValue)
+                                : parsedValue;
+
+                        } catch (e) {
+                            console.error("Failed to process field-attribute-control value:", e);
+                        }
+
+                } else {
+                    console.warn(`field-attribute-control element not found.`);
                 }
             } else if (field.control === "maps-control") {
                 let mapElement = document.querySelector("maps-control");

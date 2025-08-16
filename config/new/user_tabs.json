@@ -13,20 +13,73 @@
         ]
     },
     "Admin1":{
-        "tab_list":[
-            {"Name":"Entity","function":"get_entity_list(0)"},
-            {"Name":"Resource","function":"get_resource_list(0)"},
-            {"Name":"Event","function":"get_event_list(0)"},
-            {"Name":"Alert","function":"get_alert_list(0)"},
-            {"Name":"Messages","function":"get_message_list(0)"},
-            {"Name":"Subscriber","function":"get_subscriber_list(0)"},
-            {"Name":"Appointment","function":"get_appointment_list()"},
-            {"Name":"Log","function":"get_Log_list()"},
-            {"Name":"EntityConfig","function":"get_EntityConfig_list(0)"},
-            {"Name":"NetworkConfig","function":"get_NetworkConfig_list(0)"},
-            {"Name":"SystemConfig","function":"get_SystemConfig_list(0)"}
-       
+       "tab_list": [
+            {
+                "Name": {
+                "english": "Entity Config",
+                "german": "Entitätskonfiguration",
+                "french": "Configuration d'entité",
+                "arabic": "تكوين الكيان"
+                }
+            },
+            {
+                "Name": {
+                "english": "Network Config",
+                "german": "Netzwerkkonfiguration",
+                "french": "Configuration du réseau",
+                "arabic": "تكوين الشبكة"
+                }
+            },
+            {
+                "Name": {
+                "english": "System Config",
+                "german": "Systemkonfiguration",
+                "french": "Configuration du système",
+                "arabic": "تكوين النظام"
+                }
+            },
+            {
+                "Name": {
+                "english": "Event Config",
+                "german": "Ereigniskonfiguration",
+                "french": "Configuration des événements",
+                "arabic": "تكوين الحدث"
+                }
+            },
+            {
+                "Name": {
+                "english": "Program Config",
+                "german": "Programmkonstruktion",
+                "french": "Configuration du programme",
+                "arabic": "تكوين البرنامج"
+                }
+            },
+            {
+                "Name": {
+                "english": "Service Config",
+                "german": "Dienstkonfiguration",
+                "french": "Configuration du service",
+                "arabic": "تكوين الخدمة"
+                }
+            },
+            {
+                "Name": {
+                "english": "Document Config",
+                "german": "Dokumentkonfiguration",
+                "french": "Configuration du document",
+                "arabic": "تكوين المستند"
+                }
+            },
+            {
+                "Name": {
+                "english": "App Config",
+                "german": "App-Konfiguration",
+                "french": "Configuration de l'application",
+                "arabic": "تكوين التطبيق"
+                }
+            }
         ]
+
     },
     "User":{
         "tab_list":[
