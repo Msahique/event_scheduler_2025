@@ -114,7 +114,7 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-{"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                            {"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
                             {"seqno":"","field":"affiliation_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Affiliation Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
                             {"seqno":"","field":"resource_name","name":"Resource Name","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Resource Name","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
                             {"seqno":"","field":"program","name":"Program","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Program","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
@@ -469,7 +469,7 @@ var MainConfig={
                         },
                         {  "helper":"getentityname",
                            "fields":[
-{"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                              {"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
                               {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":""}
                            ],
                            "edit_option":true,
@@ -482,7 +482,7 @@ var MainConfig={
                      "data":[
                         {  "helper":"none",
                            "fields":[
-{"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},    
+                              {"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},    
                               {"seqno":"1","field":"person_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":""},
                               {"seqno":"3","field":"resource_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":""},
                               {"seqno":"5","field":" entity_id","edit":false,"show":false,"control":"number","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false, "tooltip":"this is a test description","default":""},
@@ -500,7 +500,7 @@ var MainConfig={
                         },
                         {"helper":"getentityname",
                            "fields":[
-{"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                                 {"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
                                  {"seqno":"14","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":""}
                               ]
                         }
@@ -525,7 +525,7 @@ var MainConfig={
                      "data":[
                         {"helper":"getcurrentuserdetails",
                         "fields":[
-{"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                              {"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
                               {"seqno":"","field":"entityid","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":""},
                               {"seqno":"","field":"entityname","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":""}
                            ]
@@ -1414,7 +1414,6 @@ var MainConfig={
          {"type":"button","tooltip":"this is a test description","tag":"edit","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
          {"type":"button","tooltip":"this is a test description","tag":"delete","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
          {"type":"button","tooltip":"this is a test description","tag":"maps","roles":["Admin"],"name":"<i class='bi bi-map-fill'><i> ","function":"collectSelectedData()","class":"btn btn-secondary btn-sm"},
-         {"type":"button","tooltip":"this is a test description","tag":"graphs","roles":["Admin"],"name":"<i class='fa fa-chart-bar'></i> ","function":"graphInitialization()","class":"btn btn-primary btn-xs my-xs-btn"},
          {"type": "select", "tooltip":"this is a test description","tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": [ "Event Schedule","Alert Schedule","Appointment Schedule","Event Log","Subscriber Registry","Subscriber Log"], "function": "","textContent": "Items"},
          {"type": "select", "tooltip":"this is a test description","tag": "entriesPerPage", "roles": ["Admin","Approver","User"], "name": "EntriesPerPage", "options": [2,3,5,10,15,20,25,30,35,40,45,50], "textContent": "Rows/Page"},
       ],
@@ -2767,7 +2766,7 @@ var MainConfig={
          {"type":"button","tooltip":"this is a test description","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
          {"type":"button","tooltip":"this is a test description","tag":"edit","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
          {"type":"button","tooltip":"this is a test description","tag":"delete","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
-         {"type": "select", "tooltip":"this is a test description","tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Document Data Templates","Document UI Templates","Document View Templates","HTML Template","Trigger Functions","Helper Functions"],"textContent": "Items"},
+         {"type": "select", "tooltip":"this is a test description","tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Document Data Templates","Document UI Templates","Document View Templates","Tab Templates","HTML Template","Trigger Functions","Helper Functions"],"textContent": "Items"},
          {"type": "select", "tooltip":"this is a test description","tag": "entriesPerPage", "roles": ["Admin","Approver","User"], "name": "EntriesPerPage", "options": [2,3,5,10,15,20,25,30,35,40,45,50], "textContent": "Rows/Page"},
         ],
         "Roles":["Admin"],
@@ -3085,6 +3084,106 @@ var MainConfig={
                 "cancel":{"api":"config","onSuccess":"Role_canceled()"}
             }
         },
+        "Tab Templates":{
+             "doc_title":"","getDataApi":"config/list_details",
+            "key":"role_id",
+            "attchment_files_path":"",
+            "job":{
+                "create":{
+                "roles":["Admin"],   
+                "data":[
+                   {"helper":"getTabs",
+                     "fields":[
+                        {"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field":"Select tab","edit":true,"show":true,"control":"dropdown","onchange":"tab_onchange_trigger","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":""},
+                        //{"seqno":"","field":"Select tab","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":""}
+                        ]
+                   },
+                    {  "helper":"none",
+                        "fields":[
+                            {"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                            {"seqno":"","field":"doc_final_templates_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Affiliation ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"doc_type","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Type","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"affiliation_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"doc_description","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"doc_template","edit":true,"show":true,"control":"doc-template-control","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Doc Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"ui_template","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                        ],
+                        "edit_option":true,
+                        "delete_option":true
+                    }
+                ],
+                "api":"config/new",
+                "onSuccess":"Role_created()"
+                
+                },
+                "list":{
+                "roles":["Admin"],  
+                "data":[
+                    {  "helper":"none",
+                        "fields":[
+{"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                            {"seqno":"","field":"doc_final_templates_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"affiliation_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"template","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Final Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"status","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Status","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"log","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Log","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"remarks","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Remarks","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            
+                           
+                        ],
+                        "edit_option":true,
+                        "delete_option":true
+                    }
+                ],
+                "api":"config/list_details",
+                "onSuccess":"Role_listed()"
+                },
+                "update":{
+                    "roles":["Admin"],  
+                    "data":[
+                        {  "helper":"none",
+                            "fields":[
+{"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                                {"seqno":"","field":"role_id","name":"Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                                {"seqno":"","field":"entity_id","name":"Entity Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                                {"seqno":"","field":"role_name","name":"Role Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            ],
+                            "edit_option":true,
+                            "delete_option":true
+                        }
+                    ],
+                    "checklist":{
+                        "checkpoints":[]
+                    },
+                    "api":"config/modifications"
+                    
+
+                },
+                "approver":{
+                "roles":["Approver"],
+                "data":[
+                    {  "helper":"none",
+                        "fields":[
+                        {"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},    
+                        {"seqno":"","field":"entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":""},
+                        {"seqno":"","field":"entity_name","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":""},
+                        {"seqno":"","field":"entity_type","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":""},
+                        {"seqno":"","field":"entry_status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","values":["suspended","approved"]},
+                        {"seqno":"","field":"remark","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":""},
+                        {"seqno":"","field":"change_log","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":""}
+    
+                        ],
+                        "edit_option":true,
+                        "delete_option":false
+                    }
+                ],
+                "onSuccess":"Role_approved()"
+                
+                },
+                "cancel":{"api":"config","onSuccess":"Role_canceled()"}
+            }
+        },
         "Trigger Functions":{
             "doc_terminology":[],
              "doc_title":"","getDataApi":"config/list_details",
@@ -3343,14 +3442,14 @@ var MainConfig={
                 "data":[
                    {"helper":"getTabs",
                      "fields":[
-{"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
                         {"seqno":"","field":"Select tab","edit":true,"show":true,"control":"dropdown","onchange":"tab_onchange_trigger","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":""},
                         //{"seqno":"","field":"Select tab","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":""}
                         ]
                    },
                     {  "helper":"none",
                         "fields":[
-{"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                            {"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
                             {"seqno":"","field":"doc_final_templates_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Affiliation ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
                             {"seqno":"","field":"doc_type","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Type","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
                             {"seqno":"","field":"affiliation_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
@@ -3414,7 +3513,7 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-{"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},    
+                        {"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},    
                         {"seqno":"","field":"entity_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":""},
                         {"seqno":"","field":"entity_name","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":""},
                         {"seqno":"","field":"entity_type","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":""},
@@ -3529,8 +3628,92 @@ var MainConfig={
             }
         }
 
-    }  
+    } ,
+    "DAQ Config":{
+         "controls":[
+         {"type":"button","tooltip":"Add","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
+         {"type":"button","tooltip":"Print","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
+         {"type":"button","tooltip":"Edit","tag":"print","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
+         {"type":"button","tooltip":"Delete","tag":"print","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
+         {"type":"button","tooltip":"Graph","tag":"graphs","roles":["Admin"],"name":"<i class='fa fa-chart-bar'></i> ","function":"graphInitialization()","class":"btn btn-primary btn-xs my-xs-btn"},
+         {"type": "select", "tooltip":"this is a test description","tag": "items", "roles": ["Admin"], "name": "DAQ Config", "options": ["Env Measurements"],"textContent": "Items"},
+         {"type": "select", "tooltip":"this is a test description","tag": "entriesPerPage", "roles": ["Admin","Approver","User"], "name": "EntriesPerPage", "options": [2,3,5,10,15,20,25,30,35,40,45,50], "textContent": "Rows/Page"},
+        ],
+         "Roles":["Admin"],
+         "Env Measurements":{
+            "doc_title":"","getDataApi":"config/list_details",
+            "key":"id",
+            "attchment_files_path":"",
+            "job":{
+               "create":{
+                "roles":["Admin"],   
+                "data":[
+                    {"helper":"none",
+                     "fields":[
+                        {"seqno":"","field": "id", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "ID", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},    
+                        {"seqno":"","field":"humidity","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Humidity", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field":"temperature","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Temperature", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field":"pressure","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Pressure", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field":"description","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field":"status","edit":true,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Status", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field":"log","edit":true,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Log", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field":"remarks","edit":true,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Remarks", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        ],
+                        "edit_option":true,
+                        "delete_option":true
+                  }
+               ],
+               "api":"config/new",
+               "onSuccess":"Role_created()"
+               },
+               "list":{
+                "roles":["Admin"],   
+                "data":[
+                    {"helper":"none",
+                     "fields":[
+                        {"seqno":"","field": "id", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "ID", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},    
+                        {"seqno":"","field":"humidity","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Humidity", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field":"temperature","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Temperature", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field":"pressure","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Pressure", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field":"description","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field":"status","edit":true,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Status", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field":"log","edit":true,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Log", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field":"remarks","edit":true,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Remarks", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        ],
+                        "edit_option":true,
+                        "delete_option":true
+                  }
+               ],
+               "api":"config/list_details",
+               "onSuccess":"Role_listed()"
+               },
+               "update":{
+                "roles":["Admin"],   
+                "data":[
+                    {"helper":"none",
+                     "fields":[
+                        {"seqno":"","field": "id", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "ID", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},    
+                        {"seqno":"","field":"humidity","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Humidity", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field":"temperature","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Temperature", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field":"pressure","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Pressure", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field":"description","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field":"status","edit":true,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Status", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field":"log","edit":true,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Log", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        {"seqno":"","field":"remarks","edit":true,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang": {"english": "Remarks", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                        ],
+                        "edit_option":true,
+                        "delete_option":true
+                  }
+               ],
+               "api":"config/modifications"
+               },
+               "cancel":{"api":"config","onSuccess":"Role_canceled()"}
+            }
+         }
+    }
 }
+
+            
     
  /*   
 

@@ -8,7 +8,8 @@
             {"Name":"Program Config"},
             {"Name":"Service Config"},
             {"Name":"Document Config"},
-            {"Name":"App Config"}
+            {"Name":"App Config"},
+            {"Name":"DAQ Config"}
         ]
     },
     "Admin1":{

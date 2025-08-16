@@ -40,11 +40,14 @@
         "Document Data Templates":"doc_templates",
         "Document UI Templates":"doc_ui_template",
         "Document View Templates":"doc_view_template",
+        "Tab Templates":"doc_final_templates",
         "Trigger Functions":"trigger_functions",
         "Helper Functions":"helper_functions"
     },
      "App Config":{
         "Final Templates":"doc_final_templates"
-        
+    },
+    "DAQ Config":{
+        "Env Measurements":"env_measurements"
     }
 }

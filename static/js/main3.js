@@ -629,12 +629,14 @@ function createTable(responseData) {
         thContent.style.alignItems = "center";
         thContent.style.justifyContent = "center";
         thContent.style.cursor = "pointer";
-        
-        // Column Name
         let columnText = document.createElement('span');
-        columnText.textContent = element.lang[global_settings.language] || element.field.replace(/_/g, ' ').toUpperCase();
-        columnText.style.marginRight = "5px";
-        
+        try{// Column Name
+            columnText.textContent = element.lang[global_settings.language] || element.field.replace(/_/g, ' ').toUpperCase();
+            columnText.style.marginRight = "5px";
+        } catch (error) {
+            console.error("Error creating column text:", error);
+        }
+
         // Arrow Icon
         let sortIcon = document.createElement('span');
         sortIcon.className = "bi bi-arrow-up-down"; // Bootstrap sort icon
@@ -729,7 +731,7 @@ function createTable(responseData) {
     // Create Table Body
     let tbody = document.createElement('tbody');
     tbody.setAttribute("id", "entityTableBody");
-    console.log(responseData.data)
+    // console.log(responseData.data)
     responseData.data.forEach(rowData => {
         let tr = document.createElement('tr');
         let rowDataString = JSON.stringify(rowData);
@@ -3407,8 +3409,10 @@ async function affiliationFilterCheck(db, table, selectFields, filterOptions, ge
     ALTER TABLE `doc_templates` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
     ALTER TABLE `doc_types` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
     ALTER TABLE `doc_ui_template` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `doc_view_template` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
     ALTER TABLE `entity` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
     ALTER TABLE `entity_types` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
+    ALTER TABLE `env_measurements` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
     ALTER TABLE `event_log` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
     ALTER TABLE `event_new` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;
     ALTER TABLE `event_type` ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN version INT DEFAULT 1;

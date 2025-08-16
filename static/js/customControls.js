@@ -5072,6 +5072,7 @@ class VenueLocationControl extends HTMLElement {
 customElements.define("venue-location-control", VenueLocationControl);
 
 
+
 class GraphsControl extends HTMLElement {
     constructor() {
         super();
@@ -5080,34 +5081,398 @@ class GraphsControl extends HTMLElement {
         this.shadowRoot.innerHTML = `
             <style>
                 .graphs-container {
-                    padding: 10px;
-                    border: 1px solid #ccc;
-                    border-radius: 5px;
-                    background: #f9f9f9;
-                }
-                .graphs-menu {
                     display: flex;
-                    gap: 10px;
-                    margin-bottom: 15px;
+                    flex-direction: column;
+                    height: 100%;
+                    background: #ffffff;
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    overflow-y: auto; /* Changed from overflow: hidden */
+                    overflow-x: hidden;
+                    padding: 20px;
                 }
-                .graphs-menu button {
-                    padding: 10px;
-                    border: none;
-                    border-radius: 5px;
-                    background: #007bff;
-                    color: white;
+                /* Control Panel Styles */
+                .control-panel {
+                    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                    border: 1px solid #dee2e6;
+                    border-radius: 12px;
+                    padding: 20px;
+                    margin-bottom: 20px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                }
+
+                .control-panel-title {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #495057;
+                    margin-bottom: 16px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+
+                .control-panel-title::before {
+                    content: "⚙️";
+                    font-size: 20px;
+                }
+
+                .controls-row {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 1fr 1fr;
+                    gap: 20px;
+                    align-items: end;
+                }
+
+                .control-group {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                }
+
+                .control-group label {
+                    font-weight: 600;
+                    font-size: 14px;
+                    color: #495057;
+                    margin-bottom: 4px;
+                }
+
+                .control-group select {
+                    padding: 10px 12px;
+                    border: 2px solid #e9ecef;
+                    border-radius: 8px;
+                    background: #ffffff;
+                    font-size: 14px;
+                    color: #495057;
                     cursor: pointer;
+                    transition: all 0.2s ease;
+                    min-height: 44px;
                 }
-                .graphs-menu button:hover {
+
+                .control-group select:hover {
+                    border-color: #0d6efd;
+                    box-shadow: 0 0 0 0.2rem rgba(13,110,253,0.15);
+                }
+
+                .control-group select:focus {
+                    outline: none;
+                    border-color: #0d6efd;
+                    box-shadow: 0 0 0 0.2rem rgba(13,110,253,0.25);
+                }
+
+                /* Multi-select containers */
+                #customMultiSelectContainer, 
+                #customThirdMultiSelectContainer {
+                    min-height: 44px;
+                    max-height: 120px;
+                    overflow-y: auto;
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 6px;
+                    background: #ffffff;
+                    border: 2px solid #e9ecef;
+                    border-radius: 8px;
+                    padding: 8px;
+                    transition: all 0.2s ease;
+                }
+
+                #customMultiSelectContainer:hover,
+                #customThirdMultiSelectContainer:hover {
+                    border-color: #0d6efd;
+                    box-shadow: 0 0 0 0.2rem rgba(13,110,253,0.15);
+                }
+
+                #customMultiSelectContainer select,
+                #customThirdMultiSelectContainer select {
+                    margin: 0;
+                    min-width: 100px;
+                    border: 1px solid #dee2e6;
+                    border-radius: 6px;
+                    padding: 4px 8px;
+                    font-size: 12px;
+                }
+
+                #customMultiSelectContainer span,
+                #customThirdMultiSelectContainer span {
+                    background: #e7f3ff;
+                    color: #0066cc;
+                    padding: 4px 8px;
+                    border-radius: 16px;
+                    font-size: 12px;
+                    font-weight: 500;
+                    border: 1px solid #b3d9ff;
+                }
+
+                /* Graph Container Styles */
+                .graph-container {
+                    flex: 0 0 auto; /* Changed from flex: 1 */
+                    background: #ffffff;
+                    border: 1px solid #dee2e6;
+                    border-radius: 12px;
+                    padding: 20px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                    display: flex;
+                    flex-direction: column;
+                    min-height: 200px; /* Set minimum height for proper initial display */
+                    
+                }
+                .graph-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 16px;
+                    padding-bottom: 12px;
+                    border-bottom: 2px solid #f8f9fa;
+                }
+
+                .graph-title {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #495057;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+
+                .graph-title::before {
+                    content: "📊";
+                    font-size: 20px;
+                }
+
+                .legend-control-panel {
+                    grid-column: 2;
+                    grid-row: 3;
+                    background: #f8f9fa;
+                    border: 1px solid #dee2e6;
+                    border-radius: 8px;
+                    padding: 15px;
+                    margin-top: 10px;
+                    overflow: auto;
+                }
+
+                .legend-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 10px;
+                }
+
+                .legend-title {
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #495057;
+                    margin: 0;
+                }
+
+                .legend-toggle {
+                    background: #0d6efd;
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-size: 14px;
+                    font-weight: 500;
+                    transition: background-color 0.2s ease;
+                }
+
+                .legend-toggle:hover {
                     background: #0056b3;
                 }
-                .graphs-menu button.active {
-                    background: #0056b3;
+
+                .legend-items {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 10px;
                 }
+
+                .legend-color-box {
+                    width: 16px !important;
+                    height: 16px !important;
+                    display: inline-block !important;
+                    margin-right: 8px !important;
+                    border: 1px solid #ccc !important;
+                    border-radius: 3px !important;
+                    vertical-align: middle !important;
+                    /* Ensure the background color shows up */
+                    background-color: inherit !important;
+                    /* Prevent any other styles from overriding */
+                    background-image: none !important;
+                    background-repeat: no-repeat !important;
+                }
+
+                .legend-item {
+                    display: flex !important;
+                    align-items: center !important;
+                    padding: 4px 8px !important;
+                    margin: 2px 0 !important;
+                    cursor: pointer !important;
+                    border-radius: 4px !important;
+                    transition: background-color 0.2s ease !important;
+                }
+
+                .legend-item:hover {
+                    background-color: rgba(0, 0, 0, 0.05) !important;
+                }
+                
+                .legend-item.hidden {
+                    opacity: 0.5 !important;
+                }
+
+                .legend-label {
+                    flex: 1 !important;
+                    margin: 0 8px !important;
+                    font-size: 14px !important;
+                    color: #333 !important;
+                }
+
+                .legend-visibility-icon {
+                    font-size: 16px !important;
+                    margin-left: auto !important;
+                    opacity: 0.7 !important;
+                }
+
+                .legend-visibility-icon:hover {
+                    opacity: 1 !important;
+                }
+
+                .legend-color {
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 50%;
+                    border: 1px solid #ccc;
+                }
+
+                .color-swatch {
+                    width: 24px !important;
+                    height: 24px !important;
+                    border-radius: 50% !important;
+                    cursor: pointer !important;
+                    border: 2px solid #fff !important;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+                    transition: transform 0.1s ease !important;
+                }
+
+                .color-swatch:hover {
+                    transform: scale(1.1) !important;
+                    border-color: #007bff !important;
+                }
+
+                /* Custom Plotly Toolbar positioned above graph */
+                .plotly-toolbar-container {
+                    display: flex;
+                    gap: 8px;
+                    align-items: center;
+                    background: #ffffff;
+                    padding: 8px;
+                    border: 1px solid #dee2e6;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    margin-bottom: 10px;
+                }
+
+                /* Hide the original Plotly modebar that appears on the graph */
+                #graphCanvas .modebar {
+                    display: none !important;
+                }
+
+                /* Style the relocated modebar */
+                .custom-modebar {
+                    display: flex !important;
+                    gap: 4px !important;
+                    background: transparent !important;
+                    border: none !important;
+                    position: static !important;
+                }
+
+                .custom-modebar .modebar-group {
+                    display: flex !important;
+                    gap: 2px !important;
+                    margin: 0 4px !important;
+                    border-right: 1px solid #dee2e6 !important;
+                    padding-right: 8px !important;
+                }
+
+                .custom-modebar .modebar-group:last-child {
+                    border-right: none !important;
+                    padding-right: 0 !important;
+                }
+
+                .custom-modebar .modebar-btn {
+                    background: #ffffff !important;
+                    border: 1px solid #dee2e6 !important;
+                    border-radius: 4px !important;
+                    padding: 6px !important;
+                    margin: 0 1px !important;
+                    cursor: pointer !important;
+                    transition: all 0.2s ease !important;
+                    color: #495057 !important;
+                }
+
+                .custom-modebar .modebar-btn:hover {
+                    background: #f8f9fa !important;
+                    border-color: #0d6efd !important;
+                }
+
+                .custom-modebar .modebar-btn svg {
+                    width: 16px !important;
+                    height: 16px !important;
+                }
+
+                .chart-wrapper {
+                    flex: 1;
+                    display: grid;
+                    grid-template-columns: 80px 1fr;
+                    grid-template-rows: 1fr auto auto;
+                    gap: 10px;
+                    min-height: 500px; /* Ensure minimum height */
+                    height: 100%; /* Take full height */
+                    align-items: stretch;
+                }
+
+                .y-axis-title {
+                    grid-column: 1;
+                    grid-row: 1;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    writing-mode: vertical-rl;
+                    text-orientation: mixed;
+                    transform: rotate(180deg);
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #495057;
+                    background: #f8f9fa;
+                    border-radius: 8px;
+                    margin-right: 5px;
+                }
+
+                .x-axis-title {
+                    grid-column: 2;
+                    grid-row: 2;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #495057;
+                    background: #f8f9fa;
+                    border-radius: 8px;
+                    padding: 10px;
+                    min-height: 40px;
+                }
+
                 #graphCanvas {
+                    grid-column: 2;
+                    grid-row: 1;
                     width: 100%;
-                    height: 400px;
+                    height: 100%;
+                    background: #ffffff;
+                    border: 1px solid #e9ecef;
+                    border-radius: 8px;
+                    min-height: 450px; /* Ensure minimum height for initial render */
+                    overflow: visible;
                 }
+
+                /* Modal Styles */
                 .modal {
                     display: none;
                     position: fixed;
@@ -5117,59 +5482,319 @@ class GraphsControl extends HTMLElement {
                     width: 100%;
                     height: 100%;
                     overflow: auto;
-                    background-color: rgba(0, 0, 0, 0.5);
+                    background-color: rgba(0, 0, 0, 0.6);
+                    backdrop-filter: blur(2px);
                 }
+
                 .modal-content {
-                    background-color: #fefefe;
-                    margin: 10% auto;
-                    padding: 20px;
-                    border: 1px solid #888;
-                    width: 80%;
-                    border-radius: 10px;
+                    background-color: #ffffff;
+                    margin: 2% auto;
+                    padding: 0;
+                    border: none;
+                    width: 95%;
+                    height: 95%;
+                    border-radius: 16px;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                    display: flex;
+                    flex-direction: column;
                 }
+
+                .modal-header {
+                    background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+                    color: white;
+                    padding: 20px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    border-radius: 16px 16px 0 0;
+                    flex-shrink: 0;
+                }
+
+                .modal-title {
+                    font-size: 20px;
+                    font-weight: 600;
+                    margin: 0;
+                }
+
                 .close {
-                    color: #aaa;
-                    float: right;
+                    color: white;
                     font-size: 28px;
                     font-weight: bold;
                     cursor: pointer;
+                    background: none;
+                    border: none;
+                    padding: 0;
+                    line-height: 1;
+                    opacity: 0.8;
+                    transition: opacity 0.2s ease;
                 }
+
                 .close:hover,
                 .close:focus {
-                    color: black;
+                    opacity: 1;
                     text-decoration: none;
+                }
+
+                .modal-body {
+                    flex: 1;
+                    padding: 20px;
+                    overflow-y: auto;
+                    height: 0; /* This allows flex: 1 to work properly */
+                }
+
+                /* NEW: Modal Footer Styles */
+                .modal-footer {
+                    padding: 20px;
+                    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                    border-top: 1px solid #dee2e6;
+                    border-radius: 0 0 16px 16px;
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 12px;
+                    flex-shrink: 0;
+                }
+
+                .btn {
+                    padding: 12px 24px;
+                    border: none;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    font-weight: 600;
                     cursor: pointer;
+                    transition: all 0.2s ease;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    min-width: 120px;
+                    justify-content: center;
+                }
+
+                .btn-primary {
+                    background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+                    color: white;
+                    box-shadow: 0 2px 4px rgba(13, 110, 253, 0.3);
+                }
+
+                .btn-primary:hover {
+                    background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.4);
+                }
+
+                .btn-secondary {
+                    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+                    color: white;
+                    box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+                }
+
+                .btn-secondary:hover {
+                    background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.4);
+                }
+
+                .btn:active {
+                    transform: translateY(0);
+                    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+                }
+
+                /* Responsive adjustments */
+                @media (max-width: 1200px) {
+                    .controls-row {
+                        grid-template-columns: 1fr 1fr;
+                        gap: 16px;
+                    }
+                }
+
+                @media (max-width: 768px) {
+                    .controls-row {
+                        grid-template-columns: 1fr;
+                        gap: 12px;
+                    }
+                    
+                    .chart-wrapper {
+                        grid-template-columns: 50px 1fr;
+                        min-height: 300px;
+                    }
+                    
+                    .control-panel {
+                        padding: 16px;
+                    }
+                    .disabled-axis {
+                        opacity: 0.5;
+                        pointer-events: none;
+                        background-color: #f5f5f5;
+                    }
+
+                    .control-group.disabled {
+                        opacity: 0.5;
+                    }
+
+                    .control-group.disabled label {
+                        color: #999;
+                    }
+
+                    .modal-footer {
+                        padding: 16px;
+                    }
+
+                    .btn {
+                        padding: 10px 20px;
+                        font-size: 13px;
+                        min-width: 100px;
+                    }
                 }
             </style>
+            
             <div class="modal" id="graphsModal">
                 <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <div class="graphs-container">
-                        <div class="graphs-menu">
-                            <button data-type="scatter" class="active">Scatter Plot</button>
-                            <button data-type="bar">Bar Chart</button>
-                            <button data-type="line">Line Chart</button>
-                            <button data-type="pie">Pie Chart</button>
+                    <div class="modal-header">
+                        <h2 class="modal-title">Chart Visualization Dashboard</h2>
+                        <span class="close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="graphs-container">
+                            <!-- Control Panel -->
+                            <div class="control-panel">
+                                <div class="control-panel-title">Chart Configuration</div>
+                                <div class="controls-row">
+                                    <div class="control-group">
+                                        <label for="chartType">Chart Type</label>
+                                        <select id="chartType">
+                                            <!-- Basic Charts -->
+                                            <option value="scatter">Scatter Plot</option>
+                                            <option value="line">Line Chart</option>
+                                            <option value="bar">Bar Chart</option>
+                                            <option value="pie">Pie Chart</option>
+                                            <option value="donut">Donut Chart</option>
+                                            <option value="bubble">Bubble Chart</option>
+                                            <option value="area">Area Chart</option>
+                                            <option value="histogram">Histogram</option>
+                                            <option value="box">Box Plot</option>
+                                            <option value="violin">Violin Plot</option>
+                                            
+                                            <!-- Statistical Charts -->
+                                            <option value="error-bars">Error Bars</option>
+                                            <option value="bar-error">Bar Chart with Error Bars</option>
+                                            <option value="histogram-kde">Histogram with KDE</option>
+                                            <option value="rug">Rug Plot</option>
+                                            <option value="funnel">Funnel Chart</option>
+                                            <option value="waterfall">Waterfall Chart</option>
+                                            
+                                                                                        
+                                            <!-- Scientific Charts -->
+                                            <option value="heatmap">Heatmaps</option>
+                                            <option value="contour">Contour Plots</option>
+                                            <option value="2d-histogram">2D Histogram</option>
+                                            <option value="3d-scatter">3D Scatter</option>
+                                            <option value="3d-surface">3D Surface Plot</option>
+                                            <option value="3d-mesh">3D Mesh Plot</option>
+                                            <option value="3d-line">3D Line Plot</option>
+                                            <option value="ternary">Ternary Plot</option>
+                                            <option value="polar">Polar Chart</option>
+                                            <option value="wind-rose">Wind Rose Chart</option>
+                                            
+                                            <!-- Financial Charts -->
+                                            <option value="time-series">Time Series Line/Bar</option>
+                                            
+                                            <!-- Other & Specialized -->
+                                            <option value="parallel-coordinates">Parallel Coordinates</option>
+                                            <option value="parallel-categories">Parallel Categories</option>
+                                            <option value="table">Table</option>
+                                            <option value="indicator">Indicator</option>
+                                            <option value="radar">Radar</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="control-group">
+                                        <label for="singleSelectDropdown">X-Axis</label>
+                                        <select id="singleSelectDropdown">
+                                            <!-- Dynamically populated options -->
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="control-group">
+                                        <label>Y-Axis</label>
+                                        <div id="customMultiSelectContainer"></div>
+                                    </div>
+                                    
+                                    <div class="control-group">
+                                        <label>Z-Axis</label>
+                                        <div id="customThirdMultiSelectContainer"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Graph Container -->
+                            <div class="graph-container">
+                                <div class="graph-header">
+                                    <div class="graph-title">Data Visualization</div>
+                                    <div class="plotly-toolbar-container">
+                                        <div id="customToolbar" class="custom-modebar"></div>
+                                    </div>
+                                </div>
+                                <div class="chart-wrapper">
+                                    <div class="y-axis-title" id="yAxisTitle">Values</div>
+                                    <div id="graphCanvas"></div>
+                                    <div class="x-axis-title" id="xAxisTitle">Labels</div>
+
+                                    <!-- Legend Control Panel -->
+                                    <div class="legend-control-panel" id="legendControlPanel" style="display: none;">
+                                        <div class="legend-header">
+                                            <h3 class="legend-title">Chart Legend</h3>
+                                        </div>
+                                        <div class="legend-items" id="legendItems">
+                                            <!-- Legend items will be populated dynamically -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <canvas id="graphCanvas"></canvas>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="cancel">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="save">
+                            <span>💾</span>
+                            Save Chart
+                        </button>
                     </div>
                 </div>
             </div>
         `;
 
-        this.graphCanvas = this.shadowRoot.getElementById("graphCanvas");
-        this.graphType = "scatter";
-        this.chart = null;
-        this.rowData = []; // Store row data
+        this.singleSelectDropdown = this.shadowRoot.getElementById("singleSelectDropdown");
+        this.selectedMultiColumns = [];
+        this.selectedThirdMultiColumns = [];
 
-        this.shadowRoot.querySelectorAll(".graphs-menu button").forEach((button) => {
-            button.addEventListener("click", () => {
-                this.changeGraphType(button.dataset.type);
-            });
+        this.graphCanvas = this.shadowRoot.getElementById("graphCanvas");
+        this.xAxisTitleElement = this.shadowRoot.getElementById("xAxisTitle");
+        this.yAxisTitleElement = this.shadowRoot.getElementById("yAxisTitle");
+        this.chartType = "scatter";
+        this.rowData = []; // Store row data
+        this.xAxisTitle = "Labels"; // Configurable x-axis title
+        this.yAxisTitle = "Values"; // Configurable y-axis title
+ 
+        // Bind methods to maintain 'this' context
+        this.toggleAllLegendItems = this.toggleAllLegendItems.bind(this);
+
+        this.shadowRoot.getElementById("chartType").addEventListener("change", (event) => {
+            this.changeGraphType(event.target.value);
         });
 
         this.shadowRoot.querySelector(".close").addEventListener("click", () => {
             this.closeModal();
+        });
+
+        // NEW: Add Cancel button functionality
+        this.shadowRoot.getElementById("cancel").addEventListener("click", () => {
+            this.closeModal();
+        });
+
+        // NEW: Add Save button functionality
+        this.shadowRoot.getElementById("save").addEventListener("click", () => {
+            this.saveChart();
         });
 
         this.shadowRoot.getElementById("graphsModal").addEventListener("click", (event) => {
@@ -5179,22 +5804,64 @@ class GraphsControl extends HTMLElement {
         });
     }
 
+    // NEW: Force resize after Y column selection
+    forceResize() {
+        setTimeout(() => {
+            if (window.Plotly && this.graphCanvas && this.graphCanvas.data) {
+                console.log('Forcing chart resize...');
+                Plotly.Plots.resize(this.graphCanvas);
+                
+                // Additional resize after a short delay to ensure proper scaling
+                setTimeout(() => {
+                    Plotly.Plots.resize(this.graphCanvas);
+                }, 100);
+            }
+        }, 100);
+    }
+
+    handleResize() {
+        if (window.Plotly && this.graphCanvas && this.graphCanvas.children.length > 0) {
+            window.Plotly.Plots.resize(this.graphCanvas);
+        }
+    }
+
+    initializeColors() {
+        if (!this.colorPalette || this.colorPalette.length === 0) {
+            this.colorPalette = [
+                '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
+                '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
+                '#aec7e8', '#ffbb78', '#98df8a', '#ff9896', '#c5b0d5',
+                '#c49c94', '#f7b6d3', '#c7c7c7', '#dbdb8d', '#9edae5'
+            ];
+        }
+        
+        if (!this.columnColors) {
+            this.columnColors = {};
+        }
+        
+        if (!this.hiddenColumns) {
+            this.hiddenColumns = new Set();
+        }
+        
+        // console.log('Color system initialized:', {
+        //     paletteLength: this.colorPalette.length,
+        //     columnColorsEmpty: Object.keys(this.columnColors).length === 0
+        // });
+    }
+
     connectedCallback() {
         this.initializeChart();
     }
 
     changeGraphType(type) {
-        this.graphType = type;
-        this.shadowRoot.querySelectorAll(".graphs-menu button").forEach((button) => {
-            button.classList.toggle("active", button.dataset.type === type);
-        });
+        this.chartType = type;
         this.updateChart();
     }
 
     initializeChart() {
-        if (!window.Chart) {
+        if (!window.Plotly) {
             const script = document.createElement("script");
-            script.src = "https://cdn.jsdelivr.net/npm/chart.js";
+            script.src = "https://cdn.plot.ly/plotly-3.1.0.min.js";
             script.onload = () => this.updateChart();
             document.head.appendChild(script);
         } else {
@@ -5202,73 +5869,1224 @@ class GraphsControl extends HTMLElement {
         }
     }
 
-    updateChart() {
-        if (this.chart) {
-            this.chart.destroy();
+    generateColumnColors(columns) {
+        // console.log('Generating colors for columns:', columns);
+
+        // Step 1: Remove colors for columns that are no longer present
+        const currentCols = new Set(columns);
+        Object.keys(this.columnColors).forEach((col) => {
+            if (!currentCols.has(col)) {
+                // console.log(`🗑 Removing color for column "${col}"`);
+                delete this.columnColors[col];
+            }
+        });
+
+        // Step 2: Find used colors in order
+        const usedColors = Object.values(this.columnColors);
+        
+        // Step 3: Assign colors to new columns
+        columns.forEach((col) => {
+            if (!this.columnColors[col]) {
+                // Find the first available color not in use
+                let color = this.colorPalette.find(c => !usedColors.includes(c));
+                
+                // If all colors are used, wrap around
+                if (!color) {
+                    const assignedCount = Object.keys(this.columnColors).length;
+                    color = this.colorPalette[assignedCount % this.colorPalette.length];
+                }
+
+                this.columnColors[col] = color;
+                usedColors.push(color);
+                console.log(`🎨 Assigned color ${color} to column "${col}"`);
+            } else {
+                console.log(`✓ Column "${col}" already has color ${this.columnColors[col]}`);
+            }
+        });
+
+        // console.log('✅ Final column colors:', this.columnColors);
+    }
+
+    // Create the legend control panel
+    createLegendControlPanel() {
+        const legendPanel = this.shadowRoot?.getElementById('legendControlPanel') || 
+                          document.getElementById('legendControlPanel');
+        const legendItems = this.shadowRoot?.getElementById('legendItems') || 
+                          document.getElementById('legendItems');
+        
+        if (!legendPanel || !legendItems) {
+            console.warn('Legend panel elements not found');
+            return;
+        }
+        
+        // Get all columns that have data traces
+        const allColumns = [...(this.selectedMultiColumns || []), ...(this.selectedThirdMultiColumns || [])];
+        console.log('ALL COLUMNS', allColumns);
+        if (allColumns.length === 0) {
+            legendItems.innerHTML = '';
+            legendPanel.style.display = 'none';
+            return;
+        }
+        
+        legendPanel.style.display = 'block';
+        this.generateColumnColors(allColumns);
+        
+        legendItems.innerHTML = '';
+        
+        allColumns.forEach((column, index) => {
+            const color = this.columnColors[column] || '#cccccc';
+            console.log(`Creating legend item for ${column} with color ${color}`);
+            
+            const legendItem = document.createElement('div');
+            legendItem.className = `legend-item ${this.hiddenColumns.has(column) ? 'hidden' : ''}`;
+            legendItem.dataset.column = column;
+            legendItem.title = `Click to toggle visibility, right-click to change color`;
+            
+            // Use SVG for guaranteed color display
+            const colorBox = document.createElement('div');
+            colorBox.innerHTML = `
+                <svg width="16" height="16" style="margin-right: 8px; vertical-align: middle;">
+                    <rect width="16" height="16" fill="${color}" stroke="#999" stroke-width="1" rx="2"/>
+                </svg>
+            `;
+            
+            const label = document.createElement('span');
+            label.className = 'legend-label';
+            label.textContent = column;
+            label.style.cssText = `
+                margin: 0 8px !important;
+                font-size: 14px !important;
+                color: #333 !important;
+                flex: 1 !important;
+            `;
+            
+            const visibilityIcon = document.createElement('span');
+            visibilityIcon.className = 'legend-visibility-icon';
+            visibilityIcon.style.cssText = `
+                font-size: 16px !important;
+                margin-left: auto !important;
+                opacity: 0.7 !important;
+                cursor: pointer !important;
+            `;
+            
+            // Set up the legend item layout with very specific styles
+            legendItem.style.cssText = `
+                display: flex !important;
+                align-items: center !important;
+                padding: 4px 8px !important;
+                margin: 2px 0 !important;
+                cursor: pointer !important;
+                border-radius: 4px !important;
+                transition: background-color 0.2s ease !important;
+                min-height: 24px !important;
+            `;
+            
+            legendItem.appendChild(colorBox);
+            legendItem.appendChild(label);
+            legendItem.appendChild(visibilityIcon);
+            
+            // Hover effect
+            legendItem.addEventListener('mouseenter', () => {
+                legendItem.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
+            });
+            
+            legendItem.addEventListener('mouseleave', () => {
+                legendItem.style.backgroundColor = 'transparent';
+            });
+            
+            // Click handler for toggling visibility
+            legendItem.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.toggleColumnVisibility(column);
+            });
+            
+            // Color change on right-click
+            legendItem.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                this.showColorPicker(column, e);
+            });
+            
+            legendItems.appendChild(legendItem);
+            
+            console.log(`✓ Added legend item for ${column} with SVG color box`);
+        });
+    }
+    
+    // Toggle column visibility
+    toggleColumnVisibility(column) {
+        if (this.hiddenColumns.has(column)) {
+            this.hiddenColumns.delete(column);
+        } else {
+            this.hiddenColumns.add(column);
+        }
+        
+        this.updateChartVisibility();
+        this.createLegendControlPanel(); // Refresh legend
+    }
+    
+    // Update chart trace visibility
+    updateChartVisibility() {
+        if (this.graphCanvas && window.Plotly && this.graphCanvas.data) {
+            const visibilityUpdates = {};
+            
+            this.graphCanvas.data.forEach((trace, index) => {
+                if (trace.name) {
+                    const isHidden = this.hiddenColumns.has(trace.name);
+                    visibilityUpdates[`visible[${index}]`] = !isHidden;
+                }
+            });
+            
+            if (Object.keys(visibilityUpdates).length > 0) {
+                Plotly.restyle(this.graphCanvas, visibilityUpdates);
+            }
+        }
+    }
+    
+    // Show color picker
+    showColorPicker(column, event) {
+        const colorOptions = this.colorPalette.slice(0, 10);
+        
+        // Remove existing color picker
+        const existing = document.getElementById('colorPicker');
+        if (existing) existing.remove();
+        
+        const picker = document.createElement('div');
+        picker.id = 'colorPicker';
+        picker.style.cssText = `
+            position: fixed;
+            left: ${event.pageX}px;
+            top: ${event.pageY}px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: flex;
+            gap: 4px;
+        `;
+        
+        colorOptions.forEach(color => {
+            const colorSwatch = document.createElement('div');
+            colorSwatch.className = 'color-swatch';
+            colorSwatch.style.backgroundColor = color;
+            colorSwatch.title = `Change to ${color}`;
+            
+            colorSwatch.addEventListener('click', () => {
+                this.changeColumnColor(column, color);
+                picker.remove();
+            });
+            
+            picker.appendChild(colorSwatch);
+        });
+        
+        document.body.appendChild(picker);
+        
+        // Close picker when clicking outside
+        setTimeout(() => {
+            const closeHandler = (e) => {
+                if (!picker.contains(e.target)) {
+                    picker.remove();
+                    document.removeEventListener('click', closeHandler);
+                }
+            };
+            document.addEventListener('click', closeHandler);
+        }, 100);
+    }
+    
+    // Change column color
+    changeColumnColor(column, newColor) {
+        this.columnColors[column] = newColor;
+        
+        // Update chart colors using Plotly.restyle
+        if (this.graphCanvas && window.Plotly && this.graphCanvas.data) {
+            const colorUpdates = {};
+            
+            this.graphCanvas.data.forEach((trace, index) => {
+                if (trace.name === column) {
+                    // Handle different chart types
+                    if (trace.type === 'scatter' || trace.type === 'line') {
+                        colorUpdates[`marker.color[${index}]`] = newColor;
+                        if (trace.mode && trace.mode.includes('lines')) {
+                            colorUpdates[`line.color[${index}]`] = newColor;
+                        }
+                    } else if (trace.type === 'bar') {
+                        colorUpdates[`marker.color[${index}]`] = newColor;
+                    }
+                    // Add more chart types as needed
+                }
+            });
+            
+            if (Object.keys(colorUpdates).length > 0) {
+                Plotly.restyle(this.graphCanvas, colorUpdates);
+            }
+        }
+        
+        this.createLegendControlPanel(); // Refresh legend
+    }
+    
+    // Toggle all legend items
+    toggleAllLegendItems() {
+        const allColumns = [...(this.selectedMultiColumns || []), ...(this.selectedThirdMultiColumns || [])];
+        
+        if (this.hiddenColumns.size === 0) {
+            // Hide all
+            allColumns.forEach(col => this.hiddenColumns.add(col));
+        } else {
+            // Show all
+            this.hiddenColumns.clear();
+        }
+        
+        this.updateChartVisibility();
+        this.createLegendControlPanel();
+    }
+
+    // NEW: Save chart functionality
+    saveChart() {
+        try {
+            // You can customize this method based on your requirements
+            if (this.graphCanvas && window.Plotly) {
+                // Option 1: Download as PNG
+                Plotly.toImage(this.graphCanvas, {
+                    format: 'png',
+                    width: 1200,
+                    height: 800,
+                    scale: 2
+                }).then(dataUrl => {
+                    const link = document.createElement('a');
+                    link.href = dataUrl;
+                    link.download = `chart_${Date.now()}.png`;
+                    link.click();
+                });
+                
+                // Option 2: Save configuration (you can modify this)
+                const chartConfig = {
+                    chartType: this.chartType,
+                    xAxis: this.singleSelectDropdown.value,
+                    yAxis: this.selectedMultiColumns,
+                    zAxis: this.selectedThirdMultiColumns,
+                    colors: this.columnColors,
+                    hiddenColumns: Array.from(this.hiddenColumns)
+                };
+                
+                console.log('Chart configuration saved:', chartConfig);
+                
+                // You could also emit an event or call a callback here
+                this.dispatchEvent(new CustomEvent('chartSaved', {
+                    detail: chartConfig
+                }));
+                
+            }
+            this.closeModal();
+        } catch (error) {
+            console.error('Error saving chart:', error);
+            alert('Error saving chart. Please try again.');
+        }
+    }
+
+    updateAxisSelections(chartType) {
+        // console.log("Reached HERE !!!!!!!!!!!")
+        const singleAxisCharts = ["histogram","rug", "indicator"];
+        const twoDAxisCharts = [
+            "scatter", "line", "bar", "area", "box", "violin", "bubble","pie", "donut", 
+            "heatmap", "contour", "2d-histogram", "radar", "polar", "wind-rose",
+            "funnel", "waterfall", "time-series", "error-bars", "bar-error", 
+            "histogram-kde"
+        ];
+        const threeDAxisCharts = ["3d-scatter", "3d-line", "3d-surface", "3d-mesh"];
+        
+        if (singleAxisCharts.includes(chartType)) {
+            this.disableAxisSelector("y");
+            this.disableAxisSelector("z");
+        } else if (twoDAxisCharts.includes(chartType)) {
+            this.enableAxisSelector("y");
+            this.disableAxisSelector("z");
+        } else if (threeDAxisCharts.includes(chartType)) {
+            this.enableAxisSelector("x");
+            this.enableAxisSelector("y");
+            this.enableAxisSelector("z");
+        } else {
+            this.enableAxisSelector("x");
+            this.enableAxisSelector("y");
+            this.disableAxisSelector("z");
+        }
+    }
+
+    disableAxisSelector(axis) {
+        let container;
+        if (axis === "x") {
+            container = document.querySelector("#singleSelectDropdown") || 
+                      this.shadowRoot?.querySelector("#singleSelectDropdown");
+        } else if (axis === "y") {
+            container = this.shadowRoot?.querySelector("#customMultiSelectContainer");
+        } else if (axis === "z") {
+            container = this.shadowRoot?.querySelector("#customThirdMultiSelectContainer");
         }
 
-        const data = this.prepareData();
-        const config = this.getChartConfig(data);
-
-        this.chart = new Chart(this.graphCanvas, config);
+        if (container) {
+            const controlGroup = container.closest(".control-group") || container; 
+            controlGroup.style.display = "none";
+            controlGroup.classList.add("hidden-axis");
+        } else {
+            console.warn(`${axis}-axis container not found`);
+        }
     }
 
-    prepareData() {
-        // Use the row data to prepare labels and dataset
-        const labels = this.rowData.map((row, index) => `Row ${index + 1}`);
-        const dataset = this.rowData.map((row) => row.value || 0); // Replace 'value' with the actual key in your data
+    enableAxisSelector(axis) {
+        let container;
+        if (axis === "x") {
+            container = document.querySelector("#singleSelectDropdown") || 
+                      this.shadowRoot?.querySelector("#singleSelectDropdown");
+        } else if (axis === "y") {
+            container = this.shadowRoot?.querySelector("#customMultiSelectContainer");
+        } else if (axis === "z") {
+            container = this.shadowRoot?.querySelector("#customThirdMultiSelectContainer");
+        }
 
-        return { labels, dataset };
+        if (container) {
+            const controlGroup = container.closest(".control-group") || container;
+            controlGroup.style.display = "";
+            controlGroup.classList.remove("hidden-axis");
+        }
     }
 
-    getChartConfig(data) {
-        const { labels, dataset } = data;
+    updateChart() {
+        if (!this.rowData || this.rowData.length === 0) {
+            this.graphCanvas.innerHTML = "<p>No data available to display.</p>";
+            return;
+        }
+        this.graphCanvas.innerHTML = '';
+        const chartType = this.chartType;
+        // console.log(chartType)
+        // console.log("Before updateAxisSelections:");
+        // console.log("Y container exists:", !!document.querySelector("#customMultiSelectContainer"));
+        // console.log("Z container exists:", !!document.querySelector("#customThirdMultiSelectContainer"));
+        this.updateAxisSelections(chartType);
+        const xCol = this.singleSelectDropdown.value;
+        const yCols = this.selectedMultiColumns || [];
+        const zCols = this.selectedThirdMultiColumns || [];
 
-        const config = {
-            type: this.graphType,
-            data: {
-                labels,
-                datasets: [
-                    {
-                        label: "Row Data",
-                        data: dataset,
-                        backgroundColor: "rgba(75, 192, 192, 0.2)",
-                        borderColor: "rgba(75, 192, 192, 1)",
-                        borderWidth: 1,
-                    },
-                ],
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: "top",
-                    },
-                },
-            },
+        this.updateAxisTitlesFromColumns(chartType, xCol, yCols, zCols);
+
+        const data = [];
+        const xValues = xCol ? this.rowData.map(row => row[xCol]) : [];
+        const layout = this.getChartLayout();
+        this.initializeColors();
+        // Generate colors for all columns that will be used
+        const allColumns = [...yCols, ...zCols];
+        this.generateColumnColors(allColumns);
+        // console.log('Generated colors:', this.columnColors);
+        // Helper for error display
+        const showError = (msg) => {
+            this.graphCanvas.innerHTML = `<p style="color:red">${msg}</p>`;
         };
 
-        return config;
+        // Helper function to apply colors and visibility to traces
+        const applyTraceProperties = (trace, columnName) => {
+            if (this.columnColors[columnName]) {
+                const color = this.columnColors[columnName];
+                
+                // Fixed color application - ensure marker object exists first
+                if (trace.type === 'scatter' || trace.type === 'line' || !trace.type) {
+                    if (!trace.marker) trace.marker = {};
+                    trace.marker.color = color;
+                    
+                    // For line charts, also set line color
+                    if (trace.mode && trace.mode.includes('lines')) {
+                        if (!trace.line) trace.line = {};
+                        trace.line.color = color;
+                    }
+                } else if (trace.type === 'bar') {
+                    if (!trace.marker) trace.marker = {};
+                    trace.marker.color = color;
+                } else if (trace.type === 'pie') {
+                    // For pie charts, colors should be an array
+                    if (!trace.marker) trace.marker = {};
+                    trace.marker.colors = [color]; // or generate array for multiple slices
+                }
+            }
+            
+            // Set visibility
+            if (this.hiddenColumns.has(columnName)) {
+                trace.visible = false;
+            }
+            
+            return trace;
+        };
+
+        // 1. Basic 2D Charts
+        if (["scatter", "line", "bar", "area", "box", "violin"].includes(chartType)) {
+            if (!xCol || yCols.length === 0) {
+                this.graphCanvas.innerHTML = `<p style="color:red">Select X and at least one Y column.</p>`;
+                return;
+            }
+            
+            yCols.forEach((yCol, index) => {
+                let trace = {
+                    x: xValues,
+                    y: this.rowData.map(row => row[yCol]),
+                    type: chartType === "area" ? "scatter" : chartType,
+                    mode: chartType === "scatter" ? "markers" : (chartType === "line" || chartType === "area" ? "lines+markers" : undefined),
+                    fill: chartType === "area" ? "tozeroy" : undefined,
+                    name: yCol
+                };
+                
+                console.log(`Creating trace for ${yCol}, type: ${trace.type}`);
+                
+                // Apply colors and visibility
+                trace = applyTraceProperties(trace, yCol);
+                data.push(trace);
+            });
+        }
+        // 2. Histogram
+        else if (chartType === "histogram") {
+            if (!xCol) return showError("Select a column for histogram.");
+            let trace = {
+                x: xValues,
+                type: "histogram",
+                name: xCol
+            };
+            
+            trace = applyTraceProperties(trace, xCol);
+            data.push(trace);
+        }
+        // 3. Pie/Donut
+        else if (chartType === "pie" || chartType === "donut") {
+            if (!xCol || yCols.length === 0) return showError("Select label (X) and value (Y) columns.");
+            let trace = {
+                labels: xValues,
+                values: this.rowData.map(row => row[yCols[0]]),
+                type: "pie",
+                hole: chartType === "donut" ? 0.3 : 0,
+                textinfo: "label+percent",
+                textposition: "outside",
+                automargin: true,
+                name: yCols[0]
+            };
+            
+            trace = applyTraceProperties(trace, yCols[0]);
+            data.push(trace);
+        }
+        // 4. Bubble Chart
+        else if (chartType === "bubble") {
+            if (!xCol || yCols.length < 2) return showError("Select X, Y, and a size column (Y2) for bubble chart.");
+            let trace = {
+                x: xValues,
+                y: this.rowData.map(row => row[yCols[0]]),
+                mode: "markers",
+                marker: {
+                    size: this.rowData.map(row => row[yCols[1]]),
+                    sizemode: "area",
+                    sizeref: 2.0 * Math.max(...this.rowData.map(row => row[yCols[1]])) / (40 ** 2),
+                    sizemin: 4
+                },
+                type: "scatter",
+                name: yCols[0]
+            };
+            
+            trace = applyTraceProperties(trace, yCols[0]);
+            data.push(trace);
+        }
+        // 5. 3D Charts
+        else if (["3d-scatter", "3d-line", "3d-surface", "3d-mesh"].includes(chartType)) {
+            if (!xCol || yCols.length === 0 || zCols.length === 0) return showError("Select X, Y, and Z columns for 3D chart.");
+            const x = this.rowData.map(row => row[xCol]);
+            const y = this.rowData.map(row => row[yCols[0]]);
+            const z = this.rowData.map(row => row[zCols[0]]);
+            
+            if (chartType === "3d-scatter" || chartType === "3d-line") {
+                let trace = {
+                    x, y, z,
+                    type: "scatter3d",
+                    mode: chartType === "3d-line" ? "lines" : "markers",
+                    marker: { size: 4 },
+                    name: `${xCol} vs ${yCols[0]} vs ${zCols[0]}`
+                };
+                
+                trace = applyTraceProperties(trace, yCols[0]);
+                data.push(trace);
+            } else if (chartType === "3d-surface") {
+                // For surface, z should be a 2D array. Here we just reshape if possible.
+                let zMatrix = [];
+                const sqrtLength = Math.sqrt(z.length);
+                for (let i = 0; i < x.length; i += sqrtLength) {
+                    zMatrix.push(z.slice(i, i + sqrtLength));
+                }
+                let trace = {
+                    x, y,
+                    z: zMatrix,
+                    type: "surface",
+                    name: zCols[0]
+                };
+                
+                trace = applyTraceProperties(trace, zCols[0]);
+                data.push(trace);
+            } else if (chartType === "3d-mesh") {
+                let trace = {
+                    x, y, z,
+                    type: "mesh3d",
+                    name: zCols[0]
+                };
+                
+                trace = applyTraceProperties(trace, zCols[0]);
+                data.push(trace);
+            }
+        }
+        // 6. Heatmap/Contour/2D Histogram
+        else if (chartType === "heatmap" || chartType === "contour" || chartType === "2d-histogram") {
+            if (!xCol || yCols.length === 0) return showError("Select X and Y columns.");
+            const x = this.rowData.map(row => row[xCol]);
+            const y = this.rowData.map(row => row[yCols[0]]);
+            // Z is optional for contour
+            let z = [];
+            if (zCols.length > 0) z = this.rowData.map(row => row[zCols[0]]);
+            
+            let trace;
+            if (chartType === "heatmap") {
+                trace = { 
+                    x, y, 
+                    z: [z.length ? z : y], 
+                    type: "heatmap",
+                    name: yCols[0]
+                };
+            } else if (chartType === "contour") {
+                trace = { 
+                    x, y, 
+                    z: [z.length ? z : y], 
+                    type: "contour",
+                    name: yCols[0]
+                };
+            } else if (chartType === "2d-histogram") {
+                trace = { 
+                    x, y, 
+                    type: "histogram2d",
+                    name: yCols[0]
+                };
+            }
+            
+            if (trace) {
+                trace = applyTraceProperties(trace, yCols[0]);
+                data.push(trace);
+            }
+        }
+        // 7. Parallel Coordinates
+        else if (chartType === "parallel-coordinates") {
+            const allCols = [...yCols, ...zCols];
+            if (allCols.length < 2) return showError("Select at least two columns for parallel coordinates.");
+            let trace = {
+                type: "parcoords",
+                dimensions: allCols.map(col => ({
+                    label: col,
+                    values: this.rowData.map(row => row[col])
+                })),
+                name: "Parallel Coordinates"
+            };
+            
+            // For parallel coordinates, we'll use the first column for coloring
+            trace = applyTraceProperties(trace, allCols[0]);
+            data.push(trace);
+        }
+        // 8. Table
+        else if (chartType === "table") {
+            const cols = [xCol, ...yCols, ...zCols].filter(Boolean);
+            if (cols.length === 0) return showError("Select at least one column for table.");
+            let trace = {
+                type: "table",
+                header: { values: cols },
+                cells: {
+                    values: cols.map(col => this.rowData.map(row => row[col]))
+                },
+                name: "Data Table"
+            };
+            
+            data.push(trace); // Tables don't need color application
+        }
+        // 9. Indicator
+        else if (chartType === "indicator") {
+            if (yCols.length === 0) return showError("Select a Y column for indicator.");
+            const val = this.rowData.reduce((sum, row) => sum + (parseFloat(row[yCols[0]]) || 0), 0);
+            let trace = {
+                type: "indicator",
+                mode: "number+delta",
+                value: val,
+                title: { text: yCols[0] },
+                name: yCols[0]
+            };
+            
+            trace = applyTraceProperties(trace, yCols[0]);
+            data.push(trace);
+        }
+        // 10. Radar/Polar charts
+        else if (chartType === "radar" || chartType === "polar" || chartType === "wind-rose") {
+            // Needs theta and r
+            if (!xCol || yCols.length === 0) return showError("Select theta (X) and r (Y) columns.");
+            let trace = {
+                type: "scatterpolar",
+                r: this.rowData.map(row => row[yCols[0]]),
+                theta: xValues,
+                fill: "toself",
+                name: yCols[0]
+            };
+            
+            trace = applyTraceProperties(trace, yCols[0]);
+            data.push(trace);
+            layout.polar = { radialaxis: { visible: true } };
+        }
+        else if (chartType === "funnel") {
+            if (!xCol || yCols.length === 0) return showError("Select X and Y columns for funnel.");
+            let trace = {
+                type: "funnel",
+                y: xValues,
+                x: this.rowData.map(row => row[yCols[0]]),
+                name: yCols[0]
+            };
+            
+            trace = applyTraceProperties(trace, yCols[0]);
+            data.push(trace);
+        }
+        else if (chartType === "waterfall") {
+            if (!xCol || yCols.length === 0) return showError("Select X and Y columns for waterfall.");
+            let trace = {
+                type: "waterfall",
+                x: xValues,
+                y: this.rowData.map(row => row[yCols[0]]),
+                name: yCols[0]
+            };
+            
+            trace = applyTraceProperties(trace, yCols[0]);
+            data.push(trace);
+        }
+        else if (chartType === "rug") {
+            if (!xCol) return showError("Select a column for rug plot.");
+            let trace = {
+                type: "rug",
+                x: xValues,
+                name: xCol
+            };
+            
+            trace = applyTraceProperties(trace, xCol);
+            data.push(trace);
+        }
+        else if (chartType === "histogram-kde") {
+            if (!xCol) return showError("Select a column for histogram with KDE.");
+            
+            // Histogram trace
+            let histTrace = {
+                type: "histogram",
+                x: xValues,
+                histnorm: "probability density",
+                name: `${xCol} Histogram`
+            };
+            histTrace = applyTraceProperties(histTrace, xCol);
+            data.push(histTrace);
+            
+            // KDE trace (simplified)
+            let kdeTrace = {
+                type: "scatter",
+                x: xValues,
+                y: this.rowData.map(row => row[xCol]), // Not a true KDE, but placeholder
+                mode: "lines",
+                name: `${xCol} KDE`
+            };
+            kdeTrace = applyTraceProperties(kdeTrace, `${xCol}_KDE`);
+            data.push(kdeTrace);
+        }
+        else if (chartType === "error-bars" || chartType === "bar-error") {
+            if (!xCol || yCols.length < 2) return showError("Select X, Y, and error columns.");
+            let trace = {
+                type: chartType === "bar-error" ? "bar" : "scatter",
+                x: xValues,
+                y: this.rowData.map(row => row[yCols[0]]),
+                error_y: {
+                    type: "data",
+                    array: this.rowData.map(row => row[yCols[1]]),
+                    visible: true
+                },
+                name: yCols[0]
+            };
+            
+            trace = applyTraceProperties(trace, yCols[0]);
+            data.push(trace);
+        }
+        else if (chartType === "time-series") {
+            if (!xCol || yCols.length === 0) return showError("Select X (time) and Y columns.");
+            yCols.forEach(yCol => {
+                let trace = {
+                    x: xValues,
+                    y: this.rowData.map(row => row[yCol]),
+                    type: "scatter",
+                    mode: "lines+markers",
+                    name: yCol
+                };
+                
+                trace = applyTraceProperties(trace, yCol);
+                data.push(trace);
+            });
+        }
+        else if (chartType === "parallel-categories") {
+            const allCols = [xCol, ...yCols, ...zCols].filter(Boolean);
+            if (allCols.length < 2) return showError("Select at least two columns for parallel categories.");
+            let trace = {
+                type: "parcats",
+                dimensions: allCols.map(col => ({
+                    label: col,
+                    values: this.rowData.map(row => row[col])
+                })),
+                name: "Parallel Categories"
+            };
+            
+            // For parallel categories, use first column for coloring
+            trace = applyTraceProperties(trace, allCols[0]);
+            data.push(trace);
+        }
+        else {
+            return showError("Chart type not implemented or not supported.");
+        }
+
+        console.log('=== ALL TRACES BEFORE PLOTTING ===');
+        data.forEach((trace, index) => {
+            console.log(`Trace ${index}:`, {
+                name: trace.name,
+                type: trace.type,
+                markerColor: trace.marker?.color,
+                lineColor: trace.line?.color,
+                visible: trace.visible !== false
+            });
+        });
+
+        // Plotly config - DISABLE BUILT-IN LEGEND
+        const config = {
+            responsive: true,
+            displayModeBar: true,
+            modeBarButtonsToRemove: ['select2d', 'lasso2d', 'autoScale2d', 'hoverClosestCartesian', 'hoverCompareCartesian'],
+            displaylogo: false,
+            modeBarButtons: [
+                ['toImage'],
+                ['zoom2d', 'pan2d'],
+                ['zoomIn2d', 'zoomOut2d'],
+                ['resetScale2d']
+            ],
+            toImageButtonOptions: {
+                format: 'png',
+                filename: 'chart',
+                height: 800,
+                width: 1200,
+                scale: 2
+            }
+        };
+
+        Plotly.newPlot(this.graphCanvas, data, layout, config).then(() => {
+            console.log('Chart plotted successfully');
+            setTimeout(() => {
+                this.relocateToolbar();
+                this.createLegendControlPanel(); // Create legend after chart is rendered
+                this.forceResize(); // Force resize after chart creation
+                window.addEventListener('resize', () => this.handleResize());
+                console.log("Chart fully loaded and resized!");
+            }, 500);
+        }).catch((error) => {
+            console.error('Error creating chart:', error);
+            this.graphCanvas.innerHTML = '<p style="color:red">Error creating chart. Check console for details.</p>';
+        });
     }
 
+    updateAxisTitlesFromColumns(chartType, xCol, yCols, zCols) {
+        const is3DChart = ["3d-scatter", "3d-line", "3d-surface", "3d-mesh"].includes(chartType);
+
+        if (this.xAxisTitleElement) {
+            this.xAxisTitleElement.style.display = is3DChart ? 'none' : 'block';
+        }
+        if (this.yAxisTitleElement) {
+            this.yAxisTitleElement.style.display = is3DChart ? 'none' : 'block';
+        }
+
+        // If it's a 3D chart, don't set titles at all
+        if (is3DChart) return;
+        if (!is3DChart) {
+            this.xAxisTitleElement.style.textAnchor = 'middle'; // for SVG text
+            this.xAxisTitleElement.style.textAlign = 'center'; // for HTML text
+            this.yAxisTitleElement.style.textAnchor = 'middle'; // for SVG text
+            this.yAxisTitleElement.style.textAlign = 'center';
+        }
+        let xTitle = xCol || "X-Axis";
+
+        const formatMultiColumnTitle = (cols, defaultTitle) => {
+            if (!cols || cols.length === 0) return defaultTitle;
+            if (cols.length === 1) return cols[0];
+            if (cols.length <= 3) return cols.join(" + ");
+            return `${cols.slice(0, 2).join(" + ")} + ${cols.length - 2} more`;
+        };
+
+        let yTitle;
+        switch (chartType) {
+            case "histogram":
+                yTitle = "Count";
+                break;
+            case "pie":
+            case "donut":
+                yTitle = yCols.length > 0 ? yCols[0] : "Values";
+                break;
+            case "bubble":
+                yTitle = yCols.length > 0 ? yCols[0] : "Y-Axis";
+                break;
+            case "heatmap":
+            case "contour":
+            case "2d-histogram":
+                yTitle = formatMultiColumnTitle(yCols, "Y-Axis");
+                break;
+            case "indicator":
+                yTitle = formatMultiColumnTitle(yCols, "Value");
+                break;
+            case "funnel":
+            case "waterfall":
+                yTitle = formatMultiColumnTitle(yCols, "Values");
+                break;
+            case "radar":
+            case "polar":
+            case "wind-rose":
+                yTitle = formatMultiColumnTitle(yCols, "Radius");
+                break;
+            case "time-series":
+                yTitle = formatMultiColumnTitle(yCols, "Values");
+                break;
+            case "parallel-coordinates":
+            case "parallel-categories":
+                yTitle = formatMultiColumnTitle(
+                    [...(yCols || []), ...(zCols || [])],
+                    "Variables"
+                );
+                break;
+            default:
+                yTitle = formatMultiColumnTitle(yCols, "Y-Axis");
+                break;
+        }
+
+        this.setAxisTitles(xTitle, yTitle);
+    }
+
+    initializeDropdownListeners() {
+        // X-axis single select listener
+        const singleSelectDropdown = this.shadowRoot.getElementById('singleSelectDropdown');
+        if (singleSelectDropdown) {
+            singleSelectDropdown.addEventListener('change', () => {
+                this.updateChart(); // This will auto-update titles
+            });
+        }
+    }
+
+    relocateToolbar() {
+        const originalToolbar = this.graphCanvas.querySelector('.modebar');
+        const customToolbarContainer = this.shadowRoot.getElementById('customToolbar');
+        
+        if (originalToolbar && customToolbarContainer) {
+            // Clone the toolbar
+            const clonedToolbar = originalToolbar.cloneNode(true);
+            
+            // Clear the custom container and add the cloned toolbar
+            customToolbarContainer.innerHTML = '';
+            customToolbarContainer.appendChild(clonedToolbar);
+            
+            // Hide the original toolbar
+            originalToolbar.style.display = 'none';
+            
+            // Make the cloned toolbar visible and functional
+            clonedToolbar.style.display = 'flex';
+            clonedToolbar.style.position = 'static';
+            clonedToolbar.style.background = 'transparent';
+            clonedToolbar.style.border = 'none';
+            
+            // Re-attach event listeners to the cloned buttons
+            this.attachToolbarEvents(clonedToolbar);
+        }
+    }
+    
+    // Method to attach events to the relocated toolbar buttons
+    attachToolbarEvents(toolbar) {
+        const buttons = toolbar.querySelectorAll('.modebar-btn');
+        buttons.forEach(button => {
+            const newButton = button.cloneNode(true);
+            button.parentNode.replaceChild(newButton, button);
+            
+            // Get the original button's data attributes
+            const originalButton = this.graphCanvas.querySelector(`[data-title="${newButton.getAttribute('data-title')}"]`);
+            if (originalButton) {
+                newButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    originalButton.click();
+                });
+            }
+        });
+    }
+
+    getChartLayout() {
+        const layout = {
+            font: {
+                family: "Arial, sans-serif",
+                size: 22,
+                color: "#333"
+            },
+            plot_bgcolor: 'white',
+            paper_bgcolor: 'white',
+            autosize: true,
+            showlegend: false // DISABLE PLOTLY'S BUILT-IN LEGEND
+        };
+
+        // Different layouts for different chart types
+        if (this.chartType === 'pie' || this.chartType === 'donut') {
+            layout.margin = { 
+                t: 40,   // More space for title
+                l: 80,   // More space for labels
+                r: 80,   // More space for labels
+                b: 0    // More space for labels
+            };
+        } else {
+            // For other chart types (bar, line, scatter, etc.)
+            layout.margin = { 
+                t: 60,   // Space for title
+                l: 80,   // More space for y-axis labels
+                r: 60,   // Space for any overflow
+                b: 0   // More space for x-axis labels
+            };
+            
+            layout.xaxis = {
+                showgrid: true,
+                gridcolor: '#e6e6e6',
+                tickfont: {
+                    size: 22,
+                    color: "#333"
+                },
+                showline: true,
+                linecolor: '#333',
+                linewidth: 1,
+                showticklabels: true,
+                tickangle: -45,  // Angle labels to prevent overlap
+                automargin: true  // Auto adjust margins for labels
+            };
+            
+            layout.yaxis = {
+                showgrid: true,
+                gridcolor: '#e6e6e6',
+                tickfont: {
+                    size: 22,
+                    color: "#333"
+                },
+                showline: true,
+                linecolor: '#333',
+                linewidth: 1,
+                showticklabels: true,
+                automargin: true  // Auto adjust margins for labels
+            };
+        }
+
+        return layout;
+    }
+    
     openModal() {
-        this.shadowRoot.getElementById("graphsModal").style.display = "block";
+        const modal = this.shadowRoot.getElementById("graphsModal");
+        modal.style.display = "block";
+
+        // Wait for the modal to be visible, then resize the plot
+        setTimeout(() => {
+            // Force initial resize
+            this.forceResize();
+            window.addEventListener('resize', () => this.handleResize());
+        }, 200); // Increased timeout for better reliability
     }
 
     closeModal() {
         this.shadowRoot.getElementById("graphsModal").style.display = "none";
     }
 
-    initializeAndOpenModal(rowData) {
-        console.log("Row data received:", rowData);
+    // Method to set custom axis titles
+    setAxisTitles(xTitle, yTitle) {
+        this.xAxisTitle = xTitle || "Labels";
+        this.yAxisTitle = yTitle || "Values";
+        
+        // Update the HTML elements
+        this.xAxisTitleElement.textContent = this.xAxisTitle;
+        this.yAxisTitleElement.textContent = this.yAxisTitle;
+        
+        if (this.graphCanvas.children.length > 0) {
+            this.updateChart();
+        }
+    }
+
+    populateDropdowns() {
+        if (!this.rowData || this.rowData.length === 0) {
+            console.log("No rowData available to populate dropdowns.");
+            return;
+        }
+
+        // Get column names from the first row of rowData
+        const keys = Object.keys(this.rowData[0]);
+
+        // Populate singleSelectDropdown
+        this.singleSelectDropdown.innerHTML = keys
+            .map(key => `<option value="${key}">${key}</option>`)
+            .join("");
+
+        // console.log("Dropdowns populated with column keys:", keys);
+        
+        // Add event listeners to update the chart when dropdowns change
+        this.singleSelectDropdown.addEventListener("change", () => this.updateChart());
+        
+        this.selectedMultiColumns = this.selectedMultiColumns || [];
+        this.selectedThirdMultiColumns = this.selectedThirdMultiColumns || [];
+        this.renderCustomMultiSelect(keys);
+        this.renderCustomThirdMultiSelect(keys);
+        
+        // Debug: Check if containers exist after creation
+        // console.log("After creating containers:");
+        // console.log("Y container exists:", !!document.querySelector("#customMultiSelectContainer"));
+        // console.log("Z container exists:", !!document.querySelector("#customThirdMultiSelectContainer"));
+    }
+
+    renderCustomMultiSelect(options) {
+        // options: array of column names
+        const container = this.shadowRoot.getElementById('customMultiSelectContainer');
+        container.innerHTML = '';
+
+        // Show selected tags
+        this.selectedMultiColumns = this.selectedMultiColumns || [];
+        const tagsDiv = document.createElement('div');
+        tagsDiv.style.display = 'flex';
+        tagsDiv.style.flexWrap = 'wrap';
+        tagsDiv.style.gap = '6px';
+
+        this.selectedMultiColumns.forEach(col => {
+            const tag = document.createElement('span');
+            tag.textContent = col;
+            tag.style.background = '#007cba';
+            tag.style.color = 'white';
+            tag.style.padding = '2px 8px';
+            tag.style.borderRadius = '12px';
+            tag.style.display = 'flex';
+            tag.style.alignItems = 'center';
+            tag.style.gap = '4px';
+            tag.style.fontSize = '13px';
+            tag.style.margin = '2px 4px 2px 0';
+
+            const removeBtn = document.createElement('span');
+            removeBtn.textContent = '×';
+            removeBtn.style.cursor = 'pointer';
+            removeBtn.onclick = () => {
+                this.selectedMultiColumns = this.selectedMultiColumns.filter(c => c !== col);
+                this.renderCustomMultiSelect(options);
+                this.updateChart();
+                this.createLegendControlPanel();
+                // Force resize after Y column change
+                this.forceResize();
+            };
+            tag.appendChild(removeBtn);
+            tagsDiv.appendChild(tag);
+        });
+        container.appendChild(tagsDiv);
+
+        // Show dropdown for unselected options
+        const dropdown = document.createElement('select');
+        dropdown.innerHTML = `<option value="">+ Add column...</option>` +
+            options.filter(opt => !this.selectedMultiColumns.includes(opt))
+                .map(opt => `<option value="${opt}">${opt}</option>`).join('');
+        dropdown.onchange = () => {
+            if (dropdown.value && !this.selectedMultiColumns.includes(dropdown.value)) {
+                this.selectedMultiColumns.push(dropdown.value);
+                this.renderCustomMultiSelect(options);
+                this.updateChart();
+                this.createLegendControlPanel();
+                // Force resize after Y column addition
+                this.forceResize();
+            }
+        };
+        container.appendChild(dropdown);
+    }
+
+    renderCustomThirdMultiSelect(options) {
+        const container = this.shadowRoot.getElementById('customThirdMultiSelectContainer');
+        container.innerHTML = '';
+
+        this.selectedThirdMultiColumns = this.selectedThirdMultiColumns || [];
+        const tagsDiv = document.createElement('div');
+        tagsDiv.style.display = 'flex';
+        tagsDiv.style.flexWrap = 'wrap';
+        tagsDiv.style.gap = '6px';
+
+        this.selectedThirdMultiColumns.forEach(col => {
+            const tag = document.createElement('span');
+            tag.textContent = col;
+            tag.style.background = '#28a745';
+            tag.style.color = 'white';
+            tag.style.padding = '2px 8px';
+            tag.style.borderRadius = '12px';
+            tag.style.display = 'flex';
+            tag.style.alignItems = 'center';
+            tag.style.gap = '4px';
+            tag.style.fontSize = '13px';
+
+            const removeBtn = document.createElement('span');
+            removeBtn.textContent = '×';
+            removeBtn.style.cursor = 'pointer';
+            removeBtn.onclick = () => {
+                this.selectedThirdMultiColumns = this.selectedThirdMultiColumns.filter(c => c !== col);
+                this.renderCustomThirdMultiSelect(options);
+                this.updateChart();
+                this.createLegendControlPanel();
+                // Force resize after Z column change
+                this.forceResize();
+            };
+            tag.appendChild(removeBtn);
+            tagsDiv.appendChild(tag);
+        });
+        container.appendChild(tagsDiv);
+
+        const dropdown = document.createElement('select');
+        dropdown.innerHTML = `<option value="">+ Add column...</option>` +
+            options.filter(opt => !this.selectedThirdMultiColumns.includes(opt))
+                .map(opt => `<option value="${opt}">${opt}</option>`).join('');
+        dropdown.onchange = () => {
+            if (dropdown.value && !this.selectedThirdMultiColumns.includes(dropdown.value)) {
+                this.selectedThirdMultiColumns.push(dropdown.value);
+                this.renderCustomThirdMultiSelect(options);
+                this.updateChart();
+                this.createLegendControlPanel();
+                // Force resize after Z column addition
+                this.forceResize();
+            }
+        };
+        container.appendChild(dropdown);
+    }
+
+    initializeAndOpenModal(rowData, xTitle = "X-Axis", yTitle = "Y-Axis") {
+        // console.log("Row data received:", rowData);
         this.rowData = rowData; // Store the row data
+        this.xAxisTitle = xTitle;
+        this.yAxisTitle = yTitle;
+
+        // Update the HTML elements
+        this.xAxisTitleElement.textContent = this.xAxisTitle;
+        this.yAxisTitleElement.textContent = this.yAxisTitle;
+
+        // Populate dropdowns with column names from rowData
+        this.populateDropdowns();
+        this.initializeDropdownListeners();
         this.initializeChart();
         this.openModal();
+        
+        // Enhanced initialization sequence
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                this.initializeChart();
+                this.forceResize(); // Force resize during initialization
+                window.addEventListener('resize', () => this.handleResize());
+            }, 300); // Increased delay for better reliability
+        });
     }
 }
 
 // Register the custom element
 customElements.define("graphs-control", GraphsControl);
+
+
+
 class TemplateMappingControl extends HTMLElement {
   constructor() {
     super();
