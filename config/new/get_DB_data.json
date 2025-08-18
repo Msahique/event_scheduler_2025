@@ -41,7 +41,7 @@
         "Document UI Templates":"doc_ui_template",
         "Document View Templates":"doc_view_template",
         "Trigger Functions":"trigger_functions",
-        "Helper Functions":"helper_functions"
+        "Function Registry":"function_registry"
     },
      "App Config":{
         "Final Templates":"doc_final_templates"

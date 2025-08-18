@@ -26,6 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+//localStorage.setItem("my_current_affiliaition")="";
+
+
 let contextState = {
     previous: null,
     current: null

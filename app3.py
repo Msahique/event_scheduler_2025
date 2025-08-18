@@ -109,7 +109,7 @@ def login():
             resource_data=get_data(json_data['db_name'],"resource_profile", ['affiliation_id'],{'resource_name': myresult[0]['name']},exact_match=True) 
             print(resource_data)
             for x in resource_data:
-                affiliations=(get_data(json_data['db_name'],"affiliation", ['*'],{'affiliation_id':x['affiliation_id']},exact_match=True))
+                affiliations=(get_data(json_data['db_name'],"affiliation", ['*'],{'id':x['affiliation_id']},exact_match=True))
                 affiliations_data.append(affiliations[0])
                 print(affiliations_data); 
             return jsonify({"message": "Login successful","affiliations":affiliations_data}), 200
