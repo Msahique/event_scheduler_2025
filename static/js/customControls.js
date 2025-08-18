@@ -1874,7 +1874,7 @@ class FieldAttributeControl extends HTMLElement {
 }
 customElements.define('field-attribute-control', FieldAttributeControl);
 */
-
+/* this
 class FieldAttributeControl extends HTMLElement {
   constructor() {
     super();
@@ -2085,7 +2085,10 @@ class FieldAttributeControl extends HTMLElement {
   populateAllJobs(docType) {
     if (!docType) return;
     this.currentDocType = docType;
+    console.log("🟢 Populating all jobs for docType:", docType);
+    console.log("🟢 Fields by docType:", this.fieldsByDocType);
     const fields = this.fieldsByDocType[docType] || [];
+    console.log("🟢 Fields for docType:", fields);
     ['create', 'list', 'update'].forEach(job => {
       this.jobs[job] = JSON.parse(JSON.stringify(fields));
     });
@@ -2250,7 +2253,408 @@ class FieldAttributeControl extends HTMLElement {
   }
 }
 customElements.define('field-attribute-control', FieldAttributeControl);
+*/
 
+class FieldAttributeControl extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.jobs = { create: [], list: [], update: [], cancel: { api: '', onSuccess: '' } };
+    this.fieldsByDocType = {};
+    this.currentDocType = '';
+  }
+
+  connectedCallback() {
+    this.render();
+    this.loadDocTypesFromBackend();
+  }
+
+  async loadDocTypesFromBackend() {
+    try {
+      const templates = await getDocTemplates1({});
+      console.log("[DEBUG] Loaded templates:", templates);
+
+      if (Array.isArray(templates)) {
+        this.fieldsByDocType = {};
+        const selector = this.shadowRoot.getElementById('docTypeSelector');
+        selector.innerHTML = `<option value="">-- Select --</option>`;
+        const seen = new Set();
+
+        templates.forEach(tpl => {
+          const docType = tpl.doc_type?.trim();
+          if (!docType || seen.has(docType)) return;
+          seen.add(docType);
+          let fields = [];
+          try {
+            const parsed = tpl.doc_template && JSON.parse(tpl.doc_template);
+            if (Array.isArray(parsed?.fields)) {
+              fields = parsed.fields.map((f, index) => ({
+                seqno: f.seqno ?? index,
+                field: f.name || f.field || "",           // Backend uses 'name'
+                control: f.control || "text",
+                trigger: f.trigger || [],
+                edit: f.edit ?? (f.not_null === "false"),  // Map not_null to edit
+                show: f.show ?? true,
+                mandatory: f.mandatory ?? (f.not_null === "true"), // Map not_null to mandatory
+                default: f.default || "",
+                helper: f.helper || "none",
+                unique: f.unique || "false",               // Add unique field from backend
+                datatype: f.datatype || "",                // Add datatype field from backend
+                lang: f.lang || {
+                  english: "", german: "", arabic: "", french: ""
+                }
+              }));
+            }
+          } catch (e) {
+            console.warn(`[WARN] Invalid JSON for ${docType}:`, tpl.doc_template);
+          }
+
+          this.fieldsByDocType[docType] = fields;
+
+          const option = document.createElement("option");
+          option.value = docType;
+          option.textContent = docType;
+          selector.appendChild(option);
+        });
+      }
+    } catch (err) {
+      console.error("[ERROR] Could not load doc types:", err);
+    }
+  }
+
+  populateFromTemplate(templateJson) {
+    try {
+      const jobKeys = ['create', 'update', 'list', 'cancel'];
+      for (const job of jobKeys) {
+        const jobData = templateJson?.job?.[job];
+        if (!jobData || !Array.isArray(jobData.data)) {
+          this.jobs[job] = [];
+          continue;
+        }
+
+        const fields = [];
+        for (const section of jobData.data) {
+          if (Array.isArray(section.fields)) {
+            fields.push(...section.fields);
+          }
+        }
+
+        fields.sort((a, b) => (a.seqno ?? 0) - (b.seqno ?? 0));
+        this.jobs[job] = fields;
+      }
+
+      const currentJob = this.shadowRoot.querySelector('.job-tab.active')?.dataset.job || 'create';
+      this.renderFields(currentJob);
+
+    } catch (err) {
+      console.error("❌ Error populating template:", err);
+    }
+  }
+
+  render() {
+    this.shadowRoot.innerHTML = `
+      <style>
+        table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+        th, td { border: 1px solid #ccc; padding: 0.5rem; text-align: left; }
+        button { margin: 0.5rem 0.25rem; }
+        input, select, textarea { width: 100%; box-sizing: border-box; }
+        .drag-handle { cursor: move; text-align: center; }
+        tr.dragging { opacity: 0.5; }
+      </style>
+      <div>
+        <label>getDataApi: <input type="text" id="getDataApi" value="config/list_details" /></label><br/>
+        <label>Doc Type:
+          <select id="docTypeSelector">
+            <option value="">-- Select --</option>
+          </select>
+        </label>
+        <label>Job Type:
+          <select id="jobSelector">
+            <option value="create">Create</option>
+            <option value="list">List</option>
+            <option value="update">Update</option>
+            <option value="cancel">Cancel</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <button id="loadJobFields">Load Fields</button>
+      </div>
+      <div id="cancel-section" style="display:none">
+        <label>Cancel API: <input type="text" id="cancelApi" /></label>
+        <label>onSuccess: <input type="text" id="cancelOnSuccess" /></label>
+        <button id="save-cancel">Save Cancel Config</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>⇅</th><th>Field</th><th>Control</th><th>Edit</th><th>Show</th><th>Mandatory</th>
+            <th>Default</th><th>Trigger</th><th>Unique</th><th>DataType</th>
+            <th>Lang (EN)</th><th>Lang (DE)</th><th>Lang (AR)</th><th>Lang (FR)</th><th>Helper</th><th>Remove</th>
+          </tr>
+        </thead>
+        <tbody id="field-body"></tbody>
+      </table>
+      <button id="add-field">Add Field</button>
+      <button id="save-fields">Save Job Fields</button>
+      <button id="export-json">Export Config</button>
+      <button id="alert-json">Show JSON in Alert</button>
+      <pre id="output"></pre>
+    `;
+
+    this.shadowRoot.getElementById('add-field').addEventListener('click', () => this.addField());
+    this.shadowRoot.getElementById('docTypeSelector').addEventListener('change', (e) => this.populateAllJobs(e.target.value));
+    this.shadowRoot.getElementById('loadJobFields').addEventListener('click', () => this.loadFields(this.shadowRoot.getElementById('jobSelector').value));
+    this.shadowRoot.getElementById('save-fields').addEventListener('click', () => this.saveFields(this.shadowRoot.getElementById('jobSelector').value));
+    this.shadowRoot.getElementById('save-cancel').addEventListener('click', () => this.saveCancelConfig());
+    this.shadowRoot.getElementById('export-json').addEventListener('click', () => {
+      const config = this.exportConfig();
+      this.shadowRoot.getElementById('output').textContent = JSON.stringify(config, null, 2);
+    });
+    this.shadowRoot.getElementById('alert-json').addEventListener('click', () => {
+      const config = this.exportConfig();
+      alert(JSON.stringify(config, null, 2));
+    });
+    this.shadowRoot.getElementById('jobSelector').addEventListener('change', e => {
+      const job = e.target.value;
+      this.shadowRoot.getElementById('cancel-section').style.display = job === 'cancel' ? 'block' : 'none';
+    });
+  }
+
+  get value() {
+    // Include the original fields from the selected document type (only name and datatype)
+    const originalFields = this.currentDocType ? 
+      (this.fieldsByDocType[this.currentDocType] || []).map(f => ({
+        name: f.field,
+        datatype: f.datatype
+      })) : [];
+    
+    return {
+      getDataApi: this.shadowRoot.getElementById('getDataApi')?.value || '',
+      fields: originalFields,
+      job: this.jobs
+    };
+  }
+
+  set value(val) {
+    if (typeof val === "object") {
+      this.jobs = val.job || {};
+      this.currentDocType = val.doc_type || "";
+      this.shadowRoot.getElementById('getDataApi').value = val.getDataApi || '';
+      this.loadFields('create');
+    }
+  }
+
+  saveCancelConfig() {
+    const api = this.shadowRoot.getElementById('cancelApi').value || 'config';
+    const onSuccess = this.shadowRoot.getElementById('cancelOnSuccess').value || 'Role_canceled()';
+    this.jobs.cancel = { api, onSuccess };
+    const jobSelector = this.shadowRoot.getElementById('jobSelector');
+    const cancelOption = Array.from(jobSelector.options).find(opt => opt.value === 'cancel');
+    if (cancelOption) {
+      cancelOption.textContent = `✔️ Cancel`;
+    }
+  }
+
+  loadFields(job = 'create') {
+    const tbody = this.shadowRoot.getElementById('field-body');
+    tbody.innerHTML = '';
+    if (!Array.isArray(this.jobs[job])) return;
+    this.jobs[job].forEach(f => this.addFieldFromObject(f));
+  }
+
+  saveFields(job = 'create') {
+    this.jobs[job] = this.captureFields();
+    const jobSelector = this.shadowRoot.getElementById('jobSelector');
+    const selectedOption = Array.from(jobSelector.options).find(opt => opt.value === job);
+    if (selectedOption) {
+      selectedOption.textContent = `✔️ ${job.charAt(0).toUpperCase() + job.slice(1)}`;
+    }
+  }
+
+  populateAllJobs(docType) {
+    if (!docType) return;
+    this.currentDocType = docType;
+    const fields = this.fieldsByDocType[docType] || [];
+    ['create', 'list', 'update'].forEach(job => {
+      this.jobs[job] = JSON.parse(JSON.stringify(fields));
+    });
+    this.jobs.cancel = { api: "config", onSuccess: "Role_canceled()" };
+    this.loadFields('create');
+  }
+
+  addField(field = "", control = "text", trigger = []) {
+    this.addFieldFromObject({
+      field,
+      control,
+      trigger,
+      edit: false,  show: false,  mandatory: false,
+      default: "",
+      unique: "false",
+      datatype: "",
+      helper: "none",
+      lang: { english: "", german: "", arabic: "", french: "" }
+    });
+  }
+
+  addFieldFromObject(obj) {
+    const tbody = this.shadowRoot.getElementById('field-body');
+    const row = document.createElement('tr');
+    row.setAttribute('draggable', true);
+    row.classList.add('draggable-row');
+
+    row.innerHTML = `
+      <td class="drag-handle">⇅</td>
+      <td><input type="text" class="field-name" value="${obj.field || ""}"/></td>
+      <td><select class="control">
+        <option value="text">text</option>
+        <option value="dropdown">dropdown</option>
+        <option value="field-attribute-control">field-attribute-control</option>
+        <option value="datime">datime</option>
+      </select></td>
+      <td><input type="checkbox" class="edit" ${obj.edit ? "checked" : ""}/></td>
+      <td><input type="checkbox" class="show" ${obj.show ? "checked" : ""}/></td>
+      <td><input type="checkbox" class="mandatory" ${obj.mandatory ? "checked" : ""}/></td>
+      <td><input type="text" class="default" value="${obj.default || ""}"/></td>
+      <td><button class="trigger-btn">⚙️ Configure</button><textarea class="trigger" style="display:none">${JSON.stringify(obj.trigger || [])}</textarea></td>
+      <td><input type="text" class="unique" value="${obj.unique || "false"}"/></td>
+      <td><input type="text" class="datatype" value="${obj.datatype || ""}"/></td>
+      <td><input type="text" class="lang-en" value="${obj.lang?.english || ""}"/></td>
+      <td><input type="text" class="lang-de" value="${obj.lang?.german || ""}"/></td>
+      <td><input type="text" class="lang-ar" value="${obj.lang?.arabic || ""}"/></td>
+      <td><input type="text" class="lang-fr" value="${obj.lang?.french || ""}"/></td>
+      <td>
+        <select class="helper">
+          <option value="none">None</option>
+          <option value="getcurrentuserdetails">getcurrentuserdetails</option>
+          <option value="getresorceCategories">getresorceCategories</option>
+          <option value="get_affiliation">get_affiliation</option>
+        </select>
+      </td>
+      <td><button class="remove">X</button></td>
+    `;
+
+    row.querySelector('.control').value = obj.control || "text";
+    row.querySelector('.helper').value = obj.helper || "none";
+    row.querySelector('.remove').addEventListener('click', () => row.remove());
+    row.querySelector('.trigger-btn').addEventListener('click', () => {
+      const textarea = row.querySelector('.trigger');
+      let existingTriggers = [];
+      try {
+        existingTriggers = JSON.parse(textarea.value || "[]");
+      } catch (e) {
+        existingTriggers = [];
+      }
+      openTriggerModal(existingTriggers, (updatedTriggers) => {
+        textarea.value = JSON.stringify(updatedTriggers, null, 2);
+      });
+    });
+
+    this.addDragEvents(row);
+    tbody.appendChild(row);
+  }
+
+  addDragEvents(row) {
+    row.addEventListener('dragstart', e => {
+      row.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+
+    row.addEventListener('dragend', () => {
+      row.classList.remove('dragging');
+    });
+
+    row.addEventListener('dragover', e => {
+      e.preventDefault();
+      const dragging = this.shadowRoot.querySelector('.dragging');
+      if (!dragging || dragging === row) return;
+      const tbody = row.parentNode;
+      const rows = Array.from(tbody.children);
+      const draggingIndex = rows.indexOf(dragging);
+      const targetIndex = rows.indexOf(row);
+      if (draggingIndex < targetIndex) {
+        tbody.insertBefore(dragging, row.nextSibling);
+      } else {
+        tbody.insertBefore(dragging, row);
+      }
+    });
+  }
+
+  captureFields() {
+    const rows = this.shadowRoot.querySelectorAll('#field-body tr');
+    return Array.from(rows).map((row, index) => ({
+      seqno: index,
+      field: row.querySelector('.field-name').value,
+      control: row.querySelector('.control').value,
+      trigger: (() => {
+        try {
+          return JSON.parse(row.querySelector('.trigger').value || '[]');
+        } catch (e) {
+          return [];
+        }
+      })(),
+      edit: row.querySelector('.edit').checked,
+      show: row.querySelector('.show').checked,
+      mandatory: row.querySelector('.mandatory').checked,
+      default: row.querySelector('.default').value,
+      unique: row.querySelector('.unique').value,
+      datatype: row.querySelector('.datatype').value,
+      helper: row.querySelector('.helper').value,
+      lang: {
+        english: row.querySelector('.lang-en').value,
+        german: row.querySelector('.lang-de').value,
+        arabic: row.querySelector('.lang-ar').value,
+        french: row.querySelector('.lang-fr').value
+      }
+    }));
+  }
+
+  exportConfig() {
+    const job = {};
+    Object.keys(this.jobs).forEach(jobType => {
+      if (jobType === 'cancel') {
+        job[jobType] = {
+          api: this.jobs.cancel.api || "config",
+          onSuccess: this.jobs.cancel.onSuccess || "Role_canceled()"
+        };
+      } else {
+        const fields = this.jobs[jobType];
+        const grouped = {};
+        fields.forEach(f => {
+          const helper = f.helper || "none";
+          if (!grouped[helper]) grouped[helper] = [];
+          grouped[helper].push(f);
+        });
+        const data = Object.entries(grouped).map(([helper, fields]) => ({
+          helper,
+          fields,
+          edit_option: true,
+          delete_option: true
+        }));
+        job[jobType] = {
+          roles: ["Admin"],
+          data,
+          api: `config/${jobType === 'list' ? 'list_details' : jobType === 'update' ? 'modifications' : 'new'}`,
+          onSuccess: `Role_${jobType}ed()`
+        };
+      }
+    });
+    
+    // Include the original fields from the selected document type (only name and datatype)
+    const originalFields = this.currentDocType ? 
+      (this.fieldsByDocType[this.currentDocType] || []).map(f => ({
+        name: f.field,
+        datatype: f.datatype
+      })) : [];
+    
+    return {
+      getDataApi: this.shadowRoot.getElementById('getDataApi').value,
+      fields: originalFields,
+      job
+    };
+  }
+}
+customElements.define('field-attribute-control', FieldAttributeControl);
 
 
 /*
