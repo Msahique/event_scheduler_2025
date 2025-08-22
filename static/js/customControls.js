@@ -617,6 +617,368 @@ class AttachmentControl extends HTMLElement {
 }
 customElements.define("attachment-control", AttachmentControl);
 
+/*******************************
+ 📂 File Attachment
+*******************************/
+class FileAttachment extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        this.shadowRoot.innerHTML = this.template("📂 File Attachment", "fileHelperSelect", "fileInput", "fileList");
+        this.init();
+    }
+    template(title, selectId, inputId, listId) {
+        return `
+        <style>${AttachmentStyles}</style>
+        <div class="wrapper">
+            <h4>${title}</h4>
+            <label>Choose from existing:</label>
+            <select id="${selectId}">
+                <option value="">-- Select from existing --</option>
+            </select>
+            <label>Or upload new:</label>
+            <input type="file" id="${inputId}" multiple>
+            <div id="${listId}"></div>
+        </div>`;
+    }
+    async init() {
+        this.fileList = this.shadowRoot.getElementById("fileList");
+        this.fileInput = this.shadowRoot.getElementById("fileInput");
+        this.fileHelperSelect = this.shadowRoot.getElementById("fileHelperSelect");
+
+        let options = await get_file_list();
+        this.populateSelect(this.fileHelperSelect, options);
+
+        this.fileInput.addEventListener("change", e => this.showFiles(e.target.files));
+        this.fileHelperSelect.addEventListener("change", e => this.addRow("[Existing] " + e.target.value));
+    }
+    populateSelect(select, options) {
+        if (options && Array.isArray(options)) {
+            options.forEach(opt => {
+                let o = document.createElement("option");
+                o.value = opt.filename;
+                o.textContent = opt.filename;
+                select.appendChild(o);
+            });
+        }
+    }
+    showFiles(files) {
+        Array.from(files).forEach(file => this.addRow(file.name));
+    }
+    addRow(name) {
+        if (!name) return;
+        let wrap = document.createElement("div");
+        wrap.classList.add("itemWrapper");
+        wrap.innerHTML = `<button class="delete-btn">❌</button><span>${name}</span>`;
+        wrap.querySelector(".delete-btn").addEventListener("click", () => wrap.remove());
+        this.fileList.appendChild(wrap);
+    }
+}
+customElements.define("file-attachment", FileAttachment);
+
+
+/*******************************
+ 🖼️ Image Attachment
+*******************************/
+class ImageAttachment extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode:"open" });
+        this.shadowRoot.innerHTML = `
+            <style>${AttachmentStyles}</style>
+            <div class="wrapper">
+                <h4>🖼️ Image Attachment</h4>
+                <label>Choose from existing:</label>
+                <select id="imageHelperSelect"><option value="">-- Select --</option></select>
+                <video id="video" autoplay style="max-width:300px;display:none;"></video>
+                <button id="captureBtn">📸 Capture</button>
+                <div id="imageList"></div>
+            </div>
+        `;
+        this.init();
+    }
+    async init() {
+        this.video = this.shadowRoot.getElementById("video");
+        this.captureBtn = this.shadowRoot.getElementById("captureBtn");
+        this.imageList = this.shadowRoot.getElementById("imageList");
+        this.imageHelperSelect = this.shadowRoot.getElementById("imageHelperSelect");
+
+        let options = await get_image_list();
+        this.populateSelect(this.imageHelperSelect, options);
+
+        this.captureBtn.addEventListener("click", () => this.captureImage());
+        this.imageHelperSelect.addEventListener("change", e => this.addImage(`/uploads/images/${e.target.value}`));
+
+        navigator.mediaDevices.getUserMedia({ video:true }).then(stream=>{
+            this.video.srcObject = stream;
+            this.video.style.display="block";
+        });
+    }
+    populateSelect(select, options) {
+        if (options && Array.isArray(options)) {
+            options.forEach(opt => {
+                let o = document.createElement("option");
+                o.value = opt.filename;
+                o.textContent = opt.filename;
+                select.appendChild(o);
+            });
+        }
+    }
+    captureImage() {
+        let canvas = document.createElement("canvas");
+        canvas.width = this.video.videoWidth;
+        canvas.height = this.video.videoHeight;
+        canvas.getContext("2d").drawImage(this.video, 0, 0);
+        this.addImage(canvas.toDataURL("image/png"));
+    }
+    addImage(src) {
+        if (!src) return;
+        let wrap = document.createElement("div");
+        wrap.classList.add("itemWrapper");
+        let img = document.createElement("img");
+        img.src = src;
+        img.style.width="100px";
+        wrap.appendChild(img);
+        let del = document.createElement("button");
+        del.textContent="❌";
+        del.classList.add("delete-btn");
+        del.addEventListener("click",()=>wrap.remove());
+        wrap.appendChild(del);
+        this.imageList.appendChild(wrap);
+    }
+}
+customElements.define("image-attachment", ImageAttachment);
+
+
+/*******************************
+ 🎬 Video Attachment
+*******************************/
+class VideoAttachment extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode:"open" });
+        this.shadowRoot.innerHTML = `
+            <style>${AttachmentStyles}</style>
+            <div class="wrapper">
+                <h4>🎬 Video Attachment</h4>
+                <label>Choose from existing:</label>
+                <select id="videoHelperSelect"><option value="">-- Select --</option></select>
+                <video id="preview" autoplay style="max-width:300px;"></video>
+                <button id="recordBtn">⏺ Start Recording</button>
+                <div id="videoList"></div>
+            </div>
+        `;
+        this.init();
+    }
+    async init() {
+        this.preview = this.shadowRoot.getElementById("preview");
+        this.recordBtn = this.shadowRoot.getElementById("recordBtn");
+        this.videoList = this.shadowRoot.getElementById("videoList");
+        this.videoHelperSelect = this.shadowRoot.getElementById("videoHelperSelect");
+        this.recorder=null; this.chunks=[];
+
+        let options = await get_video_list();
+        this.populateSelect(this.videoHelperSelect, options);
+
+        this.recordBtn.addEventListener("click",()=>this.toggleRecording());
+        this.videoHelperSelect.addEventListener("change", e => this.addVideo(`/uploads/videos/${e.target.value}`));
+
+        navigator.mediaDevices.getUserMedia({ video:true, audio:true }).then(stream=>{
+            this.preview.srcObject=stream; this.stream=stream;
+        });
+    }
+    populateSelect(select, options) {
+        if (options && Array.isArray(options)) {
+            options.forEach(opt => {
+                let o = document.createElement("option");
+                o.value = opt.filename;
+                o.textContent = opt.filename;
+                select.appendChild(o);
+            });
+        }
+    }
+    toggleRecording() {
+        if (!this.recorder || this.recorder.state==="inactive") {
+            this.chunks=[];
+            this.recorder=new MediaRecorder(this.stream);
+            this.recorder.ondataavailable=e=>this.chunks.push(e.data);
+            this.recorder.onstop=()=>{
+                let blob=new Blob(this.chunks,{type:"video/webm"});
+                let url=URL.createObjectURL(blob);
+                this.addVideo(url);
+            };
+            this.recorder.start();
+            this.recordBtn.textContent="⏹ Stop Recording";
+        } else {
+            this.recorder.stop();
+            this.recordBtn.textContent="⏺ Start Recording";
+        }
+    }
+    addVideo(src) {
+        if (!src) return;
+        let wrap=document.createElement("div");
+        wrap.classList.add("itemWrapper");
+        let vid=document.createElement("video");
+        vid.src=src; vid.controls=true; vid.style.width="200px";
+        wrap.appendChild(vid);
+        let del=document.createElement("button");
+        del.textContent="❌"; del.classList.add("delete-btn");
+        del.addEventListener("click",()=>wrap.remove());
+        wrap.appendChild(del);
+        this.videoList.appendChild(wrap);
+    }
+}
+customElements.define("video-attachment", VideoAttachment);
+
+
+/*******************************
+ 🎤 Audio Attachment
+*******************************/
+class AudioAttachment extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode:"open" });
+        this.shadowRoot.innerHTML = `
+            <style>${AttachmentStyles}</style>
+            <div class="wrapper">
+                <h4>🎤 Audio Attachment</h4>
+                <label>Choose from existing:</label>
+                <select id="audioHelperSelect"><option value="">-- Select --</option></select>
+                <button id="recordBtn">🎙️ Start Recording</button>
+                <div id="audioList"></div>
+            </div>
+        `;
+        this.init();
+    }
+    async init() {
+        this.recordBtn=this.shadowRoot.getElementById("recordBtn");
+        this.audioList=this.shadowRoot.getElementById("audioList");
+        this.audioHelperSelect=this.shadowRoot.getElementById("audioHelperSelect");
+        this.recorder=null; this.chunks=[];
+
+        let options=await get_audio_list();
+        this.populateSelect(this.audioHelperSelect, options);
+
+        this.recordBtn.addEventListener("click",()=>this.toggleRecording());
+        this.audioHelperSelect.addEventListener("change", e=>this.addAudio(`/uploads/audios/${e.target.value}`));
+    }
+    populateSelect(select, options) {
+        if (options && Array.isArray(options)) {
+            options.forEach(opt => {
+                let o=document.createElement("option");
+                o.value=opt.filename;
+                o.textContent=opt.filename;
+                select.appendChild(o);
+            });
+        }
+    }
+    toggleRecording() {
+        if (!this.recorder || this.recorder.state==="inactive") {
+            navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+                this.chunks=[];
+                this.recorder=new MediaRecorder(stream);
+                this.recorder.ondataavailable=e=>this.chunks.push(e.data);
+                this.recorder.onstop=()=>{
+                    let blob=new Blob(this.chunks,{type:"audio/webm"});
+                    let url=URL.createObjectURL(blob);
+                    this.addAudio(url);
+                };
+                this.recorder.start();
+                this.recordBtn.textContent="⏹ Stop Recording";
+            });
+        } else {
+            this.recorder.stop();
+            this.recordBtn.textContent="🎙️ Start Recording";
+        }
+    }
+    addAudio(src) {
+        if (!src) return;
+        let wrap=document.createElement("div");
+        wrap.classList.add("itemWrapper");
+        let audio=document.createElement("audio");
+        audio.src=src; audio.controls=true;
+        wrap.appendChild(audio);
+        let del=document.createElement("button");
+        del.textContent="❌"; del.classList.add("delete-btn");
+        del.addEventListener("click",()=>wrap.remove());
+        wrap.appendChild(del);
+        this.audioList.appendChild(wrap);
+    }
+}
+customElements.define("audio-attachment", AudioAttachment);
+
+
+/*******************************
+ 🔳 QR Attachment
+*******************************/
+class QRAttachment extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({mode:"open"});
+        this.shadowRoot.innerHTML=`
+            <style>${AttachmentStyles}</style>
+            <div class="wrapper">
+                <h4>🔳 QR Attachment</h4>
+                <label>Choose from existing:</label>
+                <select id="qrHelperSelect"><option value="">-- Select --</option></select>
+                <input type="text" id="qrText" placeholder="Enter text for QR">
+                <button id="genBtn">Generate QR</button>
+                <div id="qrList"></div>
+            </div>
+        `;
+        this.init();
+    }
+    async init() {
+        this.qrHelperSelect=this.shadowRoot.getElementById("qrHelperSelect");
+        this.qrText=this.shadowRoot.getElementById("qrText");
+        this.genBtn=this.shadowRoot.getElementById("genBtn");
+        this.qrList=this.shadowRoot.getElementById("qrList");
+
+        let options=await get_qr_list();
+        this.populateSelect(this.qrHelperSelect, options);
+
+        this.genBtn.addEventListener("click",()=>this.generateQR(this.qrText.value));
+        this.qrHelperSelect.addEventListener("change", e=>this.generateQR(e.target.value));
+    }
+    populateSelect(select, options) {
+        if (options && Array.isArray(options)) {
+            options.forEach(opt => {
+                let o=document.createElement("option");
+                o.value=opt.filename;
+                o.textContent=opt.filename;
+                select.appendChild(o);
+            });
+        }
+    }
+    generateQR(text) {
+        if (!text) return;
+        let wrap=document.createElement("div");
+        wrap.classList.add("itemWrapper");
+        let qrDiv=document.createElement("div");
+        new QRCode(qrDiv,{text:text,width:128,height:128});
+        wrap.appendChild(qrDiv);
+        let del=document.createElement("button");
+        del.textContent="❌"; del.classList.add("delete-btn");
+        del.addEventListener("click",()=>wrap.remove());
+        wrap.appendChild(del);
+        this.qrList.appendChild(wrap);
+    }
+}
+customElements.define("qr-attachment", QRAttachment);
+
+
+/*******************************
+ Common Styles
+*******************************/
+const AttachmentStyles=`
+.wrapper{padding:10px;border:1px solid #ccc;border-radius:5px;background:#f9f9f9;margin-bottom:10px;}
+.itemWrapper{display:flex;align-items:center;margin:5px 0;background:#fff;padding:5px;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,0.1);}
+.delete-btn{background:#d9534f;color:#fff;border:none;border-radius:3px;cursor:pointer;margin-left:8px;padding:2px 6px;}
+.delete-btn:hover{background:#c9302c;}
+select,input[type="file"],input[type="text"],button{margin:5px 0;padding:5px;width:100%;}
+`;
+
+
 
 class Doc_template_Control extends HTMLElement {
   constructor() {
@@ -944,6 +1306,7 @@ class Doc_template_Control extends HTMLElement {
   }
 
     populateFromTemplate(config) {
+      console.log("Populating Doc_template_Control from template", config);
     try {
       if (config?.fields && Array.isArray(config.fields)) {
         this.fields = config.fields.filter(f => !this.staticFields.some(sf => sf.name === f.name));
@@ -958,6 +1321,7 @@ class Doc_template_Control extends HTMLElement {
   }
 
   set value(data) {
+    console.log(data)
     try {
       const parsed = typeof data === 'string' ? JSON.parse(data) : data;
       this.populateFromTemplate(parsed);
@@ -968,6 +1332,8 @@ class Doc_template_Control extends HTMLElement {
 
 
   get value() {
+    //console.log(fields)
+    
     return JSON.stringify({
       fields: [...this.staticFields, ...this.fields],
       unique_constraints: this.uniqueConstraints
@@ -2875,7 +3241,7 @@ function getHelperFunctions() {
   }
   return ["sample_function_1", "sample_function_2"]; // fallback
 }
-
+/*
 function openTriggerModal(existing, onSave) {
   const modal = new bootstrap.Modal(document.getElementById('triggerModal'));
   const tbody = document.querySelector('#triggerTable tbody');
@@ -2928,6 +3294,116 @@ function openTriggerModal(existing, onSave) {
     tbody.querySelectorAll('tr').forEach(row => {
       const [eventSel, funcSel] = row.querySelectorAll('select');
       updated.push({ event: eventSel.value, function: funcSel.value });
+    });
+    onSave(updated);
+    modal.hide();
+  };
+
+  modal.show();
+}*/
+
+function openTriggerModal(existing, onSave) {
+  const modal = new bootstrap.Modal(document.getElementById('triggerModal'));
+  const tbody = document.querySelector('#triggerTable tbody');
+  tbody.innerHTML = '';
+
+  // Define available trigger types and their corresponding functions
+  const functionTypes = {
+    'sourcing': ['sourceFunction1', 'sourceFunction2', 'sourceFunction3'],
+    'storing': ['destFunction1', 'destFunction2', 'destFunction3'],
+    'processing': ['processFunction1', 'processFunction2', 'processFunction3'],
+    'systemcall': ['systemFunction1', 'systemFunction2']
+  };
+
+  // Default trigger events (you can customize these)
+  const triggerEvents = ['onchange', 'onselect', 'onload', 'onclick', 'onsubmit'];
+
+  const createRow = (trigger = {}) => {
+    const row = document.createElement('tr');
+    
+    // Create type dropdown
+    const typeSelect = document.createElement('select');
+    typeSelect.className = 'trigger-type';
+    Object.keys(functionTypes).forEach(type => {
+      const opt = document.createElement('option');
+      opt.value = type;
+      opt.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+      if (trigger.type === type) opt.selected = true;
+      typeSelect.appendChild(opt);
+    });
+
+    // Create event dropdown
+    const eventSelect = document.createElement('select');
+    eventSelect.className = 'trigger-event';
+    triggerEvents.forEach(ev => {
+      const opt = document.createElement('option');
+      opt.value = ev;
+      opt.textContent = ev;
+      if (trigger.event === ev) opt.selected = true;
+      eventSelect.appendChild(opt);
+    });
+
+    // Create function dropdown (will be populated based on type)
+    const funcSelect = document.createElement('select');
+    funcSelect.className = 'trigger-function';
+    
+    // Populate function dropdown based on selected type
+    const updateFunctionDropdown = () => {
+      const selectedType = typeSelect.value;
+      funcSelect.innerHTML = ''; // Clear existing options
+      
+      functionTypes[selectedType].forEach(fn => {
+        const opt = document.createElement('option');
+        opt.value = fn;
+        opt.textContent = fn;
+        if (trigger.function === fn) opt.selected = true;
+        funcSelect.appendChild(opt);
+      });
+    };
+    
+    // Initial population
+    updateFunctionDropdown();
+    
+    // Update functions when type changes
+    typeSelect.addEventListener('change', updateFunctionDropdown);
+
+    // Create remove button
+    const removeBtn = document.createElement('button');
+    removeBtn.className = "btn btn-danger btn-sm";
+    removeBtn.innerHTML = "&times;";
+    removeBtn.onclick = () => row.remove();
+
+    // Append all elements to the row
+    row.appendChild(tdWrap(typeSelect));
+    row.appendChild(tdWrap(eventSelect));
+    row.appendChild(tdWrap(funcSelect));
+    row.appendChild(tdWrap(removeBtn));
+
+    tbody.appendChild(row);
+  };
+
+  const tdWrap = (el) => {
+    const td = document.createElement('td');
+    td.appendChild(el);
+    return td;
+  };
+
+  // Initialize with existing triggers
+  existing.forEach(createRow);
+
+  // Add new row button
+  document.getElementById('addTriggerRow').onclick = () => createRow();
+
+  // Save button handler
+  document.getElementById('saveTrigger').onclick = () => {
+    const updated = [];
+    tbody.querySelectorAll('tr').forEach(row => {
+      const [typeSel, eventSel, funcSel] = row.querySelectorAll('select');
+      updated.push({ 
+        type: typeSel.value, 
+        event: eventSel.value, 
+        function: funcSel.value 
+      });
     });
     onSave(updated);
     modal.hide();

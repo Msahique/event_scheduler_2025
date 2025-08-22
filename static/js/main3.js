@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     console.log("Affiliations:", affiliations);
     const submenu = document.getElementById('affiliationMenu');
-    if (submenu && Array.isArray(affiliations)) {
+    /*if (submenu && Array.isArray(affiliations)) {
         affiliations.forEach(aff => {
             const li = document.createElement('li');
             const a = document.createElement('a');
@@ -23,8 +23,39 @@ document.addEventListener('DOMContentLoaded', () => {
             li.appendChild(a);
             submenu.appendChild(li);
         });
+    }*/
+
+    if (submenu && Array.isArray(affiliations)) {
+        affiliations.forEach(aff => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.className = 'dropdown-item';
+            a.href = '#';
+            a.textContent = `${aff.program} - ${aff.entity} - ${aff.department} - ${aff.service} - ${aff.role}`;
+            
+            a.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Save the complete affiliation object as JSON
+                localStorage.setItem("my_current_affiliation", JSON.stringify(aff));
+                
+                console.log("Affiliation saved:", aff);
+                
+                // Optional: Update UI
+                if (submenu.parentElement && submenu.parentElement.querySelector('.dropdown-toggle')) {
+                    submenu.parentElement.querySelector('.dropdown-toggle').textContent = a.textContent;
+                }
+                
+                // Optional: Dispatch a custom event if other parts of your app need to know
+                window.dispatchEvent(new CustomEvent('affiliationChanged', { detail: aff }));
+            });
+            
+            li.appendChild(a);
+            submenu.appendChild(li);
+        });
     }
-});
+
+    });
 
 //localStorage.setItem("my_current_affiliaition")="";
 
@@ -306,6 +337,40 @@ function API_call(domain,endpoint,body,method){
     tab_status[page_load_conf.tab]=1;
     console.log(tab_status);
     
+}
+
+/* USEAGE:  getDocumentConfigWithCache("https://mydomain.com", "/config/list_details", { type: "Invoice" }, "POST");    */
+async function getDocumentConfigWithCache(domain, endpoint, body, method) {
+  const docType = body?.type || "default";
+
+  // Step 1: Check sessionStorage
+  let storedDocs = sessionStorage.getItem("documentType");
+  storedDocs = storedDocs ? JSON.parse(storedDocs) : {};
+
+  if (storedDocs[docType]) {
+    console.log(`✅ Using cached config for ${docType}`);
+    present_Data(storedDocs[docType], body.type); // use cached result
+    return storedDocs[docType];
+  }
+
+  // Step 2: If not cached, call API_call
+  console.log(`⚡ Fetching ${docType} from API...`);
+
+  return new Promise((resolve) => {
+    API_call(domain, endpoint, body, method);
+
+    // Override present_Data temporarily to also cache result
+    const originalPresentData = window.present_Data;
+    window.present_Data = function (data, type) {
+      // Save in sessionStorage
+      storedDocs[docType] = data;
+      sessionStorage.setItem("documentType", JSON.stringify(storedDocs));
+
+      // Call the original function
+      originalPresentData(data, type);
+      resolve(data);
+    };
+  });
 }
 
 /*displayObjectList*/
@@ -1470,8 +1535,6 @@ function graphInitialization() {
 }
 
 
-
-
 /*
 function print_document(){
     console.log(" Inside print_document function");
@@ -2561,9 +2624,10 @@ async function Registration_modal() {
                 let doc_template_Element = document.querySelector("doc-template-control");
                 if (doc_template_Element) {
                     try {
+                        console.log(doc_template_Element.value);
                         let rawValue = doc_template_Element.value;
                         let parsedValue;
-
+                        
                         if (typeof rawValue === "string") {
                             try {
                                 parsedValue = JSON.parse(rawValue);

@@ -8,6 +8,7 @@
         "Message Template":"message_details",
         "Resource Registry":"resource_profile",
         "Application Registry":"application_registry",
+        "Storage Paths":"storage_paths",
         "Entity log":""
     },
     "Network Config":{
@@ -30,10 +31,12 @@
     },
     "Program Config":{
         "Program Registry":"program_registry",
+        "Program Type":"program_type",
         "Program log":""
     },
     "Service Config":{
         "Service Registry":"gov_service_regsitry",
+        "Service Type":"service_type",
         "Service log":""
     },
     "Document Config":{
@@ -41,7 +44,8 @@
         "Document UI Templates":"doc_ui_template",
         "Document View Templates":"doc_view_template",
         "Trigger Functions":"trigger_functions",
-        "Function Registry":"function_registry"
+        "Function Registry":"function_registry",
+        "Image Registry":"images"
     },
      "App Config":{
         "Final Templates":"doc_final_templates"

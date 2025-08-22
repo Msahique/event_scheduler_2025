@@ -1,123 +1,73 @@
+"""
+access_check_mysql.py
 
-import math
-a=10        
-b=20
-c=30
-d= [10,20,50]
+Access control checker using normalized tables in MySQL.
+Wildcard rule: 0 in any scope field (program, service, entity, department, role) means "all".
+"""
 
-def add_custom(a, b, c):
-    return a + b + c
+import pymysql
 
-def add_arr(arr):
-    sum = 0
-    for i in arr:
-        print("Adding:", i)
-        sum += i
-        print(sum)
-    
-    return sum
+ALLOWED_OPS = {"create", "modify", "view", "print", "download", "approve", "delete", "update"}
 
-def subtract(a, b):
-    return a - b
+class MySQLAccessChecker:
+    """
+    Access control checker for MySQL normalized schema.
+    """
 
-data = "add"
+    _SQL = """
+        SELECT 1
+        FROM doc_permissions AS dp
+        JOIN affiliations AS perm
+          ON perm.affiliation_id = dp.affiliation_id
+        JOIN affiliations AS usr
+          ON usr.affiliation_id = %s
+        WHERE dp.doc_type  = %s
+          AND dp.operation = %s
+          AND (
+                (perm.program_id    = usr.program_id    OR perm.program_id    = 0 OR usr.program_id    = 0)
+            AND (perm.service_id    = usr.service_id    OR perm.service_id    = 0 OR usr.service_id    = 0)
+            AND (perm.entity_id     = usr.entity_id     OR perm.entity_id     = 0 OR usr.entity_id     = 0)
+            AND (perm.department_id = usr.department_id OR perm.department_id = 0 OR usr.department_id = 0)
+            AND (perm.role_id       = usr.role_id       OR perm.role_id       = 0 OR usr.role_id       = 0)
+          )
+        LIMIT 1;
+    """
 
-if data=="add":
-    #sum=add(a,b,c); print("Sum:", sum)
-    sum=sum([a,b]); print("Sum:", sum)
-elif data=="subtract":
-    sum=subtract(a,b) ; print("Difference:", sum)
-elif data=="add_arr":
-    sum=add_arr(d) ; print("Sum:", sum)
-else:
-    print("Invalid operation")
+    def __init__(self, host, user, password, database):
+        """
+        Initialize the checker with MySQL connection params.
+        Connection is established lazily per query.
+        """
+        self.conn = pymysql.connect(
+            host=host, user=user, password=password, database=database,
+            cursorclass=pymysql.cursors.Cursor, autocommit=True
+        )
 
+    def can_access(self, user_affiliation_id: int, doc_type: str, operation: str) -> bool:
+        """
+        Return True if the user affiliation is allowed to perform the operation on doc_type.
+        """
+        if operation not in ALLOWED_OPS:
+            return False
 
+        with self.conn.cursor() as cur:
+            cur.execute(self._SQL, (user_affiliation_id, doc_type, operation))
+            return cur.fetchone() is not None
 
-"job": {
-    "create": {
-        "roles": ["Admin"],
-        "data": [
-            {
-                "helper": "none",
-                "fields": [
-                    {"seqno": "", "field": "description", "name": "", "edit": false, "show": false, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "this is a test description", "default": "", "filter_type": "textbox", "filter_default_value": "", "lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}, "values": "", "tooltip_source": "", "tooltip_content": ""},
-                    {"seqno": "", "field": "id", "name": "Id", "edit": false, "show": false, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "this is a test description", "default": "", "filter_type": "textbox", "filter_default_value": "", "lang": {"english": "Role Id", "german": "Rollen-ID", "arabic": "معرف الدور", "french": "ID du rôle"}, "values": "", "tooltip_source": "", "tooltip_content": ""},
-                    {"seqno": "", "field": "entity_id", "name": "Entity Id", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "this is a test description", "default": "", "filter_type": "textbox", "filter_default_value": "", "lang": {"english": "Entity Id", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID de l'entité"}, "values": "", "tooltip_source": "", "tooltip_content": ""},
-                    {"seqno": "", "field": "role_name", "name": "Role Name", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "this is a test description", "default": "", "filter_type": "textbox", "filter_default_value": "", "lang": {"english": "Role Name", "german": "Rollenname", "arabic": "اسم الدور", "french": "Nom du rôle"}, "values": "", "tooltip_source": "", "tooltip_content": ""}
-                ],
-                "edit_option": true,
-                "delete_option": true
-            }
-        ],
-        "api": "config/new",
-        "onSuccess": "Role_created()"
-    },
-    "list": {
-        "roles": ["Admin"],
-        "data": [
-            {
-                "helper": "none",
-                "fields": [
-                    {"seqno": "", "field": "description", "name": "", "edit": false, "show": false, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "this is a test description", "default": "", "filter_type": "textbox", "filter_default_value": "", "lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}, "values": "", "tooltip_source": "", "tooltip_content": ""},
-                    {"seqno": "", "field": "id", "name": "Id", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "this is a test description", "default": "", "filter_type": "", "filter_default_value": "", "lang": {"english": "Role Id", "german": "Rollen-ID", "arabic": "معرف الدور", "french": "ID du rôle"}, "values": "", "tooltip_source": "", "tooltip_content": ""},
-                    {"seqno": "", "field": "entity_id", "name": "Entity Id", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "this is a test description", "default": "", "filter_type": "", "filter_default_value": "", "lang": {"english": "Entity Id", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID de l'entité"}, "values": "", "tooltip_source": "", "tooltip_content": ""},
-                    {"seqno": "", "field": "role_name", "name": "Role Name", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "this is a test description", "default": "", "filter_type": "", "filter_default_value": "", "lang": {"english": "Role Name", "german": "Rollenname", "arabic": "اسم الدور", "french": "Nom du rôle"}, "values": "", "tooltip_source": "", "tooltip_content": ""}
-                ],
-                "edit_option": true,
-                "delete_option": true
-            }
-        ],
-        "api": "config/list_details",
-        "onSuccess": "Role_listed()"
-    },
-    "update": {
-        "roles": ["Admin"],
-        "data": [
-            {
-                "helper": "none",
-                "fields": [
-                    {"seqno": "", "field": "description", "name": "", "edit": false, "show": false, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "this is a test description", "default": "", "filter_type": "textbox", "filter_default_value": "", "lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}, "values": "", "tooltip_source": "", "tooltip_content": ""},
-                    {"seqno": "", "field": "id", "name": "Id", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "this is a test description", "default": "", "filter_type": "textbox", "filter_default_value": "", "lang": {"english": "Role Id", "german": "Rollen-ID", "arabic": "معرف الدور", "french": "ID du rôle"}, "values": "", "tooltip_source": "", "tooltip_content": ""},
-                    {"seqno": "", "field": "entity_id", "name": "Entity Id", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "this is a test description", "default": "", "filter_type": "textbox", "filter_default_value": "", "lang": {"english": "Entity Id", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID de l'entité"}, "values": "", "tooltip_source": "", "tooltip_content": ""},
-                    {"seqno": "", "field": "role_name", "name": "Role Name", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "this is a test description", "default": "", "filter_type": "textbox", "filter_default_value": "", "lang": {"english": "Role Name", "german": "Rollenname", "arabic": "اسم الدور", "french": "Nom du rôle"}, "values": "", "tooltip_source": "", "tooltip_content": ""}
-                ],
-                "edit_option": true,
-                "delete_option": true
-            }
-        ],
-        "checklist": {
-            "checkpoints": []
-        },
-        "api": "config/modifications"
-    },
-    "approver": {
-        "roles": ["Approver"],
-        "data": [
-            {
-                "helper": "none",
-                "fields": [
-                    {"seqno": "", "field": "description", "name": "", "edit": false, "show": false, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "this is a test description", "default": "", "filter_type": "textbox", "filter_default_value": "", "lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}, "values": "", "tooltip_source": "", "tooltip_content": ""},
-                    {"seqno": "", "field": "entity_id", "name": "", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "this is a test description", "default": "", "filter_type": "", "filter_default_value": "", "lang": "", "values": "", "tooltip_source": "", "tooltip_content": ""},
-                    {"seqno": "", "field": "entity_name", "name": "", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "this is a test description", "default": "", "filter_type": "", "filter_default_value": "", "lang": "", "values": "", "tooltip_source": "", "tooltip_content": ""},
-                    {"seqno": "", "field": "entity_type", "name": "", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "this is a test description", "default": "", "filter_type": "", "filter_default_value": "", "lang": "", "values": "", "tooltip_source": "", "tooltip_content": ""},
-                    {"seqno": "", "field": "entry_status", "name": "", "edit": true, "show": true, "control": "dropdown", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "this is a test description", "default": "", "filter_type": "", "filter_default_value": "", "lang": "", "values": ["suspended", "approved"], "tooltip_source": "table", "tooltip_content": ""},
-                    {"seqno": "", "field": "remark", "name": "", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "this is a test description", "default": "", "filter_type": "", "filter_default_value": "", "lang": "", "values": "", "tooltip_source": "", "tooltip_content": ""},
-                    {"seqno": "", "field": "change_log", "name": "", "edit": false, "show": false, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "this is a test description", "default": "", "filter_type": "", "filter_default_value": "", "lang": "", "values": "", "tooltip_source": "", "tooltip_content": ""}
-                ],
-                "edit_option": true,
-                "delete_option": false
-            }
-        ],
-        "onSuccess": "Role_approved()"
-    },
-    "cancel": {
-        "api": "config",
-        "onSuccess": "Role_canceled()"
-    },
-    "view": {
-        "doc_view_template_id": "1",
-        "doc_view_template_name": "invoice1",
-        "onSuccess": ""
-    }
-}
+    def close(self):
+        """Close the DB connection."""
+        self.conn.close()
+
+checker = MySQLAccessChecker(
+    host="localhost", user="root", password="root", database="event_scheduler2025"
+)
+
+allowed = checker.can_access(
+    user_affiliation_id=4,
+    doc_type="gradesheet",
+    operation="modify"
+)
+
+print("Access granted?" , allowed)
+
+checker.close()
