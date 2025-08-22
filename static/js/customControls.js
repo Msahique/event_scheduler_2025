@@ -880,10 +880,11 @@ class Doc_template_Control extends HTMLElement {
         <input type="text" class="field-name" placeholder="Field name" value="${field.name}">
         <select class="field-datatype">
           <option value="string" ${field.datatype === 'string' ? 'selected' : ''}>String</option>
-          <option value="number" ${field.datatype === 'number' ? 'selected' : ''}>Number</option>
-          <option value="boolean" ${field.datatype === 'boolean' ? 'selected' : ''}>Boolean</option>
+          <option value="bigint" ${field.datatype === 'bigint' ? 'selected' : ''}>BigInt</option>
+          <option value="smallint" ${field.datatype === 'smallint' ? 'selected' : ''}>Boolean</option>
           <option value="date" ${field.datatype === 'date' ? 'selected' : ''}>Date</option>
           <option value="mediumtext" ${field.datatype === 'mediumtext' ? 'selected' : ''}>MediumText</option>
+          <option value="json" ${field.datatype === 'json' ? 'selected' : ''}>JSON</option>
         </select>
         <select class="field-unique">
           <option value="true" ${field.unique === 'true' ? 'selected' : ''}>Yes</option>
@@ -5362,25 +5363,25 @@ class GraphsControl extends HTMLElement {
     }
 
     // NEW: Force resize after Y column selection
-    forceResize() {
-        setTimeout(() => {
-            if (window.Plotly && this.graphCanvas && this.graphCanvas.data) {
-                console.log('Forcing chart resize...');
-                Plotly.Plots.resize(this.graphCanvas);
+    // forceResize() {
+    //     setTimeout(() => {
+    //         if (window.Plotly && this.graphCanvas && this.graphCanvas.data) {
+    //             console.log('Forcing chart resize...');
+    //             Plotly.Plots.resize(this.graphCanvas);
                 
-                // Additional resize after a short delay to ensure proper scaling
-                setTimeout(() => {
-                    Plotly.Plots.resize(this.graphCanvas);
-                }, 100);
-            }
-        }, 100);
-    }
+    //             // Additional resize after a short delay to ensure proper scaling
+    //             setTimeout(() => {
+    //                 Plotly.Plots.resize(this.graphCanvas);
+    //             }, 100);
+    //         }
+    //     }, 100);
+    // }
 
-    handleResize() {
-        if (window.Plotly && this.graphCanvas && this.graphCanvas.children.length > 0) {
-            window.Plotly.Plots.resize(this.graphCanvas);
-        }
-    }
+    // handleResize() {
+    //     if (window.Plotly && this.graphCanvas && this.graphCanvas.children.length > 0) {
+    //         window.Plotly.Plots.resize(this.graphCanvas);
+    //     }
+    // }
 
     initializeColors() {
         if (!this.colorPalette || this.colorPalette.length === 0) {
@@ -5696,49 +5697,6 @@ class GraphsControl extends HTMLElement {
         
         this.updateChartVisibility();
         this.createLegendControlPanel();
-    }
-
-    // NEW: Save chart functionality
-    saveChart() {
-        try {
-            // You can customize this method based on your requirements
-            if (this.graphCanvas && window.Plotly) {
-                // Option 1: Download as PNG
-                Plotly.toImage(this.graphCanvas, {
-                    format: 'png',
-                    width: 1200,
-                    height: 800,
-                    scale: 2
-                }).then(dataUrl => {
-                    const link = document.createElement('a');
-                    link.href = dataUrl;
-                    link.download = `chart_${Date.now()}.png`;
-                    link.click();
-                });
-                
-                // Option 2: Save configuration (you can modify this)
-                const chartConfig = {
-                    chartType: this.chartType,
-                    xAxis: this.singleSelectDropdown.value,
-                    yAxis: this.selectedMultiColumns,
-                    zAxis: this.selectedThirdMultiColumns,
-                    colors: this.columnColors,
-                    hiddenColumns: Array.from(this.hiddenColumns)
-                };
-                
-                console.log('Chart configuration saved:', chartConfig);
-                
-                // You could also emit an event or call a callback here
-                this.dispatchEvent(new CustomEvent('chartSaved', {
-                    detail: chartConfig
-                }));
-                
-            }
-            this.closeModal();
-        } catch (error) {
-            console.error('Error saving chart:', error);
-            alert('Error saving chart. Please try again.');
-        }
     }
 
     updateAxisSelections(chartType) {
@@ -6233,11 +6191,12 @@ class GraphsControl extends HTMLElement {
         };
 
         Plotly.newPlot(this.graphCanvas, data, layout, config).then(() => {
+            console.log("Data:", data);
             console.log('Chart plotted successfully');
             setTimeout(() => {
                 this.relocateToolbar();
                 this.createLegendControlPanel(); // Create legend after chart is rendered
-                this.forceResize(); // Force resize after chart creation
+                // this.forceResize(); // Force resize after chart creation
                 window.addEventListener('resize', () => this.handleResize());
                 console.log("Chart fully loaded and resized!");
             }, 500);
@@ -6445,7 +6404,7 @@ class GraphsControl extends HTMLElement {
         // Wait for the modal to be visible, then resize the plot
         setTimeout(() => {
             // Force initial resize
-            this.forceResize();
+            // this.forceResize();
             window.addEventListener('resize', () => this.handleResize());
         }, 200); // Increased timeout for better reliability
     }
@@ -6612,30 +6571,624 @@ class GraphsControl extends HTMLElement {
         container.appendChild(dropdown);
     }
 
-    initializeAndOpenModal(rowData, xTitle = "X-Axis", yTitle = "Y-Axis") {
-        // console.log("Row data received:", rowData);
-        this.rowData = rowData; // Store the row data
+    saveChart() {
+        try {
+            // Generate chart name
+            const chartName = this.generateChartName();
+            
+            // Prompt for description
+            const description = prompt(`Please enter a description for the chart template:\n\nChart Name: ${chartName}`, "");
+            
+            // Check if user cancelled or entered empty description
+            if (description === null) {
+                // User cancelled
+                return;
+            }
+            
+            if (description.trim() === "") {
+                alert("Description is required. Please enter a description to save the chart.");
+                return;
+            }
+            
+            // Proceed with saving
+            this.proceedWithSave(chartName, description.trim());
+            
+        } catch (error) {
+            console.error('Error saving chart:', error);
+            alert('Error saving chart. Please try again.');
+        }
+    }
+
+    proceedWithSave(chartName, description) {
+        try {
+            // Get the current chart data from Plotly
+            const chartData = this.graphCanvas.data || [];
+            const chartLayout = this.graphCanvas.layout || {};
+            
+            // Prepare the chart template data
+            const chartTemplate = {
+                xAxis: this.singleSelectDropdown.value || null,
+                yAxis: this.selectedMultiColumns || [],
+                zAxis: this.selectedThirdMultiColumns || [],
+                chartType: this.chartType,
+                colors: this.columnColors || {},
+                hiddenColumns: Array.from(this.hiddenColumns || []),
+                plotlyData: chartData,
+                plotlyLayout: chartLayout,
+                rowData: this.rowData || [] // The actual data rows that were plotted
+            };
+            
+            // Prepare the payload for backend
+            const payload = {
+                chartName: chartName,
+                chartTemplate: JSON.stringify(chartTemplate),
+                description: description
+            };
+            
+            console.log('Saving chart with payload:', payload);
+            
+            // Send to Python backend
+            this.sendChartToBackend(payload);
+            
+        } catch (error) {
+            console.error('Error preparing chart data:', error);
+            alert('Error preparing chart data. Please try again.');
+        }
+    }
+
+    generateChartName() {
+        const item = this.selectedItemFromDropdown || 'Chart';
+        const type = this.chartType || 'unknown';
+        const xAxis = this.singleSelectDropdown?.value || 'X';
+        
+        let yAxisPart = '';
+        if (this.selectedMultiColumns && this.selectedMultiColumns.length > 0) {
+            yAxisPart = this.selectedMultiColumns.join('-');
+        }
+        
+        let zAxisPart = '';
+        if (this.selectedThirdMultiColumns && this.selectedThirdMultiColumns.length > 0) {
+            zAxisPart = '_' + this.selectedThirdMultiColumns.join('-');
+        }
+        
+        // Construct chart name
+        let chartName = `${item}_${type}_${xAxis}`;
+        if (yAxisPart) {
+            chartName += `_${yAxisPart}`;
+        }
+        if (zAxisPart) {
+            chartName += zAxisPart;
+        }
+        
+        return chartName;
+    }
+
+    async sendChartToBackend(payload) {
+        try {
+            const response = await fetch('http://localhost:5000/api/save-chart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            console.log('Chart saved successfully:', result);
+            
+            // Show success message
+            alert('Chart saved successfully!');
+            
+            // Dispatch success event
+            this.dispatchEvent(new CustomEvent('chartSaved', {
+                detail: {
+                    success: true,
+                    chartName: payload.chartName,
+                    response: result
+                }
+            }));
+            
+            // Close modal after successful save
+            this.closeModal();
+            
+        } catch (error) {
+            console.error('Error sending chart to backend:', error);
+            alert(`Error saving chart to backend: ${error.message}`);
+            
+            // Dispatch error event
+            this.dispatchEvent(new CustomEvent('chartSaveError', {
+                detail: {
+                    success: false,
+                    error: error.message
+                }
+            }));
+        }
+    }
+
+    applyChartTemplate(template) {
+        try {
+            console.log('GraphsControl: Applying chart template:', template);
+
+            // 1. Set the row data
+            if (template.rowData && Array.isArray(template.rowData)) {
+                this.rowData = template.rowData;
+                console.log('GraphsControl: Set rowData:', template.rowData.length, 'rows');
+            }
+
+            // 2. Set chart type
+            if (template.chartType) {
+                this.chartType = template.chartType;
+                console.log('GraphsControl: Set chartType:', template.chartType);
+
+                const chartTypeSelect =
+                    this.querySelector('#chartTypeSelect') ||
+                    this.querySelector('.chart-type-select') ||
+                    this.querySelector('select[name="chartType"]');
+
+                if (chartTypeSelect) {
+                    chartTypeSelect.value = template.chartType;
+                    chartTypeSelect.dispatchEvent(new Event('change'));
+                }
+
+                if (this.updateAxisSelections) {
+                    this.updateAxisSelections(template.chartType);
+                }
+            }
+
+            // 3. Axis titles
+            if (template.xAxisTitle || template.yAxisTitle) {
+                this.setAxisTitles(template.xAxisTitle, template.yAxisTitle);
+            }
+
+            // 4. X-axis selection
+            if (template.xAxis && this.singleSelectDropdown) {
+                this.displaySingleValue(this.singleSelectDropdown, template.xAxis);
+                console.log('GraphsControl: Set xAxis:', template.xAxis);
+            }
+
+            // 5. Y-axis selections
+            if (template.yAxis && Array.isArray(template.yAxis)) {
+                this.selectedMultiColumns = [...template.yAxis];
+                this.displayMultiSelectValues('y', template.yAxis);
+                console.log('GraphsControl: Set yAxis:', template.yAxis);
+            }
+
+            // 6. Z-axis selections
+            if (template.zAxis && Array.isArray(template.zAxis)) {
+                this.selectedThirdMultiColumns = [...template.zAxis];
+                this.displayMultiSelectValues('z', template.zAxis);
+                console.log('GraphsControl: Set zAxis:', template.zAxis);
+            }
+
+            // ✅ Refresh chart here after X/Y/Z are set
+            if (this.updateChart) {
+                this.updateChart();
+            }
+
+            // 7. Colors
+            if (this.initializeColors) {
+                this.initializeColors();
+            }
+            if (template.colors && typeof template.colors === 'object') {
+                this.columnColors = { ...template.colors };
+                console.log('GraphsControl: Set colors:', template.colors);
+            }
+
+            // 8. Hidden columns
+            if (template.hiddenColumns && Array.isArray(template.hiddenColumns)) {
+                this.hiddenColumns = new Set(template.hiddenColumns);
+                console.log('GraphsControl: Set hiddenColumns:', template.hiddenColumns);
+            }
+
+            // 9. Apply chart with template data (optional override)
+            setTimeout(() => {
+                if (template.plotlyData && template.plotlyLayout && this.graphCanvas) {
+                    this.renderChartFromTemplate(template.plotlyData, template.plotlyLayout);
+                } else {
+                    setTimeout(() => this.forceResize(), 500);
+                }
+            }, 300);
+
+            console.log('GraphsControl: Chart template applied successfully');
+        } catch (error) {
+            console.error('GraphsControl: Error applying chart template:', error);
+            setTimeout(() => {
+                if (this.updateChart) {
+                    this.updateChart();
+                }
+                setTimeout(() => this.forceResize(), 500);
+            }, 300);
+        }
+    }
+
+    // Simple method to display single value in X-axis dropdown
+    displaySingleValue(dropdown, value) {
+        try {
+            if (!dropdown || !value) return;
+            
+            dropdown.innerHTML = '';
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = value;
+            option.selected = true;
+            dropdown.appendChild(option);
+            
+            console.log(`X-axis set to: ${value}`);
+        } catch (error) {
+            console.error('Error setting X-axis value:', error);
+        }
+    }
+
+    // Simple method to display multi-select values as tags only (no dropdowns)
+    displayMultiSelectValues(axisType, values) {
+        try {
+            if (!values || !Array.isArray(values)) return;
+            
+            let containerId = '';
+            let bgColor = '';
+            
+            if (axisType === 'y') {
+                containerId = 'customMultiSelectContainer';
+                bgColor = '#007cba';
+            } else if (axisType === 'z') {
+                containerId = 'customThirdMultiSelectContainer';
+                bgColor = '#28a745';
+            }
+            
+            const container = this.shadowRoot.getElementById(containerId);
+            if (!container) return;
+            
+            // Clear container
+            container.innerHTML = '';
+            
+            // Create tags div
+            const tagsDiv = document.createElement('div');
+            tagsDiv.style.display = 'flex';
+            tagsDiv.style.flexWrap = 'wrap';
+            tagsDiv.style.gap = '6px';
+            tagsDiv.style.padding = '5px';
+            
+            // Add each value as a tag (no remove button)
+            values.forEach(col => {
+                const tag = document.createElement('span');
+                tag.textContent = col;
+                tag.style.background = bgColor;
+                tag.style.color = 'white';
+                tag.style.padding = '4px 12px';
+                tag.style.borderRadius = '12px';
+                tag.style.fontSize = '13px';
+                tag.style.margin = '2px';
+                tag.style.display = 'inline-block';
+                tagsDiv.appendChild(tag);
+            });
+            
+            container.appendChild(tagsDiv);
+            
+            console.log(`${axisType.toUpperCase()}-axis set to:`, values);
+        } catch (error) {
+            console.error(`Error setting ${axisType}-axis values:`, error);
+        }
+    }
+
+    // Enhanced renderChartFromTemplate method with better resizing
+    renderChartFromTemplate(plotlyData, plotlyLayout) {
+        try {
+            console.log('GraphsControl: Rendering chart from template data');
+            
+            // Get container dimensions before rendering
+            const modal = this.closest('.modal') || this.querySelector('.modal') || document.querySelector('.modal');
+            const modalBody = modal ? modal.querySelector('.modal-body') : null;
+            
+            let containerWidth = 800;
+            let containerHeight = 600;
+            
+            if (modalBody) {
+                const rect = modalBody.getBoundingClientRect();
+                containerWidth = Math.max(rect.width - 100, 1500);
+                containerHeight = Math.max(rect.height - 200, 400);
+            }
+            
+            // Enhanced Plotly config
+            const config = {
+                responsive: true,
+                displayModeBar: true,
+                modeBarButtonsToRemove: ['select2d', 'lasso2d', 'autoScale2d'],
+                displaylogo: false,
+                toImageButtonOptions: {
+                    format: 'png',
+                    filename: 'chart',
+                    height: containerHeight,
+                    width: containerWidth,
+                    scale: 2
+                }
+            };
+            
+            // Enhanced layout with calculated dimensions
+            const enhancedLayout = {
+                ...plotlyLayout,
+                autosize: false,
+                width: containerWidth,
+                height: containerHeight,
+                margin: { l: 60, r: 50, t: 50, b: 0 }
+            };
+            
+            // Clear and set canvas size
+            this.graphCanvas.innerHTML = '';
+            this.graphCanvas.style.width = containerWidth + 'px';
+            this.graphCanvas.style.height = containerHeight + 'px';
+            
+            // Plot the chart
+            Plotly.newPlot(this.graphCanvas, plotlyData, enhancedLayout, config).then(() => {
+                console.log('GraphsControl: Chart restored from template successfully');
+                
+                // Post-plotting setup
+                setTimeout(() => {
+                    if (this.relocateToolbar) {
+                        this.relocateToolbar();
+                    }
+                    if (this.createLegendControlPanel) {
+                        this.createLegendControlPanel();
+                    }
+                    
+                    console.log("GraphsControl: Template chart fully loaded!");
+                }, 200);
+                
+            }).catch((error) => {
+                console.error('GraphsControl: Error restoring chart from template:', error);
+                // Fallback
+                setTimeout(() => {
+                    if (this.updateChart) {
+                        this.updateChart();
+                    }
+                }, 300);
+            });
+            
+        } catch (error) {
+            console.error('GraphsControl: Error in renderChartFromTemplate:', error);
+            // Fallback
+            setTimeout(() => {
+                if (this.updateChart) {
+                    this.updateChart();
+                }
+            }, 300);
+        }
+    }
+
+    // Enhanced forceResize method
+    forceResize() {
+        try {
+            if (!this.graphCanvas || this.graphCanvas.children.length === 0) {
+                return;
+            }
+            
+            // Find the modal or container
+            const modal = this.closest('.modal') || this.querySelector('.modal') || document.querySelector('.modal');
+            const modalBody = modal ? modal.querySelector('.modal-body') : null;
+            const container = modalBody || this.graphCanvas.parentElement;
+            
+            if (!container) {
+                console.warn('No container found for resize');
+                return;
+            }
+            
+            // Get container dimensions
+            const containerRect = container.getBoundingClientRect();
+            
+            // Calculate dimensions with some padding
+            const availableWidth = containerRect.width - 100;
+            const availableHeight = containerRect.height - 200;
+            
+            const width = Math.max(availableWidth, 1500);
+            const height = Math.max(availableHeight, 400);
+            
+            console.log(`Resizing chart to: ${width}x${height}`);
+            
+            // Update Plotly layout
+            const update = {
+                width: width,
+                height: height,
+                autosize: false
+            };
+            
+            // Apply resize
+            Plotly.relayout(this.graphCanvas, update).then(() => {
+                console.log('Chart resized successfully');
+            }).catch((error) => {
+                console.error('Error resizing chart:', error);
+                // Fallback to style-based resize
+                this.graphCanvas.style.width = width + 'px';
+                this.graphCanvas.style.height = height + 'px';
+            });
+            
+        } catch (error) {
+            console.error('GraphsControl: Error in forceResize:', error);
+        }
+    }
+
+    // Enhanced handleResize method for window resize events
+    handleResize() {
+        clearTimeout(this.resizeTimeout);
+        this.resizeTimeout = setTimeout(() => {
+            this.forceResize();
+        }, 250);
+    }
+
+    clearChart() {
+        try {
+            console.log('GraphsControl: Clearing chart and resetting to default state');
+            
+            // Clear the chart canvas
+            if (this.graphCanvas) {
+                this.graphCanvas.innerHTML = '';
+                console.log('Chart canvas cleared');
+            }
+            
+            // Reset all selections
+            this.selectedMultiColumns = [];
+            this.selectedThirdMultiColumns = [];
+            this.columnColors = {};
+            this.hiddenColumns = new Set();
+            
+            // Reset chart type to default
+            this.chartType = 'scatter';
+            
+            // Clear axis titles
+            this.setAxisTitles("X-Axis", "Y-Axis");
+            
+            // Reset dropdowns to default state
+            this.resetDropdownsToDefault();
+            
+            // Clear any legend control panel
+            this.clearLegendControlPanel();
+            
+            console.log('GraphsControl: Chart cleared successfully');
+            
+        } catch (error) {
+            console.error('GraphsControl: Error clearing chart:', error);
+        }
+    }
+
+    // Method to reset dropdowns to default state
+    resetDropdownsToDefault() {
+        try {
+            // Reset chart type dropdown
+            const chartTypeSelect = this.querySelector('#chartTypeSelect') || 
+                                this.querySelector('.chart-type-select') ||
+                                this.querySelector('select[name="chartType"]');
+            if (chartTypeSelect) {
+                chartTypeSelect.value = 'scatter';
+                chartTypeSelect.dispatchEvent(new Event('change'));
+            }
+            
+            // Reset X-axis dropdown to show all options
+            if (this.singleSelectDropdown) {
+                // Repopulate with all available columns
+                const availableColumns = this.getAvailableColumns();
+                this.singleSelectDropdown.innerHTML = '<option value="">Select X-axis...</option>';
+                availableColumns.forEach(col => {
+                    const option = document.createElement('option');
+                    option.value = col;
+                    option.textContent = col;
+                    this.singleSelectDropdown.appendChild(option);
+                });
+            }
+            
+            // Reset Y-axis multi-select
+            const yContainer = this.shadowRoot?.getElementById('customMultiSelectContainer');
+            if (yContainer) {
+                yContainer.innerHTML = '';
+                // Add placeholder text
+                const placeholder = document.createElement('div');
+                placeholder.textContent = 'No Y-axis columns selected';
+                placeholder.style.color = '#999';
+                placeholder.style.fontStyle = 'italic';
+                placeholder.style.padding = '8px';
+                yContainer.appendChild(placeholder);
+            }
+            
+            // Reset Z-axis multi-select
+            const zContainer = this.shadowRoot?.getElementById('customThirdMultiSelectContainer');
+            if (zContainer) {
+                zContainer.innerHTML = '';
+                // Add placeholder text
+                const placeholder = document.createElement('div');
+                placeholder.textContent = 'No Z-axis columns selected';
+                placeholder.style.color = '#999';
+                placeholder.style.fontStyle = 'italic';
+                placeholder.style.padding = '8px';
+                zContainer.appendChild(placeholder);
+            }
+            
+            console.log('Dropdowns reset to default state');
+            
+        } catch (error) {
+            console.error('Error resetting dropdowns:', error);
+        }
+    }
+
+    // Method to clear legend control panel
+    clearLegendControlPanel() {
+        try {
+            // Find and remove legend control panel
+            const legendPanel = this.querySelector('.legend-control-panel') || 
+                            this.shadowRoot?.querySelector('.legend-control-panel') ||
+                            document.querySelector('.legend-control-panel');
+            if (legendPanel) {
+                legendPanel.remove();
+                console.log('Legend control panel cleared');
+            }
+            
+            // Clear any other legend-related elements
+            const legendElements = this.querySelectorAll('[class*="legend"]');
+            legendElements.forEach(element => {
+                if (element !== this.graphCanvas) { // Don't remove the main canvas
+                    element.remove();
+                }
+            });
+            
+        } catch (error) {
+            console.error('Error clearing legend control panel:', error);
+        }
+    }
+
+    // Updated initializeAndOpenModal method with template clearing support
+    initializeAndOpenModal(rowData, selectedItemFromDropdown, chartTemplate = null, xTitle = "X-Axis", yTitle = "Y-Axis") {
+        console.log("GraphsControl: Initializing modal with template:", chartTemplate);
+        
+        this.rowData = rowData;
         this.xAxisTitle = xTitle;
         this.yAxisTitle = yTitle;
-
-        // Update the HTML elements
-        this.xAxisTitleElement.textContent = this.xAxisTitle;
-        this.yAxisTitleElement.textContent = this.yAxisTitle;
-
-        // Populate dropdowns with column names from rowData
-        this.populateDropdowns();
+        this.selectedItemFromDropdown = selectedItemFromDropdown;
+        this.chartTemplate = chartTemplate;
+        
+        // Clear chart first if no template
+        if (!chartTemplate) {
+            this.clearChart();
+        }
+        
+        // Update the HTML elements with initial titles
+        if (this.xAxisTitleElement) {
+            this.xAxisTitleElement.textContent = this.xAxisTitle;
+        }
+        if (this.yAxisTitleElement) {
+            this.yAxisTitleElement.textContent = this.yAxisTitle;
+        }
+        
+        // Populate dropdowns with column names from rowData (if no template)
+        if (!chartTemplate) {
+            this.populateDropdowns();
+            this.resetDropdownsToDefault();
+        }
+        
         this.initializeDropdownListeners();
         this.initializeChart();
         this.openModal();
         
-        // Enhanced initialization sequence
-        requestAnimationFrame(() => {
-            setTimeout(() => {
-                this.initializeChart();
-                this.forceResize(); // Force resize during initialization
-                window.addEventListener('resize', () => this.handleResize());
-            }, 300); // Increased delay for better reliability
-        });
+        // Enhanced initialization sequence with template handling
+        setTimeout(() => {
+            if (chartTemplate) {
+                // Apply template after modal is fully visible
+                this.applyChartTemplate(chartTemplate);
+            } else {
+                // Normal initialization - just show empty chart area
+                console.log('Normal initialization - no template applied');
+            }
+            
+            // Add resize listener
+            window.addEventListener('resize', () => this.handleResize());
+        }, 500);
+    }
+
+    // Method to get available columns from rowData (if not already present)
+    getAvailableColumns() {
+        if (!this.rowData || !Array.isArray(this.rowData) || this.rowData.length === 0) {
+            return [];
+        }
+        return Object.keys(this.rowData[0]);
     }
 }
 

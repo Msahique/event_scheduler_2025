@@ -77,6 +77,14 @@
                 "french": "Configuration de l'application",
                 "arabic": "تكوين التطبيق"
                 }
+            },
+            {
+                "Name": {
+                "english": "DAQ Config",
+                "german": "DAQ-Konfiguration",
+                "french": "Configuration DAQ",
+                "arabic": "تكوين DAQ"
+                }
             }
         ]
 

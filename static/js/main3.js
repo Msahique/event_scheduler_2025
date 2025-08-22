@@ -307,7 +307,181 @@ function API_call(domain,endpoint,body,method){
 
 /*displayObjectList*/
 
-function createTable(responseData) {
+let selectedChartTemplateName = null;
+
+async function fetchChartTemplates() {
+    try {
+        const response = await fetch('/api/chart-templates');
+        const data = await response.json();
+        
+        if (data.success) {
+            return data.chart_templates;
+        } else {
+            console.error('Error fetching chart templates:', data.error);
+            return [];
+        }
+    } catch (error) {
+        console.error('Network error fetching chart templates:', error);
+        return [];
+    }
+}
+
+// Function to extract the first part of chart name (before underscore)
+function getItemTypeFromChartName(chartName) {
+    // Split by underscore and take everything before the first underscore
+    const parts = chartName.split('_');
+    return parts[0];
+}
+
+// Function to filter chart templates based on selected item
+function filterChartTemplatesByItem(chartTemplates, selectedItem) {
+    return chartTemplates.filter(chartName => {
+        const itemType = getItemTypeFromChartName(chartName);
+        return itemType === selectedItem;
+    });
+}
+
+async function fetchChartTemplateByName(templateName) {
+    try {
+        const response = await fetch(`/api/chart-template/${encodeURIComponent(templateName)}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            return data.chart_template;
+        } else {
+            console.error('Error fetching chart template:', data.error);
+            return null;
+        }
+    } catch (error) {
+        console.error('Network error fetching chart template:', error);
+        return null;
+    }
+}
+
+// Function to handle chart template selection from dropdown
+function handleChartTemplateSelection(templateName) {
+    console.log(`Chart template selected: ${templateName}`);
+    
+    if (templateName === "None") {
+        // Clear template selection
+        selectedChartTemplateName = null;
+        console.log('Template selection cleared');
+        
+        // Show chart configuration section
+        showChartConfiguration();
+        
+        // Clear any template selection indicator
+        clearChartTemplateSelection();
+        
+    } else {
+        selectedChartTemplateName = templateName;
+        console.log(`Template set to: ${templateName}`);
+        
+        // Hide chart configuration section when template is selected
+        hideChartConfiguration();
+    }
+}
+
+function hideChartConfiguration() {
+    try {
+        // Target the control-panel div specifically from your HTML
+        const controlPanel = document.querySelector('.control-panel');
+        
+        if (controlPanel) {
+            controlPanel.style.display = 'none';
+            console.log('Chart configuration panel hidden');
+        } else {
+            // Fallback: try to find it within the modal
+            const modal = document.getElementById('graphsModal');
+            if (modal) {
+                const controlPanel = modal.querySelector('.control-panel');
+                if (controlPanel) {
+                    controlPanel.style.display = 'none';
+                    console.log('Chart configuration panel hidden via modal selector');
+                }
+            }
+        }
+        
+        // Also hide the control panel title if it exists separately
+        const controlPanelTitle = document.querySelector('.control-panel-title');
+        if (controlPanelTitle) {
+            controlPanelTitle.style.display = 'none';
+        }
+        
+    } catch (error) {
+        console.error('Error hiding chart configuration:', error);
+    }
+}
+
+// Fixed function to show chart configuration section
+function showChartConfiguration() {
+    try {
+        // Target the control-panel div specifically from your HTML
+        const controlPanel = document.querySelector('.control-panel');
+        
+        if (controlPanel) {
+            controlPanel.style.display = '';
+            console.log('Chart configuration panel shown');
+        } else {
+            // Fallback: try to find it within the modal
+            const modal = document.getElementById('graphsModal');
+            if (modal) {
+                const controlPanel = modal.querySelector('.control-panel');
+                if (controlPanel) {
+                    controlPanel.style.display = '';
+                    console.log('Chart configuration panel shown via modal selector');
+                }
+            }
+        }
+        
+        // Also show the control panel title if it was hidden
+        const controlPanelTitle = document.querySelector('.control-panel-title');
+        if (controlPanelTitle) {
+            controlPanelTitle.style.display = '';
+        }
+        
+    } catch (error) {
+        console.error('Error showing chart configuration:', error);
+    }
+}
+
+function clearChartTemplateSelection() {
+    selectedChartTemplateName = null;
+    const indicator = document.getElementById('template-selection-indicator');
+    if (indicator) {
+        indicator.remove();
+    }
+}
+
+function showTemplateSelectionIndicator(templateName) {
+    // Remove existing indicator if any
+    const existingIndicator = document.getElementById('template-selection-indicator');
+    if (existingIndicator) {
+        existingIndicator.remove();
+    }
+    
+    // Create new indicator
+    const indicator = document.createElement('div');
+    indicator.id = 'template-selection-indicator';
+    indicator.innerHTML = `<i class="fa fa-chart-bar"></i> Template: ${templateName}`;
+    indicator.style.cssText = `
+        margin: 5px 0;
+        padding: 5px 10px;
+        background-color: #e3f2fd;
+        border-radius: 4px;
+        font-size: 12px;
+        color: #1976d2;
+        border: 1px solid #bbdefb;
+    `;
+    
+    // Add to header container
+    const container = document.getElementById("tab_page_header");
+    if (container) {
+        container.appendChild(indicator);
+    }
+}
+
+async function createTable(responseData) { 
     caldata=responseData;
     contextSwitch("list")
     var status="";
@@ -327,10 +501,10 @@ function createTable(responseData) {
             container.innerHTML = ""; 
             console.log("///////////////////////")
             divControls.className = 'mb-3 d-flex gap-2';
-            responseData.controls.forEach(control => {
+            for (const control of responseData.controls) {
                 if (control.roles && control.roles.includes(role)) {
                     let input = null;
-
+                    console.log(selectedItemFromDropdown);
                     if (control.type === "select") {
                         let selectContainer = document.createElement('div');
                         selectContainer.className = 'custom-dropdown';
@@ -350,7 +524,30 @@ function createTable(responseData) {
                         input.appendChild(defaultOption);
 
                         // Get options from JSON config or use a fallback array
-                        let data = control.options || ["Config A", "Config B", "Config C"];
+                        let data = [];
+
+                        if (control.function === "getChartTemplate") {
+                            // Fetch all chart templates
+                            const allChartTemplates = await fetchChartTemplates();
+
+                            // Find the "items" control for this tab
+                            const itemsControl = responseData.controls.find(c => c.tag === "items");
+
+                            if (itemsControl && Array.isArray(itemsControl.options)) {
+                                // Collect all chart templates whose prefix matches ANY of the items options
+                                filteredTemplates = allChartTemplates.filter(chartName => {
+                                    const prefix = getItemTypeFromChartName(chartName);
+                                    return itemsControl.options.includes(prefix);
+                                });
+                                data = ["None", ...filteredTemplates];
+                            } else{
+                                data = ["None"];
+                            }
+                        } else {
+                            // Normal config dropdown
+                            data = control.options || ["Config A", "Config B", "Config C"];
+                        }
+
                         console.log(`Dropdown '${control.name}' Options:`, data);
 
                         if (Array.isArray(data) && data.length > 0) {
@@ -368,9 +565,18 @@ function createTable(responseData) {
                         input.addEventListener("change", function () {
                             console.log(`Selected Config: ${this.value}`, control.tag);
                             
-                            if(control.tag === "entriesPerPage"){rowsPerPage=this.value;  displayPage(1);}
-                            else if(control.tag ==="items"){selectedItemFromDropdown=this.value;    get_data_list(this.value,{}); }
-                           
+                            if (control.tag === "entriesPerPage") {
+                                rowsPerPage = this.value;  
+                                displayPage(1);
+                            } else if (control.tag === "items") {
+                                selectedItemFromDropdown = this.value;    
+                                get_data_list(this.value, {}); 
+                                // Clear chart template selection when items change
+                                clearChartTemplateSelection();
+                            } else if (control.function === "getChartTemplate") {
+                                // Handle chart template selection
+                                handleChartTemplateSelection(this.value);
+                            }
                         });
                         
                         //let selectContainer = document.createElement('div');
@@ -387,7 +593,7 @@ function createTable(responseData) {
                         divControls.appendChild(input);
                     }
                 }
-            });
+            }
             container.appendChild(divControls);
         }
         catch (err) {
@@ -1449,27 +1655,83 @@ function collectSelectedData() {
     }
 }
 
+/*
+1. On click of button get all the rows for the shown document(Data UI template, Entity Registry etc)
+2. Dropdown for selecting document type comes from document data template table(for registration only)
+3. Based on document type get the template from the chart template table(assumption)
+*/
+
 function graphInitialization() {
     console.log("Inside graphInitialization function");
     const selectedCheckboxes = document.querySelectorAll('input[name="editRowSelect[]"]:checked');
 
-    if (selectedCheckboxes.length === 0) {
-        alert('No rows selected.');
-        return;
-    }
-
     const selectedData = Array.from(selectedCheckboxes).map(cb => JSON.parse(cb.value));
-
     const graphsControl = document.querySelector("graphs-control");
+    
     if (graphsControl) {
-        graphsControl.initializeAndOpenModal(selectedData); // Call the method to handle data and open modal
+        // Check if a chart template is selected
+        if (selectedChartTemplateName && selectedChartTemplateName !== "None") {
+            console.log(`Loading graph with template: ${selectedChartTemplateName}`);
+            // Load the template and pass it to GraphsControl
+            loadTemplateAndInitialize(selectedChartTemplateName, selectedData, graphsControl);
+        } else {
+            console.log('Loading graph without template');
+            // Normal initialization without template
+            graphsControl.initializeAndOpenModal(selectedData, selectedItemFromDropdown);
+            
+            // Make sure configuration is visible for normal mode
+            setTimeout(() => showChartConfiguration(), 100);
+        }
     } else {
         alert("GraphsControl not found. Please ensure the component is loaded.");
     }
 }
 
-
-
+// Updated loadTemplateAndInitialize function
+async function loadTemplateAndInitialize(templateName, selectedData, graphsControl) {
+    try {
+        console.log(`Fetching template: ${templateName}`);
+        const template = await fetchChartTemplateByName(templateName);
+        
+        if (template) {
+            // Parse template if it's a string
+            let parsedTemplate;
+            if (typeof template === 'string') {
+                parsedTemplate = JSON.parse(template);
+            } else {
+                parsedTemplate = template;
+            }
+            
+            console.log('Template loaded successfully:', parsedTemplate);
+            
+            // Extract axis titles from template if available
+            const xTitle = parsedTemplate.xAxisTitle || parsedTemplate.xAxis || "X-Axis";
+            const yTitle = parsedTemplate.yAxisTitle || "Y-Axis";
+            
+            // Pass template and proper titles to GraphsControl
+            graphsControl.initializeAndOpenModal(
+                selectedData, 
+                selectedItemFromDropdown, 
+                parsedTemplate, 
+                xTitle, 
+                yTitle
+            );
+            
+            // Hide configuration after template is loaded
+            setTimeout(() => hideChartConfiguration(), 500);
+            
+        } else {
+            console.error('Failed to load template, using default initialization');
+            graphsControl.initializeAndOpenModal(selectedData, selectedItemFromDropdown);
+            setTimeout(() => showChartConfiguration(), 100);
+        }
+    } catch (error) {
+        console.error('Error loading template:', error);
+        alert('Error loading chart template. Using default settings.');
+        graphsControl.initializeAndOpenModal(selectedData, selectedItemFromDropdown);
+        setTimeout(() => showChartConfiguration(), 100);
+    }
+}
 
 /*
 function print_document(){
@@ -2430,7 +2692,7 @@ async function Registration_modal() {
                 input.addEventListener("change", (e) => window[field.onchange](e));
             }
 
-        } else if (["schedule-control", "venue-control","field-mapping-control", "doc-template-control", "attachment-control", "field-attribute-control", "maps-control", "venue-location-control","template-mapping-control"].includes(field.control)) {
+        } else if (["schedule-control", "venue-control","field-mapping-control", "doc-template-control", "attachment-control", "field-attribute-control", "maps-control", "venue-location-control","template-mapping-control","graphs-control"].includes(field.control)) {
             input = document.createElement(field.control);
             input.id = fieldId;
             if (currentValue) {
@@ -2512,7 +2774,7 @@ async function Registration_modal() {
             if (!field.show) continue;
             let input = form.elements[field.field];
     
-            if (!input && field.control !== 'schedule-control' && field.control !== 'venue-control' && field.control !== 'file' && field.control !== 'attachment-control' && field.control !== 'doc-template-control' && field.control !== 'field-attribute-control' && field.control !== 'maps-control' && field.control !== 'venue-location-control') {
+            if (!input && field.control !== 'schedule-control' && field.control !== 'venue-control' && field.control !== 'file' && field.control !== 'attachment-control' && field.control !== 'doc-template-control' && field.control !== 'field-attribute-control' && field.control !== 'maps-control' && field.control !== 'venue-location-control' && field.control !=='graphs-control') {
                 console.warn(`Field ${field.field} is missing in the form.`);
                 continue;
             }
@@ -2549,7 +2811,7 @@ async function Registration_modal() {
                 } else {
                     console.warn(`field-mapping-control control element not found.`);
                 }    
-            }  else if (field.control === 'attachment-control') {
+            } else if (field.control === 'attachment-control') {
                 let attachmentElement = document.querySelector("attachment-control");
                 if (attachmentElement) {
                     newData[field.field] = attachmentElement.value;
@@ -2587,6 +2849,40 @@ async function Registration_modal() {
 
                 } else {
                     console.warn(`doc_template control element not found.`);
+                }
+
+            } else if (field.control === 'graphs-control') {
+                console.log("Opening Graphs Control!")
+                let graphsElement = document.querySelector("graphs-control");
+                if (graphsElement) {
+                    try {
+                        let rawValue = graphsElement.value;
+                        let parsedValue;
+
+                        if (typeof rawValue === "string") {
+                            try {
+                                parsedValue = JSON.parse(rawValue);
+                            } catch (parseErr) {
+                                console.warn("Value is not valid JSON, using raw string instead:", parseErr);
+                                parsedValue = rawValue;
+                            }
+                        } else {
+                            parsedValue = rawValue; // Already an object or array
+                        }
+
+                            console.log("Parsed graphs-control value:", parsedValue);
+
+                            // Store as stringified JSON if it's an object, else store as-is
+                            newData[field.field] = typeof parsedValue === "object"
+                                ? JSON.stringify(parsedValue)
+                                : parsedValue;
+
+                        } catch (e) {
+                            console.error("Failed to process graphs-control value:", e);
+                        }
+
+                } else {
+                    console.warn(`graphs-control element not found.`);
                 }
 
             } else if (field.control === "field-attribute-control") {

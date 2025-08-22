@@ -17,7 +17,7 @@ from db_operations import *
 db = pymysql.connect(
   host="localhost",
   user="root",
-  password="root",
+  password="Blr@2025",
   database="event_scheduler2025",
   port=3306,
   cursorclass=pymysql.cursors.DictCursor
@@ -2053,6 +2053,231 @@ def check_resource_availability(event_id):
 
     return jsonify({"available": True})
 
+############################################# DAQ Config API #######################################
+
+@app.route('/api/save-chart', methods=['POST'])
+def save_chart():
+    """Save chart template to database"""
+    try:
+        # Get JSON data from request
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({
+                'success': False,
+                'error': 'No data provided'
+            }), 400
+        
+        # Extract data from request
+        chart_name = data.get('chartName', '').strip()
+        chart_template = data.get('chartTemplate', '')
+        description = data.get('description', '').strip()
+        
+        # Basic validation
+        if not chart_name:
+            return jsonify({
+                'success': False,
+                'error': 'Chart name is required'
+            }), 400
+        
+        if not chart_template:
+            return jsonify({
+                'success': False,
+                'error': 'Chart template is required'
+            }), 400
+        
+        if not description:
+            return jsonify({
+                'success': False,
+                'error': 'Description is required'
+            }), 400
+        
+        # Validate JSON format
+        try:
+            json.loads(chart_template)
+        except json.JSONDecodeError:
+            return jsonify({
+                'success': False,
+                'error': 'Invalid chart template JSON format'
+            }), 400
+        
+        # Parse chart template to get axis information for validation
+        try:
+            template_data = json.loads(chart_template)
+            current_x_axis = template_data.get('xAxis')
+            current_y_axis = set(template_data.get('yAxis', []))  # Convert to set for comparison
+            current_z_axis = set(template_data.get('zAxis', []))  # Convert to set for comparison
+        except (json.JSONDecodeError, KeyError):
+            return jsonify({
+                'success': False,
+                'error': 'Invalid chart template structure'
+            }), 400
+        
+        # Get current timestamp
+        created_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        
+        # Use your existing cursor
+        cursor = db.cursor()
+        
+        # Check for duplicate charts with same configuration
+        # Extract selectedItemFromDropdown from chart_name (assuming it's the first part before underscore)
+        selected_item = chart_name.split('_')[0] if '_' in chart_name else chart_name
+        
+        # Query to find charts with same selectedItemFromDropdown and x-axis
+        duplicate_check_query = """
+        SELECT id, chart_name, settings FROM chart_templates 
+        WHERE chart_name LIKE %s AND status = 'active'
+        """
+        cursor.execute(duplicate_check_query, (f"{selected_item}_%",))
+        existing_charts = cursor.fetchall()
+        
+        # Check each existing chart for duplicate configuration
+        for existing_chart in existing_charts:
+            try:
+                existing_template = json.loads(existing_chart['settings'])
+                existing_x_axis = existing_template.get('xAxis')
+                existing_y_axis = set(existing_template.get('yAxis', []))
+                existing_z_axis = set(existing_template.get('zAxis', []))
+                
+                # Check if it's the exact same configuration
+                if (existing_x_axis == current_x_axis and 
+                    existing_y_axis == current_y_axis and 
+                    existing_z_axis == current_z_axis):
+                    
+                    return jsonify({
+                        'success': False,
+                        'error': f'A chart with identical configuration already exists: {existing_chart["chart_name"]}'
+                    }), 409
+                    
+            except (json.JSONDecodeError, KeyError):
+                # Skip malformed existing charts
+                continue
+        
+        # Check if chart with exact same name already exists (for update)
+        check_query = "SELECT id FROM chart_templates WHERE chart_name = %s"
+        cursor.execute(check_query, (chart_name,))
+        existing_chart = cursor.fetchone()
+        
+        if existing_chart:
+            # Update existing chart
+            update_query = """
+            UPDATE chart_templates 
+            SET settings = %s, description = %s, created_at = %s, status = 'active'
+            WHERE chart_name = %s
+            """
+            cursor.execute(update_query, (
+                chart_template,
+                description,
+                created_at,
+                chart_name
+            ))
+            chart_id = existing_chart['id']
+            action = 'updated'
+        else:
+            # Insert new chart
+            insert_query = """
+            INSERT INTO chart_templates 
+            (chart_name, doc_type_id, settings, description, status, created_at, version)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """
+            cursor.execute(insert_query, (
+                chart_name,
+                None,  # doc_type_id is NULL
+                chart_template,
+                description,
+                'active',
+                created_at,
+                '1.0'
+            ))
+            chart_id = cursor.lastrowid
+            action = 'created'
+        
+        # Commit transaction
+        db.commit()
+        
+        logging.info(f"Chart template {action}: {chart_name} (ID: {chart_id})")
+        
+        return jsonify({
+            'success': True,
+            'message': f'Chart template {action} successfully',
+            'chart_id': chart_id,
+            'chart_name': chart_name,
+            'action': action
+        }), 200
+        
+    except pymysql.Error as e:
+        logging.error(f"Database error: {e}")
+        db.rollback()  # Rollback on error
+        return jsonify({
+            'success': False,
+            'error': f'Database error: {str(e)}'
+        }), 500
+    
+    except Exception as e:
+        logging.error(f"Unexpected error: {e}")
+        return jsonify({
+            'success': False,
+            'error': f'Server error: {str(e)}'
+        }), 500
+
+@app.route('/api/chart-templates', methods=['GET'])
+def get_chart_templates():
+    """
+    Fetch all chart templates from database
+    """
+    try:
+        mycursor = db.cursor()
+        
+        query = "SELECT chart_name FROM chart_templates"
+        mycursor.execute(query)
+        
+        results = mycursor.fetchall()
+        
+        # Extract chart names from results (since you're using DictCursor)
+        chart_names = [row['chart_name'] for row in results]
+        
+        return jsonify({
+            'success': True,
+            'chart_templates': chart_names
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/chart-template/<string:template_name>', methods=['GET'])
+def get_chart_template_by_name(template_name):
+    """
+    Fetch a specific chart template by name from database
+    """
+    try:
+        mycursor = db.cursor()
+        
+        # Query to get the specific chart template
+        query = "SELECT chart_name, settings FROM chart_templates WHERE chart_name = %s"
+        mycursor.execute(query, (template_name,))
+        
+        result = mycursor.fetchone()
+        
+        if result:
+            return jsonify({
+                'success': True,
+                'chart_template': result['settings'],  # Return the chart configuration
+                'template_name': result['chart_name']
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': f'Chart template "{template_name}" not found'
+            }), 404
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
 if __name__ == '__main__':
    app.run(host='0.0.0.0', port=5000, debug=True)
