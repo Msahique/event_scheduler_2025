@@ -104,7 +104,7 @@ def login():
     affiliations_data=[]
     try:
         myresult=get_data(json_data['db_name'],"user_registration", ['*'],{'email': username,'password':password},exact_match=True) 
-        print(myresult);    
+        print("Myresult:",myresult);    
         if(myresult):
             resource_data=get_data(json_data['db_name'],"resource_profile", ['affiliation_id'],{'resource_name': myresult[0]['name']},exact_match=True) 
             print(resource_data)
