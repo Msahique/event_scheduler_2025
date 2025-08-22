@@ -16,13 +16,14 @@ function get_data_list(selected_item,where_data){
     data_list_body={
         "requestor_id":"",
         "request_token":"",
-        "affiliations": JSON.parse(sessionStorage.getItem("userAffiliations")),
+        "affiliations": JSON.parse(localStorage.getItem("my_current_affiliation[0].id")),
         "qry":{
             "select_fields":["*"],
             "where_data":where_data
         }
     }
-    
+    console.log("User Affiliations:",localStorage.getItem("my_current_affiliation"));
+
     //if(tab_status[page_load_conf.tab]==0){
         console.log(page_load_conf.tab, tab_status[page_load_conf.tab])
         console.log(data_list_body)
