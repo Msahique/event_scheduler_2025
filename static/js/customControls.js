@@ -187,7 +187,6 @@ class ScheduleControl extends HTMLElement {
         });
     }
 }
-
 // **✅ Register the custom element**
 customElements.define("schedule-control", ScheduleControl);
 
@@ -618,6 +617,368 @@ class AttachmentControl extends HTMLElement {
 }
 customElements.define("attachment-control", AttachmentControl);
 
+/*******************************
+ 📂 File Attachment
+*******************************/
+class FileAttachment extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        this.shadowRoot.innerHTML = this.template("📂 File Attachment", "fileHelperSelect", "fileInput", "fileList");
+        this.init();
+    }
+    template(title, selectId, inputId, listId) {
+        return `
+        <style>${AttachmentStyles}</style>
+        <div class="wrapper">
+            <h4>${title}</h4>
+            <label>Choose from existing:</label>
+            <select id="${selectId}">
+                <option value="">-- Select from existing --</option>
+            </select>
+            <label>Or upload new:</label>
+            <input type="file" id="${inputId}" multiple>
+            <div id="${listId}"></div>
+        </div>`;
+    }
+    async init() {
+        this.fileList = this.shadowRoot.getElementById("fileList");
+        this.fileInput = this.shadowRoot.getElementById("fileInput");
+        this.fileHelperSelect = this.shadowRoot.getElementById("fileHelperSelect");
+
+        let options = await get_file_list();
+        this.populateSelect(this.fileHelperSelect, options);
+
+        this.fileInput.addEventListener("change", e => this.showFiles(e.target.files));
+        this.fileHelperSelect.addEventListener("change", e => this.addRow("[Existing] " + e.target.value));
+    }
+    populateSelect(select, options) {
+        if (options && Array.isArray(options)) {
+            options.forEach(opt => {
+                let o = document.createElement("option");
+                o.value = opt.filename;
+                o.textContent = opt.filename;
+                select.appendChild(o);
+            });
+        }
+    }
+    showFiles(files) {
+        Array.from(files).forEach(file => this.addRow(file.name));
+    }
+    addRow(name) {
+        if (!name) return;
+        let wrap = document.createElement("div");
+        wrap.classList.add("itemWrapper");
+        wrap.innerHTML = `<button class="delete-btn">❌</button><span>${name}</span>`;
+        wrap.querySelector(".delete-btn").addEventListener("click", () => wrap.remove());
+        this.fileList.appendChild(wrap);
+    }
+}
+customElements.define("file-attachment", FileAttachment);
+
+
+/*******************************
+ 🖼️ Image Attachment
+*******************************/
+class ImageAttachment extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode:"open" });
+        this.shadowRoot.innerHTML = `
+            <style>${AttachmentStyles}</style>
+            <div class="wrapper">
+                <h4>🖼️ Image Attachment</h4>
+                <label>Choose from existing:</label>
+                <select id="imageHelperSelect"><option value="">-- Select --</option></select>
+                <video id="video" autoplay style="max-width:300px;display:none;"></video>
+                <button id="captureBtn">📸 Capture</button>
+                <div id="imageList"></div>
+            </div>
+        `;
+        this.init();
+    }
+    async init() {
+        this.video = this.shadowRoot.getElementById("video");
+        this.captureBtn = this.shadowRoot.getElementById("captureBtn");
+        this.imageList = this.shadowRoot.getElementById("imageList");
+        this.imageHelperSelect = this.shadowRoot.getElementById("imageHelperSelect");
+
+        let options = await get_image_list();
+        this.populateSelect(this.imageHelperSelect, options);
+
+        this.captureBtn.addEventListener("click", () => this.captureImage());
+        this.imageHelperSelect.addEventListener("change", e => this.addImage(`/uploads/images/${e.target.value}`));
+
+        navigator.mediaDevices.getUserMedia({ video:true }).then(stream=>{
+            this.video.srcObject = stream;
+            this.video.style.display="block";
+        });
+    }
+    populateSelect(select, options) {
+        if (options && Array.isArray(options)) {
+            options.forEach(opt => {
+                let o = document.createElement("option");
+                o.value = opt.filename;
+                o.textContent = opt.filename;
+                select.appendChild(o);
+            });
+        }
+    }
+    captureImage() {
+        let canvas = document.createElement("canvas");
+        canvas.width = this.video.videoWidth;
+        canvas.height = this.video.videoHeight;
+        canvas.getContext("2d").drawImage(this.video, 0, 0);
+        this.addImage(canvas.toDataURL("image/png"));
+    }
+    addImage(src) {
+        if (!src) return;
+        let wrap = document.createElement("div");
+        wrap.classList.add("itemWrapper");
+        let img = document.createElement("img");
+        img.src = src;
+        img.style.width="100px";
+        wrap.appendChild(img);
+        let del = document.createElement("button");
+        del.textContent="❌";
+        del.classList.add("delete-btn");
+        del.addEventListener("click",()=>wrap.remove());
+        wrap.appendChild(del);
+        this.imageList.appendChild(wrap);
+    }
+}
+customElements.define("image-attachment", ImageAttachment);
+
+
+/*******************************
+ 🎬 Video Attachment
+*******************************/
+class VideoAttachment extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode:"open" });
+        this.shadowRoot.innerHTML = `
+            <style>${AttachmentStyles}</style>
+            <div class="wrapper">
+                <h4>🎬 Video Attachment</h4>
+                <label>Choose from existing:</label>
+                <select id="videoHelperSelect"><option value="">-- Select --</option></select>
+                <video id="preview" autoplay style="max-width:300px;"></video>
+                <button id="recordBtn">⏺ Start Recording</button>
+                <div id="videoList"></div>
+            </div>
+        `;
+        this.init();
+    }
+    async init() {
+        this.preview = this.shadowRoot.getElementById("preview");
+        this.recordBtn = this.shadowRoot.getElementById("recordBtn");
+        this.videoList = this.shadowRoot.getElementById("videoList");
+        this.videoHelperSelect = this.shadowRoot.getElementById("videoHelperSelect");
+        this.recorder=null; this.chunks=[];
+
+        let options = await get_video_list();
+        this.populateSelect(this.videoHelperSelect, options);
+
+        this.recordBtn.addEventListener("click",()=>this.toggleRecording());
+        this.videoHelperSelect.addEventListener("change", e => this.addVideo(`/uploads/videos/${e.target.value}`));
+
+        navigator.mediaDevices.getUserMedia({ video:true, audio:true }).then(stream=>{
+            this.preview.srcObject=stream; this.stream=stream;
+        });
+    }
+    populateSelect(select, options) {
+        if (options && Array.isArray(options)) {
+            options.forEach(opt => {
+                let o = document.createElement("option");
+                o.value = opt.filename;
+                o.textContent = opt.filename;
+                select.appendChild(o);
+            });
+        }
+    }
+    toggleRecording() {
+        if (!this.recorder || this.recorder.state==="inactive") {
+            this.chunks=[];
+            this.recorder=new MediaRecorder(this.stream);
+            this.recorder.ondataavailable=e=>this.chunks.push(e.data);
+            this.recorder.onstop=()=>{
+                let blob=new Blob(this.chunks,{type:"video/webm"});
+                let url=URL.createObjectURL(blob);
+                this.addVideo(url);
+            };
+            this.recorder.start();
+            this.recordBtn.textContent="⏹ Stop Recording";
+        } else {
+            this.recorder.stop();
+            this.recordBtn.textContent="⏺ Start Recording";
+        }
+    }
+    addVideo(src) {
+        if (!src) return;
+        let wrap=document.createElement("div");
+        wrap.classList.add("itemWrapper");
+        let vid=document.createElement("video");
+        vid.src=src; vid.controls=true; vid.style.width="200px";
+        wrap.appendChild(vid);
+        let del=document.createElement("button");
+        del.textContent="❌"; del.classList.add("delete-btn");
+        del.addEventListener("click",()=>wrap.remove());
+        wrap.appendChild(del);
+        this.videoList.appendChild(wrap);
+    }
+}
+customElements.define("video-attachment", VideoAttachment);
+
+
+/*******************************
+ 🎤 Audio Attachment
+*******************************/
+class AudioAttachment extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode:"open" });
+        this.shadowRoot.innerHTML = `
+            <style>${AttachmentStyles}</style>
+            <div class="wrapper">
+                <h4>🎤 Audio Attachment</h4>
+                <label>Choose from existing:</label>
+                <select id="audioHelperSelect"><option value="">-- Select --</option></select>
+                <button id="recordBtn">🎙️ Start Recording</button>
+                <div id="audioList"></div>
+            </div>
+        `;
+        this.init();
+    }
+    async init() {
+        this.recordBtn=this.shadowRoot.getElementById("recordBtn");
+        this.audioList=this.shadowRoot.getElementById("audioList");
+        this.audioHelperSelect=this.shadowRoot.getElementById("audioHelperSelect");
+        this.recorder=null; this.chunks=[];
+
+        let options=await get_audio_list();
+        this.populateSelect(this.audioHelperSelect, options);
+
+        this.recordBtn.addEventListener("click",()=>this.toggleRecording());
+        this.audioHelperSelect.addEventListener("change", e=>this.addAudio(`/uploads/audios/${e.target.value}`));
+    }
+    populateSelect(select, options) {
+        if (options && Array.isArray(options)) {
+            options.forEach(opt => {
+                let o=document.createElement("option");
+                o.value=opt.filename;
+                o.textContent=opt.filename;
+                select.appendChild(o);
+            });
+        }
+    }
+    toggleRecording() {
+        if (!this.recorder || this.recorder.state==="inactive") {
+            navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+                this.chunks=[];
+                this.recorder=new MediaRecorder(stream);
+                this.recorder.ondataavailable=e=>this.chunks.push(e.data);
+                this.recorder.onstop=()=>{
+                    let blob=new Blob(this.chunks,{type:"audio/webm"});
+                    let url=URL.createObjectURL(blob);
+                    this.addAudio(url);
+                };
+                this.recorder.start();
+                this.recordBtn.textContent="⏹ Stop Recording";
+            });
+        } else {
+            this.recorder.stop();
+            this.recordBtn.textContent="🎙️ Start Recording";
+        }
+    }
+    addAudio(src) {
+        if (!src) return;
+        let wrap=document.createElement("div");
+        wrap.classList.add("itemWrapper");
+        let audio=document.createElement("audio");
+        audio.src=src; audio.controls=true;
+        wrap.appendChild(audio);
+        let del=document.createElement("button");
+        del.textContent="❌"; del.classList.add("delete-btn");
+        del.addEventListener("click",()=>wrap.remove());
+        wrap.appendChild(del);
+        this.audioList.appendChild(wrap);
+    }
+}
+customElements.define("audio-attachment", AudioAttachment);
+
+
+/*******************************
+ 🔳 QR Attachment
+*******************************/
+class QRAttachment extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({mode:"open"});
+        this.shadowRoot.innerHTML=`
+            <style>${AttachmentStyles}</style>
+            <div class="wrapper">
+                <h4>🔳 QR Attachment</h4>
+                <label>Choose from existing:</label>
+                <select id="qrHelperSelect"><option value="">-- Select --</option></select>
+                <input type="text" id="qrText" placeholder="Enter text for QR">
+                <button id="genBtn">Generate QR</button>
+                <div id="qrList"></div>
+            </div>
+        `;
+        this.init();
+    }
+    async init() {
+        this.qrHelperSelect=this.shadowRoot.getElementById("qrHelperSelect");
+        this.qrText=this.shadowRoot.getElementById("qrText");
+        this.genBtn=this.shadowRoot.getElementById("genBtn");
+        this.qrList=this.shadowRoot.getElementById("qrList");
+
+        let options=await get_qr_list();
+        this.populateSelect(this.qrHelperSelect, options);
+
+        this.genBtn.addEventListener("click",()=>this.generateQR(this.qrText.value));
+        this.qrHelperSelect.addEventListener("change", e=>this.generateQR(e.target.value));
+    }
+    populateSelect(select, options) {
+        if (options && Array.isArray(options)) {
+            options.forEach(opt => {
+                let o=document.createElement("option");
+                o.value=opt.filename;
+                o.textContent=opt.filename;
+                select.appendChild(o);
+            });
+        }
+    }
+    generateQR(text) {
+        if (!text) return;
+        let wrap=document.createElement("div");
+        wrap.classList.add("itemWrapper");
+        let qrDiv=document.createElement("div");
+        new QRCode(qrDiv,{text:text,width:128,height:128});
+        wrap.appendChild(qrDiv);
+        let del=document.createElement("button");
+        del.textContent="❌"; del.classList.add("delete-btn");
+        del.addEventListener("click",()=>wrap.remove());
+        wrap.appendChild(del);
+        this.qrList.appendChild(wrap);
+    }
+}
+customElements.define("qr-attachment", QRAttachment);
+
+
+/*******************************
+ Common Styles
+*******************************/
+const AttachmentStyles=`
+.wrapper{padding:10px;border:1px solid #ccc;border-radius:5px;background:#f9f9f9;margin-bottom:10px;}
+.itemWrapper{display:flex;align-items:center;margin:5px 0;background:#fff;padding:5px;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,0.1);}
+.delete-btn{background:#d9534f;color:#fff;border:none;border-radius:3px;cursor:pointer;margin-left:8px;padding:2px 6px;}
+.delete-btn:hover{background:#c9302c;}
+select,input[type="file"],input[type="text"],button{margin:5px 0;padding:5px;width:100%;}
+`;
+
+
 
 class Doc_template_Control extends HTMLElement {
   constructor() {
@@ -880,8 +1241,13 @@ class Doc_template_Control extends HTMLElement {
         <input type="text" class="field-name" placeholder="Field name" value="${field.name}">
         <select class="field-datatype">
           <option value="string" ${field.datatype === 'string' ? 'selected' : ''}>String</option>
-          <option value="bigint" ${field.datatype === 'bigint' ? 'selected' : ''}>BigInt</option>
           <option value="smallint" ${field.datatype === 'smallint' ? 'selected' : ''}>Boolean</option>
+          <option value="number" ${field.datatype === 'number' ? 'selected' : ''}>Number</option>
+          <option value="decimal" ${field.datatype === 'decimal' ? 'selected' : ''}>Decimal</option>
+          <option value="double" ${field.datatype === 'double' ? 'selected' : ''}>Double</option>
+          <option value="float" ${field.datatype === 'float' ? 'selected' : ''}>Float</option>
+          <option value="int" ${field.datatype === 'int' ? 'selected' : ''}>Int</option>
+          <option value="bigint" ${field.datatype === 'bigint' ? 'selected' : ''}>Bigint</option>
           <option value="date" ${field.datatype === 'date' ? 'selected' : ''}>Date</option>
           <option value="mediumtext" ${field.datatype === 'mediumtext' ? 'selected' : ''}>MediumText</option>
           <option value="json" ${field.datatype === 'json' ? 'selected' : ''}>JSON</option>
@@ -941,6 +1307,7 @@ class Doc_template_Control extends HTMLElement {
   }
 
     populateFromTemplate(config) {
+      console.log("Populating Doc_template_Control from template", config);
     try {
       if (config?.fields && Array.isArray(config.fields)) {
         this.fields = config.fields.filter(f => !this.staticFields.some(sf => sf.name === f.name));
@@ -955,6 +1322,7 @@ class Doc_template_Control extends HTMLElement {
   }
 
   set value(data) {
+    console.log(data)
     try {
       const parsed = typeof data === 'string' ? JSON.parse(data) : data;
       this.populateFromTemplate(parsed);
@@ -965,6 +1333,8 @@ class Doc_template_Control extends HTMLElement {
 
 
   get value() {
+    //console.log(fields)
+    
     return JSON.stringify({
       fields: [...this.staticFields, ...this.fields],
       unique_constraints: this.uniqueConstraints
@@ -1039,7 +1409,7 @@ class QRControl extends HTMLElement {
 }
 customElements.define('qr-control', QRControl);
 
-
+/* working
 class FieldAttributeControl extends HTMLElement {
   constructor() {
     super();
@@ -1487,6 +1857,1379 @@ class FieldAttributeControl extends HTMLElement {
 
 }
 customElements.define('field-attribute-control', FieldAttributeControl);
+*/
+
+// version one , working with updates
+/*
+class FieldAttributeControl extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.jobs = { create: [], list: [], update: [], cancel: { api: '', onSuccess: '' } };
+    this.fieldsByDocType = {};
+    this.currentDocType = '';
+  }
+
+  connectedCallback() {
+    this.render();
+    this.loadDocTypesFromBackend();
+  }
+
+  async loadDocTypesFromBackend() {
+    try {
+      const templates = await getDocTemplates1({});
+      console.log("[DEBUG] Loaded templates:", templates);
+
+      if (Array.isArray(templates)) {
+        this.fieldsByDocType = {};
+        const selector = this.shadowRoot.getElementById('docTypeSelector');
+        selector.innerHTML = `<option value="">-- Select --</option>`;
+        const seen = new Set();
+
+        templates.forEach(tpl => {
+          const docType = tpl.doc_type?.trim();
+          if (!docType || seen.has(docType)) return;
+          seen.add(docType);
+          let fields = [];
+          try {
+            const parsed = tpl.doc_template && JSON.parse(tpl.doc_template);
+            if (Array.isArray(parsed?.fields)) {
+              fields = parsed.fields.map(f => ({
+                seqno: f.seqno ?? 0,
+                field: f.field || f.name || "",
+                control: f.control || "text",
+                trigger: f.trigger || [],
+                edit: f.edit ?? true,
+                show: f.show ?? true,
+                mandatory: f.mandatory ?? true,
+                default: f.default || "",
+                helper: f.helper || "none",
+                lang: f.lang || {
+                  english: "", german: "", arabic: "", french: ""
+                }
+              }));
+            }
+          } catch (e) {
+            console.warn(`[WARN] Invalid JSON for ${docType}:`, tpl.doc_template);
+          }
+
+          this.fieldsByDocType[docType] = fields;
+
+          const option = document.createElement("option");
+          option.value = docType;
+          option.textContent = docType;
+          selector.appendChild(option);
+        });
+      }
+    } catch (err) {
+      console.error("[ERROR] Could not load doc types:", err);
+    }
+  }
+
+  populateFromTemplate(templateJson) {
+    try {
+      const jobKeys = ['create', 'update', 'list', 'cancel'];
+      for (const job of jobKeys) {
+        const jobData = templateJson?.job?.[job];
+        if (!jobData || !Array.isArray(jobData.data)) {
+          this.jobs[job] = [];
+          continue;
+        }
+
+        const fields = [];
+        for (const section of jobData.data) {
+          if (Array.isArray(section.fields)) {
+            fields.push(...section.fields);
+          }
+        }
+
+        fields.sort((a, b) => (a.seqno ?? 0) - (b.seqno ?? 0));
+        this.jobs[job] = fields;
+      }
+
+      const currentJob = this.shadowRoot.querySelector('.job-tab.active')?.dataset.job || 'create';
+      this.renderFields(currentJob);
+
+    } catch (err) {
+      console.error("❌ Error populating template:", err);
+    }
+  }
+
+  render() {
+    this.shadowRoot.innerHTML = `
+      <style>
+        table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+        th, td { border: 1px solid #ccc; padding: 0.5rem; text-align: left; }
+        button { margin: 0.5rem 0.25rem; }
+        input, select, textarea { width: 100%; box-sizing: border-box; }
+        .drag-handle { cursor: move; text-align: center; }
+        tr.dragging { opacity: 0.5; }
+      </style>
+      <div>
+        <label>getDataApi: <input type="text" id="getDataApi" value="config/list_details" /></label><br/>
+        <label>attchment_files_path: <input type="text" id="attchment_files_path" value="" /></label><br/>
+        <label>Doc Type:
+          <select id="docTypeSelector">
+            <option value="">-- Select --</option>
+          </select>
+        </label>
+        <label>Job Type:
+          <select id="jobSelector">
+            <option value="create">Create</option>
+            <option value="list">List</option>
+            <option value="update">Update</option>
+            <option value="cancel">Cancel</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <button id="loadJobFields">Load Fields</button>
+      </div>
+      <div id="cancel-section" style="display:none">
+        <label>Cancel API: <input type="text" id="cancelApi" /></label>
+        <label>onSuccess: <input type="text" id="cancelOnSuccess" /></label>
+        <button id="save-cancel">Save Cancel Config</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>⇅</th><th>Field</th><th>Control</th><th>Edit</th><th>Show</th><th>Mandatory</th>
+            <th>Default</th><th>Trigger</th>
+            <th>Lang (EN)</th><th>Lang (DE)</th><th>Lang (AR)</th><th>Lang (FR)</th><th>Helper</th><th>Remove</th>
+          </tr>
+        </thead>
+        <tbody id="field-body"></tbody>
+      </table>
+      <button id="add-field">Add Field</button>
+      <button id="save-fields">Save Job Fields</button>
+      <button id="export-json">Export Config</button>
+      <button id="alert-json">Show JSON in Alert</button>
+      <pre id="output"></pre>
+    `;
+
+    this.shadowRoot.getElementById('add-field').addEventListener('click', () => this.addField());
+    this.shadowRoot.getElementById('docTypeSelector').addEventListener('change', (e) => this.populateAllJobs(e.target.value));
+    this.shadowRoot.getElementById('loadJobFields').addEventListener('click', () => this.loadFields(this.shadowRoot.getElementById('jobSelector').value));
+    this.shadowRoot.getElementById('save-fields').addEventListener('click', () => this.saveFields(this.shadowRoot.getElementById('jobSelector').value));
+    this.shadowRoot.getElementById('save-cancel').addEventListener('click', () => this.saveCancelConfig());
+    this.shadowRoot.getElementById('export-json').addEventListener('click', () => {
+      const config = this.exportConfig();
+      this.shadowRoot.getElementById('output').textContent = JSON.stringify(config, null, 2);
+    });
+    this.shadowRoot.getElementById('alert-json').addEventListener('click', () => {
+      const config = this.exportConfig();
+      alert(JSON.stringify(config, null, 2));
+    });
+    this.shadowRoot.getElementById('jobSelector').addEventListener('change', e => {
+      const job = e.target.value;
+      this.shadowRoot.getElementById('cancel-section').style.display = job === 'cancel' ? 'block' : 'none';
+    });
+  }
+
+  get value() {
+    return {
+      getDataApi: this.shadowRoot.getElementById('getDataApi')?.value || '',
+      attchment_files_path: this.shadowRoot.getElementById('attchment_files_path')?.value || '',
+      job: this.jobs
+    };
+  }
+
+  set value(val) {
+    if (typeof val === "object") {
+      this.jobs = val.job || {};
+      this.currentDocType = val.doc_type || "";
+      this.shadowRoot.getElementById('getDataApi').value = val.getDataApi || '';
+      this.shadowRoot.getElementById('attchment_files_path').value = val.attchment_files_path || '';
+      this.loadFields('create');
+    }
+  }
+
+  saveCancelConfig() {
+    const api = this.shadowRoot.getElementById('cancelApi').value || 'config';
+    const onSuccess = this.shadowRoot.getElementById('cancelOnSuccess').value || 'Role_canceled()';
+    this.jobs.cancel = { api, onSuccess };
+    const jobSelector = this.shadowRoot.getElementById('jobSelector');
+    const cancelOption = Array.from(jobSelector.options).find(opt => opt.value === 'cancel');
+    if (cancelOption) {
+      cancelOption.textContent = `✔️ Cancel`;
+    }
+  }
+
+  loadFields(job = 'create') {
+    const tbody = this.shadowRoot.getElementById('field-body');
+    tbody.innerHTML = '';
+    if (!Array.isArray(this.jobs[job])) return;
+    this.jobs[job].forEach(f => this.addFieldFromObject(f));
+  }
+
+  saveFields(job = 'create') {
+    this.jobs[job] = this.captureFields();
+    const jobSelector = this.shadowRoot.getElementById('jobSelector');
+    const selectedOption = Array.from(jobSelector.options).find(opt => opt.value === job);
+    if (selectedOption) {
+      selectedOption.textContent = `✔️ ${job.charAt(0).toUpperCase() + job.slice(1)}`;
+    }
+  }
+
+  populateAllJobs(docType) {
+    if (!docType) return;
+    this.currentDocType = docType;
+    const fields = this.fieldsByDocType[docType] || [];
+    ['create', 'list', 'update'].forEach(job => {
+      this.jobs[job] = JSON.parse(JSON.stringify(fields));
+    });
+    this.jobs.cancel = { api: "config", onSuccess: "Role_canceled()" };
+    this.loadFields('create');
+  }
+
+  addField(field = "", control = "text", trigger = []) {
+    this.addFieldFromObject({
+      field,
+      control,
+      trigger,
+      edit: false,  show: false,  mandatory: false,
+      default: "",
+      helper: "none",
+      lang: { english: "", german: "", arabic: "", french: "" }
+    });
+  }
+
+  addFieldFromObject(obj) {
+    const tbody = this.shadowRoot.getElementById('field-body');
+    const row = document.createElement('tr');
+    row.setAttribute('draggable', true);
+    row.classList.add('draggable-row');
+
+    row.innerHTML = `
+      <td class="drag-handle">⇅</td>
+      <td><input type="text" class="field-name" value="${obj.field || ""}"/></td>
+      <td><select class="control">
+        <option value="text">text</option>
+        <option value="dropdown">dropdown</option>
+        <option value="field-attribute-control">field-attribute-control</option>
+        <option value="datime">datime</option>
+      </select></td>
+      <td><input type="checkbox" class="edit" ${obj.edit ? "checked" : ""}/></td>
+      <td><input type="checkbox" class="show" ${obj.show ? "checked" : ""}/></td>
+      <td><input type="checkbox" class="mandatory" ${obj.mandatory ? "checked" : ""}/></td>
+      <td><input type="text" class="default" value="${obj.default || ""}"/></td>
+      <td><button class="trigger-btn">⚙️ Configure</button><textarea class="trigger" style="display:none">${JSON.stringify(obj.trigger || [])}</textarea></td>
+      <td><input type="text" class="lang-en" value="${obj.lang?.english || ""}"/></td>
+      <td><input type="text" class="lang-de" value="${obj.lang?.german || ""}"/></td>
+      <td><input type="text" class="lang-ar" value="${obj.lang?.arabic || ""}"/></td>
+      <td><input type="text" class="lang-fr" value="${obj.lang?.french || ""}"/></td>
+      <td>
+        <select class="helper">
+          <option value="none">None</option>
+          <option value="getcurrentuserdetails">getcurrentuserdetails</option>
+          <option value="getresorceCategories">getresorceCategories</option>
+          <option value="get_affiliation">get_affiliation</option>
+        </select>
+      </td>
+      <td><button class="remove">X</button></td>
+    `;
+
+    row.querySelector('.control').value = obj.control || "text";
+    row.querySelector('.helper').value = obj.helper || "none";
+    row.querySelector('.remove').addEventListener('click', () => row.remove());
+    row.querySelector('.trigger-btn').addEventListener('click', () => {
+      const textarea = row.querySelector('.trigger');
+      let existingTriggers = [];
+      try {
+        existingTriggers = JSON.parse(textarea.value || "[]");
+      } catch (e) {
+        existingTriggers = [];
+      }
+      openTriggerModal(existingTriggers, (updatedTriggers) => {
+        textarea.value = JSON.stringify(updatedTriggers, null, 2);
+      });
+    });
+
+    this.addDragEvents(row);
+    tbody.appendChild(row);
+  }
+
+  addDragEvents(row) {
+    row.addEventListener('dragstart', e => {
+      row.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+
+    row.addEventListener('dragend', () => {
+      row.classList.remove('dragging');
+    });
+
+    row.addEventListener('dragover', e => {
+      e.preventDefault();
+      const dragging = this.shadowRoot.querySelector('.dragging');
+      if (!dragging || dragging === row) return;
+      const tbody = row.parentNode;
+      const rows = Array.from(tbody.children);
+      const draggingIndex = rows.indexOf(dragging);
+      const targetIndex = rows.indexOf(row);
+      if (draggingIndex < targetIndex) {
+        tbody.insertBefore(dragging, row.nextSibling);
+      } else {
+        tbody.insertBefore(dragging, row);
+      }
+    });
+  }
+
+  captureFields() {
+    const rows = this.shadowRoot.querySelectorAll('#field-body tr');
+    return Array.from(rows).map((row, index) => ({
+      seqno: index,
+      field: row.querySelector('.field-name').value,
+      control: row.querySelector('.control').value,
+      trigger: (() => {
+        try {
+          return JSON.parse(row.querySelector('.trigger').value || '[]');
+        } catch (e) {
+          return [];
+        }
+      })(),
+      edit: row.querySelector('.edit').checked,
+      show: row.querySelector('.show').checked,
+      mandatory: row.querySelector('.mandatory').checked,
+      default: row.querySelector('.default').value,
+      helper: row.querySelector('.helper').value,
+      lang: {
+        english: row.querySelector('.lang-en').value,
+        german: row.querySelector('.lang-de').value,
+        arabic: row.querySelector('.lang-ar').value,
+        french: row.querySelector('.lang-fr').value
+      }
+    }));
+  }
+
+  exportConfig() {
+    const job = {};
+    Object.keys(this.jobs).forEach(jobType => {
+      if (jobType === 'cancel') {
+        job[jobType] = {
+          api: this.jobs.cancel.api || "config",
+          onSuccess: this.jobs.cancel.onSuccess || "Role_canceled()"
+        };
+      } else {
+        const fields = this.jobs[jobType];
+        const grouped = {};
+        fields.forEach(f => {
+          const helper = f.helper || "none";
+          if (!grouped[helper]) grouped[helper] = [];
+          grouped[helper].push(f);
+        });
+        const data = Object.entries(grouped).map(([helper, fields]) => ({
+          helper,
+          fields,
+          edit_option: true,
+          delete_option: true
+        }));
+        job[jobType] = {
+          roles: ["Admin"],
+          data,
+          api: `config/${jobType === 'list' ? 'list_details' : jobType === 'update' ? 'modifications' : 'new'}`,
+          onSuccess: `Role_${jobType}ed()`
+        };
+      }
+    });
+    return {
+      getDataApi: this.shadowRoot.getElementById('getDataApi').value,
+      attchment_files_path: this.shadowRoot.getElementById('attchment_files_path').value,
+      job
+    };
+  }
+}
+customElements.define('field-attribute-control', FieldAttributeControl);
+*/
+/* this
+class FieldAttributeControl extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.jobs = { create: [], list: [], update: [], cancel: { api: '', onSuccess: '' } };
+    this.fieldsByDocType = {};
+    this.currentDocType = '';
+  }
+
+  connectedCallback() {
+    this.render();
+    this.loadDocTypesFromBackend();
+  }
+
+  async loadDocTypesFromBackend() {
+    try {
+      const templates = await getDocTemplates1({});
+      console.log("[DEBUG] Loaded templates:", templates);
+
+      if (Array.isArray(templates)) {
+        this.fieldsByDocType = {};
+        const selector = this.shadowRoot.getElementById('docTypeSelector');
+        selector.innerHTML = `<option value="">-- Select --</option>`;
+        const seen = new Set();
+
+        templates.forEach(tpl => {
+          const docType = tpl.doc_type?.trim();
+          if (!docType || seen.has(docType)) return;
+          seen.add(docType);
+          let fields = [];
+          try {
+            const parsed = tpl.doc_template && JSON.parse(tpl.doc_template);
+            if (Array.isArray(parsed?.fields)) {
+              fields = parsed.fields.map(f => ({
+                seqno: f.seqno ?? 0,
+                field: f.field || f.name || "",
+                control: f.control || "text",
+                trigger: f.trigger || [],
+                edit: f.edit ?? true,
+                show: f.show ?? true,
+                mandatory: f.mandatory ?? true,
+                default: f.default || "",
+                helper: f.helper || "none",
+                lang: f.lang || {
+                  english: "", german: "", arabic: "", french: ""
+                }
+              }));
+            }
+          } catch (e) {
+            console.warn(`[WARN] Invalid JSON for ${docType}:`, tpl.doc_template);
+          }
+
+          this.fieldsByDocType[docType] = fields;
+
+          const option = document.createElement("option");
+          option.value = docType;
+          option.textContent = docType;
+          selector.appendChild(option);
+        });
+      }
+    } catch (err) {
+      console.error("[ERROR] Could not load doc types:", err);
+    }
+  }
+
+  populateFromTemplate(templateJson) {
+    try {
+      const jobKeys = ['create', 'update', 'list', 'cancel'];
+      for (const job of jobKeys) {
+        const jobData = templateJson?.job?.[job];
+        if (!jobData || !Array.isArray(jobData.data)) {
+          this.jobs[job] = [];
+          continue;
+        }
+
+        const fields = [];
+        for (const section of jobData.data) {
+          if (Array.isArray(section.fields)) {
+            fields.push(...section.fields);
+          }
+        }
+
+        fields.sort((a, b) => (a.seqno ?? 0) - (b.seqno ?? 0));
+        this.jobs[job] = fields;
+      }
+
+      const currentJob = this.shadowRoot.querySelector('.job-tab.active')?.dataset.job || 'create';
+      this.renderFields(currentJob);
+
+    } catch (err) {
+      console.error("❌ Error populating template:", err);
+    }
+  }
+
+  render() {
+    this.shadowRoot.innerHTML = `
+      <style>
+        table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+        th, td { border: 1px solid #ccc; padding: 0.5rem; text-align: left; }
+        button { margin: 0.5rem 0.25rem; }
+        input, select, textarea { width: 100%; box-sizing: border-box; }
+        .drag-handle { cursor: move; text-align: center; }
+        tr.dragging { opacity: 0.5; }
+      </style>
+      <div>
+        <label>getDataApi: <input type="text" id="getDataApi" value="config/list_details" /></label><br/>
+        <label>Doc Type:
+          <select id="docTypeSelector">
+            <option value="">-- Select --</option>
+          </select>
+        </label>
+        <label>Job Type:
+          <select id="jobSelector">
+            <option value="create">Create</option>
+            <option value="list">List</option>
+            <option value="update">Update</option>
+            <option value="cancel">Cancel</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <button id="loadJobFields">Load Fields</button>
+      </div>
+      <div id="cancel-section" style="display:none">
+        <label>Cancel API: <input type="text" id="cancelApi" /></label>
+        <label>onSuccess: <input type="text" id="cancelOnSuccess" /></label>
+        <button id="save-cancel">Save Cancel Config</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>⇅</th><th>Field</th><th>Control</th><th>Edit</th><th>Show</th><th>Mandatory</th>
+            <th>Default</th><th>Trigger</th>
+            <th>Lang (EN)</th><th>Lang (DE)</th><th>Lang (AR)</th><th>Lang (FR)</th><th>Helper</th><th>Remove</th>
+          </tr>
+        </thead>
+        <tbody id="field-body"></tbody>
+      </table>
+      <button id="add-field">Add Field</button>
+      <button id="save-fields">Save Job Fields</button>
+      <button id="export-json">Export Config</button>
+      <button id="alert-json">Show JSON in Alert</button>
+      <pre id="output"></pre>
+    `;
+
+    this.shadowRoot.getElementById('add-field').addEventListener('click', () => this.addField());
+    this.shadowRoot.getElementById('docTypeSelector').addEventListener('change', (e) => this.populateAllJobs(e.target.value));
+    this.shadowRoot.getElementById('loadJobFields').addEventListener('click', () => this.loadFields(this.shadowRoot.getElementById('jobSelector').value));
+    this.shadowRoot.getElementById('save-fields').addEventListener('click', () => this.saveFields(this.shadowRoot.getElementById('jobSelector').value));
+    this.shadowRoot.getElementById('save-cancel').addEventListener('click', () => this.saveCancelConfig());
+    this.shadowRoot.getElementById('export-json').addEventListener('click', () => {
+      const config = this.exportConfig();
+      this.shadowRoot.getElementById('output').textContent = JSON.stringify(config, null, 2);
+    });
+    this.shadowRoot.getElementById('alert-json').addEventListener('click', () => {
+      const config = this.exportConfig();
+      alert(JSON.stringify(config, null, 2));
+    });
+    this.shadowRoot.getElementById('jobSelector').addEventListener('change', e => {
+      const job = e.target.value;
+      this.shadowRoot.getElementById('cancel-section').style.display = job === 'cancel' ? 'block' : 'none';
+    });
+  }
+
+  get value() {
+    return {
+      getDataApi: this.shadowRoot.getElementById('getDataApi')?.value || '',
+      job: this.jobs
+    };
+  }
+
+  set value(val) {
+    if (typeof val === "object") {
+      this.jobs = val.job || {};
+      this.currentDocType = val.doc_type || "";
+      this.shadowRoot.getElementById('getDataApi').value = val.getDataApi || '';
+      this.loadFields('create');
+    }
+  }
+
+  saveCancelConfig() {
+    const api = this.shadowRoot.getElementById('cancelApi').value || 'config';
+    const onSuccess = this.shadowRoot.getElementById('cancelOnSuccess').value || 'Role_canceled()';
+    this.jobs.cancel = { api, onSuccess };
+    const jobSelector = this.shadowRoot.getElementById('jobSelector');
+    const cancelOption = Array.from(jobSelector.options).find(opt => opt.value === 'cancel');
+    if (cancelOption) {
+      cancelOption.textContent = `✔️ Cancel`;
+    }
+  }
+
+  loadFields(job = 'create') {
+    const tbody = this.shadowRoot.getElementById('field-body');
+    tbody.innerHTML = '';
+    if (!Array.isArray(this.jobs[job])) return;
+    this.jobs[job].forEach(f => this.addFieldFromObject(f));
+  }
+
+  saveFields(job = 'create') {
+    this.jobs[job] = this.captureFields();
+    const jobSelector = this.shadowRoot.getElementById('jobSelector');
+    const selectedOption = Array.from(jobSelector.options).find(opt => opt.value === job);
+    if (selectedOption) {
+      selectedOption.textContent = `✔️ ${job.charAt(0).toUpperCase() + job.slice(1)}`;
+    }
+  }
+
+  populateAllJobs(docType) {
+    if (!docType) return;
+    this.currentDocType = docType;
+    console.log("🟢 Populating all jobs for docType:", docType);
+    console.log("🟢 Fields by docType:", this.fieldsByDocType);
+    const fields = this.fieldsByDocType[docType] || [];
+    console.log("🟢 Fields for docType:", fields);
+    ['create', 'list', 'update'].forEach(job => {
+      this.jobs[job] = JSON.parse(JSON.stringify(fields));
+    });
+    this.jobs.cancel = { api: "config", onSuccess: "Role_canceled()" };
+    this.loadFields('create');
+  }
+
+  addField(field = "", control = "text", trigger = []) {
+    this.addFieldFromObject({
+      field,
+      control,
+      trigger,
+      edit: false,  show: false,  mandatory: false,
+      default: "",
+      helper: "none",
+      lang: { english: "", german: "", arabic: "", french: "" }
+    });
+  }
+
+  addFieldFromObject(obj) {
+    const tbody = this.shadowRoot.getElementById('field-body');
+    const row = document.createElement('tr');
+    row.setAttribute('draggable', true);
+    row.classList.add('draggable-row');
+
+    row.innerHTML = `
+      <td class="drag-handle">⇅</td>
+      <td><input type="text" class="field-name" value="${obj.field || ""}"/></td>
+      <td><select class="control">
+        <option value="text">text</option>
+        <option value="dropdown">dropdown</option>
+        <option value="field-attribute-control">field-attribute-control</option>
+        <option value="datime">datime</option>
+      </select></td>
+      <td><input type="checkbox" class="edit" ${obj.edit ? "checked" : ""}/></td>
+      <td><input type="checkbox" class="show" ${obj.show ? "checked" : ""}/></td>
+      <td><input type="checkbox" class="mandatory" ${obj.mandatory ? "checked" : ""}/></td>
+      <td><input type="text" class="default" value="${obj.default || ""}"/></td>
+      <td><button class="trigger-btn">⚙️ Configure</button><textarea class="trigger" style="display:none">${JSON.stringify(obj.trigger || [])}</textarea></td>
+      <td><input type="text" class="lang-en" value="${obj.lang?.english || ""}"/></td>
+      <td><input type="text" class="lang-de" value="${obj.lang?.german || ""}"/></td>
+      <td><input type="text" class="lang-ar" value="${obj.lang?.arabic || ""}"/></td>
+      <td><input type="text" class="lang-fr" value="${obj.lang?.french || ""}"/></td>
+      <td>
+        <select class="helper">
+          <option value="none">None</option>
+          <option value="getcurrentuserdetails">getcurrentuserdetails</option>
+          <option value="getresorceCategories">getresorceCategories</option>
+          <option value="get_affiliation">get_affiliation</option>
+        </select>
+      </td>
+      <td><button class="remove">X</button></td>
+    `;
+
+    row.querySelector('.control').value = obj.control || "text";
+    row.querySelector('.helper').value = obj.helper || "none";
+    row.querySelector('.remove').addEventListener('click', () => row.remove());
+    row.querySelector('.trigger-btn').addEventListener('click', () => {
+      const textarea = row.querySelector('.trigger');
+      let existingTriggers = [];
+      try {
+        existingTriggers = JSON.parse(textarea.value || "[]");
+      } catch (e) {
+        existingTriggers = [];
+      }
+      openTriggerModal(existingTriggers, (updatedTriggers) => {
+        textarea.value = JSON.stringify(updatedTriggers, null, 2);
+      });
+    });
+
+    this.addDragEvents(row);
+    tbody.appendChild(row);
+  }
+
+  addDragEvents(row) {
+    row.addEventListener('dragstart', e => {
+      row.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+
+    row.addEventListener('dragend', () => {
+      row.classList.remove('dragging');
+    });
+
+    row.addEventListener('dragover', e => {
+      e.preventDefault();
+      const dragging = this.shadowRoot.querySelector('.dragging');
+      if (!dragging || dragging === row) return;
+      const tbody = row.parentNode;
+      const rows = Array.from(tbody.children);
+      const draggingIndex = rows.indexOf(dragging);
+      const targetIndex = rows.indexOf(row);
+      if (draggingIndex < targetIndex) {
+        tbody.insertBefore(dragging, row.nextSibling);
+      } else {
+        tbody.insertBefore(dragging, row);
+      }
+    });
+  }
+
+  captureFields() {
+    const rows = this.shadowRoot.querySelectorAll('#field-body tr');
+    return Array.from(rows).map((row, index) => ({
+      seqno: index,
+      field: row.querySelector('.field-name').value,
+      control: row.querySelector('.control').value,
+      trigger: (() => {
+        try {
+          return JSON.parse(row.querySelector('.trigger').value || '[]');
+        } catch (e) {
+          return [];
+        }
+      })(),
+      edit: row.querySelector('.edit').checked,
+      show: row.querySelector('.show').checked,
+      mandatory: row.querySelector('.mandatory').checked,
+      default: row.querySelector('.default').value,
+      helper: row.querySelector('.helper').value,
+      lang: {
+        english: row.querySelector('.lang-en').value,
+        german: row.querySelector('.lang-de').value,
+        arabic: row.querySelector('.lang-ar').value,
+        french: row.querySelector('.lang-fr').value
+      }
+    }));
+  }
+
+  exportConfig() {
+    const job = {};
+    Object.keys(this.jobs).forEach(jobType => {
+      if (jobType === 'cancel') {
+        job[jobType] = {
+          api: this.jobs.cancel.api || "config",
+          onSuccess: this.jobs.cancel.onSuccess || "Role_canceled()"
+        };
+      } else {
+        const fields = this.jobs[jobType];
+        const grouped = {};
+        fields.forEach(f => {
+          const helper = f.helper || "none";
+          if (!grouped[helper]) grouped[helper] = [];
+          grouped[helper].push(f);
+        });
+        const data = Object.entries(grouped).map(([helper, fields]) => ({
+          helper,
+          fields,
+          edit_option: true,
+          delete_option: true
+        }));
+        job[jobType] = {
+          roles: ["Admin"],
+          data,
+          api: `config/${jobType === 'list' ? 'list_details' : jobType === 'update' ? 'modifications' : 'new'}`,
+          onSuccess: `Role_${jobType}ed()`
+        };
+      }
+    });
+    return {
+      getDataApi: this.shadowRoot.getElementById('getDataApi').value,
+      job
+    };
+  }
+}
+customElements.define('field-attribute-control', FieldAttributeControl);
+*/
+
+class FieldAttributeControl extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.jobs = { create: [], list: [], update: [], cancel: { api: '', onSuccess: '' } };
+    this.fieldsByDocType = {};
+    this.currentDocType = '';
+  }
+
+  connectedCallback() {
+    this.render();
+    this.loadDocTypesFromBackend();
+  }
+
+  async loadDocTypesFromBackend() {
+    try {
+      const templates = await getDocTemplates1({});
+      console.log("[DEBUG] Loaded templates:", templates);
+
+      if (Array.isArray(templates)) {
+        this.fieldsByDocType = {};
+        const selector = this.shadowRoot.getElementById('docTypeSelector');
+        selector.innerHTML = `<option value="">-- Select --</option>`;
+        const seen = new Set();
+
+        templates.forEach(tpl => {
+          const docType = tpl.doc_type?.trim();
+          if (!docType || seen.has(docType)) return;
+          seen.add(docType);
+          let fields = [];
+          try {
+            const parsed = tpl.doc_template && JSON.parse(tpl.doc_template);
+            if (Array.isArray(parsed?.fields)) {
+              fields = parsed.fields.map((f, index) => ({
+                seqno: f.seqno ?? index,
+                field: f.name || f.field || "",           // Backend uses 'name'
+                control: f.control || "text",
+                trigger: f.trigger || [],
+                edit: f.edit ?? (f.not_null === "false"),  // Map not_null to edit
+                show: f.show ?? true,
+                mandatory: f.mandatory ?? (f.not_null === "true"), // Map not_null to mandatory
+                default: f.default || "",
+                helper: f.helper || "none",
+                unique: f.unique || "false",               // Add unique field from backend
+                datatype: f.datatype || "",                // Add datatype field from backend
+                lang: f.lang || {
+                  english: "", german: "", arabic: "", french: ""
+                }
+              }));
+            }
+          } catch (e) {
+            console.warn(`[WARN] Invalid JSON for ${docType}:`, tpl.doc_template);
+          }
+
+          this.fieldsByDocType[docType] = fields;
+
+          const option = document.createElement("option");
+          option.value = docType;
+          option.textContent = docType;
+          selector.appendChild(option);
+        });
+      }
+    } catch (err) {
+      console.error("[ERROR] Could not load doc types:", err);
+    }
+  }
+
+  populateFromTemplate(templateJson) {
+    try {
+      const jobKeys = ['create', 'update', 'list', 'cancel'];
+      for (const job of jobKeys) {
+        const jobData = templateJson?.job?.[job];
+        if (!jobData || !Array.isArray(jobData.data)) {
+          this.jobs[job] = [];
+          continue;
+        }
+
+        const fields = [];
+        for (const section of jobData.data) {
+          if (Array.isArray(section.fields)) {
+            fields.push(...section.fields);
+          }
+        }
+
+        fields.sort((a, b) => (a.seqno ?? 0) - (b.seqno ?? 0));
+        this.jobs[job] = fields;
+      }
+
+      const currentJob = this.shadowRoot.querySelector('.job-tab.active')?.dataset.job || 'create';
+      this.renderFields(currentJob);
+
+    } catch (err) {
+      console.error("❌ Error populating template:", err);
+    }
+  }
+
+  render() {
+    this.shadowRoot.innerHTML = `
+      <style>
+        table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+        th, td { border: 1px solid #ccc; padding: 0.5rem; text-align: left; }
+        button { margin: 0.5rem 0.25rem; }
+        input, select, textarea { width: 100%; box-sizing: border-box; }
+        .drag-handle { cursor: move; text-align: center; }
+        tr.dragging { opacity: 0.5; }
+      </style>
+      <div>
+        <label>getDataApi: <input type="text" id="getDataApi" value="config/list_details" /></label><br/>
+        <label>Doc Type:
+          <select id="docTypeSelector">
+            <option value="">-- Select --</option>
+          </select>
+        </label>
+        <label>Job Type:
+          <select id="jobSelector">
+            <option value="create">Create</option>
+            <option value="list">List</option>
+            <option value="update">Update</option>
+            <option value="cancel">Cancel</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <button id="loadJobFields">Load Fields</button>
+      </div>
+      <div id="cancel-section" style="display:none">
+        <label>Cancel API: <input type="text" id="cancelApi" /></label>
+        <label>onSuccess: <input type="text" id="cancelOnSuccess" /></label>
+        <button id="save-cancel">Save Cancel Config</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>⇅</th><th>Field</th><th>Control</th><th>Edit</th><th>Show</th><th>Mandatory</th>
+            <th>Default</th><th>Trigger</th><th>Unique</th><th>DataType</th>
+            <th>Lang (EN)</th><th>Lang (DE)</th><th>Lang (AR)</th><th>Lang (FR)</th><th>Helper</th><th>Remove</th>
+          </tr>
+        </thead>
+        <tbody id="field-body"></tbody>
+      </table>
+      <button id="add-field">Add Field</button>
+      <button id="save-fields">Save Job Fields</button>
+      <button id="export-json">Export Config</button>
+      <button id="alert-json">Show JSON in Alert</button>
+      <pre id="output"></pre>
+    `;
+
+    this.shadowRoot.getElementById('add-field').addEventListener('click', () => this.addField());
+    this.shadowRoot.getElementById('docTypeSelector').addEventListener('change', (e) => this.populateAllJobs(e.target.value));
+    this.shadowRoot.getElementById('loadJobFields').addEventListener('click', () => this.loadFields(this.shadowRoot.getElementById('jobSelector').value));
+    this.shadowRoot.getElementById('save-fields').addEventListener('click', () => this.saveFields(this.shadowRoot.getElementById('jobSelector').value));
+    this.shadowRoot.getElementById('save-cancel').addEventListener('click', () => this.saveCancelConfig());
+    this.shadowRoot.getElementById('export-json').addEventListener('click', () => {
+      const config = this.exportConfig();
+      this.shadowRoot.getElementById('output').textContent = JSON.stringify(config, null, 2);
+    });
+    this.shadowRoot.getElementById('alert-json').addEventListener('click', () => {
+      const config = this.exportConfig();
+      alert(JSON.stringify(config, null, 2));
+    });
+    this.shadowRoot.getElementById('jobSelector').addEventListener('change', e => {
+      const job = e.target.value;
+      this.shadowRoot.getElementById('cancel-section').style.display = job === 'cancel' ? 'block' : 'none';
+    });
+  }
+
+  get value() {
+    // Include the original fields from the selected document type (only name and datatype)
+    const originalFields = this.currentDocType ? 
+      (this.fieldsByDocType[this.currentDocType] || []).map(f => ({
+        name: f.field,
+        datatype: f.datatype
+      })) : [];
+    
+    return {
+      getDataApi: this.shadowRoot.getElementById('getDataApi')?.value || '',
+      fields: originalFields,
+      job: this.jobs
+    };
+  }
+
+  set value(val) {
+    if (typeof val === "object") {
+      this.jobs = val.job || {};
+      this.currentDocType = val.doc_type || "";
+      this.shadowRoot.getElementById('getDataApi').value = val.getDataApi || '';
+      this.loadFields('create');
+    }
+  }
+
+  saveCancelConfig() {
+    const api = this.shadowRoot.getElementById('cancelApi').value || 'config';
+    const onSuccess = this.shadowRoot.getElementById('cancelOnSuccess').value || 'Role_canceled()';
+    this.jobs.cancel = { api, onSuccess };
+    const jobSelector = this.shadowRoot.getElementById('jobSelector');
+    const cancelOption = Array.from(jobSelector.options).find(opt => opt.value === 'cancel');
+    if (cancelOption) {
+      cancelOption.textContent = `✔️ Cancel`;
+    }
+  }
+
+  loadFields(job = 'create') {
+    const tbody = this.shadowRoot.getElementById('field-body');
+    tbody.innerHTML = '';
+    if (!Array.isArray(this.jobs[job])) return;
+    this.jobs[job].forEach(f => this.addFieldFromObject(f));
+  }
+
+  saveFields(job = 'create') {
+    this.jobs[job] = this.captureFields();
+    const jobSelector = this.shadowRoot.getElementById('jobSelector');
+    const selectedOption = Array.from(jobSelector.options).find(opt => opt.value === job);
+    if (selectedOption) {
+      selectedOption.textContent = `✔️ ${job.charAt(0).toUpperCase() + job.slice(1)}`;
+    }
+  }
+
+  populateAllJobs(docType) {
+    if (!docType) return;
+    this.currentDocType = docType;
+    const fields = this.fieldsByDocType[docType] || [];
+    ['create', 'list', 'update'].forEach(job => {
+      this.jobs[job] = JSON.parse(JSON.stringify(fields));
+    });
+    this.jobs.cancel = { api: "config", onSuccess: "Role_canceled()" };
+    this.loadFields('create');
+  }
+
+  addField(field = "", control = "text", trigger = []) {
+    this.addFieldFromObject({
+      field,
+      control,
+      trigger,
+      edit: false,  show: false,  mandatory: false,
+      default: "",
+      unique: "false",
+      datatype: "",
+      helper: "none",
+      lang: { english: "", german: "", arabic: "", french: "" }
+    });
+  }
+
+  addFieldFromObject(obj) {
+    const tbody = this.shadowRoot.getElementById('field-body');
+    const row = document.createElement('tr');
+    row.setAttribute('draggable', true);
+    row.classList.add('draggable-row');
+
+    row.innerHTML = `
+      <td class="drag-handle">⇅</td>
+      <td><input type="text" class="field-name" value="${obj.field || ""}"/></td>
+      <td><select class="control">
+        <option value="text">text</option>
+        <option value="dropdown">dropdown</option>
+        <option value="field-attribute-control">field-attribute-control</option>
+        <option value="datime">datime</option>
+      </select></td>
+      <td><input type="checkbox" class="edit" ${obj.edit ? "checked" : ""}/></td>
+      <td><input type="checkbox" class="show" ${obj.show ? "checked" : ""}/></td>
+      <td><input type="checkbox" class="mandatory" ${obj.mandatory ? "checked" : ""}/></td>
+      <td><input type="text" class="default" value="${obj.default || ""}"/></td>
+      <td><button class="trigger-btn">⚙️ Configure</button><textarea class="trigger" style="display:none">${JSON.stringify(obj.trigger || [])}</textarea></td>
+      <td><input type="text" class="unique" value="${obj.unique || "false"}"/></td>
+      <td><input type="text" class="datatype" value="${obj.datatype || ""}"/></td>
+      <td><input type="text" class="lang-en" value="${obj.lang?.english || ""}"/></td>
+      <td><input type="text" class="lang-de" value="${obj.lang?.german || ""}"/></td>
+      <td><input type="text" class="lang-ar" value="${obj.lang?.arabic || ""}"/></td>
+      <td><input type="text" class="lang-fr" value="${obj.lang?.french || ""}"/></td>
+      <td>
+        <select class="helper">
+          <option value="none">None</option>
+          <option value="getcurrentuserdetails">getcurrentuserdetails</option>
+          <option value="getresorceCategories">getresorceCategories</option>
+          <option value="get_affiliation">get_affiliation</option>
+        </select>
+      </td>
+      <td><button class="remove">X</button></td>
+    `;
+
+    row.querySelector('.control').value = obj.control || "text";
+    row.querySelector('.helper').value = obj.helper || "none";
+    row.querySelector('.remove').addEventListener('click', () => row.remove());
+    row.querySelector('.trigger-btn').addEventListener('click', () => {
+      const textarea = row.querySelector('.trigger');
+      let existingTriggers = [];
+      try {
+        existingTriggers = JSON.parse(textarea.value || "[]");
+      } catch (e) {
+        existingTriggers = [];
+      }
+      openTriggerModal(existingTriggers, (updatedTriggers) => {
+        textarea.value = JSON.stringify(updatedTriggers, null, 2);
+      });
+    });
+
+    this.addDragEvents(row);
+    tbody.appendChild(row);
+  }
+
+  addDragEvents(row) {
+    row.addEventListener('dragstart', e => {
+      row.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+
+    row.addEventListener('dragend', () => {
+      row.classList.remove('dragging');
+    });
+
+    row.addEventListener('dragover', e => {
+      e.preventDefault();
+      const dragging = this.shadowRoot.querySelector('.dragging');
+      if (!dragging || dragging === row) return;
+      const tbody = row.parentNode;
+      const rows = Array.from(tbody.children);
+      const draggingIndex = rows.indexOf(dragging);
+      const targetIndex = rows.indexOf(row);
+      if (draggingIndex < targetIndex) {
+        tbody.insertBefore(dragging, row.nextSibling);
+      } else {
+        tbody.insertBefore(dragging, row);
+      }
+    });
+  }
+
+  captureFields() {
+    const rows = this.shadowRoot.querySelectorAll('#field-body tr');
+    return Array.from(rows).map((row, index) => ({
+      seqno: index,
+      field: row.querySelector('.field-name').value,
+      control: row.querySelector('.control').value,
+      trigger: (() => {
+        try {
+          return JSON.parse(row.querySelector('.trigger').value || '[]');
+        } catch (e) {
+          return [];
+        }
+      })(),
+      edit: row.querySelector('.edit').checked,
+      show: row.querySelector('.show').checked,
+      mandatory: row.querySelector('.mandatory').checked,
+      default: row.querySelector('.default').value,
+      unique: row.querySelector('.unique').value,
+      datatype: row.querySelector('.datatype').value,
+      helper: row.querySelector('.helper').value,
+      lang: {
+        english: row.querySelector('.lang-en').value,
+        german: row.querySelector('.lang-de').value,
+        arabic: row.querySelector('.lang-ar').value,
+        french: row.querySelector('.lang-fr').value
+      }
+    }));
+  }
+
+  exportConfig() {
+    const job = {};
+    Object.keys(this.jobs).forEach(jobType => {
+      if (jobType === 'cancel') {
+        job[jobType] = {
+          api: this.jobs.cancel.api || "config",
+          onSuccess: this.jobs.cancel.onSuccess || "Role_canceled()"
+        };
+      } else {
+        const fields = this.jobs[jobType];
+        const grouped = {};
+        fields.forEach(f => {
+          const helper = f.helper || "none";
+          if (!grouped[helper]) grouped[helper] = [];
+          grouped[helper].push(f);
+        });
+        const data = Object.entries(grouped).map(([helper, fields]) => ({
+          helper,
+          fields,
+          edit_option: true,
+          delete_option: true
+        }));
+        job[jobType] = {
+          roles: ["Admin"],
+          data,
+          api: `config/${jobType === 'list' ? 'list_details' : jobType === 'update' ? 'modifications' : 'new'}`,
+          onSuccess: `Role_${jobType}ed()`
+        };
+      }
+    });
+    
+    // Include the original fields from the selected document type (only name and datatype)
+    const originalFields = this.currentDocType ? 
+      (this.fieldsByDocType[this.currentDocType] || []).map(f => ({
+        name: f.field,
+        datatype: f.datatype
+      })) : [];
+    
+    return {
+      getDataApi: this.shadowRoot.getElementById('getDataApi').value,
+      fields: originalFields,
+      job
+    };
+  }
+}
+customElements.define('field-attribute-control', FieldAttributeControl);
+
+
+/*
+class FieldAttributeControl extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.jobs = { create: [], list: [], update: [], cancel: { api: '', onSuccess: '' } };
+    this.fieldsByDocType = {};
+    this.currentDocType = '';
+  }
+
+  connectedCallback() {
+    this.render();
+    this.loadDocTypesFromBackend();
+  }
+
+  render() {
+    this.shadowRoot.innerHTML = `
+      <style>
+        .container { font-family: Arial, sans-serif; }
+        select, input, button { margin: 5px 0; padding: 6px; }
+        .field-list { margin-top: 15px; }
+        .card {
+          border: 1px solid #ddd;
+          border-radius: 12px;
+          padding: 15px;
+          margin-bottom: 12px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+          background: #fff;
+        }
+        .card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          cursor: grab;
+          margin-bottom: 10px;
+        }
+        .drag-handle {
+          cursor: grab;
+          font-size: 16px;
+          margin-right: 10px;
+        }
+        .field-inputs label { font-size: 13px; display: block; margin-top: 6px; }
+        .field-inputs input, .field-inputs select { width: 100%; border: 1px solid #ccc; border-radius: 6px; padding: 5px; }
+        .advanced-section { margin-top: 10px; display: none; }
+        .advanced-toggle { font-size: 13px; color: #007bff; cursor: pointer; margin-top: 6px; display: inline-block; }
+        .remove-btn { background: #dc3545; color: #fff; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; }
+        .remove-btn:hover { background: #b02a37; }
+        .save-btn { background: #28a745; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; margin-top: 15px; }
+        .save-btn:hover { background: #218838; }
+      </style>
+
+      <div class="container">
+        <label>Select Doc Type:</label>
+        <select id="docTypeSelect"></select>
+
+        <div class="field-list" id="fieldList"></div>
+        <button id="addFieldBtn">+ Add Field</button>
+        <button class="save-btn" id="saveBtn">💾 Save</button>
+      </div>
+    `;
+
+    this.shadowRoot.querySelector('#addFieldBtn').addEventListener('click', () => this.addFieldCard());
+    this.shadowRoot.querySelector('#saveBtn').addEventListener('click', () => this.saveJobs());
+    this.shadowRoot.querySelector('#docTypeSelect').addEventListener('change', e => this.changeDocType(e.target.value));
+    this.initSortable();
+  }
+
+  async loadDocTypesFromBackend() {
+    const docTypes = ['Invoice', 'Purchase Order', 'Delivery Note'];
+    const select = this.shadowRoot.querySelector('#docTypeSelect');
+    select.innerHTML = docTypes.map(d => `<option value="${d}">${d}</option>`).join('');
+    this.currentDocType = docTypes[0];
+    this.fieldsByDocType[this.currentDocType] = this.fieldsByDocType[this.currentDocType] || [];
+    this.renderFields();
+  }
+
+  changeDocType(docType) {
+    this.currentDocType = docType;
+    if (!this.fieldsByDocType[docType]) this.fieldsByDocType[docType] = [];
+    this.renderFields();
+  }
+
+  renderFields() {
+    const fieldList = this.shadowRoot.querySelector('#fieldList');
+    fieldList.innerHTML = '';
+    this.fieldsByDocType[this.currentDocType].forEach((field, index) => this.addFieldCard(field, index));
+  }
+
+  addFieldCard(field = {}, index = null) {
+    const fieldList = this.shadowRoot.querySelector('#fieldList');
+    const card = document.createElement('div');
+    card.classList.add('card');
+    card.draggable = true;
+    card.innerHTML = `
+      <div class="card-header">
+        <span class="drag-handle">☰</span>
+        <strong>${field.field || 'New Field'}</strong>
+        <button class="remove-btn">✖</button>
+      </div>
+      <div class="field-inputs">
+        <label>Field Name</label>
+        <input type="text" class="field-name" value="${field.field || ''}" />
+        
+        <label>Control</label>
+        <select class="field-control">
+          <option value="text" ${field.control === 'text' ? 'selected' : ''}>Text</option>
+          <option value="number" ${field.control === 'number' ? 'selected' : ''}>Number</option>
+          <option value="date" ${field.control === 'date' ? 'selected' : ''}>Date</option>
+        </select>
+
+        <label><input type="checkbox" class="field-edit" ${field.edit ? 'checked' : ''}/> Editable</label>
+        <label><input type="checkbox" class="field-show" ${field.show ? 'checked' : ''}/> Show</label>
+        <label><input type="checkbox" class="field-mandatory" ${field.mandatory ? 'checked' : ''}/> Mandatory</label>
+
+        <span class="advanced-toggle">▶ Advanced</span>
+        <div class="advanced-section">
+          <label>English Label</label>
+          <input type="text" class="field-lang-en" value="${field.lang?.english || ''}" />
+          <label>French Label</label>
+          <input type="text" class="field-lang-fr" value="${field.lang?.french || ''}" />
+          <label>German Label</label>
+          <input type="text" class="field-lang-de" value="${field.lang?.german || ''}" />
+          <label>Arabic Label</label>
+          <input type="text" class="field-lang-ar" value="${field.lang?.arabic || ''}" />
+          <label>Trigger Function</label>
+          <input type="text" class="field-trigger" value="${field.trigger?.[0]?.function || ''}" />
+        </div>
+      </div>
+    `;
+
+    card.querySelector('.remove-btn').addEventListener('click', () => {
+      card.remove();
+      this.updateFieldsFromDOM();
+    });
+
+    card.querySelector('.advanced-toggle').addEventListener('click', e => {
+      const adv = card.querySelector('.advanced-section');
+      adv.style.display = adv.style.display === 'block' ? 'none' : 'block';
+      e.target.textContent = adv.style.display === 'block' ? '▼ Advanced' : '▶ Advanced';
+    });
+
+    fieldList.appendChild(card);
+    this.updateFieldsFromDOM();
+  }
+
+  updateFieldsFromDOM() {
+    const cards = Array.from(this.shadowRoot.querySelectorAll('.card'));
+    this.fieldsByDocType[this.currentDocType] = cards.map(card => ({
+      field: card.querySelector('.field-name').value,
+      control: card.querySelector('.field-control').value,
+      edit: card.querySelector('.field-edit').checked,
+      show: card.querySelector('.field-show').checked,
+      mandatory: card.querySelector('.field-mandatory').checked,
+      lang: {
+        english: card.querySelector('.field-lang-en').value,
+        french: card.querySelector('.field-lang-fr').value,
+        german: card.querySelector('.field-lang-de').value,
+        arabic: card.querySelector('.field-lang-ar').value
+      },
+      trigger: card.querySelector('.field-trigger').value ? [{ event: 'onchange', function: card.querySelector('.field-trigger').value }] : []
+    }));
+  }
+
+  saveJobs() {
+    this.updateFieldsFromDOM();
+    this.jobs.create = this.fieldsByDocType[this.currentDocType];
+    this.jobs.list = this.fieldsByDocType[this.currentDocType];
+    this.jobs.update = this.fieldsByDocType[this.currentDocType];
+    console.log('Saved Jobs:', this.jobs);
+    alert('Configuration saved!');
+  }
+
+  initSortable() {
+    let dragged;
+    this.shadowRoot.addEventListener('dragstart', e => {
+      if (e.target.classList.contains('card')) {
+        dragged = e.target;
+        e.target.style.opacity = 0.5;
+      }
+    });
+    this.shadowRoot.addEventListener('dragend', e => {
+      if (dragged) dragged.style.opacity = '';
+      dragged = null;
+    });
+    this.shadowRoot.addEventListener('dragover', e => {
+      e.preventDefault();
+      const target = e.target.closest('.card');
+      if (target && dragged && target !== dragged) {
+        const fieldList = this.shadowRoot.querySelector('#fieldList');
+        const cards = Array.from(fieldList.querySelectorAll('.card'));
+        const draggedIndex = cards.indexOf(dragged);
+        const targetIndex = cards.indexOf(target);
+        if (draggedIndex < targetIndex) {
+          fieldList.insertBefore(dragged, target.nextSibling);
+        } else {
+          fieldList.insertBefore(dragged, target);
+        }
+      }
+    });
+    this.shadowRoot.addEventListener('drop', () => this.updateFieldsFromDOM());
+  }
+}
+
+customElements.define('field-attribute-control', FieldAttributeControl);
+*/
+
 
 const triggerEvents = [
   "onchange", "oninput", "onfocus", "onblur",
@@ -1499,7 +3242,7 @@ function getHelperFunctions() {
   }
   return ["sample_function_1", "sample_function_2"]; // fallback
 }
-
+/*
 function openTriggerModal(existing, onSave) {
   const modal = new bootstrap.Modal(document.getElementById('triggerModal'));
   const tbody = document.querySelector('#triggerTable tbody');
@@ -1552,6 +3295,116 @@ function openTriggerModal(existing, onSave) {
     tbody.querySelectorAll('tr').forEach(row => {
       const [eventSel, funcSel] = row.querySelectorAll('select');
       updated.push({ event: eventSel.value, function: funcSel.value });
+    });
+    onSave(updated);
+    modal.hide();
+  };
+
+  modal.show();
+}*/
+
+function openTriggerModal(existing, onSave) {
+  const modal = new bootstrap.Modal(document.getElementById('triggerModal'));
+  const tbody = document.querySelector('#triggerTable tbody');
+  tbody.innerHTML = '';
+
+  // Define available trigger types and their corresponding functions
+  const functionTypes = {
+    'sourcing': ['sourceFunction1', 'sourceFunction2', 'sourceFunction3'],
+    'storing': ['destFunction1', 'destFunction2', 'destFunction3'],
+    'processing': ['processFunction1', 'processFunction2', 'processFunction3'],
+    'systemcall': ['systemFunction1', 'systemFunction2']
+  };
+
+  // Default trigger events (you can customize these)
+  const triggerEvents = ['onchange', 'onselect', 'onload', 'onclick', 'onsubmit'];
+
+  const createRow = (trigger = {}) => {
+    const row = document.createElement('tr');
+    
+    // Create type dropdown
+    const typeSelect = document.createElement('select');
+    typeSelect.className = 'trigger-type';
+    Object.keys(functionTypes).forEach(type => {
+      const opt = document.createElement('option');
+      opt.value = type;
+      opt.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+      if (trigger.type === type) opt.selected = true;
+      typeSelect.appendChild(opt);
+    });
+
+    // Create event dropdown
+    const eventSelect = document.createElement('select');
+    eventSelect.className = 'trigger-event';
+    triggerEvents.forEach(ev => {
+      const opt = document.createElement('option');
+      opt.value = ev;
+      opt.textContent = ev;
+      if (trigger.event === ev) opt.selected = true;
+      eventSelect.appendChild(opt);
+    });
+
+    // Create function dropdown (will be populated based on type)
+    const funcSelect = document.createElement('select');
+    funcSelect.className = 'trigger-function';
+    
+    // Populate function dropdown based on selected type
+    const updateFunctionDropdown = () => {
+      const selectedType = typeSelect.value;
+      funcSelect.innerHTML = ''; // Clear existing options
+      
+      functionTypes[selectedType].forEach(fn => {
+        const opt = document.createElement('option');
+        opt.value = fn;
+        opt.textContent = fn;
+        if (trigger.function === fn) opt.selected = true;
+        funcSelect.appendChild(opt);
+      });
+    };
+    
+    // Initial population
+    updateFunctionDropdown();
+    
+    // Update functions when type changes
+    typeSelect.addEventListener('change', updateFunctionDropdown);
+
+    // Create remove button
+    const removeBtn = document.createElement('button');
+    removeBtn.className = "btn btn-danger btn-sm";
+    removeBtn.innerHTML = "&times;";
+    removeBtn.onclick = () => row.remove();
+
+    // Append all elements to the row
+    row.appendChild(tdWrap(typeSelect));
+    row.appendChild(tdWrap(eventSelect));
+    row.appendChild(tdWrap(funcSelect));
+    row.appendChild(tdWrap(removeBtn));
+
+    tbody.appendChild(row);
+  };
+
+  const tdWrap = (el) => {
+    const td = document.createElement('td');
+    td.appendChild(el);
+    return td;
+  };
+
+  // Initialize with existing triggers
+  existing.forEach(createRow);
+
+  // Add new row button
+  document.getElementById('addTriggerRow').onclick = () => createRow();
+
+  // Save button handler
+  document.getElementById('saveTrigger').onclick = () => {
+    const updated = [];
+    tbody.querySelectorAll('tr').forEach(row => {
+      const [typeSel, eventSel, funcSel] = row.querySelectorAll('select');
+      updated.push({ 
+        type: typeSel.value, 
+        event: eventSel.value, 
+        function: funcSel.value 
+      });
     });
     onSave(updated);
     modal.hide();

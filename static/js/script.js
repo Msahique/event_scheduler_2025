@@ -68,6 +68,7 @@ function get_data_list(selected_item,where_data){
                 }
             } else {
                 API_call(domain, MainConfig[page_load_conf.tab][selected_item].getDataApi, data_list_body, "POST");
+                //getDocumentConfigWithCache(domain, MainConfig[page_load_conf.tab][selected_item].getDataApi, data_list_body, "POST");
             }
         } 
         else{present_Data({})}

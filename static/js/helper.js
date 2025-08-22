@@ -41,6 +41,7 @@ async function get_affiliation(data) {
     return options
 }
 
+
 async function get_program_services(data) {
     var end_point = domain +"options";
     var body={
@@ -361,6 +362,18 @@ function autoSplitDescriptionAndFirstField(data) {
     otherFieldValues
   };
 }
+
+
+/*******************************
+ Example Helper Stubs
+*******************************/
+async function get_file_list(){ return [{filename:"doc1.pdf"},{filename:"report.xlsx"}]; }
+async function get_image_list(){ return [{filename:"img1.png"},{filename:"img2.jpg"}]; }
+async function get_video_list(){ return [{filename:"vid1.mp4"}]; }
+async function get_audio_list(){ return [{filename:"audio1.mp3"}]; }
+async function get_qr_list(){ return [{filename:"qr_data1"},{filename:"qr_data2"}]; }
+
+
 
 /*
 async function fetchEntityName1(entity_id){ 

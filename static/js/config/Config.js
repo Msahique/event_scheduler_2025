@@ -462,7 +462,7 @@ var MainConfig={
 {"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
                               {"seqno":"1","field": "person_id", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "tooltip":"this is a test description","default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Person ID", "german": "Personalausweis", "arabic": "معرف الشخص", "french": "ID de personne"}},
                               {"seqno":"4","field": "resource_name", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Resource Name", "german": "Ressourcenname", "arabic": "اسم المورد", "french": "Nom de la ressource"}},
-                              {"seqno":"5","field": "affiliation_id", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Affiliation ID", "german": "Ressourcenname", "arabic": "اسم المورد", "french": "Nom de la ressource"}},
+                              {"seqno":"5","field": "affiliation_id", "edit": true, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Affiliation ID", "german": "Ressourcenname", "arabic": "اسم المورد", "french": "Nom de la ressource"}},
                               {"seqno":"7","field": "entity_id", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Entity ID", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID d'entité"}},
                               {"seqno":"9","field": "resource_category", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"dropdown","filter_helper":"getResourceCateory","filter_default_value":["Doctor","Teacher","Admin"],"lang": {"english": "Category", "german": "Entitäts-ID", "arabic": "معرف الكيان", "french": "ID d'entité"}},
                               {"seqno":"11","field": "details", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": true, "tooltip":"this is a test description","default": "", "filter_type":"","filter_default_value":"","lang": {"english": "Details", "german": "Einzelheiten", "arabic": "تفاصيل", "french": "Détails"}},
@@ -999,7 +999,126 @@ var MainConfig={
 
              
          },
-        "Entity log":{} 
+         "Storage Path": {
+            "doc_title": "",
+            "getDataApi": "config/list_details",
+            "key": "id",
+            "attchment_files_path": "",
+            "job": {
+               "create": {
+               "roles": ["Admin"],
+               "data": [
+                  {
+                     "helper": "none",
+                     "fields": [
+                     {"seqno": "", "field": "id", "name": "Id", "edit": false, "show": false, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Storage path unique identifier", "default": "", "lang": {"english": "Storage Id", "german": "Speicher-ID", "arabic": "معرف التخزين", "french": "ID de stockage"}},
+                     {"seqno": "", "field": "affiliation_ids", "name": "Affiliation IDs", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Associated affiliation identifiers", "default": "", "lang": {"english": "Affiliation IDs", "german": "Zugehörigkeits-IDs", "arabic": "معرفات الانتماء", "french": "IDs d'affiliation"}},
+                     {"seqno": "", "field": "description", "name": "Description", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Storage path description", "default": "", "lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                     {"seqno": "", "field": "remarks", "name": "Remarks", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Additional remarks or notes", "default": "", "lang": {"english": "Remarks", "german": "Bemerkungen", "arabic": "ملاحظات", "french": "Remarques"}},
+                     {"seqno": "", "field": "status", "name": "Status", "edit": false, "show": false, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Current status of storage path", "default": "", "lang": {"english": "Status", "german": "Status", "arabic": "الحالة", "french": "Statut"}},
+                     {"seqno": "", "field": "log", "name": "Log", "edit": false, "show": false, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "System log information", "default": "", "lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}},
+                     {"seqno": "", "field": "created_at", "name": "Created At", "edit": false, "show": false, "control": "datime", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Creation timestamp", "default": "", "lang": {"english": "Created At", "german": "Erstellt am", "arabic": "تم إنشاؤه في", "french": "Créé le"}},
+                     {"seqno": "", "field": "db_path", "name": "Database Path", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Database connection path", "default": "", "lang": {"english": "Database Path", "german": "Datenbankpfad", "arabic": "مسار قاعدة البيانات", "french": "Chemin de base de données"}},
+                     {"seqno": "", "field": "db_type", "name": "Database Type", "edit": true, "show": true, "control": "dropdown", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Type of database system", "default": "", "lang": {"english": "Database Type", "german": "Datenbanktyp", "arabic": "نوع قاعدة البيانات", "french": "Type de base de données"}},
+                     {"seqno": "", "field": "files_path", "name": "Files Path", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "File storage path location", "default": "", "lang": {"english": "Files Path", "german": "Dateipfad", "arabic": "مسار الملفات", "french": "Chemin des fichiers"}},
+                     {"seqno": "", "field": "file_storage_type", "name": "File Storage Type", "edit": true, "show": true, "control": "dropdown", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Type of file storage system", "default": "", "lang": {"english": "File Storage Type", "german": "Dateispeichertyp", "arabic": "نوع تخزين الملفات", "french": "Type de stockage de fichiers"}},
+                     {"seqno": "", "field": "db_access_cred", "name": "Database Access Credentials", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Database access credentials", "default": "", "lang": {"english": "DB Access Credentials", "german": "DB-Zugangsdaten", "arabic": "بيانات الوصول لقاعدة البيانات", "french": "Identifiants d'accès BD"}},
+                     {"seqno": "", "field": "files_access_cred", "name": "Files Access Credentials", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "File storage access credentials", "default": "", "lang": {"english": "Files Access Credentials", "german": "Datei-Zugangsdaten", "arabic": "بيانات الوصول للملفات", "french": "Identifiants d'accès fichiers"}},
+                     {"seqno": "", "field": "storage_pathscol", "name": "Storage Paths Collection", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Collection of storage paths", "default": "", "lang": {"english": "Storage Paths Collection", "german": "Speicherpfad-Sammlung", "arabic": "مجموعة مسارات التخزين", "french": "Collection de chemins de stockage"}}
+                     ],
+                     "edit_option": true,
+                     "delete_option": true
+                  }
+               ],
+               "api": "config/new",
+               "onSuccess": "StoragePath_created()"
+               },
+               "list": {
+               "roles": ["Admin"],
+               "data": [
+                  {
+                     "helper": "none",
+                     "fields": [
+                     {"seqno": "", "field": "id", "name": "Id", "edit": false, "show": false, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Storage path unique identifier", "default": "", "lang": {"english": "Storage Id", "german": "Speicher-ID", "arabic": "معرف التخزين", "french": "ID de stockage"}},
+                     {"seqno": "", "field": "affiliation_ids", "name": "Affiliation IDs", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Associated affiliation identifiers", "default": "", "lang": {"english": "Affiliation IDs", "german": "Zugehörigkeits-IDs", "arabic": "معرفات الانتماء", "french": "IDs d'affiliation"}},
+                     {"seqno": "", "field": "description", "name": "Description", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Storage path description", "default": "", "lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                     {"seqno": "", "field": "remarks", "name": "Remarks", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Additional remarks or notes", "default": "", "lang": {"english": "Remarks", "german": "Bemerkungen", "arabic": "ملاحظات", "french": "Remarques"}},
+                     {"seqno": "", "field": "status", "name": "Status", "edit": true, "show": false, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Current status of storage path", "default": "", "lang": {"english": "Status", "german": "Status", "arabic": "الحالة", "french": "Statut"}},
+                     {"seqno": "", "field": "log", "name": "Log", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "System log information", "default": "", "lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}},
+                     {"seqno": "", "field": "created_at", "name": "Created At", "edit": false, "show": true, "control": "datime", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Creation timestamp", "default": "", "lang": {"english": "Created At", "german": "Erstellt am", "arabic": "تم إنشاؤه في", "french": "Créé le"}},
+                     {"seqno": "", "field": "db_path", "name": "Database Path", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Database connection path", "default": "", "lang": {"english": "Database Path", "german": "Datenbankpfad", "arabic": "مسار قاعدة البيانات", "french": "Chemin de base de données"}},
+                     {"seqno": "", "field": "db_type", "name": "Database Type", "edit": false, "show": true, "control": "dropdown", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Type of database system", "default": "", "lang": {"english": "Database Type", "german": "Datenbanktyp", "arabic": "نوع قاعدة البيانات", "french": "Type de base de données"}},
+                     {"seqno": "", "field": "files_path", "name": "Files Path", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "File storage path location", "default": "", "lang": {"english": "Files Path", "german": "Dateipfad", "arabic": "مسار الملفات", "french": "Chemin des fichiers"}},
+                     {"seqno": "", "field": "file_storage_type", "name": "File Storage Type", "edit": false, "show": true, "control": "dropdown", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Type of file storage system", "default": "", "lang": {"english": "File Storage Type", "german": "Dateispeichertyp", "arabic": "نوع تخزين الملفات", "french": "Type de stockage de fichiers"}},
+                     {"seqno": "", "field": "db_access_cred", "name": "Database Access Credentials", "edit": false, "show": false, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Database access credentials", "default": "", "lang": {"english": "DB Access Credentials", "german": "DB-Zugangsdaten", "arabic": "بيانات الوصول لقاعدة البيانات", "french": "Identifiants d'accès BD"}},
+                     {"seqno": "", "field": "files_access_cred", "name": "Files Access Credentials", "edit": false, "show": false, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "File storage access credentials", "default": "", "lang": {"english": "Files Access Credentials", "german": "Datei-Zugangsdaten", "arabic": "بيانات الوصول للملفات", "french": "Identifiants d'accès fichiers"}},
+                     {"seqno": "", "field": "storage_pathscol", "name": "Storage Paths Collection", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Collection of storage paths", "default": "", "lang": {"english": "Storage Paths Collection", "german": "Speicherpfad-Sammlung", "arabic": "مجموعة مسارات التخزين", "french": "Collection de chemins de stockage"}}
+                     ],
+                     "edit_option": true,
+                     "delete_option": true
+                  }
+               ],
+               "api": "config/list_details",
+               "onSuccess": "StoragePath_listed()"
+               },
+               "update": {
+               "roles": ["Admin"],
+               "data": [
+                  {
+                     "helper": "none",
+                     "fields": [
+                     {"seqno": "", "field": "id", "name": "Id", "edit": false, "show": false, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Storage path unique identifier", "default": "", "lang": {"english": "Storage Id", "german": "Speicher-ID", "arabic": "معرف التخزين", "french": "ID de stockage"}},
+                     {"seqno": "", "field": "affiliation_ids", "name": "Affiliation IDs", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Associated affiliation identifiers", "default": "", "lang": {"english": "Affiliation IDs", "german": "Zugehörigkeits-IDs", "arabic": "معرفات الانتماء", "french": "IDs d'affiliation"}},
+                     {"seqno": "", "field": "description", "name": "Description", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Storage path description", "default": "", "lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                     {"seqno": "", "field": "remarks", "name": "Remarks", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Additional remarks or notes", "default": "", "lang": {"english": "Remarks", "german": "Bemerkungen", "arabic": "ملاحظات", "french": "Remarques"}},
+                     {"seqno": "", "field": "status", "name": "Status", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Current status of storage path", "default": "", "lang": {"english": "Status", "german": "Status", "arabic": "الحالة", "french": "Statut"}},
+                     {"seqno": "", "field": "log", "name": "Log", "edit": false, "show": false, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "System log information", "default": "", "lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}},
+                     {"seqno": "", "field": "created_at", "name": "Created At", "edit": false, "show": true, "control": "datime", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Creation timestamp", "default": "", "lang": {"english": "Created At", "german": "Erstellt am", "arabic": "تم إنشاؤه في", "french": "Créé le"}},
+                     {"seqno": "", "field": "db_path", "name": "Database Path", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Database connection path", "default": "", "lang": {"english": "Database Path", "german": "Datenbankpfad", "arabic": "مسار قاعدة البيانات", "french": "Chemin de base de données"}},
+                     {"seqno": "", "field": "db_type", "name": "Database Type", "edit": true, "show": true, "control": "dropdown", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Type of database system", "default": "", "lang": {"english": "Database Type", "german": "Datenbanktyp", "arabic": "نوع قاعدة البيانات", "french": "Type de base de données"}},
+                     {"seqno": "", "field": "files_path", "name": "Files Path", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "File storage path location", "default": "", "lang": {"english": "Files Path", "german": "Dateipfad", "arabic": "مسار الملفات", "french": "Chemin des fichiers"}},
+                     {"seqno": "", "field": "file_storage_type", "name": "File Storage Type", "edit": true, "show": true, "control": "dropdown", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Type of file storage system", "default": "", "lang": {"english": "File Storage Type", "german": "Dateispeichertyp", "arabic": "نوع تخزين الملفات", "french": "Type de stockage de fichiers"}},
+                     {"seqno": "", "field": "db_access_cred", "name": "Database Access Credentials", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Database access credentials", "default": "", "lang": {"english": "DB Access Credentials", "german": "DB-Zugangsdaten", "arabic": "بيانات الوصول لقاعدة البيانات", "french": "Identifiants d'accès BD"}},
+                     {"seqno": "", "field": "files_access_cred", "name": "Files Access Credentials", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "File storage access credentials", "default": "", "lang": {"english": "Files Access Credentials", "german": "Datei-Zugangsdaten", "arabic": "بيانات الوصول للملفات", "french": "Identifiants d'accès fichiers"}},
+                     {"seqno": "", "field": "storage_pathscol", "name": "Storage Paths Collection", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Collection of storage paths", "default": "", "lang": {"english": "Storage Paths Collection", "german": "Speicherpfad-Sammlung", "arabic": "مجموعة مسارات التخزين", "french": "Collection de chemins de stockage"}}
+                     ],
+                     "edit_option": true,
+                     "delete_option": true
+                  }
+               ],
+               "api": "config/modifications"
+               },
+               "approver": {
+               "roles": ["Approver"],
+               "data": [
+                  {
+                     "helper": "none",
+                     "fields": [
+                     {"seqno": "", "field": "id", "name": "Id", "edit": false, "show": false, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Storage path unique identifier", "default": "", "lang": {"english": "Storage Id", "german": "Speicher-ID", "arabic": "معرف التخزين", "french": "ID de stockage"}},
+                     {"seqno": "", "field": "affiliation_ids", "name": "Affiliation IDs", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Associated affiliation identifiers", "default": "", "lang": {"english": "Affiliation IDs", "german": "Zugehörigkeits-IDs", "arabic": "معرفات الانتماء", "french": "IDs d'affiliation"}},
+                     {"seqno": "", "field": "description", "name": "Description", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Storage path description", "default": "", "lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                     {"seqno": "", "field": "remarks", "name": "Remarks", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Additional remarks or notes", "default": "", "lang": {"english": "Remarks", "german": "Bemerkungen", "arabic": "ملاحظات", "french": "Remarques"}},
+                     {"seqno": "", "field": "status", "name": "Status", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Current status of storage path", "default": "", "lang": {"english": "Status", "german": "Status", "arabic": "الحالة", "french": "Statut"}},
+                     {"seqno": "", "field": "log", "name": "Log", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "System log information", "default": "", "lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}},
+                     {"seqno": "", "field": "created_at", "name": "Created At", "edit": false, "show": true, "control": "datime", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Creation timestamp", "default": "", "lang": {"english": "Created At", "german": "Erstellt am", "arabic": "تم إنشاؤه في", "french": "Créé le"}},
+                     {"seqno": "", "field": "db_path", "name": "Database Path", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Database connection path", "default": "", "lang": {"english": "Database Path", "german": "Datenbankpfad", "arabic": "مسار قاعدة البيانات", "french": "Chemin de base de données"}},
+                     {"seqno": "", "field": "db_type", "name": "Database Type", "edit": true, "show": true, "control": "dropdown", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Type of database system", "default": "", "lang": {"english": "Database Type", "german": "Datenbanktyp", "arabic": "نوع قاعدة البيانات", "french": "Type de base de données"}},
+                     {"seqno": "", "field": "files_path", "name": "Files Path", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "File storage path location", "default": "", "lang": {"english": "Files Path", "german": "Dateipfad", "arabic": "مسار الملفات", "french": "Chemin des fichiers"}},
+                     {"seqno": "", "field": "file_storage_type", "name": "File Storage Type", "edit": true, "show": true, "control": "dropdown", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Type of file storage system", "default": "", "lang": {"english": "File Storage Type", "german": "Dateispeichertyp", "arabic": "نوع تخزين الملفات", "french": "Type de stockage de fichiers"}},
+                     {"seqno": "", "field": "db_access_cred", "name": "Database Access Credentials", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Database access credentials", "default": "", "lang": {"english": "DB Access Credentials", "german": "DB-Zugangsdaten", "arabic": "بيانات الوصول لقاعدة البيانات", "french": "Identifiants d'accès BD"}},
+                     {"seqno": "", "field": "files_access_cred", "name": "Files Access Credentials", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "File storage access credentials", "default": "", "lang": {"english": "Files Access Credentials", "german": "Datei-Zugangsdaten", "arabic": "بيانات الوصول للملفات", "french": "Identifiants d'accès fichiers"}},
+                     {"seqno": "", "field": "storage_pathscol", "name": "Storage Paths Collection", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Collection of storage paths", "default": "", "lang": {"english": "Storage Paths Collection", "german": "Speicherpfad-Sammlung", "arabic": "مجموعة مسارات التخزين", "french": "Collection de chemins de stockage"}}
+                     ],
+                     "edit_option": true,
+                     "delete_option": true
+                  }
+               ],
+               "api": "config/modifications",
+               },
+               "cancel":{"api":"config","onSuccess":"Role_canceled()"},
+            },
+         },
+      "Entity log":{} 
 
     },
     "Network Config":{
@@ -2392,6 +2511,840 @@ var MainConfig={
   
         }
       },
+      
+      "Program Type": {
+         "job": {
+            "list": {
+            "api": "config/list_details",
+            "data": [
+               {
+                  "fields": [
+                  {
+                     "edit": false,
+                     "lang": {
+                        "arabic": "معرف نوع البرنامج",
+                        "french": "ID du type de programme",
+                        "german": "Programmtyp-ID",
+                        "english": "Program Type Id"
+                     },
+                     "name": "Id",
+                     "show": false,
+                     "field": "id",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Program Type Id",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": true
+                  },
+                  {
+                     "edit": true,
+                     "lang": {
+                        "arabic": "نوع البرنامج",
+                        "french": "Type de programme",
+                        "german": "Programmtyp",
+                        "english": "Program Type"
+                     },
+                     "name": "Program Type",
+                     "show": true,
+                     "field": "program_type",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Type of program",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": true
+                  },
+                  {
+                     "edit": true,
+                     "lang": {
+                        "arabic": "الوصف",
+                        "french": "Description",
+                        "german": "Beschreibung",
+                        "english": "Description"
+                     },
+                     "name": "Description",
+                     "show": true,
+                     "field": "description",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Description of program type",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": false
+                  },
+                  {
+                     "edit": true,
+                     "lang": {
+                        "arabic": "الحالة",
+                        "french": "Statut",
+                        "german": "Status",
+                        "english": "Status"
+                     },
+                     "name": "Status",
+                     "show": true,
+                     "field": "status",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Status of program type",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": false
+                  },
+                  {
+                     "edit": false,
+                     "lang": {
+                        "arabic": "السجل",
+                        "french": "Journal",
+                        "german": "Protokoll",
+                        "english": "Log"
+                     },
+                     "name": "Log",
+                     "show": true,
+                     "field": "log",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Log information",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": false
+                  },
+                  {
+                     "edit": false,
+                     "lang": {
+                        "arabic": "ملاحظات",
+                        "french": "Remarques",
+                        "german": "Bemerkungen",
+                        "english": "Remarks"
+                     },
+                     "name": "Remarks",
+                     "show": true,
+                     "field": "remarks",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Additional remarks",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": false
+                  },
+                  {
+                     "edit": false,
+                     "lang": {
+                        "arabic": "تم الإنشاء في",
+                        "french": "Créé à",
+                        "german": "Erstellt am",
+                        "english": "Created At"
+                     },
+                     "name": "Created At",
+                     "show": true,
+                     "field": "created_at",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Creation timestamp",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": false
+                  }
+                  ],
+                  "helper": "none",
+                  "edit_option": true,
+                  "delete_option": true
+               }
+            ],
+            "roles": [
+               "Admin"
+            ],
+            "onSuccess": "ProgramType_listed()"
+            },
+            "cancel": {
+            "api": "config",
+            "onSuccess": "ProgramType_canceled()"
+            },
+            "create": {
+            "api": "config/new",
+            "data": [
+               {
+                  "fields": [
+                  {
+                     "edit": false,
+                     "lang": {
+                        "arabic": "معرف نوع البرنامج",
+                        "french": "ID du type de programme",
+                        "german": "Programmtyp-ID",
+                        "english": "Program Type Id"
+                     },
+                     "name": "Id",
+                     "show": false,
+                     "field": "id",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Program Type Id",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": true
+                  },
+                  {
+                     "edit": true,
+                     "lang": {
+                        "arabic": "نوع البرنامج",
+                        "french": "Type de programme",
+                        "german": "Programmtyp",
+                        "english": "Program Type"
+                     },
+                     "name": "Program Type",
+                     "show": true,
+                     "field": "program_type",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Type of program",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": true
+                  },
+                  {
+                     "edit": true,
+                     "lang": {
+                        "arabic": "الوصف",
+                        "french": "Description",
+                        "german": "Beschreibung",
+                        "english": "Description"
+                     },
+                     "name": "Description",
+                     "show": true,
+                     "field": "description",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Description of program type",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": false
+                  },
+                  {
+                     "edit": false,
+                     "lang": {
+                        "arabic": "الحالة",
+                        "french": "Statut",
+                        "german": "Status",
+                        "english": "Status"
+                     },
+                     "name": "Status",
+                     "show": false,
+                     "field": "status",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Status of program type",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": false
+                  },
+                  {
+                     "edit": false,
+                     "lang": {
+                        "arabic": "السجل",
+                        "french": "Journal",
+                        "german": "Protokoll",
+                        "english": "Log"
+                     },
+                     "name": "Log",
+                     "show": false,
+                     "field": "log",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Log information",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": false
+                  },
+                  {
+                     "edit": false,
+                     "lang": {
+                        "arabic": "ملاحظات",
+                        "french": "Remarques",
+                        "german": "Bemerkungen",
+                        "english": "Remarks"
+                     },
+                     "name": "Remarks",
+                     "show": false,
+                     "field": "remarks",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Additional remarks",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": false
+                  },
+                  {
+                     "edit": false,
+                     "lang": {
+                        "arabic": "تم الإنشاء في",
+                        "french": "Créé à",
+                        "german": "Erstellt am",
+                        "english": "Created At"
+                     },
+                     "name": "Created At",
+                     "show": false,
+                     "field": "created_at",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Creation timestamp",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": false
+                  }
+                  ],
+                  "helper": "none",
+                  "edit_option": true,
+                  "delete_option": true
+               }
+            ],
+            "roles": [
+               "Admin"
+            ],
+            "onSuccess": "ProgramType_created()"
+            },
+            "update": {
+            "api": "config/modifications",
+            "data": [
+               {
+                  "fields": [
+                  {
+                     "edit": false,
+                     "lang": {
+                        "arabic": "معرف نوع البرنامج",
+                        "french": "ID du type de programme",
+                        "german": "Programmtyp-ID",
+                        "english": "Program Type Id"
+                     },
+                     "name": "Id",
+                     "show": false,
+                     "field": "id",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Program Type Id",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": true
+                  },
+                  {
+                     "edit": true,
+                     "lang": {
+                        "arabic": "نوع البرنامج",
+                        "french": "Type de programme",
+                        "german": "Programmtyp",
+                        "english": "Program Type"
+                     },
+                     "name": "Program Type",
+                     "show": true,
+                     "field": "program_type",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Type of program",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": true
+                  },
+                  {
+                     "edit": true,
+                     "lang": {
+                        "arabic": "الوصف",
+                        "french": "Description",
+                        "german": "Beschreibung",
+                        "english": "Description"
+                     },
+                     "name": "Description",
+                     "show": true,
+                     "field": "description",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Description of program type",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": false
+                  },
+                  {
+                     "edit": true,
+                     "lang": {
+                        "arabic": "الحالة",
+                        "french": "Statut",
+                        "german": "Status",
+                        "english": "Status"
+                     },
+                     "name": "Status",
+                     "show": true,
+                     "field": "status",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Status of program type",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": false
+                  },
+                  {
+                     "edit": false,
+                     "lang": {
+                        "arabic": "السجل",
+                        "french": "Journal",
+                        "german": "Protokoll",
+                        "english": "Log"
+                     },
+                     "name": "Log",
+                     "show": false,
+                     "field": "log",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Log information",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": false
+                  },
+                  {
+                     "edit": true,
+                     "lang": {
+                        "arabic": "ملاحظات",
+                        "french": "Remarques",
+                        "german": "Bemerkungen",
+                        "english": "Remarks"
+                     },
+                     "name": "Remarks",
+                     "show": true,
+                     "field": "remarks",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Additional remarks",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": false
+                  },
+                  {
+                     "edit": false,
+                     "lang": {
+                        "arabic": "تم الإنشاء في",
+                        "french": "Créé à",
+                        "german": "Erstellt am",
+                        "english": "Created At"
+                     },
+                     "name": "Created At",
+                     "show": true,
+                     "field": "created_at",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Creation timestamp",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": false
+                  }
+                  ],
+                  "helper": "none",
+                  "edit_option": true,
+                  "delete_option": true
+               }
+            ],
+            "roles": [
+               "Admin"
+            ]
+            },
+            "approver": {
+            "data": [
+               {
+                  "fields": [
+                  {
+                     "edit": false,
+                     "lang": {
+                        "arabic": "معرف نوع البرنامج",
+                        "french": "ID du type de programme",
+                        "german": "Programmtyp-ID",
+                        "english": "Program Type Id"
+                     },
+                     "name": "Id",
+                     "show": false,
+                     "field": "id",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Program Type Id",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": true
+                  },
+                  {
+                     "edit": true,
+                     "lang": {
+                        "arabic": "نوع البرنامج",
+                        "french": "Type de programme",
+                        "german": "Programmtyp",
+                        "english": "Program Type"
+                     },
+                     "name": "Program Type",
+                     "show": true,
+                     "field": "program_type",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Type of program",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": true
+                  },
+                  {
+                     "edit": true,
+                     "lang": {
+                        "arabic": "الوصف",
+                        "french": "Description",
+                        "german": "Beschreibung",
+                        "english": "Description"
+                     },
+                     "name": "Description",
+                     "show": true,
+                     "field": "description",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Description of program type",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": false
+                  },
+                  {
+                     "edit": true,
+                     "lang": {
+                        "arabic": "الحالة",
+                        "french": "Statut",
+                        "german": "Status",
+                        "english": "Status"
+                     },
+                     "name": "Status",
+                     "show": true,
+                     "field": "status",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Status of program type",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": false
+                  },
+                  {
+                     "edit": false,
+                     "lang": {
+                        "arabic": "السجل",
+                        "french": "Journal",
+                        "german": "Protokoll",
+                        "english": "Log"
+                     },
+                     "name": "Log",
+                     "show": true,
+                     "field": "log",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Log information",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": false
+                  },
+                  {
+                     "edit": true,
+                     "lang": {
+                        "arabic": "ملاحظات",
+                        "french": "Remarques",
+                        "german": "Bemerkungen",
+                        "english": "Remarks"
+                     },
+                     "name": "Remarks",
+                     "show": true,
+                     "field": "remarks",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Additional remarks",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": false
+                  },
+                  {
+                     "edit": false,
+                     "lang": {
+                        "arabic": "تم الإنشاء في",
+                        "french": "Créé à",
+                        "german": "Erstellt am",
+                        "english": "Created At"
+                     },
+                     "name": "Created At",
+                     "show": true,
+                     "field": "created_at",
+                     "seqno": "",
+                     "control": "text",
+                     "default": "",
+                     "tooltip": "Creation timestamp",
+                     "trigger": [
+                        {
+                        "event": "onchange",
+                        "function": "tab_onchange_trigger"
+                        },
+                        {
+                        "event": "onselect",
+                        "function": "tab_onselect_trigger"
+                        }
+                     ],
+                     "mandatory": false
+                  }
+                  ],
+                  "helper": "none",
+                  "edit_option": true,
+                  "delete_option": false
+               }
+            ],
+            "roles": [
+               "Approver"
+            ],
+            "onSuccess": "ProgramType_approved()"
+            }
+         },
+         "key": "id",
+         "doc_title": "",
+         "getDataApi": "config/list_details",
+         "attchment_files_path": ""
+  
+      }
+     
+
    
     },
     "Service Config":{
@@ -2482,8 +3435,7 @@ var MainConfig={
          }
   
         }
-      },
-   
+      }
     },
     "Subscriber Config":{
         "controls":[
@@ -2901,7 +3853,7 @@ var MainConfig={
                             {"seqno":"","field":"affiliation_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
                             {"seqno":"","field":"description","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
                             {"seqno":"","field":"ui_template","edit":true,"show":true,"control":"field-attribute-control","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
-                        ],
+                           ],
                         "edit_option":true,
                         "delete_option":true
                     }
@@ -3216,7 +4168,7 @@ var MainConfig={
                 "cancel":{"api":"config","onSuccess":"Role_canceled()"}
             }
         },
-        "Helper Functions":{
+        "Function Registry":{
             "doc_title":"","getDataApi":"config/list_details",
             "key":"id",
             "attchment_files_path":"",
@@ -3226,18 +4178,16 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-{"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
                            {"seqno":"","field":"id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
                            {"seqno":"","field":"helper_functions_name","name":"Trigger Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Helper Functions Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
-                           {"seqno":"","field":"type","name":"Helper Function","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","options":["source","deposit","process"],"filter_type":"","filter_default_value":"","lang":{"english":"Type","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
-                           {"seqno":"","field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
-                           {"seqno":"","field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
+                           {"seqno":"","field":"function_type","name":"Helper Function","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"source","options":["source","deposit","process"],"filter_type":"","filter_default_value":"","lang":{"english":"Type","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
+                           {"seqno":"","field":"frontorback","name":"UI Template ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
                            {"seqno":"","field":"helper_functions_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
-                           {"seqno":"","field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
-                           {"seqno":"","field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","g111erman":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
+                           {"seqno":"","field":"status","name":"Status","edit":false,"show":false,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
+                           {"seqno":"","field":"remarks","name":"Remarks","edit":false,"show":false,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","g111erman":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
                            {"seqno":"","field":"version","name":"Version","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"1","filter_type":"","filter_default_value":"","lang":{"english":"Version","german":"Version","arabic":"الإصدار","french":"Version"}},
-                           {"seqno":"","field":"created_at","name":"Created At","edit":false,"show":true,"control":"datetime","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}},
-                           {"seqno":"","field":"log","name":"Helper Function","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}}
+                           {"seqno":"","field":"created_at","name":"Created At","edit":false,"show":false,"control":"datetime","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"datetime","filter_default_value":"","lang":{"english":"Created At","german":"Erstellt am","arabic":"تاريخ الإنشاء","french":"Créé le"}},
+                           {"seqno":"","field":"log","name":"Helper Function","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Function","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -3252,12 +4202,10 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-{"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
                            {"seqno":"","field":"id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
                            {"seqno":"","field":"helper_functions_name","name":"Trigger Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Helper Functions Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
-                           {"seqno":"","field":"type","name":"Helper Function","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","options":["source","deposit","process"],"filter_type":"","filter_default_value":"","lang":{"english":"Type","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
-                           {"seqno":"","field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
-                           {"seqno":"","field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
+                           {"seqno":"","field":"function_type","name":"Helper Function","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"source","options":["source","deposit","process"],"filter_type":"","filter_default_value":"","lang":{"english":"Type","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
+                           {"seqno":"","field":"frontorback","name":"UI Template ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
                            {"seqno":"","field":"helper_functions_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
                            {"seqno":"","field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
                            {"seqno":"","field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","g111erman":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
@@ -3280,9 +4228,8 @@ var MainConfig={
 {"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
                            {"seqno":"","field":"id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
                            {"seqno":"","field":"helper_functions_name","name":"Trigger Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Helper Functions Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
-                           {"seqno":"","field":"type","name":"Helper Function","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","options":["source","deposit","process"],"filter_type":"","filter_default_value":"","lang":{"english":"Type","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
-                           {"seqno":"","field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
-                           {"seqno":"","field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
+                           {"seqno":"","field":"function_type","name":"Helper Function","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","options":["source","deposit","process"],"filter_type":"","filter_default_value":"","lang":{"english":"Type","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
+                           {"seqno":"","field":"frontorback","name":"UI Template ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
                            {"seqno":"","field":"helper_functions_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
                            {"seqno":"","field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
                            {"seqno":"","field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","g111erman":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
@@ -3309,9 +4256,8 @@ var MainConfig={
 {"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
                            {"seqno":"","field":"id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Id","german":"Kennung","arabic":"المعرف","french":"Identifiant"}},
                            {"seqno":"","field":"helper_functions_name","name":"Trigger Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Helper Functions Name","german":"Auslösername","arabic":"اسم الزناد","french":"Nom du déclencheur"}},
-                           {"seqno":"","field":"type","name":"Helper Function","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","options":["source","deposit","process"],"filter_type":"","filter_default_value":"","lang":{"english":"Type","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
-                           {"seqno":"","field":"ui_template_id","name":"UI Template ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
-                           {"seqno":"","field":"control_id","name":"Control ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Control ID","german":"Steuerungs-ID","arabic":"معرف التحكم","french":"ID de contrôle"}},
+                           {"seqno":"","field":"function_type","name":"Helper Function","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","options":["source","deposit","process"],"filter_type":"","filter_default_value":"","lang":{"english":"Type","german":"Hilfsfunktion","arabic":"دالة المساعد","french":"Fonction d'aide"}},
+                           {"seqno":"","field":"frontorback","name":"UI Template ID","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"UI Template ID","german":"Vorlagen-ID","arabic":"معرف القالب","french":"ID du modèle"}},
                            {"seqno":"","field":"helper_functions_description","name":"Trigger Description","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Helper Description","german":"Auslöserbeschreibung","arabic":"وصف الزناد","french":"Description du déclencheur"}},
                            {"seqno":"","field":"status","name":"Status","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"active","filter_type":"dropdown","filter_default_value":"active","lang":{"english":"Status","german":"Status","arabic":"الحالة","french":"Statut"}},
                            {"seqno":"","field":"remarks","name":"Remarks","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Remarks","g111erman":"Bemerkungen","arabic":"ملاحظات","french":"Remarques"}},
@@ -3328,7 +4274,110 @@ var MainConfig={
                 },
                 "cancel":{"api":"config","onSuccess":"Role_canceled()"}
             }
-        }
+        },
+        "Image Registry": {
+         "doc_title": "",
+         "getDataApi": "config/list_details",
+         "key": "id",
+         "attchment_files_path": "",
+         "job": {
+            "create": {
+                  "roles": ["Admin"],
+                  "data": [
+                     {
+                        "helper": "none",
+                        "fields": [
+                              {"seqno": "", "field": "id", "name": "Id", "edit": false, "show": false, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Unique identifier for the file", "default": "", "lang": {"english": "File Id", "german": "Datei-ID", "arabic": "معرف الملف", "french": "ID du fichier"}},
+                              {"seqno": "", "field": "filename", "name": "Filename", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Name of the file", "default": "", "lang": {"english": "Filename", "german": "Dateiname", "arabic": "اسم الملف", "french": "Nom du fichier"}},
+                              {"seqno": "", "field": "file_path", "name": "File Path", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Path where the file is stored", "default": "", "lang": {"english": "File Path", "german": "Dateipfad", "arabic": "مسار الملف", "french": "Chemin du fichier"}},
+                              {"seqno": "", "field": "title", "name": "Title", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Title of the file", "default": "", "lang": {"english": "Title", "german": "Titel", "arabic": "العنوان", "french": "Titre"}},
+                              {"seqno": "", "field": "description", "name": "Description", "edit": true, "show": true, "control": "textarea", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Description of the file", "default": "", "lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                              {"seqno": "", "field": "affiliation_id", "name": "Affiliation ID", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Organization or affiliation identifier", "default": "", "lang": {"english": "Affiliation ID", "german": "Zugehörigkeits-ID", "arabic": "معرف الانتماء", "french": "ID d'affiliation"}},
+                              {"seqno": "", "field": "status", "name": "Status", "edit": false, "show": false, "control": "select", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Current status of the file", "default": "active", "lang": {"english": "Status", "german": "Status", "arabic": "الحالة", "french": "Statut"}},
+                              {"seqno": "", "field": "cretaed_at", "name": "Created At", "edit": false, "show": false, "control": "datetime", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "File creation timestamp", "default": "", "lang": {"english": "Created At", "german": "Erstellt am", "arabic": "تم الإنشاء في", "french": "Créé le"}},
+                              {"seqno": "", "field": "log", "name": "Log", "edit": false, "show": false, "control": "textarea", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "System log information", "default": "", "lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}},
+                              {"seqno": "", "field": "remarks", "name": "Remarks", "edit": true, "show": true, "control": "textarea", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Additional remarks or notes", "default": "", "lang": {"english": "Remarks", "german": "Bemerkungen", "arabic": "ملاحظات", "french": "Remarques"}}
+                        ],
+                        "edit_option": true,
+                        "delete_option": true
+                     }
+                  ],
+                  "api": "files/new",
+                  "onSuccess": "File_created()"
+            },
+            "list": {
+                  "roles": ["Admin"],
+                  "data": [
+                     {
+                        "helper": "none",
+                        "fields": [
+                              {"seqno": "", "field": "id", "name": "Id", "edit": false, "show": false, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Unique identifier for the file", "default": "", "lang": {"english": "File Id", "german": "Datei-ID", "arabic": "معرف الملف", "french": "ID du fichier"}},
+                              {"seqno": "", "field": "filename", "name": "Filename", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Name of the file", "default": "", "lang": {"english": "Filename", "german": "Dateiname", "arabic": "اسم الملف", "french": "Nom du fichier"}},
+                              {"seqno": "", "field": "file_path", "name": "File Path", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Path where the file is stored", "default": "", "lang": {"english": "File Path", "german": "Dateipfad", "arabic": "مسار الملف", "french": "Chemin du fichier"}},
+                              {"seqno": "", "field": "title", "name": "Title", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Title of the file", "default": "", "lang": {"english": "Title", "german": "Titel", "arabic": "العنوان", "french": "Titre"}},
+                              {"seqno": "", "field": "description", "name": "Description", "edit": true, "show": true, "control": "textarea", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Description of the file", "default": "", "lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                              {"seqno": "", "field": "affiliation_id", "name": "Affiliation ID", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Organization or affiliation identifier", "default": "", "lang": {"english": "Affiliation ID", "german": "Zugehörigkeits-ID", "arabic": "معرف الانتماء", "french": "ID d'affiliation"}},
+                              {"seqno": "", "field": "status", "name": "Status", "edit": true, "show": true, "control": "select", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Current status of the file", "default": "active", "lang": {"english": "Status", "german": "Status", "arabic": "الحالة", "french": "Statut"}},
+                              {"seqno": "", "field": "cretaed_at", "name": "Created At", "edit": false, "show": true, "control": "datetime", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "File creation timestamp", "default": "", "lang": {"english": "Created At", "german": "Erstellt am", "arabic": "تم الإنشاء في", "french": "Créé le"}},
+                              {"seqno": "", "field": "log", "name": "Log", "edit": false, "show": true, "control": "textarea", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "System log information", "default": "", "lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}},
+                              {"seqno": "", "field": "remarks", "name": "Remarks", "edit": false, "show": true, "control": "textarea", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Additional remarks or notes", "default": "", "lang": {"english": "Remarks", "german": "Bemerkungen", "arabic": "ملاحظات", "french": "Remarques"}}
+                        ],
+                        "edit_option": true,
+                        "delete_option": true
+                     }
+                  ],
+                  "api": "config/list_details",
+                  "onSuccess": "File_listed()"
+            },
+            "update": {
+                  "roles": ["Admin"],
+                  "data": [
+                     {
+                        "helper": "none",
+                        "fields": [
+                              {"seqno": "", "field": "id", "name": "Id", "edit": false, "show": false, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Unique identifier for the file", "default": "", "lang": {"english": "File Id", "german": "Datei-ID", "arabic": "معرف الملف", "french": "ID du fichier"}},
+                              {"seqno": "", "field": "filename", "name": "Filename", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Name of the file", "default": "", "lang": {"english": "Filename", "german": "Dateiname", "arabic": "اسم الملف", "french": "Nom du fichier"}},
+                              {"seqno": "", "field": "file_path", "name": "File Path", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Path where the file is stored", "default": "", "lang": {"english": "File Path", "german": "Dateipfad", "arabic": "مسار الملف", "french": "Chemin du fichier"}},
+                              {"seqno": "", "field": "title", "name": "Title", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Title of the file", "default": "", "lang": {"english": "Title", "german": "Titel", "arabic": "العنوان", "french": "Titre"}},
+                              {"seqno": "", "field": "description", "name": "Description", "edit": true, "show": true, "control": "textarea", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Description of the file", "default": "", "lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                              {"seqno": "", "field": "affiliation_id", "name": "Affiliation ID", "edit": true, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Organization or affiliation identifier", "default": "", "lang": {"english": "Affiliation ID", "german": "Zugehörigkeits-ID", "arabic": "معرف الانتماء", "french": "ID d'affiliation"}},
+                              {"seqno": "", "field": "status", "name": "Status", "edit": true, "show": true, "control": "select", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Current status of the file", "default": "active", "lang": {"english": "Status", "german": "Status", "arabic": "الحالة", "french": "Statut"}},
+                              {"seqno": "", "field": "cretaed_at", "name": "Created At", "edit": false, "show": false, "control": "datetime", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "File creation timestamp", "default": "", "lang": {"english": "Created At", "german": "Erstellt am", "arabic": "تم الإنشاء في", "french": "Créé le"}},
+                              {"seqno": "", "field": "log", "name": "Log", "edit": false, "show": false, "control": "textarea", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "System log information", "default": "", "lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}},
+                              {"seqno": "", "field": "remarks", "name": "Remarks", "edit": true, "show": true, "control": "textarea", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Additional remarks or notes", "default": "", "lang": {"english": "Remarks", "german": "Bemerkungen", "arabic": "ملاحظات", "french": "Remarques"}}
+                        ],
+                        "edit_option": true,
+                        "delete_option": true
+                     }
+                  ],
+                  "api": "files/modifications"
+            },
+            "approver": {
+                  "roles": ["Approver"],
+                  "data": [
+                     {
+                        "helper": "none",
+                        "fields": [
+                              {"seqno": "", "field": "id", "name": "Id", "edit": false, "show": false, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Unique identifier for the file", "default": "", "lang": {"english": "File Id", "german": "Datei-ID", "arabic": "معرف الملف", "french": "ID du fichier"}},
+                              {"seqno": "", "field": "filename", "name": "Filename", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Name of the file", "default": "", "lang": {"english": "Filename", "german": "Dateiname", "arabic": "اسم الملف", "french": "Nom du fichier"}},
+                              {"seqno": "", "field": "file_path", "name": "File Path", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Path where the file is stored", "default": "", "lang": {"english": "File Path", "german": "Dateipfad", "arabic": "مسار الملف", "french": "Chemin du fichier"}},
+                              {"seqno": "", "field": "title", "name": "Title", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Title of the file", "default": "", "lang": {"english": "Title", "german": "Titel", "arabic": "العنوان", "french": "Titre"}},
+                              {"seqno": "", "field": "description", "name": "Description", "edit": false, "show": true, "control": "textarea", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Description of the file", "default": "", "lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                              {"seqno": "", "field": "affiliation_id", "name": "Affiliation ID", "edit": false, "show": true, "control": "text", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": true, "tooltip": "Organization or affiliation identifier", "default": "", "lang": {"english": "Affiliation ID", "german": "Zugehörigkeits-ID", "arabic": "معرف الانتماء", "french": "ID d'affiliation"}},
+                              {"seqno": "", "field": "status", "name": "Status", "edit": true, "show": true, "control": "select", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Current status of the file", "default": "active", "lang": {"english": "Status", "german": "Status", "arabic": "الحالة", "french": "Statut"}},
+                              {"seqno": "", "field": "cretaed_at", "name": "Created At", "edit": false, "show": true, "control": "datetime", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "File creation timestamp", "default": "", "lang": {"english": "Created At", "german": "Erstellt am", "arabic": "تم الإنشاء في", "french": "Créé le"}},
+                              {"seqno": "", "field": "log", "name": "Log", "edit": false, "show": true, "control": "textarea", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "System log information", "default": "", "lang": {"english": "Log", "german": "Protokoll", "arabic": "السجل", "french": "Journal"}},
+                              {"seqno": "", "field": "remarks", "name": "Remarks", "edit": true, "show": true, "control": "textarea", "trigger": [{"event": "onchange", "function": "tab_onchange_trigger"}, {"event": "onselect", "function": "tab_onselect_trigger"}], "mandatory": false, "tooltip": "Additional remarks or notes", "default": "", "lang": {"english": "Remarks", "german": "Bemerkungen", "arabic": "ملاحظات", "french": "Remarques"}}
+                        ],
+                        "edit_option": true,
+                        "delete_option": false
+                     }
+                  ],
+                  "onSuccess": "File_approved()"
+            },
+            "cancel": {"api": "files", "onSuccess": "File_canceled()"}
+         }
+      }
     },
     "App Config":{
         "controls":[
