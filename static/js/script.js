@@ -23,7 +23,6 @@ function get_data_list(selected_item,where_data,block_no,block_size){
         }
     }
     console.log("User Affiliations:",localStorage.getItem("my_current_affiliation"));
-
     //if(tab_status[page_load_conf.tab]==0){
         console.log(page_load_conf.tab, tab_status[page_load_conf.tab])
         console.log(data_list_body)
@@ -812,3 +811,25 @@ function refreshControlContent(controlId, options = {}) {
     }
 }
 
+
+/** 
+ * example to use this function. This is a gereral function to get data from any API endpoint 
+ * based on the body and method provided.
+ */
+async function test_API_call() {
+     var control_data_body={
+            "requestor_id":"", 
+            "request_token": "", 
+            "tab":"Tab Config",
+            "affiliations": JSON.parse(localStorage.getItem("my_current_affiliation[0].id")),
+            "event": "getTabContol",
+            "type": "Tab Registry",
+            "qry": {
+                "select_fields": ["*"], 
+                "where_data": {"tab_name":"Entity Config"}
+                }
+        }
+       console.log(control_data_body)
+       var get_config = await API_call(domain,"config/list_details",control_data_body,"POST",false);   
+       console.log(get_config)
+}

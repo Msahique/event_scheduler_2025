@@ -286,7 +286,7 @@ function load_preview_tabs() {
     console.log(tab_status);
     
 }
-
+/*
 function API_call(domain,endpoint,body,method){
     var end_point = domain+endpoint;
     console.log(end_point, method)
@@ -329,7 +329,65 @@ function API_call(domain,endpoint,body,method){
     tab_status[page_load_conf.tab]=1;
     console.log(tab_status);
     
+}*/
+
+// Independent reusable API utility
+async function API_call(domain, endpoint, body = {}, method = "GET", autoPresent = true) {
+    let end_point = domain + endpoint;
+    console.log(end_point, body, method , autoPresent); 
+
+    let response;
+    try {
+        if (method !== "GET") {
+            console.log("inside post");
+            response = await fetch(end_point, {
+                method,
+                body: JSON.stringify(body),
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            });
+        } else {
+            console.log("inside get");
+            response = await fetch(end_point, {
+                method,
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            });
+        }
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        let raps = await response.json(); console.log(raps)
+        let result = raps || "No data found";
+        console.log(result, page_load_conf.tab, body.type);
+        // 🔹 Keep old flow intact (optional auto-present)
+        if (autoPresent) {
+            console.log(result, page_load_conf.tab, body.type);
+            if (body.type) {
+                present_Data(result, body.type);
+            } else {
+                present_Data(result, null);
+            }
+            tab_status[page_load_conf.tab] = 1;
+            console.log(tab_status);
+        }
+        
+        return result;  // 🔹 Independent usage
+    } catch (err) {
+        console.error("API_call error:", err);
+        throw err;  // let caller handle errors
+    }
 }
+
+
+
+
 
 /* USEAGE:  getDocumentConfigWithCache("https://mydomain.com", "/config/list_details", { type: "Invoice" }, "POST");    */
 async function getDocumentConfigWithCache(domain, endpoint, body, method) {
