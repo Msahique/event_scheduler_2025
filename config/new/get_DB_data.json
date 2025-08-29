@@ -53,5 +53,9 @@
     "DAQ Config":{
         "Env Measurements":"env_measurements",
         "Chart Templates":"chart_templates"
+    },
+     "Tab Config":{
+        "Tab Registry":"tab_registry"
     }
+
 }

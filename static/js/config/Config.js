@@ -4635,7 +4635,237 @@ var MainConfig={
                "cancel":{"api":"config","onSuccess":"Role_canceled()"}
             }
          }
-    }
+    },
+    "Tab Config":{
+      "controls":[
+         {"type":"button","tooltip":"Add","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
+         {"type":"button","tooltip":"Print","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
+         {"type":"button","tooltip":"Edit","tag":"print","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
+         {"type":"button","tooltip":"Delete","tag":"print","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
+         {"type":"button","tooltip":"Graph","tag":"graphs","roles":["Admin"],"name":"<i class='fa fa-chart-bar'></i> ","function":"graphInitialization()","class":"btn btn-primary btn-xs my-xs-btn"},
+         {"type": "select", "tooltip":"this is a test description","tag": "chartTemplates", "roles": ["Admin"], "name": "DAQ Config", "options": [],"function":"getChartTemplate","textContent": "Chart Templates"},
+         {"type": "select", "tooltip":"this is a test description","tag": "items", "roles": ["Admin"], "name": "DAQ Config", "options": ["Tab Registry","Chart Templates"],"textContent": "Items"},
+         {"type": "select", "tooltip":"this is a test description","tag": "entriesPerPage", "roles": ["Admin","Approver","User"], "name": "EntriesPerPage", "options": [2,3,5,10,15,20,25,30,35,40,45,50], "textContent": "Rows/Page"},
+      ],
+      "Roles":["Admin"],
+      "Tab Registry": {
+         "doc_title": "",
+         "getDataApi": "config/list_details",
+         "key": "id",
+         "attchment_files_path": "",
+         "job": {
+            "create": {
+               "roles": ["Admin"],
+               "data": [
+               {
+                  "helper": "none",
+                  "fields": [
+                     {
+                     "seqno": "",
+                     "field": "tab_name",
+                     "edit": true,
+                     "show": true,
+                     "control": "text",
+                     "trigger": [
+                        { "event": "onchange", "function": "tab_onchange_trigger" }
+                     ],
+                     "mandatory": true,
+                     "tooltip": "Enter the Tab Name",
+                     "default": "",
+                     "lang": {
+                        "english": "Tab Name",
+                        "german": "Registername",
+                        "arabic": "اسم التبويب",
+                        "french": "Nom de l'onglet"
+                     }
+                     },
+                     {
+                     "seqno": "",
+                     "field": "tab_common_template",
+                     "edit": true,
+                     "show": true,
+                     "control": "text",
+                     "trigger": [
+                        { "event": "onchange", "function": "tab_onchange_trigger" }
+                     ],
+                     "mandatory": true,
+                     "tooltip": "Enter the Tab Common Template",
+                     "default": "",
+                     "lang": {
+                        "english": "Tab Common Template",
+                        "german": "Gemeinsame Vorlage",
+                        "arabic": "القالب المشترك للتبويب",
+                        "french": "Modèle commun d'onglet"
+                     }
+                     }
+                  ]
+               }
+               ],
+               "api": "config/new",
+               "onSuccess": "Tab_created()"
+            },
+            "list": {
+               "roles": ["Admin"],
+               "data": [
+               {
+                  "helper": "none",
+                  "fields": [
+                     {
+                     "seqno": "",
+                     "field": "id",
+                     "edit": false,
+                     "show": false,
+                     "control": "text",
+                     "trigger": [
+                        { "event": "onchange", "function": "tab_onchange_trigger" },
+                        { "event": "onselect", "function": "tab_onselect_trigger" }
+                     ],
+                     "mandatory": false,
+                     "tooltip": "Unique Tab ID",
+                     "default": "",
+                     "filter_type": "textbox",
+                     "filter_default_value": "",
+                     "lang": {
+                        "english": "ID",
+                        "german": "ID",
+                        "arabic": "المعرف",
+                        "french": "Identifiant"
+                     }
+                     },
+                     {
+                     "seqno": "",
+                     "field": "tab_name",
+                     "edit": false,
+                     "show": true,
+                     "control": "text",
+                     "trigger": [
+                        { "event": "onchange", "function": "tab_onchange_trigger" },
+                        { "event": "onselect", "function": "tab_onselect_trigger" }
+                     ],
+                     "mandatory": true,
+                     "tooltip": "Tab Name",
+                     "default": "",
+                     "filter_type": "textbox",
+                     "filter_default_value": "",
+                     "lang": {
+                        "english": "Tab Name",
+                        "german": "Registername",
+                        "arabic": "اسم التبويب",
+                        "french": "Nom de l'onglet"
+                     }
+                     },
+                     {
+                     "seqno": "",
+                     "field": "tab_common_template",
+                     "edit": false,
+                     "show": true,
+                     "control": "text",
+                     "trigger": [
+                        { "event": "onchange", "function": "tab_onchange_trigger" },
+                        { "event": "onselect", "function": "tab_onselect_trigger" }
+                     ],
+                     "mandatory": true,
+                     "tooltip": "Tab Common Template",
+                     "default": "",
+                     "filter_type": "textbox",
+                     "filter_default_value": "",
+                     "lang": {
+                        "english": "Tab Common Template",
+                        "german": "Gemeinsame Vorlage",
+                        "arabic": "القالب المشترك للتبويب",
+                        "french": "Modèle commun d'onglet"
+                     }
+                     }
+                  ],
+                  "edit_option": true,
+                  "delete_option": true
+               }
+               ],
+               "api": "config/list_details",
+               "onSuccess": "Tab_listed()"
+            },
+            "update": {
+               "roles": ["Admin"],
+               "data": [
+               {
+                  "helper": "none",
+                  "fields": [
+                     {
+                     "seqno": "",
+                     "field": "id",
+                     "edit": false,
+                     "show": false,
+                     "control": "text",
+                     "trigger": [
+                        { "event": "onchange", "function": "tab_onchange_trigger" },
+                        { "event": "onselect", "function": "tab_onselect_trigger" }
+                     ],
+                     "mandatory": false,
+                     "tooltip": "Unique Tab ID",
+                     "default": "",
+                     "filter_type": "textbox",
+                     "filter_default_value": "",
+                     "lang": {
+                        "english": "ID",
+                        "german": "ID",
+                        "arabic": "المعرف",
+                        "french": "Identifiant"
+                     }
+                     },
+                     {
+                     "seqno": "",
+                     "field": "tab_name",
+                     "edit": true,
+                     "show": true,
+                     "control": "text",
+                     "trigger": [
+                        { "event": "onchange", "function": "tab_onchange_trigger" }
+                     ],
+                     "mandatory": true,
+                     "tooltip": "Tab Name",
+                     "default": "",
+                     "filter_type": "textbox",
+                     "filter_default_value": "",
+                     "lang": {
+                        "english": "Tab Name",
+                        "german": "Registername",
+                        "arabic": "اسم التبويب",
+                        "french": "Nom de l'onglet"
+                     }
+                     },
+                     {
+                     "seqno": "",
+                     "field": "tab_common_template",
+                     "edit": true,
+                     "show": true,
+                     "control": "text",
+                     "trigger": [
+                        { "event": "onchange", "function": "tab_onchange_trigger" }
+                     ],
+                     "mandatory": true,
+                     "tooltip": "Tab Common Template",
+                     "default": "",
+                     "filter_type": "textbox",
+                     "filter_default_value": "",
+                     "lang": {
+                        "english": "Tab Common Template",
+                        "german": "Gemeinsame Vorlage",
+                        "arabic": "القالب المشترك للتبويب",
+                        "french": "Modèle commun d'onglet"
+                     }
+                     }
+                  ],
+                  "edit_option": true,
+                  "delete_option": true
+               }
+               ],
+               "api": "config/modifications"
+            },
+            "cancel": { "api": "config", "onSuccess": "Tab_canceled()" }
+         }
+      }
+
+   }
 }
  
 
