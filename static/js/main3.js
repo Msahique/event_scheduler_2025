@@ -13,49 +13,70 @@ document.addEventListener('DOMContentLoaded', () => {
     
     console.log("Affiliations:", affiliations);
     const submenu = document.getElementById('affiliationMenu');
-    /*if (submenu && Array.isArray(affiliations)) {
-        affiliations.forEach(aff => {
-            const li = document.createElement('li');
-            const a = document.createElement('a');
-            a.className = 'dropdown-item';
-            a.href = '#';
-            a.textContent = `${aff.program} - ${aff.entity} - ${aff.department} - ${aff.service} - ${aff.role}`;
-            li.appendChild(a);
-            submenu.appendChild(li);
-        });
+    const dropdownToggle = submenu?.parentElement?.querySelector('.dropdown-toggle');
+
+    // Function to convert affiliation object to human-readable string
+    /*function formatAffiliation(aff) {
+        return `Program: ${aff.program || ''} | Entity: ${aff.entity || ''} | Department: ${aff.department || ''} | Service: ${aff.service || ''} | Role: ${aff.role || ''}`;
     }*/
 
+    function formatAffiliation(aff) {
+    return `    Program: ${aff.program || ''}\nEntity: ${aff.entity || ''}\nDepartment: ${aff.department || ''}\nService: ${aff.service || ''}\nRole: ${aff.role || ''}`;
+    }
+
+
     if (submenu && Array.isArray(affiliations)) {
-        affiliations.forEach(aff => {
+        affiliations.forEach((aff, index) => {
             const li = document.createElement('li');
             const a = document.createElement('a');
             a.className = 'dropdown-item';
             a.href = '#';
-            a.textContent = `${aff.program} - ${aff.entity} - ${aff.department} - ${aff.service} - ${aff.role}`;
+
+            // Label as Affiliation 1, 2, ...
+            const label = `Affiliation ${index + 1}`;
+            a.textContent = label;
             
+            // Tooltip with full details
+            a.title = formatAffiliation(aff);
+
             a.addEventListener('click', (e) => {
                 e.preventDefault();
                 
                 // Save the complete affiliation object as JSON
                 localStorage.setItem("my_current_affiliation", JSON.stringify(aff));
-                
+                localStorage.setItem("my_current_affiliation_index", index + 1);
+
                 console.log("Affiliation saved:", aff);
-                
-                // Optional: Update UI
-                if (submenu.parentElement && submenu.parentElement.querySelector('.dropdown-toggle')) {
-                    submenu.parentElement.querySelector('.dropdown-toggle').textContent = a.textContent;
+
+                // Update dropdown toggle to show "Affiliation X" with tooltip
+                if (dropdownToggle) {
+                    dropdownToggle.textContent = label;
+                    dropdownToggle.title = formatAffiliation(aff);
                 }
                 
-                // Optional: Dispatch a custom event if other parts of your app need to know
+                // Dispatch a custom event
                 window.dispatchEvent(new CustomEvent('affiliationChanged', { detail: aff }));
             });
             
             li.appendChild(a);
             submenu.appendChild(li);
         });
-    }
 
-    });
+        // Load saved affiliation on page load
+        const savedAff = localStorage.getItem("my_current_affiliation");
+        const savedIndex = localStorage.getItem("my_current_affiliation_index");
+        if (savedAff && dropdownToggle) {
+            try {
+                const parsed = JSON.parse(savedAff);
+                dropdownToggle.textContent = `Affiliation ${savedIndex}`;
+                dropdownToggle.title = formatAffiliation(parsed);
+            } catch (e) {
+                console.error("Error parsing saved affiliation:", e);
+            }
+        }
+    }
+});
+
 
 //localStorage.setItem("my_current_affiliaition")="";
 
@@ -64,7 +85,7 @@ let contextState = {
     previous: null,
     current: null
 };
-/**
+/*
  * Switch UI context
  * @param {string} newContext - The new context name
  * @param {Object} config - Mapping of context => elements to enable/disable
@@ -161,36 +182,7 @@ function load_tabs() {
         
         console.log((data.tab_list))
         tab_list = data.tab_list;
-        console.log(tab_list[0]);
-
-        /*for (var i = 0; i < tab_list.length; i++) {
-            var li = document.createElement("li");
-            li.className = "nav-item";
-
-            var a = document.createElement("a");
-            a.setAttribute('data-bs-toggle', 'tab');  // Corrected for Bootstrap 5
-            a.href = `#${tab_list[i].Name}`;
-            a.innerHTML = tab_list[i].Name;
-            a.className = 'nav-link';
-
-            a.addEventListener('click', function () {
-                const tabName = this.innerHTML.trim(); 
-                page_load_conf.tab = tabName;  
-                tab_status[tabName] = 0;         
-                get_data_list();
-            });
-
-            tab_href_div = document.createElement('div');
-            tab_href_div.id = tab_list[i].Name;
-            tab_href_div.className = "tab-pane fade";
-            tab_href_div.innerHTML = "This is tab page " + tab_list[i].Name;
-
-            tab_pg_content.append(tab_href_div);
-            li.appendChild(a);
-            ul.appendChild(li);
-
-            tab_status[tab_list[i].Name] = 0;
-        }*/
+        //console.log(tab_list[0]);
 
         for (var i = 0; i < tab_list.length; i++) {
             var tab = tab_list[i];
@@ -2090,7 +2082,7 @@ async function editRow(rowData, action) {
         request_token: "",
         type: selectedItemFromDropdown,
         tab: page_load_conf.tab,
-        affiliations: JSON.parse(sessionStorage.getItem("userAffiliations")),
+        affiliations: JSON.parse(localStorage.getItem("my_current_affiliation[0].id")),
         qry: {
             select_fields: ["*"],
             where_data: { [key_val]: rowData[key_val] }
@@ -2358,20 +2350,19 @@ function editModalCreation(response,selectedItemFromDropdown) {
                 input.id = field.field;
 
                 document.body.appendChild(input); // Ensure it's in the DOM
-
+                console.log("rowData[field.field]:", rowData[field.field]); // Debug
                 // Wait for the custom element to be fully initialized
                 if (rowData[field.field]) {
                     setTimeout(() => {
                         try {
                             let attrData = rowData[field.field];
-                            if (typeof attrData === "string") {
-                                attrData = JSON.parse(attrData);
-                            }
+                            if (typeof attrData === "string") {attrData = JSON.parse(attrData);}
                             input.value = attrData;
                             console.log("Parsed field-attribute-control data:", attrData); // Debug
-                            const config = attrData;
-                            const control = document.querySelector('field-attribute-control');
-                            control.populateFromTemplate(config);
+                            //const config = attrData;
+                            //const control = document.querySelector('field-attribute-control');
+                            console.log(">>> Final attrData before populate:", JSON.stringify(attrData, null, 2));
+                            input.populateFromTemplate(attrData);
                         } catch (e) {
                             console.error("Failed to parse field-attribute-control data", e);
                         }
@@ -2397,8 +2388,7 @@ function editModalCreation(response,selectedItemFromDropdown) {
                         }
                     }, 100);
                 }
-            }
-            else {
+            } else {
                 console.log(7);
                 console.log(label, field.field, field.control, rowData[field.field]);
                 
@@ -2525,7 +2515,8 @@ function editModalCreation(response,selectedItemFromDropdown) {
                 newValue = input.value;
             } else if (field.field === "ui_template") {
                 let fieldAttrControl = document.querySelector("field-attribute-control");
-                newValue = fieldAttrControl ? fieldAttrControl.value : ""; 
+                //newValue = fieldAttrControl ? fieldAttrControl.value : ""; 
+                newValue = JSON.stringify(fieldAttrControl.value);
             } else if (field.field === "doc_template") {
                 let doctemplatecontrol = document.querySelector("doc-template-control");
                 newValue = doctemplatecontrol ? doctemplatecontrol.value : ""; 
@@ -2535,7 +2526,7 @@ function editModalCreation(response,selectedItemFromDropdown) {
                 console.warn(`Input element not found for field: ${field.field}`);
                 newValue = currentValue; // Keep original value if input not found
             }
-            
+            console.log("NewVal : ",newValue)
             // ✅ Only add changed fields to updatedData
             // For JSON fields, we need to compare the parsed objects or strings
             let hasChanged = false;

@@ -68,6 +68,7 @@ function get_data_list(selected_item,where_data){
                     present_Data({});
                 }
             } else {
+                console.log("Fetching data from API...");
                 API_call(domain, MainConfig[page_load_conf.tab][selected_item].getDataApi, data_list_body, "POST");
                 //getDocumentConfigWithCache(domain, MainConfig[page_load_conf.tab][selected_item].getDataApi, data_list_body, "POST");
             }
@@ -81,8 +82,7 @@ async function present_Data(data,item) {
     var display_data;
     var field_data,field_datatype = {}; // Ensure it's initialized properly
     var config_path;
-    console.log(page_load_conf.tab)
-     var body={
+    var body={
         "requestor_id":"", 
         "request_token": "", 
         "tab":"Document Config",
@@ -93,13 +93,50 @@ async function present_Data(data,item) {
             "where_data": {"doc_type":item}
             }
     }
-    var get_config = await API_helper_call(domain+"options",body)
-    console.log("=======>>>>>>*****>>>>>",get_config)
-    var ui_template_config = JSON.parse(get_config[0].ui_template);
-    console.log("UI Template Config:", ui_template_config);
-   // var get_config=  API_call(domain, MainConfig[page_load_conf.tab][selected_item].getDataApi, data_list_body, "POST");
-    if (item !== undefined){display_data=data[0];  
-        
+    if(item !== undefined) {
+        var get_config = await API_helper_call(domain+"options",body)
+        console.log("=======>>>>>>*****>>>>>",get_config)
+        var ui_template_config = JSON.parse(get_config[0].ui_template);
+        console.log("UI Template Config:", ui_template_config);
+        // var get_config=  API_call(domain, MainConfig[page_load_conf.tab][selected_item].getDataApi, data_list_body, "POST");
+        display_data=data[0];  
+        config_path=MainConfig[page_load_conf.tab][item]; 
+        selectedItemFromDropdown=item;  
+        field_datatype = ui_template_config[item].field || []
+        field_data = ui_template_config[item].job.list
+        console.log(2)
+    }
+    else{
+        display_data=data;  
+       // config_path=MainConfig[page_load_conf.tab]; 
+        var control_data_body={
+            "requestor_id":"", 
+            "request_token": "", 
+            "tab":"Tab Config",
+            "event": "getTabContol",
+            "type": "Tab Registry",
+            "qry": {
+                "select_fields": ["tab_common_template"], 
+                "where_data": {"tab_name":page_load_conf.tab}
+                }
+        }
+       
+       var get_config = await API_helper_call(domain+"options",control_data_body);   console.log(">>>>>",page_load_conf.tab, control_data_body)
+       console.log(get_config)
+       let rawConfig = get_config[0].tab_common_template;  // string
+       config_path = JSON.parse(rawConfig);           // now it's an object
+       selectedItemFromDropdown=null;  console.log(1);
+    }
+
+    /////////////////////////////////////////////////////////
+    /*
+    if(item !== undefined) {
+        var get_config = await API_helper_call(domain+"options",body)
+        console.log("=======>>>>>>*****>>>>>",get_config)
+        var ui_template_config = JSON.parse(get_config[0].ui_template);
+        console.log("UI Template Config:", ui_template_config);
+        // var get_config=  API_call(domain, MainConfig[page_load_conf.tab][selected_item].getDataApi, data_list_body, "POST");
+        display_data=data[0];  
         config_path=MainConfig[page_load_conf.tab][item]; 
         selectedItemFromDropdown=item;  
         field_datatype = ui_template_config[item].field || []
@@ -118,6 +155,10 @@ async function present_Data(data,item) {
         }
         selectedItemFromDropdown=null;  console.log(1);
     }
+    */
+
+    //////////////////////////////////////////////////////////
+
     //if (item==undefined){display_data=data;  config_path=MainConfig[page_load_conf.tab]; selectedItemFromDropdown=null;  console.log(1)}
     //else{display_data=data[0];  config_path=MainConfig[page_load_conf.tab][item]; selectedItemFromDropdown=item;  console.log(2)}
     console.log(page_load_conf.tab)

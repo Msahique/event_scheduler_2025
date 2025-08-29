@@ -2689,29 +2689,29 @@ class FieldAttributeControl extends HTMLElement {
     }
   }
 
+ 
   populateFromTemplate(templateJson) {
+    console.log(">>>>>>>>>* Populate from template:", templateJson);
     try {
       const jobKeys = ['create', 'update', 'list', 'cancel'];
+      this.jobs = {}; // reset
+
       for (const job of jobKeys) {
         const jobData = templateJson?.job?.[job];
-        if (!jobData || !Array.isArray(jobData.data)) {
+
+        // In your JSON, jobData is already an array of field objects
+        if (!Array.isArray(jobData)) {
           this.jobs[job] = [];
           continue;
         }
 
-        const fields = [];
-        for (const section of jobData.data) {
-          if (Array.isArray(section.fields)) {
-            fields.push(...section.fields);
-          }
-        }
-
-        fields.sort((a, b) => (a.seqno ?? 0) - (b.seqno ?? 0));
+        // Sort fields by seqno
+        const fields = [...jobData].sort((a, b) => (a.seqno ?? 0) - (b.seqno ?? 0));
         this.jobs[job] = fields;
       }
 
       const currentJob = this.shadowRoot.querySelector('.job-tab.active')?.dataset.job || 'create';
-      this.renderFields(currentJob);
+      this.loadFields(currentJob);
 
     } catch (err) {
       console.error("❌ Error populating template:", err);
@@ -3242,66 +3242,6 @@ function getHelperFunctions() {
   }
   return ["sample_function_1", "sample_function_2"]; // fallback
 }
-/*
-function openTriggerModal(existing, onSave) {
-  const modal = new bootstrap.Modal(document.getElementById('triggerModal'));
-  const tbody = document.querySelector('#triggerTable tbody');
-  tbody.innerHTML = '';
-
-  const createRow = (trigger = {}) => {
-    const row = document.createElement('tr');
-    const eventSelect = document.createElement('select');
-    triggerEvents.forEach(ev => {
-      const opt = document.createElement('option');
-      opt.value = ev;
-      opt.textContent = ev;
-      if (trigger.event === ev) opt.selected = true;
-      eventSelect.appendChild(opt);
-    });
-
-    const funcSelect = document.createElement('select');
-    getHelperFunctions().forEach(fn => {
-      const opt = document.createElement('option');
-      opt.value = fn;
-      opt.textContent = fn;
-      if (trigger.function === fn) opt.selected = true;
-      funcSelect.appendChild(opt);
-    });
-
-    const removeBtn = document.createElement('button');
-    removeBtn.className = "btn btn-danger btn-sm";
-    removeBtn.innerHTML = "&times;";
-    removeBtn.onclick = () => row.remove();
-
-    row.appendChild(tdWrap(eventSelect));
-    row.appendChild(tdWrap(funcSelect));
-    row.appendChild(tdWrap(removeBtn));
-
-    tbody.appendChild(row);
-  };
-
-  const tdWrap = (el) => {
-    const td = document.createElement('td');
-    td.appendChild(el);
-    return td;
-  };
-
-  existing.forEach(createRow);
-
-  document.getElementById('addTriggerRow').onclick = () => createRow();
-
-  document.getElementById('saveTrigger').onclick = () => {
-    const updated = [];
-    tbody.querySelectorAll('tr').forEach(row => {
-      const [eventSel, funcSel] = row.querySelectorAll('select');
-      updated.push({ event: eventSel.value, function: funcSel.value });
-    });
-    onSave(updated);
-    modal.hide();
-  };
-
-  modal.show();
-}*/
 
 function openTriggerModal(existing, onSave) {
   const modal = new bootstrap.Modal(document.getElementById('triggerModal'));
@@ -3322,6 +3262,8 @@ function openTriggerModal(existing, onSave) {
   const createRow = (trigger = {}) => {
     const row = document.createElement('tr');
     
+   
+
     // Create type dropdown
     const typeSelect = document.createElement('select');
     typeSelect.className = 'trigger-type';
@@ -3333,7 +3275,7 @@ function openTriggerModal(existing, onSave) {
       typeSelect.appendChild(opt);
     });
 
-    // Create event dropdown
+     // Create event dropdown
     const eventSelect = document.createElement('select');
     eventSelect.className = 'trigger-event';
     triggerEvents.forEach(ev => {
@@ -3343,6 +3285,8 @@ function openTriggerModal(existing, onSave) {
       if (trigger.event === ev) opt.selected = true;
       eventSelect.appendChild(opt);
     });
+
+     
 
     // Create function dropdown (will be populated based on type)
     const funcSelect = document.createElement('select');

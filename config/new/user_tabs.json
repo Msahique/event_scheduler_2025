@@ -85,6 +85,14 @@
                 "french": "Configuration DAQ",
                 "arabic": "تكوين DAQ"
                 }
+            },
+            {
+                "Name": {
+                "english": "Tab Config",
+                "german": "Tab-Konfiguration",
+                "french": "Configuration Tab",
+                "arabic": "تكوين Tab"
+                }
             }
         ]
 

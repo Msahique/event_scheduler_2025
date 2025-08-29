@@ -316,6 +316,7 @@ def insert_ignore(db, table_name, insert_data):
         if connection and connection.is_connected():
             connection.close()
 '''
+
 def is_affiliation_allowed(table_name, user_affiliations, db):
     """
     Determine the list of affiliation_ids from the target table that the user is allowed to access.
@@ -551,7 +552,6 @@ def insert_ignore(db, table_name, insert_data, unique_columns=None):
             cursor.close()
         if connection and connection.is_connected():
             connection.close()
-
 
 '''
 # workin code with affiliation_id enforcement

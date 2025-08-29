@@ -71,3 +71,103 @@ allowed = checker.can_access(
 print("Access granted?" , allowed)
 
 checker.close()
+
+
+'''
+-- Table: Users (basic identity)
+CREATE TABLE event_scheduler2025.new_users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE
+);
+
+-- Table: Affiliations
+CREATE TABLE event_scheduler2025.new_affiliations (
+    affiliation_id INT AUTO_INCREMENT PRIMARY KEY,
+    program_id INT DEFAULT 0,
+    service_id INT DEFAULT 0,
+    entity_id INT DEFAULT 0,
+    department_id INT DEFAULT 0,
+    role VARCHAR(100) NOT NULL
+);
+
+-- User ↔ Affiliations (many-to-many mapping)
+CREATE TABLE event_scheduler2025.new_user_affiliations (
+    user_id INT NOT NULL,
+    affiliation_id INT NOT NULL,
+    PRIMARY KEY (user_id, affiliation_id),
+    FOREIGN KEY (user_id) REFERENCES new_users(user_id),
+    FOREIGN KEY (affiliation_id) REFERENCES new_affiliations(affiliation_id)
+);
+
+-- Table: Document Types
+CREATE TABLE event_scheduler2025.new_doc_types (
+    doc_type_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE
+);
+
+-- Table: Task Types (actions)
+CREATE TABLE event_scheduler2025.new_task_type (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    task_type VARCHAR(100) NOT NULL UNIQUE
+);
+
+-- Table: Document Permissions
+CREATE TABLE event_scheduler2025.new_doc_permissions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    doc_type_id INT NOT NULL,
+    task_type_id INT NOT NULL,
+    affiliation_id INT NOT NULL,
+    FOREIGN KEY (doc_type_id) REFERENCES new_doc_types(doc_type_id),
+    FOREIGN KEY (task_type_id) REFERENCES new_task_type(id),
+    FOREIGN KEY (affiliation_id) REFERENCES new_affiliations(affiliation_id)
+);
+
+
+-- Task Types (common actions)
+INSERT INTO event_scheduler2025.new_task_type (task_type)
+VALUES ('create'), ('modify'), ('view'), ('print'), ('download'),
+       ('approve'), ('delete'), ('update');
+
+-- Document Types
+INSERT INTO event_scheduler2025.new_doc_types (name)
+VALUES ('invoice'), ('contract'), ('report'), ('medical_record');
+
+-- Affiliations (roles, departments, entities, services, programs)
+INSERT INTO event_scheduler2025.new_affiliations (program_id, service_id, entity_id, department_id, role)
+VALUES 
+  (1, 10, 100, 1000, 'Admin'),
+  (1, 10, 100, 1001, 'Manager'),
+  (2, 20, 200, 2000, 'Staff'),
+  (3, 30, 300, 3000, 'Reviewer');
+
+
+-- Users
+INSERT INTO event_scheduler2025.new_users (username, email)
+VALUES ('alice', 'alice@example.com'),
+       ('bob', 'bob@example.com'),
+       ('charlie', 'charlie@example.com');
+
+-- Map affiliations
+INSERT INTO event_scheduler2025.new_user_affiliations (user_id, affiliation_id)
+VALUES 
+  (1, 1),  -- Alice is Admin
+  (2, 2),  -- Bob is Manager
+  (2, 3),  -- Bob is also Staff
+  (3, 4);  -- Charlie is Reviewer
+
+-- Example: Admin (affiliation_id = 1) can do everything on invoices
+INSERT INTO event_scheduler2025.new_doc_permissions (doc_type_id, task_type_id, affiliation_id)
+SELECT d.doc_type_id, t.id, 1
+FROM event_scheduler2025.new_doc_types d
+JOIN event_scheduler2025.new_task_type t
+WHERE d.name = 'invoice';
+
+-- Example: Manager (affiliation_id = 2) can only view + modify contracts
+INSERT INTO event_scheduler2025.new_doc_permissions (doc_type_id, task_type_id, affiliation_id)
+SELECT d.doc_type_id, t.id, 2
+FROM event_scheduler2025.new_doc_types d
+JOIN event_scheduler2025.new_task_type t
+WHERE d.name = 'contract' AND t.task_type IN ('view','modify');
+
+'''
