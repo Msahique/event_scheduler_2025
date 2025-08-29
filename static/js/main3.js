@@ -1655,6 +1655,7 @@ function previewCreateTable(responseData) {
 function edit_data() {
     contextSwitch("edit")
     const selectedCheckboxes = document.querySelectorAll('input[name="editRowSelect[]"]:checked');
+    console.log("Selected Checkboxes for Edit:", selectedCheckboxes);
     if (selectedCheckboxes.length === 1) {
         const rowData = JSON.parse(selectedCheckboxes[0].value);
         console.log('Selected Row Data:', rowData);
@@ -1732,7 +1733,7 @@ function collectSelectedData() {
 function graphInitialization() {
     console.log("Inside graphInitialization function");
     const selectedCheckboxes = document.querySelectorAll('input[name="editRowSelect[]"]:checked');
-
+    console.log(selectedCheckboxes);
     const selectedData = Array.from(selectedCheckboxes).map(cb => JSON.parse(cb.value));
     const graphsControl = document.querySelector("graphs-control");
     
@@ -2090,7 +2091,7 @@ async function editRow(rowData, action) {
         request_token: "",
         type: selectedItemFromDropdown,
         tab: page_load_conf.tab,
-        affiliations: JSON.parse(sessionStorage.getItem("userAffiliations")),
+        affiliations: JSON.parse(localStorage.getItem("my_current_affiliation[0].id")),
         qry: {
             select_fields: ["*"],
             where_data: { [key_val]: rowData[key_val] }
@@ -2921,39 +2922,28 @@ async function Registration_modal() {
                 }
 
             } else if (field.control === 'graphs-control') {
-                console.log("Opening Graphs Control!")
-                let graphsElement = document.querySelector("graphs-control");
-                if (graphsElement) {
+                console.log("Creating graphs-control element");
+                input = document.createElement('graphs-control');
+                input.id = fieldId;
+                
+                // Initialize with current value if exists
+                if (currentValue) {
                     try {
-                        let rawValue = graphsElement.value;
-                        let parsedValue;
-
-                        if (typeof rawValue === "string") {
-                            try {
-                                parsedValue = JSON.parse(rawValue);
-                            } catch (parseErr) {
-                                console.warn("Value is not valid JSON, using raw string instead:", parseErr);
-                                parsedValue = rawValue;
-                            }
-                        } else {
-                            parsedValue = rawValue; // Already an object or array
-                        }
-
-                            console.log("Parsed graphs-control value:", parsedValue);
-
-                            // Store as stringified JSON if it's an object, else store as-is
-                            newData[field.field] = typeof parsedValue === "object"
-                                ? JSON.stringify(parsedValue)
-                                : parsedValue;
-
-                        } catch (e) {
-                            console.error("Failed to process graphs-control value:", e);
-                        }
-
-                } else {
-                    console.warn(`graphs-control element not found.`);
+                        input.value = typeof currentValue === "string" ? JSON.parse(currentValue) : currentValue;
+                    } catch (e) {
+                        console.warn(`Failed to parse value for ${fieldId}`, e);
+                    }
                 }
-
+                
+                // NEW: Initialize doc type dropdown when element is added to DOM
+                setTimeout(() => {
+                    if (input.populateDocTypeDropdown) {
+                        input.populateDocTypeDropdown();
+                    }
+                    if (input.showContent) {
+                        input.showContent();
+                    }
+                }, 100);
             } else if (field.control === "field-attribute-control") {
                 let fieldElement = document.querySelector("field-attribute-control");
                 if (fieldElement) {

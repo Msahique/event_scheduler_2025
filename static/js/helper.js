@@ -111,6 +111,31 @@ async function getDocTemplates1(data) {
     console.log(options)
     return options
 }
+
+async function fetchDocTypes(data) {
+    var end_point = domain + "options";
+    var body = {
+        "requestor_id": "",
+        "request_token": "",
+        "tab": "Document Config",
+        "event": "fetchDocTypes",
+        "type": "Document Data Templates",
+        "qry": {
+            "select_fields": ["id","doc_type"], // Fetch the doc_type column
+            "where_data": {}
+        }
+    };
+
+    if (data == "dropdown") {
+        body.qry.select_fields.push("description"); // Add description if dropdown is needed
+    }
+
+    console.log("Fetching:", end_point, body);
+
+    var options = API_helper_call(end_point, body);
+    console.log(options);
+    return options;
+}
   
 async function getTabs(data) {
     var end_point = domain +"options";

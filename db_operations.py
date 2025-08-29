@@ -44,7 +44,7 @@ def update_entry(db, table_name, update_data, where_data):
             set_clause = ', '.join([f"{key} = %s" for key in update_data.keys()])
             where_clause = ' AND '.join([f"{key} = %s" for key in where_data.keys()])
             update_values = list(update_data.values()) + list(where_data.values())
-
+            print("Update Values (before execution):", update_values)
             query = f"""
             UPDATE {table_name}
             SET {set_clause}

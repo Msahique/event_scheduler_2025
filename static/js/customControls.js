@@ -7056,123 +7056,151 @@ class GraphsControl extends HTMLElement {
                         font-size: 13px;
                         min-width: 100px;
                     }
+                    .doc-type-panel {
+                        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+                        border: 2px solid #2196f3;
+                        border-radius: 12px;
+                        padding: 20px;
+                        margin-bottom: 20px;
+                        box-shadow: 0 2px 8px rgba(33,150,243,0.2);
+                    }
+                    .doc-type-panel-title {
+                        font-size: 18px;
+                        font-weight: 600;
+                        color: #1976d2;
+                        margin-bottom: 16px;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    }
+                    .doc-type-panel-title::before {
+                        content: "📋";
+                        font-size: 20px;
+                    }
+                    .doc-type-row {
+                        display: flex;
+                        gap: 20px;
+                        align-items: end;
+                    }
                 }
             </style>
-            
-            <div class="modal" id="graphsModal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2 class="modal-title">Chart Visualization Dashboard</h2>
-                        <span class="close">&times;</span>
+
+                <div class="graphs-container">
+                    <!-- NEW: Doc Type Selection Panel -->
+                    <div class="doc-type-panel">
+                        <div class="doc-type-panel-title">Document Type Selection</div>
+                        <div class="doc-type-row">
+                            <div class="control-group">
+                                <label for="docTypeSelect">Document Type</label>
+                                <select id="docTypeSelect">
+                                    <option value="">Select Document Type...</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <div class="graphs-container">
-                            <!-- Control Panel -->
-                            <div class="control-panel">
-                                <div class="control-panel-title">Chart Configuration</div>
-                                <div class="controls-row">
-                                    <div class="control-group">
-                                        <label for="chartType">Chart Type</label>
-                                        <select id="chartType">
-                                            <!-- Basic Charts -->
-                                            <option value="scatter">Scatter Plot</option>
-                                            <option value="line">Line Chart</option>
-                                            <option value="bar">Bar Chart</option>
-                                            <option value="pie">Pie Chart</option>
-                                            <option value="donut">Donut Chart</option>
-                                            <option value="bubble">Bubble Chart</option>
-                                            <option value="area">Area Chart</option>
-                                            <option value="histogram">Histogram</option>
-                                            <option value="box">Box Plot</option>
-                                            <option value="violin">Violin Plot</option>
-                                            
-                                            <!-- Statistical Charts -->
-                                            <option value="error-bars">Error Bars</option>
-                                            <option value="bar-error">Bar Chart with Error Bars</option>
-                                            <option value="histogram-kde">Histogram with KDE</option>
-                                            <option value="rug">Rug Plot</option>
-                                            <option value="funnel">Funnel Chart</option>
-                                            <option value="waterfall">Waterfall Chart</option>
-                                            
-                                                                                        
-                                            <!-- Scientific Charts -->
-                                            <option value="heatmap">Heatmaps</option>
-                                            <option value="contour">Contour Plots</option>
-                                            <option value="2d-histogram">2D Histogram</option>
-                                            <option value="3d-scatter">3D Scatter</option>
-                                            <option value="3d-surface">3D Surface Plot</option>
-                                            <option value="3d-mesh">3D Mesh Plot</option>
-                                            <option value="3d-line">3D Line Plot</option>
-                                            <option value="ternary">Ternary Plot</option>
-                                            <option value="polar">Polar Chart</option>
-                                            <option value="wind-rose">Wind Rose Chart</option>
-                                            
-                                            <!-- Financial Charts -->
-                                            <option value="time-series">Time Series Line/Bar</option>
-                                            
-                                            <!-- Other & Specialized -->
-                                            <option value="parallel-coordinates">Parallel Coordinates</option>
-                                            <option value="parallel-categories">Parallel Categories</option>
-                                            <option value="table">Table</option>
-                                            <option value="indicator">Indicator</option>
-                                            <option value="radar">Radar</option>
-                                        </select>
-                                    </div>
+                    <!-- Control Panel -->
+                    <div class="control-panel">
+                        <div class="control-panel-title">Chart Configuration</div>
+                        <div class="controls-row">
+                            <div class="control-group">
+                                <label for="chartType">Chart Type</label>
+                                <select id="chartType">
+                                    <!-- Basic Charts -->
+                                    <option value="scatter">Scatter Plot</option>
+                                    <option value="line">Line Chart</option>
+                                    <option value="bar">Bar Chart</option>
+                                    <option value="pie">Pie Chart</option>
+                                    <option value="donut">Donut Chart</option>
+                                    <option value="bubble">Bubble Chart</option>
+                                    <option value="area">Area Chart</option>
+                                    <option value="histogram">Histogram</option>
+                                    <option value="box">Box Plot</option>
+                                    <option value="violin">Violin Plot</option>
                                     
-                                    <div class="control-group">
-                                        <label for="singleSelectDropdown">X-Axis</label>
-                                        <select id="singleSelectDropdown">
-                                            <!-- Dynamically populated options -->
-                                        </select>
-                                    </div>
+                                    <!-- Statistical Charts -->
+                                    <option value="error-bars">Error Bars</option>
+                                    <option value="bar-error">Bar Chart with Error Bars</option>
+                                    <option value="histogram-kde">Histogram with KDE</option>
+                                    <option value="rug">Rug Plot</option>
+                                    <option value="funnel">Funnel Chart</option>
+                                    <option value="waterfall">Waterfall Chart</option>
                                     
-                                    <div class="control-group">
-                                        <label>Y-Axis</label>
-                                        <div id="customMultiSelectContainer"></div>
-                                    </div>
+                                                                                
+                                    <!-- Scientific Charts -->
+                                    <option value="heatmap">Heatmaps</option>
+                                    <option value="contour">Contour Plots</option>
+                                    <option value="2d-histogram">2D Histogram</option>
+                                    <option value="3d-scatter">3D Scatter</option>
+                                    <option value="3d-surface">3D Surface Plot</option>
+                                    <option value="3d-mesh">3D Mesh Plot</option>
+                                    <option value="3d-line">3D Line Plot</option>
+                                    <option value="ternary">Ternary Plot</option>
+                                    <option value="polar">Polar Chart</option>
+                                    <option value="wind-rose">Wind Rose Chart</option>
                                     
-                                    <div class="control-group">
-                                        <label>Z-Axis</label>
-                                        <div id="customThirdMultiSelectContainer"></div>
-                                    </div>
-                                </div>
+                                    <!-- Financial Charts -->
+                                    <option value="time-series">Time Series Line/Bar</option>
+                                    
+                                    <!-- Other & Specialized -->
+                                    <option value="parallel-coordinates">Parallel Coordinates</option>
+                                    <option value="parallel-categories">Parallel Categories</option>
+                                    <option value="table">Table</option>
+                                    <option value="indicator">Indicator</option>
+                                    <option value="radar">Radar</option>
+                                </select>
                             </div>
                             
-                            <!-- Graph Container -->
-                            <div class="graph-container">
-                                <div class="graph-header">
-                                    <div class="graph-title">Data Visualization</div>
-                                    <div class="plotly-toolbar-container">
-                                        <div id="customToolbar" class="custom-modebar"></div>
-                                    </div>
-                                </div>
-                                <div class="chart-wrapper">
-                                    <div class="y-axis-title" id="yAxisTitle">Values</div>
-                                    <div id="graphCanvas"></div>
-                                    <div class="x-axis-title" id="xAxisTitle">Labels</div>
+                            <div class="control-group">
+                                <label for="singleSelectDropdown">X-Axis</label>
+                                <select id="singleSelectDropdown">
+                                    <!-- Dynamically populated options -->
+                                </select>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label>Y-Axis</label>
+                                <div id="customMultiSelectContainer"></div>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label>Z-Axis</label>
+                                <div id="customThirdMultiSelectContainer"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Graph Container -->
+                    <div class="graph-container">
+                        <div class="graph-header">
+                            <div class="graph-title">Data Visualization</div>
+                            <div class="plotly-toolbar-container">
+                                <div id="customToolbar" class="custom-modebar"></div>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <div class="y-axis-title" id="yAxisTitle">Values</div>
+                            <div id="graphCanvas"></div>
+                            <div class="x-axis-title" id="xAxisTitle">Labels</div>
 
-                                    <!-- Legend Control Panel -->
-                                    <div class="legend-control-panel" id="legendControlPanel" style="display: none;">
-                                        <div class="legend-header">
-                                            <h3 class="legend-title">Chart Legend</h3>
-                                        </div>
-                                        <div class="legend-items" id="legendItems">
-                                            <!-- Legend items will be populated dynamically -->
-                                        </div>
-                                    </div>
+                            <!-- Legend Control Panel -->
+                            <div class="legend-control-panel" id="legendControlPanel" style="display: none;">
+                                <div class="legend-header">
+                                    <h3 class="legend-title">Chart Legend</h3>
+                                </div>
+                                <div class="legend-items" id="legendItems">
+                                    <!-- Legend items will be populated dynamically -->
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" id="cancel">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="save">
-                            <span>💾</span>
-                            Save Chart
-                        </button>
-                    </div>
+                  <div class="action-buttons" style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; padding: 20px 0;">
+                      <button type="button" class="btn btn-secondary" id="cancel">Cancel</button>
+                      <button type="button" class="btn btn-primary" id="save">
+                          <span>💾</span>
+                          Save Chart
+                      </button>
+                  </div>
                 </div>
-            </div>
         `;
 
         this.singleSelectDropdown = this.shadowRoot.getElementById("singleSelectDropdown");
@@ -7190,29 +7218,33 @@ class GraphsControl extends HTMLElement {
         // Bind methods to maintain 'this' context
         this.toggleAllLegendItems = this.toggleAllLegendItems.bind(this);
 
+        this.shadowRoot.getElementById("docTypeSelect").addEventListener("change", (event) => {
+            this.handleDocTypeChange(event.target.value);
+        });
+
         this.shadowRoot.getElementById("chartType").addEventListener("change", (event) => {
             this.changeGraphType(event.target.value);
         });
 
-        this.shadowRoot.querySelector(".close").addEventListener("click", () => {
-            this.closeModal();
-        });
+        // this.shadowRoot.querySelector(".close").addEventListener("click", () => {
+        //     this.closeModal();
+        // });
 
-        // NEW: Add Cancel button functionality
-        this.shadowRoot.getElementById("cancel").addEventListener("click", () => {
-            this.closeModal();
-        });
+        // // NEW: Add Cancel button functionality
+        // this.shadowRoot.getElementById("cancel").addEventListener("click", () => {
+        //     this.closeModal();
+        // });
 
         // NEW: Add Save button functionality
         this.shadowRoot.getElementById("save").addEventListener("click", () => {
             this.saveChart();
         });
 
-        this.shadowRoot.getElementById("graphsModal").addEventListener("click", (event) => {
-            if (event.target === this.shadowRoot.getElementById("graphsModal")) {
-                this.closeModal();
-            }
-        });
+        // this.shadowRoot.getElementById("graphsModal").addEventListener("click", (event) => {
+        //     if (event.target === this.shadowRoot.getElementById("graphsModal")) {
+        //         this.closeModal();
+        //     }
+        // });
     }
 
     // NEW: Force resize after Y column selection
@@ -7261,6 +7293,10 @@ class GraphsControl extends HTMLElement {
     }
 
     connectedCallback() {
+        setTimeout(() => {
+            this.populateDocTypeDropdown();
+        }, 100);
+        
         this.initializeChart();
     }
 
@@ -8250,23 +8286,24 @@ class GraphsControl extends HTMLElement {
         return layout;
     }
     
-    openModal() {
-        const modal = this.shadowRoot.getElementById("graphsModal");
-        modal.style.display = "block";
+    // openModal() {
+    //     const modal = this.shadowRoot.getElementById("graphsModal");
+    //     modal.style.display = "block";
 
-        // Wait for the modal to be visible, then resize the plot
-        setTimeout(() => {
-            // Force initial resize
-            // this.forceResize();
-            window.addEventListener('resize', () => this.handleResize());
-        }, 200); // Increased timeout for better reliability
-    }
+    //     // Wait for the modal to be visible, then resize the plot
+    //     setTimeout(() => {
+    //         // Force initial resize
+    //         // this.forceResize();
+    //         window.addEventListener('resize', () => this.handleResize());
+    //     }, 200); // Increased timeout for better reliability
+    // }
 
-    closeModal() {
-        this.shadowRoot.getElementById("graphsModal").style.display = "none";
-    }
+    // closeModal() {
+    //     this.shadowRoot.getElementById("graphsModal").style.display = "none";
+    // }
 
     // Method to set custom axis titles
+    
     setAxisTitles(xTitle, yTitle) {
         this.xAxisTitle = xTitle || "Labels";
         this.yAxisTitle = yTitle || "Values";
@@ -8988,6 +9025,217 @@ class GraphsControl extends HTMLElement {
         }
     }
 
+    // **Set chart template data**
+    set value(chartTemplateData) {
+        if (!chartTemplateData) return;
+        
+        let template;
+        if (typeof chartTemplateData === "string") {
+            try {
+                template = JSON.parse(chartTemplateData);
+            } catch (error) {
+                console.error('GraphsControl: Error parsing chart template:', error);
+                return;
+            }
+        } else {
+            template = chartTemplateData;
+        }
+        
+        console.log('GraphsControl: Setting value with template:', template);
+        
+        // Store the template for later use
+        this.storedTemplate = template;
+        
+        // If modal is already open, apply immediately
+        if (this.shadowRoot.getElementById("graphsModal").style.display === "block") {
+            this.applyChartTemplate(template);
+        }
+    }
+
+    // **Get current chart configuration as JSON**
+    get value() {
+        try {
+            const chartTemplate = {
+                xAxis: this.singleSelectDropdown?.value || null,
+                yAxis: this.selectedMultiColumns || [],
+                zAxis: this.selectedThirdMultiColumns || [],
+                chartType: this.chartType || 'scatter',
+                colors: this.columnColors || {},
+                hiddenColumns: Array.from(this.hiddenColumns || []),
+                xAxisTitle: this.xAxisTitle || "X-Axis",
+                yAxisTitle: this.yAxisTitle || "Y-Axis",
+                plotlyData: this.graphCanvas?.data || [],
+                plotlyLayout: this.graphCanvas?.layout || {},
+                rowData: this.rowData || []
+            };
+            
+            return JSON.stringify(chartTemplate);
+        } catch (error) {
+            console.error('GraphsControl: Error getting chart template value:', error);
+            return JSON.stringify({});
+        }
+    }
+
+    async handleDocTypeChange(docType) {
+        if (!docType) {
+            this.clearChart();
+            return;
+        }
+        
+        console.log('Doc type changed to:', docType);
+        
+        try {
+            // Get row data for selected doc type
+            const rowData = await this.getRowDataForDocType(docType);
+            
+            if (!rowData || rowData.length === 0) {
+                alert('No data available for the selected document type.');
+                return;
+            }
+            
+            // Update the graphs control with new data
+            this.rowData = rowData;
+            this.selectedDocType = docType;
+            
+            // Repopulate dropdowns with new column data
+            this.populateDropdowns();
+            
+            // Clear existing selections
+            this.selectedMultiColumns = [];
+            this.selectedThirdMultiColumns = [];
+            this.columnColors = {};
+            this.hiddenColumns = new Set();
+            
+            // Update chart
+            this.updateChart();
+            
+            console.log('Chart updated with new doc type data');
+            
+        } catch (error) {
+            console.error('Error loading doc type data:', error);
+            alert('Error loading data for selected document type.');
+        }
+    }
+
+    async populateDocTypeDropdown() {
+        try {
+            const docTypeDropdown = this.shadowRoot.getElementById("docTypeSelect");
+            
+            // Call your existing helper function to get doc types
+            const docTypesResponse = await fetchHelperData("fetchDocTypes", "dropdown");
+            const docTypes = docTypesResponse.map(item => item.doc_type).filter(Boolean);
+            
+            if (!docTypes || docTypes.length === 0) {
+                console.warn('No doc types available');
+                return;
+            }
+            
+            // Clear existing options
+            docTypeDropdown.innerHTML = '<option value="">Select Document Type...</option>';
+            
+            // Add doc type options
+            docTypes.forEach(docType => {
+                const option = document.createElement('option');
+                option.value = docType;
+                option.textContent = docType;
+                docTypeDropdown.appendChild(option);
+            });
+            
+            console.log('Doc type dropdown populated with:', docTypes);
+            
+        } catch (error) {
+            console.error('Error populating doc type dropdown:', error);
+        }
+    }
+
+    async getRowDataForDocType(docType) {
+        try {
+            console.log('Getting row data for doc_type:', docType);
+            
+            // Get the doc_type ID from fetchDocTypes
+            const docTypesResponse = await fetchHelperData("fetchDocTypes", "dropdown");
+            const docTypeItem = docTypesResponse.find(item => item.doc_type === docType);
+            
+            if (!docTypeItem || !docTypeItem.id) {
+                console.log('No ID found for doc_type:', docType);
+                return [];
+            }
+            
+            const docTypeId = docTypeItem.id;
+            console.log('Doc type ID:', docTypeId);
+            
+            // Now get the UI template configuration from doc_ui_template table using the doc_type ID
+            const body = {
+                "requestor_id": "",
+                "request_token": "",
+                "tab": "Document Config",
+                "event": "getdocumentuitemplate",
+                "type": "Document UI Templates",
+                "qry": {
+                    "select_fields": ["id", "ui_template"],
+                    "where_data": {"doc_template_id": docTypeId}
+                }
+            };
+            
+            const configResult = await API_helper_call(domain + "options", body);
+            console.log('UI Template config result:', configResult);
+            
+            if (!configResult || configResult.length === 0) {
+                console.log('No UI template found for doc_template_id:', docTypeId);
+                return [];
+            }
+            
+            const uiTemplate = JSON.parse(configResult[0].ui_template);
+            console.log('Parsed UI template:', uiTemplate);
+            
+            // Get the specific doc_type configuration
+            const docTypeConfig = uiTemplate[docType];
+            if (!docTypeConfig || !docTypeConfig.job || !docTypeConfig.job.list) {
+                console.log('No list configuration found for doc_type:', docType);
+                return [];
+            }
+            
+            const listConfig = docTypeConfig.job.list;
+            console.log('List config for', docType, ':', listConfig);
+            
+            // Return the list configuration as row data
+            console.log('Returning list config as row data for', docType);
+            
+            return Array.isArray(listConfig) ? listConfig : [listConfig];
+            
+        } catch (error) {
+            console.error('Error getting row data for doc_type:', error);
+            return [];
+        }
+    }
+
+    // const dataBody = {
+    //             "requestor_id": "",
+    //             "request_token": "",
+    //             "tab": "Entity Config", 
+    //             "event": "list",
+    //             "type": "Role Registry", // Or whatever your table mapping is called
+    //             "qry": {
+    //                 "select_fields": ["entity_id"],
+    //                 "where_data": {"doc_type": docType}
+    //             },
+    //             "affiliations": "" // Add the missing affiliations field
+    //         };
+
+    showContent() {
+        const container = this.shadowRoot.querySelector('.graphs-container');
+        if (container) {
+            container.style.display = 'flex';
+        }
+    }
+
+    hideContent() {
+        const container = this.shadowRoot.querySelector('.graphs-container');
+        if (container) {
+            container.style.display = 'none';
+        }
+    }
+
     // Updated initializeAndOpenModal method with template clearing support
     initializeAndOpenModal(rowData, selectedItemFromDropdown, chartTemplate = null, xTitle = "X-Axis", yTitle = "Y-Axis") {
         console.log("GraphsControl: Initializing modal with template:", chartTemplate);
@@ -9019,7 +9267,7 @@ class GraphsControl extends HTMLElement {
         
         this.initializeDropdownListeners();
         this.initializeChart();
-        this.openModal();
+        // this.openModal();
         
         // Enhanced initialization sequence with template handling
         setTimeout(() => {
