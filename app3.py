@@ -17,7 +17,7 @@ from db_operations import *
 db = pymysql.connect(
   host="localhost",
   user="root",
-  password="root",
+  password="Blr@2025",
   database="event_scheduler2025",
   port=3306,
   cursorclass=pymysql.cursors.DictCursor
@@ -936,6 +936,35 @@ def entityConfig_list():
     except Exception as e:
         print("Error:", e)
         return jsonify({"error": str(e)}), 500
+
+
+@app.route('/config/list_details_new', methods=['POST', 'GET'])
+def Config_list_new():
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
+    #print("db name: ",json_data)
+    data = json.loads(request.data); print(data)
+    
+    try:
+        #myresult=get_data(json_data['db_name'],json_data[data['tab']][data['type']], data['qry']['select_fields'],data['qry']['where_data']) 
+        myresult = get_data(
+            json_data['db_name'],
+            json_data[data['type']],
+            data['qry']['select_fields'],
+            data['qry']['where_data'],
+            "none",
+            data['affiliations']
+        )
+        
+        print(myresult)
+        if(data['qry']['where_data']=={}):
+            return jsonify(myresult,data['type'])
+        else:
+            return jsonify(myresult,data['type'])
+     
+    except Exception as e:
+        print("Error:", e)
+        return jsonify({"error": str(e)}), 500
+
 
 # Update 
 @app.route('/config/modifications', methods=['PUT'])
@@ -2278,6 +2307,43 @@ def get_chart_template_by_name(template_name):
             'success': False,
             'error': str(e)
         }), 500
+
+@app.route('/api/db-config', methods=['GET'])
+def get_db_config():
+    """
+    Alternative endpoint with a more RESTful path
+    """
+    try:
+        # Path to your JSON file
+        json_file_path = 'config/new/get_DB_data.json'
+        
+        if not os.path.exists(json_file_path):
+            return jsonify({
+                "error": "Database configuration file not found",
+                "status": "file_not_found"
+            }), 404
+        
+        with open(json_file_path, 'r', encoding='utf-8') as file:
+            config_data = json.load(file)
+        
+        return jsonify({
+            "status": "success",
+            "data": config_data
+        })
+        
+    except json.JSONDecodeError as e:
+        return jsonify({
+            "error": "Invalid JSON format in configuration file",
+            "status": "json_error",
+            "details": str(e)
+        }), 500
+    except Exception as e:
+        return jsonify({
+            "error": "Failed to load configuration",
+            "status": "server_error",
+            "details": str(e)
+        }), 500
+
 
 if __name__ == '__main__':
    app.run(host='0.0.0.0', port=5000, debug=True)

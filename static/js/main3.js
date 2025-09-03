@@ -619,11 +619,14 @@ async function createTable(responseData) {
             container.innerHTML = ""; 
             console.log("///////////////////////")
             divControls.className = 'mb-3 d-flex gap-2';
+            console.log("ResponseData Controls",responseData.controls);
             for (const control of responseData.controls) {
                 if (control.roles && control.roles.includes(role)) {
+                    console.log("Control Roled:", control.roles);
                     let input = null;
                     console.log(selectedItemFromDropdown);
                     if (control.type === "select") {
+                        console.log("inside select",control.type);
                         let selectContainer = document.createElement('div');
                         selectContainer.className = 'custom-dropdown';
                         
@@ -703,6 +706,7 @@ async function createTable(responseData) {
                         divControls.appendChild(selectContainer);
                     } 
                     else { // For buttons
+                        console.log("Button",control.type);
                         input = document.createElement('button');
                         input.setAttribute('onclick', control.function);
                         input.className = control.class;
@@ -1780,33 +1784,76 @@ function collectSelectedData() {
 3. Based on document type get the template from the chart template table(assumption)
 */
 
+// function graphInitialization() {
+//     console.log("Inside graphInitialization function");
+//     const selectedCheckboxes = document.querySelectorAll('input[name="editRowSelect[]"]:checked');
+//     console.log(selectedCheckboxes);
+//     const selectedData = Array.from(selectedCheckboxes).map(cb => JSON.parse(cb.value));
+//     const graphsControl = document.querySelector("graphs-control");
+    
+//     if (graphsControl) {
+//         // Check if a chart template is selected
+//         if (selectedChartTemplateName && selectedChartTemplateName !== "None") {
+//             console.log(`Loading graph with template: ${selectedChartTemplateName}`);
+//             // Load the template and pass it to GraphsControl
+//             loadTemplateAndInitialize(selectedChartTemplateName, selectedData, graphsControl);
+//         } else {
+//             console.log('Loading graph without template');
+//             // Normal initialization without template
+//             graphsControl.initializeAndOpenModal(selectedData, selectedItemFromDropdown);
+            
+//             // Make sure configuration is visible for normal mode
+//             setTimeout(() => showChartConfiguration(), 100);
+//         }
+//     } else {
+//         alert("GraphsControl not found. Please ensure the component is loaded.");
+//     }
+// }
+
+// Updated loadTemplateAndInitialize function
+
 function graphInitialization() {
     console.log("Inside graphInitialization function");
     const selectedCheckboxes = document.querySelectorAll('input[name="editRowSelect[]"]:checked');
     console.log(selectedCheckboxes);
     const selectedData = Array.from(selectedCheckboxes).map(cb => JSON.parse(cb.value));
-    const graphsControl = document.querySelector("graphs-control");
-    
+
+    // Ensure modal content container exists
+    const modalContent = document.querySelector("#graphModal #modal_content");
+    if (!modalContent) {
+        alert("Modal content container not found!");
+        return;
+    }
+
+    // Either reuse an existing <graphs-control> or create one
+    let graphsControl = modalContent.querySelector("graphs-control");
+    if (!graphsControl) {
+        graphsControl = document.createElement("graphs-control");
+        modalContent.appendChild(graphsControl);
+    }
+
     if (graphsControl) {
         // Check if a chart template is selected
         if (selectedChartTemplateName && selectedChartTemplateName !== "None") {
             console.log(`Loading graph with template: ${selectedChartTemplateName}`);
-            // Load the template and pass it to GraphsControl
             loadTemplateAndInitialize(selectedChartTemplateName, selectedData, graphsControl);
         } else {
             console.log('Loading graph without template');
-            // Normal initialization without template
             graphsControl.initializeAndOpenModal(selectedData, selectedItemFromDropdown);
-            
-            // Make sure configuration is visible for normal mode
+
+            // Show configuration for normal mode
             setTimeout(() => showChartConfiguration(), 100);
         }
+
+        // Finally open the modal
+        const graphModal = new bootstrap.Modal(document.getElementById("graphModal"));
+        graphModal.show();
     } else {
-        alert("GraphsControl not found. Please ensure the component is loaded.");
+        alert("GraphsControl not created properly.");
     }
 }
 
-// Updated loadTemplateAndInitialize function
+
 async function loadTemplateAndInitialize(templateName, selectedData, graphsControl) {
     try {
         console.log(`Fetching template: ${templateName}`);
