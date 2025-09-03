@@ -1,0 +1,53 @@
+{
+    "db_name":"event_scheduler2025",
+    "db_type":"mysql",
+   
+    "Role Registry":"roles",
+    "Affiliation Registry":"affiliation",
+    "Resource Category":"resource_type",
+    "Event Category":"event_type",
+    "Message Template":"message_details",
+    "Resource Registry":"resource_profile",
+    "Application Registry":"application_registry",
+    "Storage Paths":"storage_paths",
+    "Entity log":"",
+
+    "Entity Category":"entity_types",
+    "Entity Registry":"entity",
+    "Doc status":"doc_status_types",
+
+    "Doc_status_type":"doc_status_types",
+    "com_settings":"message_details",
+    "system log":"",
+
+    "Event Schedule":"event_new",
+    "Alert Schedule":"alert",
+    "Appointment Schedule":"appointment",
+    "Subscriber Registry":"subscriber",
+    "Event log":"",
+    "Subscriber Log":"",
+
+    "Program Registry":"program_registry",
+    "Program Type":"program_type",
+    "Program log":"",
+
+    "Service Registry":"gov_service_regsitry",
+    "Service Type":"service_type",
+    "Service log":"",
+
+    "Document Data Templates":"doc_templates",
+    "Document UI Templates":"doc_ui_template",
+    "Document View Templates":"doc_view_template",
+    "Trigger Functions":"trigger_functions",
+    "Function Registry":"function_registry",
+    "Image Registry":"images",
+
+    "Final Templates":"doc_final_templates",
+
+    "Env Measurements":"env_measurements",
+    "Chart Templates":"chart_templates",
+
+    "Tab Registry":"tab_registry"
+}
+
+

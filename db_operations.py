@@ -2,6 +2,8 @@ import mysql.connector
 from mysql.connector import Error
 import json
 from datetime import datetime
+#(db_name, db_type, connection_string, document, operation, payload) 
+#("event_scheduler2025", "mysql", {"host":'localhost',"database":'event_scheduler2025',"user":'root',"password":'root'}, "entity", "update")
 
 def create_connection(db):
     """Create and return a database connection."""
@@ -372,7 +374,7 @@ def is_affiliation_allowed(table_name, user_affiliations, db):
         if connection and connection.is_connected():
             connection.close()
             print("[INFO] Closed DB connection in affiliation check.")
-
+'''
 def get_data(db, table_name, select_fields, where_data=None, exact_match=False, user_affiliations=None):
     print("[init] where_data:", where_data)
     print("[init] exact_match:", exact_match)
@@ -457,6 +459,237 @@ def get_data(db, table_name, select_fields, where_data=None, exact_match=False, 
         if connection and connection.is_connected():
             connection.close()
             print("[INFO] Database connection closed.")
+'''
+
+
+#filter_json={"block_size":10, "block_number":1,"filter":[
+# {"parameter":"","datatype":"","condition":"","from":"", "to":""},
+# {"parameter":"name","datatype":"string","condition":"=","from":"Sahique", "to":""},
+# {"parameter":"name","datatype":"string","condition":"LIKE","from":"Sah", "to":""},
+# {"parameter":"DOB","datatype":"date","condition":"=","from":"01/01/1990", "to":"01/12/2000"},
+# {"parameter":"age","datatype":"number","condition":"LIKE","from":"10", "to":"25"}
+#]}
+
+'''
+def get_data(db,table_name,select_fields,where_data=None,exact_match=False,user_affiliations=None,block_size=None,block_number=None):
+    
+    print("[init] where_data:", where_data)
+    print("[init] exact_match:", exact_match)
+    print("[init] user_affiliations:", user_affiliations)
+    print("[init] block_size:", block_size)
+    print("[init] block_number:", block_number)
+
+    connection = None
+    cursor = None
+
+    try:
+        print(f"[START] Querying table: `{table_name}` in DB: `{db}`")
+
+        connection = create_connection(db)
+        if not connection:
+            print("[ERROR] Failed to connect to database.")
+            return []
+
+        cursor = connection.cursor(dictionary=True)
+
+        # ✅ Build select fields with JSON support
+        formatted_select_fields = []
+        if select_fields == ['*']:
+            formatted_select_fields = ["*"]
+        else:
+            for field in select_fields:
+                if "." in field:
+                    column, *json_parts = field.split(".")
+                    json_path = ".".join(json_parts)
+                    formatted_select_fields.append(
+                        f"JSON_UNQUOTE(JSON_EXTRACT({column}, '$.{json_path}')) AS `{field}`"
+                    )
+                else:
+                    formatted_select_fields.append(field)
+
+        select_clause = ", ".join(formatted_select_fields)
+        query = f"SELECT {select_clause} FROM {table_name}"
+
+        where_clauses = []
+        values = []
+
+        # ✅ Add WHERE conditions
+        if where_data:
+            where_data = {k: v for k, v in where_data.items() if v != "*"}
+            print("[DEBUG] Filtered where_data:", where_data)
+
+            for key, value in where_data.items():
+                column, *json_parts = key.split(".")
+                clause = (
+                    f"JSON_UNQUOTE(JSON_EXTRACT({column}, '$.{'.'.join(json_parts)}'))"
+                    if json_parts else column
+                )
+                if exact_match:
+                    where_clauses.append(f"{clause} = %s")
+                    values.append(value)
+                else:
+                    where_clauses.append(f"{clause} LIKE %s")
+                    values.append(f"%{value}%")
+                print(f"[DEBUG] WHERE condition added: {where_clauses[-1]} with value {values[-1]}")
+
+        # ✅ Restrict by user affiliations
+        if user_affiliations:
+            allowed_ids = is_affiliation_allowed(table_name, user_affiliations, db)
+            if not allowed_ids:
+                print("[INFO] No affiliation matches. Returning empty result.")
+                return []
+
+            placeholders = ','.join(['%s'] * len(allowed_ids))
+            where_clauses.append(f"affiliation_id IN ({placeholders})")
+            values.extend(list(allowed_ids))
+
+        if where_clauses:
+            query += f" WHERE {' AND '.join(where_clauses)}"
+
+        # ✅ Add pagination with LIMIT and OFFSET
+        if block_size and block_number:
+            offset = (block_number - 1) * block_size
+            query += f" LIMIT %s OFFSET %s"
+            values.extend([block_size, offset])
+
+        print("[INFO] Final SQL Query:", query)
+        print("[INFO] Parameters:", values)
+
+        cursor.execute(query, values)
+        results = cursor.fetchall()
+        print(f"[INFO] Query returned {len(results)} result(s).")
+        return results
+
+    except Exception as e:
+        print(f"[ERROR] Exception in get_data(): {e}")
+        return []
+
+    finally:
+        if cursor:
+            cursor.close()
+        if connection and connection.is_connected():
+            connection.close()
+            print("[INFO] Database connection closed.")
+'''
+
+def get_data(db, table_name, select_fields, where_data=None, exact_match=False,
+             user_affiliations=None, block_size=None, block_number=None):
+    
+    print("[init] where_data:", where_data)
+    print("[init] exact_match:", exact_match)
+    print("[init] user_affiliations:", user_affiliations)
+    print("[init] block_size:", block_size)
+    print("[init] block_number:", block_number)
+
+    connection = None
+    cursor = None
+
+    try:
+        print(f"[START] Querying table: `{table_name}` in DB: `{db}`")
+
+        connection = create_connection(db)
+        if not connection:
+            print("[ERROR] Failed to connect to database.")
+            return []
+
+        cursor = connection.cursor(dictionary=True)
+
+        # ✅ Build select fields with JSON support
+        formatted_select_fields = []
+        if select_fields == ['*']:
+            formatted_select_fields = ["*"]
+        else:
+            for field in select_fields:
+                if "." in field:
+                    column, *json_parts = field.split(".")
+                    json_path = ".".join(json_parts)
+                    formatted_select_fields.append(
+                        f"JSON_UNQUOTE(JSON_EXTRACT({column}, '$.{json_path}')) AS `{field}`"
+                    )
+                else:
+                    formatted_select_fields.append(field)
+
+        select_clause = ", ".join(formatted_select_fields)
+        query = f"SELECT {select_clause} FROM {table_name}"
+
+        where_clauses = []
+        values = []
+
+        # ✅ Add WHERE conditions
+        if where_data:
+            where_data = {k: v for k, v in where_data.items() if v != "*"}
+            print("[DEBUG] Filtered where_data:", where_data)
+
+            for key, value in where_data.items():
+                column, *json_parts = key.split(".")
+                clause = (
+                    f"JSON_UNQUOTE(JSON_EXTRACT({column}, '$.{'.'.join(json_parts)}'))"
+                    if json_parts else column
+                )
+
+                # ✅ Handle dict-based conditions
+                if isinstance(value, dict):
+                    if "between" in value:
+                        where_clauses.append(f"{clause} BETWEEN %s AND %s")
+                        values.extend(value["between"])
+                    if "gte" in value:
+                        where_clauses.append(f"{clause} >= %s")
+                        values.append(value["gte"])
+                    if "lte" in value:
+                        where_clauses.append(f"{clause} <= %s")
+                        values.append(value["lte"])
+                else:
+                    # ✅ Keep old behavior (exact or LIKE)
+                    if exact_match:
+                        where_clauses.append(f"{clause} = %s")
+                        values.append(value)
+                    else:
+                        where_clauses.append(f"{clause} LIKE %s")
+                        values.append(f"%{value}%")
+
+                print(f"[DEBUG] WHERE condition(s) so far: {where_clauses}")
+                print(f"[DEBUG] Values so far: {values}")
+
+        # ✅ Restrict by user affiliations
+        if user_affiliations:
+            allowed_ids = is_affiliation_allowed(table_name, user_affiliations, db)
+            if not allowed_ids:
+                print("[INFO] No affiliation matches. Returning empty result.")
+                return []
+
+            placeholders = ','.join(['%s'] * len(allowed_ids))
+            where_clauses.append(f"affiliation_id IN ({placeholders})")
+            values.extend(list(allowed_ids))
+
+        if where_clauses:
+            query += f" WHERE {' AND '.join(where_clauses)}"
+
+        # ✅ Add pagination with LIMIT and OFFSET
+        if block_size and block_number:
+            offset = (block_number - 1) * block_size
+            query += f" LIMIT %s OFFSET %s"
+            values.extend([block_size, offset])
+
+        print("[INFO] Final SQL Query:", query)
+        print("[INFO] Parameters:", values)
+
+        cursor.execute(query, values)
+        results = cursor.fetchall()
+        print(f"[INFO] Query returned {len(results)} result(s).")
+        return results
+
+    except Exception as e:
+        print(f"[ERROR] Exception in get_data(): {e}")
+        return []
+
+    finally:
+        if cursor:
+            cursor.close()
+        if connection and connection.is_connected():
+            connection.close()
+            print("[INFO] Database connection closed.")
+
+
 
 def insert_ignore(db, table_name, insert_data, unique_columns=None):
     connection = create_connection(db)
@@ -748,9 +981,31 @@ def insert_ignore(db, table_name, insert_data):
             connection.close()
 '''
 
-#data = get_data("event_scheduler2025","entity", ['*'],{'entity_id': 1})
-#print(data)
+#data = get_data("event_scheduler2025","entity", ['*'],{},False,None,10,1)
+#print("1] ",data)
 
+''''''
+data = get_data(
+    "event_scheduler2025",  "entity",   ["*"],
+    {"id": {"between": (10,17)}},
+    exact_match=False,   block_size=10,  block_number=1
+)
+'''
+(
+    "event_scheduler2025",  "entity",   ["*"],
+    {"affiliation_id": {"between": (1,7),"exact_match":False}, "entry_status":"draft" },
+    exact_match=True,   block_size=10,  block_number=1
+)
+
+(
+    "event_scheduler2025",  "entity",   ["*"],
+    {"affiliation_id": {"between": (1,7)}, "entry_status":{"value":"draft","exact_match":True} },
+    block_size=10,  block_number=1
+)
+'''
+print("2] ",data)
 #data = update_entry("event_scheduler2025", "entity",{"entity_name": "Updated Entity Name"},{"entity_id": "1"})
 
 #is_deleted = delete_entry("event_scheduler2025","entity", {"entity_id": "1"})
+
+

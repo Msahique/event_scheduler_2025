@@ -387,16 +387,15 @@ async function API_call(domain, endpoint, body = {}, method = "GET", autoPresent
 
 
 
-
-
-/* USEAGE:  getDocumentConfigWithCache("https://mydomain.com", "/config/list_details", { type: "Invoice" }, "POST");    */
-async function getDocumentConfigWithCache(domain, endpoint, body, method) {
+/* USEAGE:  getDocument_data("https://mydomain.com", "/config/list_details", { type: "Invoice" }, "POST");    
+   This function first checks sessionStorage for document config by typ. If found, it uses that or else gets it from DB.  */ 
+/*async function getDocument_data(domain, endpoint, body, method) {
   const docType = body?.type || "default";
-
+    console.log(docType)
   // Step 1: Check sessionStorage
   let storedDocs = sessionStorage.getItem("documentType");
   storedDocs = storedDocs ? JSON.parse(storedDocs) : {};
-
+  console.log(storedDocs)
   if (storedDocs[docType]) {
     console.log(`✅ Using cached config for ${docType}`);
     present_Data(storedDocs[docType], body.type); // use cached result
@@ -407,7 +406,7 @@ async function getDocumentConfigWithCache(domain, endpoint, body, method) {
   console.log(`⚡ Fetching ${docType} from API...`);
 
   return new Promise((resolve) => {
-    API_call(domain, endpoint, body, method);
+    API_call(domain, endpoint, body, method) // autoPresent = false;
 
     // Override present_Data temporarily to also cache result
     const originalPresentData = window.present_Data;
@@ -421,7 +420,45 @@ async function getDocumentConfigWithCache(domain, endpoint, body, method) {
       resolve(data);
     };
   });
+}*/
+
+async function getDocument_data(domain, endpoint, body, method) {
+  const docType = body?.type || "default";
+  console.log("DocType:", docType);
+
+  // Step 1: Check sessionStorage
+  let storedDocs = sessionStorage.getItem("documentType");
+  storedDocs = storedDocs ? JSON.parse(storedDocs) : {};
+  console.log("Cached docs:", storedDocs);
+
+  if (storedDocs[docType]) {
+    console.log(`✅ Using cached config for ${docType}`);
+    present_Data(storedDocs[docType], body.type); // use cached result
+    return storedDocs[docType];
+  }
+
+  // Step 2: Fetch from API if not cached
+  console.log(`⚡ Fetching ${docType} from API...`);
+  try {
+    const data = await API_call(domain, endpoint, body, method, false); // no autoPresent
+    console.log("Fetched data:", data);
+
+    // Save in sessionStorage
+    storedDocs[docType] = data;
+    sessionStorage.setItem("documentType", JSON.stringify(storedDocs));
+
+    // Present data once fetched
+    //present_Data(data, body.type);
+
+    return data;
+  } catch (err) {
+    console.error("❌ Failed to fetch document config:", err);
+    throw err;
+  }
 }
+
+
+
 
 /*displayObjectList*/
 
@@ -444,6 +481,7 @@ async function fetchChartTemplates() {
     }
 }
 
+function session_clear(){sessionStorage.clear();}
 // Function to extract the first part of chart name (before underscore)
 function getItemTypeFromChartName(chartName) {
     // Split by underscore and take everything before the first underscore
@@ -751,48 +789,48 @@ async function createTable(responseData) {
     thead.className = 'table-dark sticky-top';
 
     let headerRow = document.createElement('tr');
-   
-    let received_Data = responseData.fields.data[0];
-     // Add Select-All Column
-    if (received_Data.edit_option) {
-        let editTh = document.createElement('th');
-        editTh.className = "text-center";
-        editTh.setAttribute('scope', 'col');
+        let received_Data = responseData.fields.data[0];
+        // Add Select-All Column
+        if (received_Data.edit_option) {
+            let editTh = document.createElement('th');
+            editTh.className = "text-center";
+            editTh.setAttribute('scope', 'col');
 
-        // Create select-all checkbox
-        let selectAllCheckbox = document.createElement('input');
-        selectAllCheckbox.type = 'checkbox';
-        selectAllCheckbox.id = 'selectAllCheckbox';
+            // Create select-all checkbox
+            let selectAllCheckbox = document.createElement('input');
+            selectAllCheckbox.type = 'checkbox';
+            selectAllCheckbox.id = 'selectAllCheckbox';
 
-        // Label (optional text beside checkbox)
-        let label = document.createElement('label');
-        label.textContent = "Select";
-        label.setAttribute('for', 'selectAllCheckbox');
-        label.style.marginLeft = "5px";
+            // Label (optional text beside checkbox)
+            let label = document.createElement('label');
+            label.textContent = "Select";
+            label.setAttribute('for', 'selectAllCheckbox');
+            label.style.marginLeft = "5px";
 
-        // Append checkbox + label
-        editTh.appendChild(selectAllCheckbox);
-        editTh.appendChild(label);
+            // Append checkbox + label
+            editTh.appendChild(selectAllCheckbox);
+            editTh.appendChild(label);
 
-        // Add functionality to select/deselect all checkboxes
-        selectAllCheckbox.addEventListener('change', function () {
-            const checkboxes = document.querySelectorAll("input[name='editRowSelect[]']");
-            checkboxes.forEach(cb => {
-                cb.checked = selectAllCheckbox.checked;
+            // Add functionality to select/deselect all checkboxes
+            selectAllCheckbox.addEventListener('change', function () {
+                const checkboxes = document.querySelectorAll("input[name='editRowSelect[]']");
+                checkboxes.forEach(cb => {
+                    cb.checked = selectAllCheckbox.checked;
+                });
             });
+
+            headerRow.appendChild(editTh);
+        }
+        //let visibleFields = received_Data.fields.filter(field => field.show);
+        let visibleFields = received_Data.fields
+        .filter(field => field.show)
+        .sort((a, b) => {
+            const aSeq = parseInt(a.seqno || "9999", 10);
+            const bSeq = parseInt(b.seqno || "9999", 10);
+            return aSeq - bSeq;
         });
 
-        headerRow.appendChild(editTh);
-    }
-    //let visibleFields = received_Data.fields.filter(field => field.show);
-    let visibleFields = received_Data.fields
-    .filter(field => field.show)
-    .sort((a, b) => {
-        const aSeq = parseInt(a.seqno || "9999", 10);
-        const bSeq = parseInt(b.seqno || "9999", 10);
-        return aSeq - bSeq;
-    });
-
+  
     const filterContainer = document.getElementById("tab_page_filter");
     // Ensure filterValues is initialized before use
     if (typeof filterValues === "undefined") {
@@ -839,16 +877,52 @@ async function createTable(responseData) {
                 {"name": "entity_id","datatype": "bigint"},
                 {"name": "id","datatype": "string"}
          ]}*/
+       
         visibleFields.forEach(element => {
             let field_datatype_val = field_datatype.find(f => f.name === element.field)?.datatype;
             console.log("field_datatype_val: ", field_datatype_val, ", element: ", element);
             try {
                 console.log("element.filter_type: ",element.filter_type, ", element: ",element);
-                
+                // common field wrapper for each filter field to get no of rows form db
                 let fieldWrapper = document.createElement("div");
                 fieldWrapper.className = "mb-3"; // Ensures proper spacing and alignment
                 
-                if (element.filter_type === "datetime") {
+                let label_entries = document.createElement("label");
+                label_entries.innerHTML = "Block size";
+                label_entries.className = "form-label";
+                
+                let input_entries = document.createElement("select");
+                input_entries.className = "form-control";
+                input_entries.name = element.field;
+                   
+                let options = ["10", "25", "50", "100", "200", "500", "1000"];
+
+                // Populate options dynamically
+                options.forEach(opt => {
+                    let option = document.createElement("option");
+                    option.value = opt;
+                    option.textContent = opt;
+                    if (datTimeFilterObj[0].end === opt) {
+                        option.selected = true; // Pre-select saved value
+                    }
+                    input_entries.appendChild(option);
+                });
+                
+                let label_block_no = document.createElement("label");
+                label_block_no.innerHTML = "Block No";
+                label_block_no.className = "form-label";
+                
+                let input_block_no = document.createElement("select");
+                input_block_no.className = "form-control";
+                input_block_no.type = "number";
+                input_block_no.name = element.field;
+
+                fieldWrapper.appendChild(label_entries);
+                fieldWrapper.appendChild(input_entries);
+                fieldWrapper.appendChild(label_block_no);
+                fieldWrapper.appendChild(input_block_no);
+
+                if (field_datatype_val === "datetime" || field_datatype_val === "date") {
                     var datTimeFilterObj = filterValues[element.key || element.field] || [{ "start": "", "end": "" }];
         
                     let label1 = document.createElement("label");
@@ -886,9 +960,10 @@ async function createTable(responseData) {
                     fieldWrapper.appendChild(label1);
                     fieldWrapper.appendChild(input1);
                     fieldWrapper.appendChild(label2);
-                    fieldWrapper.appendChild(input2);   //fieldWrapper.appendChild(document.createElement('br'));
+                    fieldWrapper.appendChild(input2); 
+                    //fieldWrapper.appendChild(document.createElement('br'));
                 } 
-                else if (element.filter_type === "dropdown") {
+                /*else if (element.filter_type === "dropdown") {
                     let label = document.createElement("label");
                     label.innerHTML = element.field;
                     label.className = "form-label";
@@ -930,8 +1005,8 @@ async function createTable(responseData) {
         
                     //fieldWrapper.appendChild(label);
                     fieldWrapper.appendChild(select);   //fieldWrapper.appendChild(document.createElement('br'));
-                } 
-                else if (field_datatype_val === "string") {
+                }*/ 
+                else if (field_datatype_val === "string" || field_datatype_val === "text" || field_datatype_val === "mediumtext" || field_datatype_val === "json" ) {
                     let label = document.createElement("label");
                     label.innerHTML = element.label || element.field;
                     label.className = "form-label";
@@ -951,25 +1026,41 @@ async function createTable(responseData) {
         
                     //fieldWrapper.appendChild(label);
                     fieldWrapper.appendChild(input);    //fieldWrapper.appendChild(document.createElement('br'));
-                }
-                else if (field_datatype_val === "bigint") {
-                    let label = document.createElement("label");
-                    label.innerHTML = element.label || element.field;
-                    label.className = "form-label";
+                } 
+                else if (field_datatype_val === "bigint" ||  field_datatype_val === "smallint" || field_datatype_val === "number" || field_datatype_val === "decimal" || field_datatype_val === "double" || field_datatype_val === "float" || field_datatype_val === "int" || field_datatype_val === "time"  ) {
+                    let label1 = document.createElement("label");
+                    label1.innerHTML = element.label || element.field;
+                    label1.className = "form-label";
 
-                    let input = document.createElement("input");
-                    input.setAttribute("type", "number");
-                    input.setAttribute("placeholder", element.label || element.field);
-                    input.className = "form-control";
+                    let input1 = document.createElement("input");
+                    input1.setAttribute("type", "number");
+                    input1.placeholder = "FROM";
+                    input1.setAttribute("placeholder", element.label || element.field);
+                    input1.className = "form-control";
+
+                    let label2 = document.createElement("label");
+                    label2.innerHTML = element.label || element.field;
+                    label2.className = "form-label";
+
+                    let input2 = document.createElement("input");
+                    input2.setAttribute("type", "number");
+                    input2.placeholder = "TO";
+                    input2.setAttribute("placeholder", element.label || element.field);
+                    input2.className = "form-control";
 
                     // Pre-fill value if available
-                    input.value = filterValues[element.key || element.field] || element.filter_default_value || "";
+                    input1.value = filterValues[element.key || element.field] || element.filter_default_value || "";
+                    input2.value = filterValues[element.key || element.field] || element.filter_default_value || "";
 
                     // Prevent decimal points for bigint
-                    input.addEventListener("input", function () {
+                    /*input.addEventListener("input", function () {
                         this.value = this.value.replace(/\D/g, ''); // Only allow digits
                         filterValues[element.key || element.field] = this.value;
                     });
+                    input2.addEventListener("input", function () {
+                        this.value = this.value.replace(/\D/g, ''); // Only allow digits
+                        filterValues[element.key || element.field] = this.value;
+                    });*/
 
                     // Make read-only if filter_type is label
                     if (element.filter_type === "lable") {
@@ -978,8 +1069,12 @@ async function createTable(responseData) {
 
                     // Append elements
                     //fieldWrapper.appendChild(label);
-                    fieldWrapper.appendChild(input);
+                    //fieldWrapper.appendChild(input);
                     //fieldWrapper.appendChild(document.createElement('br'));
+                    fieldWrapper.appendChild(label1);
+                    fieldWrapper.appendChild(input1);
+                    fieldWrapper.appendChild(label2);
+                    fieldWrapper.appendChild(input2);
                 }
                
                 filterForm.appendChild(fieldWrapper);
@@ -999,6 +1094,7 @@ async function createTable(responseData) {
             filterButton.className = "btn btn-primary";
         
             filterButton.addEventListener("click", function () {
+                // get data for block size
                 let filterQuery = { where: { ...filterValues } };
                 console.log("Filter Query:", filterQuery);
                 console.log(selectedItemFromDropdown, filterValues);
@@ -1377,6 +1473,7 @@ async function createTable(responseData) {
     // Initialize Pagination
     createPaginationControls();
     displayPage(1);
+    
 }
 
 function previewCreateTable(responseData) {

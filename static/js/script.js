@@ -7,72 +7,110 @@ const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB chunks for file uploads
 
 var sending = false;
 
-function get_data_list(selected_item,where_data,block_no,block_size){
+async function get_data_list(selected_doc_type,where_data,block_no,block_size){
     document.getElementById("tab_page_header").style.display = "block";
-    console.log(selected_item,where_data);
-    console.log(selectedItemFromDropdown);
-    page_load_conf.event="data_list";
-    console.log(">>>>>",  page_load_conf);
-    data_list_body={
-        "requestor_id":"",
-        "request_token":"",
-        "affiliations": JSON.parse(localStorage.getItem("my_current_affiliation[0].id")),
-        "qry":{
-            "select_fields":["*"],
-            "where_data":where_data
+    console.log(selected_doc_type,where_data);
+    page_load_conf.event="data_list";   console.log(">>>>>",  page_load_conf);
+
+    if(selected_doc_type) {
+        var body={
+            "requestor_id":"", 
+            "request_token": "", 
+            "type": "Document UI Templates",
+            "qry": {
+                "select_fields": ["id","ui_template"], 
+                "where_data": {"doc_type":selected_doc_type}
+                }
         }
-    }
-    console.log("User Affiliations:",localStorage.getItem("my_current_affiliation"));
-    //if(tab_status[page_load_conf.tab]==0){
-        console.log(page_load_conf.tab, tab_status[page_load_conf.tab])
-        console.log(data_list_body)
-        if(selectedItemFromDropdown === "m"){
-            fetchData();    
+        //var get_config = await API_helper_call(domain+"options",body);   console.log(">>>>>",page_load_conf.tab, body)
+       var get_config = await getDocument_data(domain,"options",body,"POST");   console.log(">>>>>",page_load_conf.tab, body)
+       console.log(get_config)
+       let rawConfig = get_config[0].ui_template;  // string
+       config = JSON.parse(rawConfig);          // now it's an object
+       console.log("UI Template Config:", config);
+       const Registry = config[selected_doc_type]; // assuming your object is in variable `config`
+
+        let fieldsArray = [];
+
+        if (Registry?.job?.list?.data?.[0]?.fields) {
+        fieldsArray = Registry.job.list.data[0].fields.map(f => f.field);
         }
-        else if(selected_item) {
-            console.log(">>>>>", selected_item);
-            data_list_body.type = selected_item;
-            console.log(data_list_body.type);
-            data_list_body.tab = page_load_conf.tab;
-            console.log(data_list_body.tab);
-            console.log(tabStatus);
-            console.log(MainConfig);
+
+        console.log(fieldsArray);
+        let data_list_body={
+            "requestor_id":"",
+            "request_token":"",
+            "affiliations": JSON.parse(localStorage.getItem("my_current_affiliation[0].id")),
+            "qry":{
+                "select_fields":fieldsArray,
+                "where_data":where_data
+            }
+        }
+        data_list_body.type = selected_doc_type;     // 
+        data_list_body.tab = page_load_conf.tab; //
+        console.log("Fetching data from API...");
+        API_call(domain, Registry.getDataApi, data_list_body, "POST");
+        //getDocumentConfigWithCache(domain, MainConfig[page_load_conf.tab][selected_item].getDataApi, data_list_body, "POST");
+
+
+
+
+        //var get_config = await API_helper_call(domain+"options",body)
+        //var get_config = await getDocumentConfigWithCache(domain, "options", body, "POST");
+        //console.log("=======>>>>>>*****>>>>>",get_config)
+        //store=sessionStorage.getItem("documentType");
+        //console.log(store)
+        //console.log(JSON.parse(sessionStorage.getItem("documentType")).selected_item)
+        //console.log("=======>>>>>>*****>>>>>",get_config)
+        //var ui_template_config = JSON.parse(get_config[0].ui_template);
+        //console.log("UI Template Config:", ui_template_config);
+        
+        /*if (tabStatus == 0) {
+            let tabName = page_load_conf.tab;
             
-            if (tabStatus == 0) {
-                let tabName = page_load_conf.tab;
+            if (MainConfig[tabName]) {
+                // Get the first available item configuration from MainConfig for this tab
+                let firstItemKey = Object.keys(MainConfig[tabName]).find(key => 
+                    key !== 'controls' && MainConfig[tabName][key] && MainConfig[tabName][key].job
+                );
                 
-                if (MainConfig[tabName]) {
-                    // Get the first available item configuration from MainConfig for this tab
-                    let firstItemKey = Object.keys(MainConfig[tabName]).find(key => 
-                        key !== 'controls' && MainConfig[tabName][key] && MainConfig[tabName][key].job
-                    );
+                if (firstItemKey && MainConfig[tabName][firstItemKey].job && MainConfig[tabName][firstItemKey].job.list) {
+                    var data_list = {
+                        tab_name: tabName,
+                        controls: MainConfig[tabName].controls || [],
+                        data: {},
+                        fields: MainConfig[tabName][firstItemKey].job.list
+                    };
                     
-                    if (firstItemKey && MainConfig[tabName][firstItemKey].job && MainConfig[tabName][firstItemKey].job.list) {
-                        var data_list = {
-                            tab_name: tabName,
-                            controls: MainConfig[tabName].controls || [],
-                            data: {},
-                            fields: MainConfig[tabName][firstItemKey].job.list
-                        };
-                        
-                        console.log("Data List:", data_list);
-                        console.log(selectedItemFromDropdown);
-                        previewCreateTable(data_list);
-                    } else {
-                        console.warn(`No valid configuration found for tab: ${tabName}`);
-                        present_Data({});
-                    }
+                    console.log("Data List:", data_list);
+                    console.log(selectedItemFromDropdown);
+                    previewCreateTable(data_list);
                 } else {
-                    console.warn(`Tab "${tabName}" not found in MainConfig`);
+                    console.warn(`No valid configuration found for tab: ${tabName}`);
                     present_Data({});
                 }
             } else {
-                console.log("Fetching data from API...");
-                API_call(domain, MainConfig[page_load_conf.tab][selected_item].getDataApi, data_list_body, "POST");
-                //getDocumentConfigWithCache(domain, MainConfig[page_load_conf.tab][selected_item].getDataApi, data_list_body, "POST");
+                console.warn(`Tab "${tabName}" not found in MainConfig`);
+                present_Data({});
             }
-        } 
-        else{present_Data({})}
+        } else {
+            let data_list_body={
+                "requestor_id":"",
+                "request_token":"",
+                "affiliations": JSON.parse(localStorage.getItem("my_current_affiliation[0].id")),
+                "qry":{
+                    "select_fields":fieldsArray,
+                    "where_data":where_data
+                }
+            }
+            data_list_body.type = selected_item;     // 
+            data_list_body.tab = page_load_conf.tab; //
+            console.log("Fetching data from API...");
+            API_call(domain, MainConfig[page_load_conf.tab][selected_item].getDataApi, data_list_body, "POST");
+            //getDocumentConfigWithCache(domain, MainConfig[page_load_conf.tab][selected_item].getDataApi, data_list_body, "POST");
+        }*/
+    } 
+    else{console.log("Missing Doc_type, please select doc type..");present_Data({})}
 }
 
 async function present_Data(data,item) {
@@ -94,7 +132,7 @@ async function present_Data(data,item) {
     }
     if(item !== undefined) {
         var get_config = await API_helper_call(domain+"options",body)
-        console.log("=======>>>>>>*****>>>>>",get_config)
+        console.log("=======>>>>>",get_config)
         var ui_template_config = JSON.parse(get_config[0].ui_template);
         console.log("UI Template Config:", ui_template_config);
         // var get_config=  API_call(domain, MainConfig[page_load_conf.tab][selected_item].getDataApi, data_list_body, "POST");
@@ -154,7 +192,7 @@ async function present_Data(data,item) {
         }
         selectedItemFromDropdown=null;  console.log(1);
     }
-    */
+    */   
 
     //////////////////////////////////////////////////////////
 
@@ -169,7 +207,7 @@ async function present_Data(data,item) {
     }
     else if (role === "Approver") {
         field_data = config_path.approve;
-    }*/
+    }*/  
     var data_list = {
         tab_name: page_load_conf.tab,
         controls: config_path.controls,
@@ -182,6 +220,127 @@ async function present_Data(data,item) {
     console.log(selectedItemFromDropdown)
     createTable(data_list);
 }
+
+/*
+async function get_data_list(selected_item, where_data, block_no = 0, block_size = 25) {
+    const tabName = page_load_conf.tab;
+    let responseData = {};
+    page_load_conf.event = "data_list";
+
+    console.log("Selected Item:", selected_item, "Where:", where_data);
+
+    // STEP 1: Fetch configuration
+    let config_path = await getConfig(tabName, selected_item); console.log("Config Data:", config_path);
+    
+    if (!config_path) {
+        console.warn("No configuration found for tab:", tabName, "item:", selected_item);
+        present_Data({});
+        return;
+    }
+
+    // STEP 2: Build data request body
+    if (selected_item){
+        let affiliations = null;
+        try {
+            const affArr = JSON.parse(localStorage.getItem("my_current_affiliation") || "[]");
+            affiliations = Array.isArray(affArr) ? (affArr[0]?.id ?? null) : null;
+        } catch (e) {
+            console.warn("Failed to parse affiliations:", e);
+        }
+
+        const data_list_body = {
+            requestor_id: "",
+            request_token: "",
+            affiliations,
+            tab: tabName,
+            type: selected_item,
+            qry: {
+                select_fields: ["*"],
+                where_data: where_data || {}
+            },
+            block_no,
+            block_size
+        };
+
+        console.log("Data Request Body:", data_list_body);
+
+        // STEP 3: Fetch data
+        
+        try {
+            responseData = await API_call(domain, config_path.getDataApi, data_list_body, "POST");
+        } catch (e) {
+            console.error("Error fetching data:", e);
+            present_Data({});
+            return;
+        }
+    }
+
+    // STEP 4: Render with config + data
+    present_Data(responseData, selected_item, config_path);
+}
+
+async function getConfig(tabName, item) {
+    if (!item) {
+        // Common tab-level config
+        const control_data_body = {
+            requestor_id: "",
+            request_token: "",
+            tab: "Tab Config",
+            event: "getTabContol",
+            type: "Tab Registry",
+            qry: {
+                select_fields: ["tab_common_template"],
+                where_data: { tab_name: tabName }
+            }
+        };
+
+        const res = await API_helper_call(domain + "options", control_data_body); console.log(">>>>>", tabName, res);
+        return res?.[0]?.tab_common_template
+            ? JSON.parse(res[0].tab_common_template)
+            : null;
+    } else {
+        // Specific UI template config
+        const body = {
+            requestor_id: "",
+            request_token: "",
+            tab: "Document Config",
+            event: "getdocumentuitemplate",
+            type: "Document UI Templates",
+            qry: {
+                select_fields: ["id", "ui_template"],
+                where_data: { doc_type: item }
+            }
+        };
+
+        const res = await API_helper_call(domain + "options", body);
+        if (res?.[0]?.ui_template) {
+            const ui_template_config = JSON.parse(res[0].ui_template);
+            return ui_template_config[item] || null;
+        }
+        return null;
+    }
+}
+
+function present_Data(data, item, config_path) {
+    console.log("Data:", data, "Item:", item, "Config:", config_path);
+    let display_data = Array.isArray(data) ? (data[0] ?? {}) : (data || {});
+    let field_data = config_path?.job?.list;
+    let field_datatype = config_path?.field || {};
+
+    const data_list = {
+        tab_name: page_load_conf.tab,
+        controls: config_path?.controls || [],
+        data: display_data,
+        fields: field_data,
+        field_datatype: field_datatype
+    };
+
+    console.log("Final Data List:", data_list);
+
+    createTable(data_list);
+}
+*/
+
 
 function updateEntry(Id, updatedData) {
     let apiEndpoint =""
