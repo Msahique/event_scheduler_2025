@@ -1,5 +1,7 @@
 {
     "db_name":"event_scheduler2025",
+    "db_type":"mysql",
+   
     "Role Registry":"roles",
     "Affiliation Registry":"affiliation",
     "Resource Category":"resource_type",

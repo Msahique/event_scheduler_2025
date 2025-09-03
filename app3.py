@@ -95,7 +95,7 @@ def test_route():
 
 @app.route('/login', methods=['POST'])
 def login():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = request.json
     print(data)
     username = data.get("username")
@@ -202,13 +202,13 @@ def get_helper_data():
     data = request.get_json()  # Use request.get_json() instead of json.loads(request.data)
     print("Received Data:", data)
 
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data)
     data = json.loads(request.data); print(data)
     
     try:
-        print(json_data['db_name'],json_data[data['tab']][data['type']], data['qry']['select_fields'],data['qry']['where_data'])
-        myresult=get_data(json_data['db_name'],json_data[data['tab']][data['type']], data['qry']['select_fields'],data['qry']['where_data']) 
+        print(json_data['db_name'],json_data[data['type']], data['qry']['select_fields'],data['qry']['where_data'])
+        myresult=get_data(json_data['db_name'],json_data[data['type']], data['qry']['select_fields'],data['qry']['where_data']) 
         print(myresult);    return jsonify(myresult)
     except Exception as e:
         print("Error:", e)
@@ -236,10 +236,10 @@ def get_user_tabs():
 
 @app.route('/affiliation/new', methods=['POST'])
 def insert_affiliation():
-    json_data = json.load(open('config/new/get_DB_data.json')) 
+    json_data = json.load(open('config/new/get_DB_data_new.json')) 
     data = stream_json()  # Receiving data in chunks
     
-    success, message = insert_ignore(json_data['db_name'], json_data[data['tab']][data['type']], data.get("qry"))
+    success, message = insert_ignore(json_data['db_name'], json_data[data['type']], data.get("qry"))
     
     if success:
         return jsonify({'message': message}), 201
@@ -248,7 +248,7 @@ def insert_affiliation():
 
 @app.route('/affiliation/modifications', methods=['PUT'])
 def update_affiliation():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     
     update_data = data.get("qry", {}).get("update")
@@ -257,7 +257,7 @@ def update_affiliation():
     if not update_data or not where_data.get("affiliation_id"):
         return jsonify({"error": "Missing affiliation_id or update_data"}), 400
 
-    success = update_entry(json_data['db_name'], json_data[data['tab']][data['type']], update_data, where_data)
+    success = update_entry(json_data['db_name'], json_data[data['type']], update_data, where_data)
     
     if success:
         return jsonify({"message": "Entry updated successfully"}), 200
@@ -266,14 +266,14 @@ def update_affiliation():
 
 @app.route('/affiliation', methods=['DELETE'])
 def Affiliation_entry_api():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     print(data)
     where_data = data.get('qry', {}).get('where_data', {})
     print("where_data :",where_data)
     
-    success = delete_entry(json_data['db_name'], json_data[data['tab']][data['type']], where_data)
-    #success = delete_entry(json_data['db_name'], json_data[data['tab']][data['type']], {"affiliation_id": affiliation_id})
+    success = delete_entry(json_data['db_name'], json_data[data['type']], where_data)
+    #success = delete_entry(json_data['db_name'], json_data[data['type']], {"affiliation_id": affiliation_id})
     
     if success:
         return jsonify({"message": "Entry deleted successfully"}), 200
@@ -282,13 +282,13 @@ def Affiliation_entry_api():
 
 @app.route('/affiliation/list_details', methods=['POST', 'GET'])
 def affiliation_get_data():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     
     try:
         myresult = get_data(
             json_data['db_name'],
-            json_data[data['tab']][data['type']],
+            json_data[data['type']],
             data['qry']['select_fields'],
             data['qry']['where_data']
         )
@@ -311,10 +311,10 @@ def stream_json():
 
 @app.route('/entity/new', methods=['POST'])
 def insert_entity():
-    json_data = json.load(open('config/new/get_DB_data.json')) 
+    json_data = json.load(open('config/new/get_DB_data_new.json')) 
     data = stream_json()  # Receiving data in chunks
     
-    success, message = insert_ignore(json_data['db_name'], json_data[data['tab']][data['type']], data.get("qry"))
+    success, message = insert_ignore(json_data['db_name'], json_data[data['type']], data.get("qry"))
     
     if success:
         return jsonify({'message': message}), 201
@@ -323,7 +323,7 @@ def insert_entity():
 
 @app.route('/entity/modifications', methods=['PUT'])
 def update_entry_api():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     
     update_data = data.get("qry", {}).get("update")
@@ -332,7 +332,7 @@ def update_entry_api():
     if not update_data or not where_data.get("entity_id"):
         return jsonify({"error": "Missing entity_id or update_data"}), 400
 
-    success = update_entry(json_data['db_name'], json_data[data['tab']][data['type']], update_data, where_data)
+    success = update_entry(json_data['db_name'], json_data[data['type']], update_data, where_data)
     
     if success:
         return jsonify({"message": "Entry updated successfully"}), 200
@@ -341,12 +341,12 @@ def update_entry_api():
 
 @app.route('/entity', methods=['DELETE'])
 def delete_entry_api():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     where_data = data.get('qry', {}).get('where_data', {})
     print("where_data :",where_data)
 
-    success = delete_entry(json_data['db_name'], json_data[data['tab']][data['type']],  where_data)
+    success = delete_entry(json_data['db_name'], json_data[data['type']],  where_data)
     
     if success:
         return jsonify({"message": "Entry deleted successfully"}), 200
@@ -355,13 +355,13 @@ def delete_entry_api():
 
 @app.route('/entity/list_details', methods=['POST', 'GET'])
 def entity_get_data():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     
     try:
         myresult = get_data(
             json_data['db_name'],
-            json_data[data['tab']][data['type']],
+            json_data[data['type']],
             data['qry']['select_fields'],
             data['qry']['where_data']
         )
@@ -376,12 +376,12 @@ def entity_get_data():
 @app.route('/resource/new', methods=['POST'])
 def resource_new():
     data = request.json
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     data = request.json
     print(data)
     
     # Insert data into the entity table
-    success, message = insert_ignore(json_data['db_name'],json_data[data['tab']][data['type']], data.get("qry"))
+    success, message = insert_ignore(json_data['db_name'],json_data[data['type']], data.get("qry"))
     
     if success:
         return jsonify({'message': message}), 201
@@ -390,13 +390,13 @@ def resource_new():
 
 @app.route('/resource/list_details', methods=['POST', 'GET'])
 def resource_list():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data)
     data = json.loads(request.data); 
-    print("data >>", json_data['db_name'],json_data[data['tab']][data['type']], data['qry']['select_fields'],data['qry']['where_data'])
+    print("data >>", json_data['db_name'],json_data[data['type']], data['qry']['select_fields'],data['qry']['where_data'])
     
     try:
-        myresult=get_data(json_data['db_name'],json_data[data['tab']][data['type']], data['qry']['select_fields'],data['qry']['where_data']) 
+        myresult=get_data(json_data['db_name'],json_data[data['type']], data['qry']['select_fields'],data['qry']['where_data']) 
         print(myresult)
         return jsonify([myresult])
      
@@ -408,7 +408,7 @@ def resource_list():
 @app.route('/resource/modifications', methods=['PUT'])
 def resource_update():
     # validate the qry, for assuring all the required fields are present. 
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     data = request.json
     qry = data.get("qry")
     update_data =qry.get("update")
@@ -418,7 +418,7 @@ def resource_update():
 
     if not update_data or not where_data:
         return jsonify({"error": "Missing table_name, update_data or where_data"}), 400
-    success = update_entry(json_data['db_name'],json_data[data['tab']][data['type']], update_data,where_data,)
+    success = update_entry(json_data['db_name'],json_data[data['type']], update_data,where_data,)
     if success:
         return jsonify({"message": "Entry updated successfully"}), 200
     else:
@@ -427,13 +427,13 @@ def resource_update():
 # Delete Entry API
 @app.route('/resource', methods=['DELETE'])
 def resoure_delete():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     data = request.json
     print("data :",data)
     where_data = data.get('qry', {}).get('where_data', {})
     print("where_data :",where_data)
     
-    success = delete_entry(json_data['db_name'],json_data[data['tab']][data['type']], where_data )
+    success = delete_entry(json_data['db_name'],json_data[data['type']], where_data )
     if success:
         return jsonify({"message": "Entry deleted successfully"}), 200
     else:
@@ -445,12 +445,12 @@ def resoure_delete():
 @app.route('/event/new', methods=['POST'])
 def event_new():
     data = request.json
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     data = request.json
     print(data)
    
     # Insert data into the entity table
-    success, message = insert_ignore(json_data['db_name'],json_data[data['tab']][data['type']], data.get("qry"))
+    success, message = insert_ignore(json_data['db_name'],json_data[data['type']], data.get("qry"))
     
     if success:
         return jsonify({'message': message}), 201
@@ -461,7 +461,7 @@ def event_new():
 @app.route('/event/list_details', methods=['POST', 'GET'])
 def event_list():
     print("**************************************************")
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = json.loads(request.data); print(data)
    
@@ -469,8 +469,8 @@ def event_list():
     # "venue.city": "Manipal"
     #data['qry']['select_fields']=["venue.city","name","category"]
     try:
-        myresult=get_data(json_data['db_name'],json_data[data['tab']][data['type']], data['qry']['select_fields'],data['qry']['where_data'])
-        #print(json_data['db_name'],json_data[data['tab']][data['type']], data['qry']['select_fields'],where_data)
+        myresult=get_data(json_data['db_name'],json_data[data['type']], data['qry']['select_fields'],data['qry']['where_data'])
+        #print(json_data['db_name'],json_data[data['type']], data['qry']['select_fields'],where_data)
         #myresult=get_data(json_data['db_name'],json_data['general']['event_table_name'], data['qry']['select_fields'],where_data) 
         print(myresult)
         if(data['qry']['where_data']=={}):
@@ -485,12 +485,12 @@ def event_list():
 # Delete 
 @app.route('/event', methods=['DELETE'])
 def event_delete():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
     where_data = data.get('qry', {}).get('where_data', {})
     
-    success = delete_entry( json_data['db_name'],json_data[data['tab']][data['type']],where_data)
+    success = delete_entry( json_data['db_name'],json_data[data['type']],where_data)
     if success:
         return jsonify({"message": "Entry deleted successfully"}), 200
     else:
@@ -499,7 +499,7 @@ def event_delete():
 # Update 
 @app.route('/event/modifications', methods=['PUT'])
 def event_update():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
     update_data = data.get("qry", {}).get("update")
@@ -508,7 +508,7 @@ def event_update():
     
     success = update_entry(
         json_data['db_name'],
-        json_data[data['tab']][data['type']], 
+        json_data[data['type']], 
         update_data,
         where_data
     )
@@ -524,7 +524,7 @@ def event_update():
 #new
 @app.route('/alert/new', methods=['POST'])
 def alert_new():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data)
     data = request.json
     required_columns = ["event_id", "target_category", "message_id", "alert_datetime"]
@@ -545,7 +545,7 @@ def alert_new():
 # List
 @app.route('/alert/list_details', methods=['POST', 'GET'])
 def alert_list():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data)
     data = json.loads(request.data); print(data)
     
@@ -564,7 +564,7 @@ def alert_list():
 # Update 
 @app.route('/alert/modifications', methods=['PUT'])
 def alert_update():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
     update_data = data.get("qry")
@@ -582,7 +582,7 @@ def alert_update():
 # Delete 
 @app.route('/alert', methods=['DELETE'])
 def alert_delete():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
     where_data = data.get('where_data')
@@ -599,7 +599,7 @@ def alert_delete():
 #new
 @app.route('/message/new', methods=['POST'])
 def message_new():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data)
     data = json.loads(request.data); print(data)
 
@@ -614,7 +614,7 @@ def message_new():
     print("function call")
     # Insert data into the entity table
     #success, message = insert_ignore(json_data['db_name'],json_data['System Config']['com_settings'], data.get("qry"))
-    success, message = insert_ignore(json_data['db_name'],json_data[data['tab']][data['type']], data['qry'])
+    success, message = insert_ignore(json_data['db_name'],json_data[data['type']], data['qry'])
     
     if success:
         return jsonify({'message': message}), 201
@@ -624,7 +624,7 @@ def message_new():
 # List
 @app.route('/message/list_details', methods=['POST', 'GET'])
 def message_list():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data)
     data = json.loads(request.data); print(data)
     
@@ -643,7 +643,7 @@ def message_list():
 # Update 
 @app.route('/message/modifications', methods=['PUT'])
 def message_update():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
     qry = data.get("qry")
@@ -662,13 +662,13 @@ def message_update():
 # Delete
 @app.route('/message', methods=['DELETE'])
 def message_delete():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
     where_data = data.get('qry', {}).get('where_data', {})
 
     #success = delete_entry(json_data['general']['message_table_name'], where_data,json_data['db_name'])
-    success = delete_entry(json_data['db_name'],json_data[data['tab']][data['type']], where_data )
+    success = delete_entry(json_data['db_name'],json_data[data['type']], where_data )
     if success:
         return jsonify({"message": "Entry deleted successfully"}), 200
     else:
@@ -681,7 +681,7 @@ def message_delete():
 #new
 @app.route('/subscriber/new', methods=['POST'])
 def subscriber_new():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data)
     data = request.json
     required_columns = ["subscriber_id", "name", "category", "phone_number", "email", "alert_url", "alert_preference", "status_poll_url"]
@@ -702,7 +702,7 @@ def subscriber_new():
 # List
 @app.route('/subscriber/list_details', methods=['POST', 'GET'])
 def subscriber_list():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data)
     data = json.loads(request.data); print(data)
     
@@ -721,7 +721,7 @@ def subscriber_list():
 # Update 
 @app.route('/subscriber/modifications', methods=['PUT'])
 def subscriber_update():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
     update_data = data.get("qry", {}).get("update")
@@ -739,7 +739,7 @@ def subscriber_update():
 # Delete
 @app.route('/subscriber', methods=['DELETE'])
 def subscriber_delete():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
     where_data = data.get('qry', {}).get('where_data', {})
@@ -755,7 +755,7 @@ def subscriber_delete():
 #new
 @app.route('/log/new', methods=['POST'])
 def log_new():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data)
     data = request.json
     required_columns = ["subscriber_id", "name", "category", "phone_number", "email", "alert_url", "alert_preference", "status_poll_url"]
@@ -776,7 +776,7 @@ def log_new():
 # List
 @app.route('/log/list_details', methods=['POST', 'GET'])
 def log_list():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data)
     data = json.loads(request.data); print(data)
     
@@ -795,7 +795,7 @@ def log_list():
 # Update 
 @app.route('/log/modifications', methods=['PUT'])
 def log_update():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
     update_data = data.get("qry")
@@ -813,7 +813,7 @@ def log_update():
 # Delete
 @app.route('/log', methods=['DELETE'])
 def log_delete():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
     where_data = data.get('where_data')
@@ -829,7 +829,7 @@ def log_delete():
 #new
 @app.route('/appointment/new', methods=['POST'])
 def appointment_new():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data)
     data = request.json
     # Insert data into the entity table
@@ -843,7 +843,7 @@ def appointment_new():
 # List
 @app.route('/appointment/list_details', methods=['POST', 'GET'])
 def appointment_list():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data)
     data = json.loads(request.data); print(data)
     
@@ -862,7 +862,7 @@ def appointment_list():
 # Update 
 @app.route('/appointment/modifications', methods=['PUT'])
 def appointment_update():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
     update_data = data.get("qry", {}).get("update")
@@ -880,7 +880,7 @@ def appointment_update():
 # Delete
 @app.route('/appointment', methods=['DELETE'])
 def appointment_delete():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
     where_data = data.get('qry', {}).get('where_data', {})
@@ -896,13 +896,13 @@ def appointment_delete():
 #new
 @app.route('/config/new', methods=['POST'])
 def entityConfig_new():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data)
     data = request.json
     print(data.get("qry"))
     # Insert data into the entity table
-    print(">>",json_data['db_name'],json_data[data['tab']][data['type']], data.get("qry") )
-    success, message = insert_ignore(json_data['db_name'],json_data[data['tab']][data['type']], data.get("qry") )
+    print(">>",json_data['db_name'],json_data[data['type']], data.get("qry") )
+    success, message = insert_ignore(json_data['db_name'],json_data[data['type']], data.get("qry") )
     
     if success:
         return jsonify({'message': message}), 201
@@ -912,15 +912,15 @@ def entityConfig_new():
 # List
 @app.route('/config/list_details', methods=['POST', 'GET'])
 def entityConfig_list():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     #print("db name: ",json_data)
     data = json.loads(request.data); print(data)
     
     try:
-        #myresult=get_data(json_data['db_name'],json_data[data['tab']][data['type']], data['qry']['select_fields'],data['qry']['where_data']) 
+        #myresult=get_data(json_data['db_name'],json_data[data['type']], data['qry']['select_fields'],data['qry']['where_data']) 
         myresult = get_data(
             json_data['db_name'],
-            json_data[data['tab']][data['type']],
+            json_data[data['type']],
             data['qry']['select_fields'],
             data['qry']['where_data'],
             "none",
@@ -969,7 +969,7 @@ def Config_list_new():
 # Update 
 @app.route('/config/modifications', methods=['PUT'])
 def entityConfig_update():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = request.json
     qry = data.get('qry', {})
@@ -979,7 +979,7 @@ def entityConfig_update():
 
     if not update_data or not where_data:
         return jsonify({"error": "Missing table_name, update_data or where_data"}), 400
-    success = update_entry(json_data['db_name'],json_data[data['tab']][data['type']], update_data,where_data,)
+    success = update_entry(json_data['db_name'],json_data[data['type']], update_data,where_data,)
     if success:
         return jsonify({"message": "Entry updated successfully"}), 200
     else:
@@ -988,7 +988,7 @@ def entityConfig_update():
 # Delete
 @app.route('/config', methods=['DELETE'])
 def entityConfig_delete():
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     print("db name: ",json_data['db_name'])
     data = json.loads(request.data)
     qry = data.get('qry', {})
@@ -1012,7 +1012,7 @@ def entityConfig_delete():
 
     print("Processed Where Data:", where_data)
     #success = delete_entry(json_data['db_name'],json_data['entity_config'][data['type']], {"entity_id":entity_id} )
-    success = delete_entry(json_data['db_name'],json_data[data['tab']][data['type']], where_data)
+    success = delete_entry(json_data['db_name'],json_data[data['type']], where_data)
     if success:
         return jsonify({"message": "Entry deleted successfully"}), 200
     else:
@@ -1023,7 +1023,7 @@ import encryption
 @app.route('/registerQR', methods=['POST'])
 def register_qr():
     data = request.get_json()
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     DocumentId = data.get('DocumentId')
     token = data.get('token')
     creator = data.get('creator')
@@ -1067,10 +1067,10 @@ def register_qr():
 
 @app.route('/app_registry/new', methods=['POST'])
 def insert_app_registry():
-    json_data = json.load(open('config/new/get_DB_data.json')) 
+    json_data = json.load(open('config/new/get_DB_data_new.json')) 
     data = stream_json()  # Receiving data in chunks
     
-    success, message = insert_ignore(json_data['db_name'], json_data[data['tab']][data['type']], data.get("qry"))
+    success, message = insert_ignore(json_data['db_name'], json_data[data['type']], data.get("qry"))
     
     if success:
         return jsonify({'message': message}), 201
@@ -1079,7 +1079,7 @@ def insert_app_registry():
 
 @app.route('/app_registry/modifications', methods=['PUT'])
 def update_app_registry():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     
     qry = data.get("qry")
@@ -1089,7 +1089,7 @@ def update_app_registry():
     if not update_data or not where_data.get("app_registry_id"):
         return jsonify({"error": "Missing app_registry_id or update_data"}), 400
 
-    success = update_entry(json_data['db_name'], json_data[data['tab']][data['type']], update_data, where_data)
+    success = update_entry(json_data['db_name'], json_data[data['type']], update_data, where_data)
     
     if success:
         return jsonify({"message": "Entry updated successfully"}), 200
@@ -1098,14 +1098,14 @@ def update_app_registry():
 
 @app.route('/app_registry', methods=['DELETE'])
 def delete_app_registry():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     entity_id = data.get('entity_id')
 
     if not entity_id:
         return jsonify({"error": "Missing entity_id"}), 400
 
-    success = delete_entry(json_data['db_name'], json_data[data['tab']][data['type']], {"entity_id": entity_id})
+    success = delete_entry(json_data['db_name'], json_data[data['type']], {"entity_id": entity_id})
     
     if success:
         return jsonify({"message": "Entry deleted successfully"}), 200
@@ -1114,13 +1114,13 @@ def delete_app_registry():
 
 @app.route('/app_registry/list_details', methods=['POST', 'GET'])
 def get_app_registry():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     
     try:
         myresult = get_data(
             json_data['db_name'],
-            json_data[data['tab']][data['type']],
+            json_data[data['type']],
             data['qry']['select_fields'],
             data['qry']['where_data']
         )
@@ -1136,10 +1136,10 @@ def get_app_registry():
 
 @app.route('/program_registry/new', methods=['POST'])
 def insert_program_registry():
-    json_data = json.load(open('config/new/get_DB_data.json')) 
+    json_data = json.load(open('config/new/get_DB_data_new.json')) 
     data = stream_json()  # Receiving data in chunks
     
-    success, message = insert_ignore(json_data['db_name'], json_data[data['tab']][data['type']], data.get("qry"))
+    success, message = insert_ignore(json_data['db_name'], json_data[data['type']], data.get("qry"))
     
     if success:
         return jsonify({'message': message}), 201
@@ -1148,7 +1148,7 @@ def insert_program_registry():
 
 @app.route('/program_registry/modifications', methods=['PUT'])
 def update_program_registry():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     
     update_data = data.get("qry")
@@ -1157,7 +1157,7 @@ def update_program_registry():
     if not update_data or not where_data.get("entity_id"):
         return jsonify({"error": "Missing entity_id or update_data"}), 400
 
-    success = update_entry(json_data['db_name'], json_data[data['tab']][data['type']], update_data, where_data)
+    success = update_entry(json_data['db_name'], json_data[data['type']], update_data, where_data)
     
     if success:
         return jsonify({"message": "Entry updated successfully"}), 200
@@ -1166,14 +1166,14 @@ def update_program_registry():
 
 @app.route('/program_registry', methods=['DELETE'])
 def delete_program_registry():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     entity_id = data.get('entity_id')
 
     if not entity_id:
         return jsonify({"error": "Missing entity_id"}), 400
 
-    success = delete_entry(json_data['db_name'], json_data[data['tab']][data['type']], {"entity_id": entity_id})
+    success = delete_entry(json_data['db_name'], json_data[data['type']], {"entity_id": entity_id})
     
     if success:
         return jsonify({"message": "Entry deleted successfully"}), 200
@@ -1182,13 +1182,13 @@ def delete_program_registry():
 
 @app.route('/program_registry/list_details', methods=['POST', 'GET'])
 def get_program_registry():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     
     try:
         myresult = get_data(
             json_data['db_name'],
-            json_data[data['tab']][data['type']],
+            json_data[data['type']],
             data['qry']['select_fields'],
             data['qry']['where_data']
         )
@@ -1203,10 +1203,10 @@ def get_program_registry():
 
 @app.route('/service_registry/new', methods=['POST'])
 def insert_service_registry():
-    json_data = json.load(open('config/new/get_DB_data.json')) 
+    json_data = json.load(open('config/new/get_DB_data_new.json')) 
     data = stream_json()  # Receiving data in chunks
     
-    success, message = insert_ignore(json_data['db_name'], json_data[data['tab']][data['type']], data.get("qry"))
+    success, message = insert_ignore(json_data['db_name'], json_data[data['type']], data.get("qry"))
     
     if success:
         return jsonify({'message': message}), 201
@@ -1215,7 +1215,7 @@ def insert_service_registry():
 
 @app.route('/service_registry/modifications', methods=['PUT'])
 def update_service_registry():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     
     update_data = data.get("qry")
@@ -1224,7 +1224,7 @@ def update_service_registry():
     if not update_data or not where_data.get("entity_id"):
         return jsonify({"error": "Missing entity_id or update_data"}), 400
 
-    success = update_entry(json_data['db_name'], json_data[data['tab']][data['type']], update_data, where_data)
+    success = update_entry(json_data['db_name'], json_data[data['type']], update_data, where_data)
     
     if success:
         return jsonify({"message": "Entry updated successfully"}), 200
@@ -1233,14 +1233,14 @@ def update_service_registry():
 
 @app.route('/service_registry', methods=['DELETE'])
 def delete_service_registry():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     entity_id = data.get('entity_id')
 
     if not entity_id:
         return jsonify({"error": "Missing entity_id"}), 400
 
-    success = delete_entry(json_data['db_name'], json_data[data['tab']][data['type']], {"entity_id": entity_id})
+    success = delete_entry(json_data['db_name'], json_data[data['type']], {"entity_id": entity_id})
     
     if success:
         return jsonify({"message": "Entry deleted successfully"}), 200
@@ -1249,13 +1249,13 @@ def delete_service_registry():
 
 @app.route('/service_registry/list_details', methods=['POST', 'GET'])
 def get_service_registry():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     
     try:
         myresult = get_data(
             json_data['db_name'],
-            json_data[data['tab']][data['type']],
+            json_data[data['type']],
             data['qry']['select_fields'],
             data['qry']['where_data']
         )
@@ -1269,10 +1269,10 @@ def get_service_registry():
 
 @app.route('/document_registry/new', methods=['POST'])
 def insert_document_registry():
-    json_data = json.load(open('config/new/get_DB_data.json')) 
+    json_data = json.load(open('config/new/get_DB_data_new.json')) 
     data = stream_json()  # Receiving data in chunks
     
-    success, message = insert_ignore(json_data['db_name'], json_data[data['tab']][data['type']], data.get("qry"))
+    success, message = insert_ignore(json_data['db_name'], json_data[data['type']], data.get("qry"))
     
     if success:
         return jsonify({'message': message}), 201
@@ -1281,7 +1281,7 @@ def insert_document_registry():
 
 @app.route('/document_registry/modifications', methods=['PUT'])
 def update_document_registry():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     
     update_data = data.get("qry")
@@ -1290,7 +1290,7 @@ def update_document_registry():
     if not update_data or not where_data.get("entity_id"):
         return jsonify({"error": "Missing entity_id or update_data"}), 400
 
-    success = update_entry(json_data['db_name'], json_data[data['tab']][data['type']], update_data, where_data)
+    success = update_entry(json_data['db_name'], json_data[data['type']], update_data, where_data)
     
     if success:
         return jsonify({"message": "Entry updated successfully"}), 200
@@ -1299,14 +1299,14 @@ def update_document_registry():
 
 @app.route('/document_registry', methods=['DELETE'])
 def delete_document_registry():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     entity_id = data.get('entity_id')
 
     if not entity_id:
         return jsonify({"error": "Missing entity_id"}), 400
 
-    success = delete_entry(json_data['db_name'], json_data[data['tab']][data['type']], {"entity_id": entity_id})
+    success = delete_entry(json_data['db_name'], json_data[data['type']], {"entity_id": entity_id})
     
     if success:
         return jsonify({"message": "Entry deleted successfully"}), 200
@@ -1315,14 +1315,14 @@ def delete_document_registry():
 
 @app.route('/document_registry/list_details', methods=['POST', 'GET'])
 def get_document_registry():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     print(data)
     print("db name: ", json_data['db_name'])
     #try:
     myresult = get_data(
         json_data['db_name'],
-        json_data[data['tab']][data['type']],
+        json_data[data['type']],
         data['qry']['select_fields'],
         data['qry']['where_data'],
         exact_match=True
@@ -1338,10 +1338,10 @@ def get_document_registry():
 
 @app.route('/documentUI_registry/new', methods=['POST'])
 def insert_documentUI_registry():
-    json_data = json.load(open('config/new/get_DB_data.json')) 
+    json_data = json.load(open('config/new/get_DB_data_new.json')) 
     data = stream_json()  # Receiving data in chunks
     
-    success, message = insert_ignore(json_data['db_name'], json_data[data['tab']][data['type']], data.get("qry"))
+    success, message = insert_ignore(json_data['db_name'], json_data[data['type']], data.get("qry"))
     
     if success:
         return jsonify({'message': message}), 201
@@ -1350,7 +1350,7 @@ def insert_documentUI_registry():
 
 @app.route('/documentUI_registry/modifications', methods=['PUT'])
 def update_documentUI_registry():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     
     update_data = data.get("qry")
@@ -1359,7 +1359,7 @@ def update_documentUI_registry():
     if not update_data or not where_data.get("entity_id"):
         return jsonify({"error": "Missing entity_id or update_data"}), 400
 
-    success = update_entry(json_data['db_name'], json_data[data['tab']][data['type']], update_data, where_data)
+    success = update_entry(json_data['db_name'], json_data[data['type']], update_data, where_data)
     
     if success:
         return jsonify({"message": "Entry updated successfully"}), 200
@@ -1368,14 +1368,14 @@ def update_documentUI_registry():
 
 @app.route('/documentUI_registry', methods=['DELETE'])
 def delete_documentUI_registry():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     entity_id = data.get('entity_id')
 
     if not entity_id:
         return jsonify({"error": "Missing entity_id"}), 400
 
-    success = delete_entry(json_data['db_name'], json_data[data['tab']][data['type']], {"entity_id": entity_id})
+    success = delete_entry(json_data['db_name'], json_data[data['type']], {"entity_id": entity_id})
     
     if success:
         return jsonify({"message": "Entry deleted successfully"}), 200
@@ -1384,12 +1384,12 @@ def delete_documentUI_registry():
 
 @app.route('/documentUI_registry/list_details', methods=['POST', 'GET'])
 def get_documentUI_registry():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     print( 
         ">>>>>>>",
         json_data['db_name'],
-        json_data[data['tab']][data['type']],
+        json_data[data['type']],
         data['qry']['select_fields'],
         data['qry']['where_data'],
         data['affiliations']
@@ -1397,7 +1397,7 @@ def get_documentUI_registry():
     try:
         myresult = get_data(
             json_data['db_name'],
-            json_data[data['tab']][data['type']],
+            json_data[data['type']],
             data['qry']['select_fields'],
             data['qry']['where_data'],
             data['affiliations']
@@ -1412,10 +1412,10 @@ def get_documentUI_registry():
 
 @app.route('/trigger_functions/new', methods=['POST'])
 def insert_trigger_functions():
-    json_data = json.load(open('config/new/get_DB_data.json')) 
+    json_data = json.load(open('config/new/get_DB_data_new.json')) 
     data = stream_json()  # Receiving data in chunks
     
-    success, message = insert_ignore(json_data['db_name'], json_data[data['tab']][data['type']], data.get("qry"))
+    success, message = insert_ignore(json_data['db_name'], json_data[data['type']], data.get("qry"))
     
     if success:
         return jsonify({'message': message}), 201
@@ -1424,7 +1424,7 @@ def insert_trigger_functions():
 
 @app.route('/trigger_functions/modifications', methods=['PUT'])
 def update_trigger_functions():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     
     update_data = data.get("qry")
@@ -1433,7 +1433,7 @@ def update_trigger_functions():
     if not update_data or not where_data.get("entity_id"):
         return jsonify({"error": "Missing entity_id or update_data"}), 400
 
-    success = update_entry(json_data['db_name'], json_data[data['tab']][data['type']], update_data, where_data)
+    success = update_entry(json_data['db_name'], json_data[data['type']], update_data, where_data)
     
     if success:
         return jsonify({"message": "Entry updated successfully"}), 200
@@ -1442,14 +1442,14 @@ def update_trigger_functions():
 
 @app.route('/trigger_functions', methods=['DELETE'])
 def delete_trigger_functions():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     entity_id = data.get('entity_id')
 
     if not entity_id:
         return jsonify({"error": "Missing entity_id"}), 400
 
-    success = delete_entry(json_data['db_name'], json_data[data['tab']][data['type']], {"entity_id": entity_id})
+    success = delete_entry(json_data['db_name'], json_data[data['type']], {"entity_id": entity_id})
     
     if success:
         return jsonify({"message": "Entry deleted successfully"}), 200
@@ -1458,13 +1458,13 @@ def delete_trigger_functions():
 
 @app.route('/trigger_functions/list_details', methods=['POST', 'GET'])
 def get_trigger_functions():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     
     try:
         myresult = get_data(
             json_data['db_name'],
-            json_data[data['tab']][data['type']],
+            json_data[data['type']],
             data['qry']['select_fields'],
             data['qry']['where_data']
         )
@@ -1479,10 +1479,10 @@ def get_trigger_functions():
 
 @app.route('/finalTemplate_registry/new', methods=['POST'])
 def insert_finalTemplate_registry():
-    json_data = json.load(open('config/new/get_DB_data.json')) 
+    json_data = json.load(open('config/new/get_DB_data_new.json')) 
     data = stream_json()  # Receiving data in chunks
     
-    success, message = insert_ignore(json_data['db_name'], json_data[data['tab']][data['type']], data.get("qry"))
+    success, message = insert_ignore(json_data['db_name'], json_data[data['type']], data.get("qry"))
     
     if success:
         return jsonify({'message': message}), 201
@@ -1491,7 +1491,7 @@ def insert_finalTemplate_registry():
 
 @app.route('/finalTemplate_registry/modifications', methods=['PUT'])
 def update_finalTemplate_registry():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     
     update_data = data.get("qry")
@@ -1500,7 +1500,7 @@ def update_finalTemplate_registry():
     if not update_data or not where_data.get("entity_id"):
         return jsonify({"error": "Missing entity_id or update_data"}), 400
 
-    success = update_entry(json_data['db_name'], json_data[data['tab']][data['type']], update_data, where_data)
+    success = update_entry(json_data['db_name'], json_data[data['type']], update_data, where_data)
     
     if success:
         return jsonify({"message": "Entry updated successfully"}), 200
@@ -1509,14 +1509,14 @@ def update_finalTemplate_registry():
 
 @app.route('/finalTemplate_registry', methods=['DELETE'])
 def delete_finalTemplate_registry():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     entity_id = data.get('entity_id')
 
     if not entity_id:
         return jsonify({"error": "Missing entity_id"}), 400
 
-    success = delete_entry(json_data['db_name'], json_data[data['tab']][data['type']], {"entity_id": entity_id})
+    success = delete_entry(json_data['db_name'], json_data[data['type']], {"entity_id": entity_id})
     
     if success:
         return jsonify({"message": "Entry deleted successfully"}), 200
@@ -1525,13 +1525,13 @@ def delete_finalTemplate_registry():
 
 @app.route('/finalTemplate_registry/list_details', methods=['POST', 'GET'])
 def get_finalTemplate_registry():
-    json_data = json.load(open('config/new/get_DB_data.json'))
+    json_data = json.load(open('config/new/get_DB_data_new.json'))
     data = stream_json()  # Receiving data in chunks
     
     try:
         myresult = get_data(
             json_data['db_name'],
-            json_data[data['tab']][data['type']],
+            json_data[data['type']],
             data['qry']['select_fields'],
             data['qry']['where_data']
         )
@@ -2014,7 +2014,7 @@ def read_qr():
     data=encryption.decrypt_from_qr_string(token,password)
     print(data)
     token_data = data.split("=")
-    f=open('config/new/get_DB_data.json');  json_data = json.load(f)
+    f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     myresult=get_data(json_data['db_name'],"qrlinks", "*",{"token":token_data[1]}) 
     print(myresult)
     # Dummy logic: resolve filename from token (you can use DB instead)
