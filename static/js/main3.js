@@ -423,11 +423,12 @@ async function API_call(domain, endpoint, body = {}, method = "GET", autoPresent
 }*/
 
 async function getDocument_data(domain, endpoint, body, method) {
-  const docType = body?.type || "default";
+  const docType = body?.qry?.where_data?.doc_type || "default";
+  console.log(body);
   console.log("DocType:", docType);
 
   // Step 1: Check sessionStorage
-  let storedDocs = sessionStorage.getItem("documentType");
+  let storedDocs = sessionStorage.getItem(docType);
   storedDocs = storedDocs ? JSON.parse(storedDocs) : {};
   console.log("Cached docs:", storedDocs);
 
@@ -445,7 +446,7 @@ async function getDocument_data(domain, endpoint, body, method) {
 
     // Save in sessionStorage
     storedDocs[docType] = data;
-    sessionStorage.setItem("documentType", JSON.stringify(storedDocs));
+    sessionStorage.setItem(docType, JSON.stringify(storedDocs));
 
     // Present data once fetched
     //present_Data(data, body.type);
@@ -1013,7 +1014,8 @@ async function createTable(responseData) {
                     //fieldWrapper.appendChild(label);
                     fieldWrapper.appendChild(select);   //fieldWrapper.appendChild(document.createElement('br'));
                 }*/ 
-                else if (field_datatype_val === "string" || field_datatype_val === "text" || field_datatype_val === "mediumtext" || field_datatype_val === "json" ) {
+                // Datatypes to use in the code as : String, Number, Date (DD/MM/YYYY), Time (H:M:S), Location (lat,long)
+                else if (field_datatype_val === "varchar" ||field_datatype_val === "string" || field_datatype_val === "text" || field_datatype_val === "mediumtext" || field_datatype_val === "json" ) {
                     let label = document.createElement("label");
                     label.innerHTML = element.label || element.field;
                     label.className = "form-label";
