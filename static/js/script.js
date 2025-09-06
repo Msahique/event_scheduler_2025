@@ -29,7 +29,7 @@ async function get_data_list(selected_doc_type,where_data,block_no,block_size){
        config = JSON.parse(rawConfig);          // now it's an object
        console.log("UI Template Config:", config);
        const Registry = config[selected_doc_type]; // assuming your object is in variable `config`
-
+        console.log(Registry);
         let fieldsArray = [];
 
         if (Registry?.job?.list?.data?.[0]?.fields) {

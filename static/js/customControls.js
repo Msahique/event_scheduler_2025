@@ -5875,6 +5875,13 @@ class GraphsControl extends HTMLElement {
                         gap: 20px;
                         align-items: end;
                     }
+                    .graph-title-display {
+                        text-align: center;
+                        font-size: 22px;
+                        font-weight: bold;
+                        color: #333;
+                        margin-bottom: 8px;
+                    }
                 }
             </style>
 
@@ -5893,7 +5900,6 @@ class GraphsControl extends HTMLElement {
                     </div>
                     <!-- Control Panel -->
                     <div class="control-panel">
-                        <div class="control-panel-title">Chart Configuration</div>
                         <div class="controls-row">
                             <div class="control-group">
                                 <label for="chartType">Chart Type</label>
@@ -5959,12 +5965,6 @@ class GraphsControl extends HTMLElement {
                                 <label>Z-Axis</label>
                                 <div id="customThirdMultiSelectContainer"></div>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Graph Container -->
-                    <div class="graph-container">
-                        <div class="graph-header">
                             <div class="graph-title">
                               <label for="graphTitleInput">Graph Title:</label>
                               <input type="text" id="graphTitleInput" placeholder="Enter graph title" class="form-control" style="width: 180px;">
@@ -5977,7 +5977,14 @@ class GraphsControl extends HTMLElement {
                               <!-- Y Axis Input -->
                               <label for="yAxisInput">Y Axis:</label>
                               <input type="text" id="yAxisInput" placeholder="Enter Y axis label" class="form-control" style="width: 150px;">
-                            </div>
+                            </div>  
+                        </div>
+                    </div>
+                    
+                    <!-- Graph Container -->
+                    <div class="graph-container">
+                        <div class="graph-header">
+                            <div id="graphTitleDisplay" class="graph-title-display"></div>
                             <div class="plotly-toolbar-container">
                                 <div id="customToolbar" class="custom-modebar"></div>
                             </div>
@@ -5998,13 +6005,6 @@ class GraphsControl extends HTMLElement {
                             </div>
                         </div>
                     </div>
-                  <div class="action-buttons" style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; padding: 20px 0;">
-                      <button type="button" class="btn btn-secondary" id="cancel">Cancel</button>
-                      <button type="button" class="btn btn-primary" id="save">
-                          <span>💾</span>
-                          Save Chart
-                      </button>
-                  </div>
                 </div>
         `;
 
@@ -6039,6 +6039,15 @@ class GraphsControl extends HTMLElement {
             this.updateAxisTitlesFromInputs();
         });
 
+        const titleInput = this.shadowRoot.getElementById("graphTitleInput");
+        const titleDisplay = this.shadowRoot.getElementById("graphTitleDisplay");
+
+        if (titleInput && titleDisplay) {
+            titleInput.addEventListener("input", () => {
+                titleDisplay.textContent = titleInput.value || "";
+            });
+        }
+
         // this.shadowRoot.querySelector(".close").addEventListener("click", () => {
         //     this.closeModal();
         // });
@@ -6049,9 +6058,9 @@ class GraphsControl extends HTMLElement {
         // });
 
         // NEW: Add Save button functionality
-        this.shadowRoot.getElementById("save").addEventListener("click", () => {
-            this.saveChart();
-        });
+        // this.shadowRoot.getElementById("save").addEventListener("click", () => {
+        //     this.saveChart();
+        // });
 
         // this.shadowRoot.getElementById("graphsModal").addEventListener("click", (event) => {
         //     if (event.target === this.shadowRoot.getElementById("graphsModal")) {
@@ -7060,8 +7069,7 @@ class GraphsControl extends HTMLElement {
             },
             plot_bgcolor: 'white',
             paper_bgcolor: 'white',
-            autosize: true,
-            showlegend: false // DISABLE PLOTLY'S BUILT-IN LEGEND
+            autosize: true
         };
 
         // Different layouts for different chart types
@@ -7341,9 +7349,7 @@ class GraphsControl extends HTMLElement {
                 chartType: this.chartType,
                 colors: this.columnColors || {},
                 hiddenColumns: Array.from(this.hiddenColumns || []),
-                plotlyData: chartData,
-                plotlyLayout: chartLayout,
-                rowData: this.rowData || [] // The actual data rows that were plotted
+                plotlyLayout: chartLayout
             };
             
             // Prepare the payload for backend
@@ -7365,7 +7371,10 @@ class GraphsControl extends HTMLElement {
     }
 
     generateChartName() {
-        const item = this.selectedItemFromDropdown || 'Chart';
+        // Get the selected value from docTypeSelect dropdown
+        const docTypeSelect = this.shadowRoot.getElementById("docTypeSelect");
+        const item = docTypeSelect?.value || 'Chart';
+        
         const type = this.chartType || 'unknown';
         const xAxis = this.singleSelectDropdown?.value || 'X';
         
@@ -7389,6 +7398,25 @@ class GraphsControl extends HTMLElement {
         }
         
         return chartName;
+    }
+
+    validateChartData() {
+        if (!this.chartType) {
+            alert('Please select a chart type');
+            return false;
+        }
+        
+        if (!this.selectedMultiColumns || this.selectedMultiColumns.length === 0) {
+            alert('Please select at least one Y-axis column');
+            return false;
+        }
+        
+        if (!this.singleSelectDropdown?.value) {
+            alert('Please select an X-axis column');
+            return false;
+        }
+        
+        return true;
     }
 
     async sendChartToBackend(payload) {
@@ -7452,14 +7480,13 @@ class GraphsControl extends HTMLElement {
                 this.chartType = template.chartType;
                 console.log('GraphsControl: Set chartType:', template.chartType);
 
-                const chartTypeSelect =
-                    this.querySelector('#chartTypeSelect') ||
-                    this.querySelector('.chart-type-select') ||
-                    this.querySelector('select[name="chartType"]');
-
+                // ✅ Fix: target the real element by its id
+                const chartTypeSelect = this.shadowRoot.getElementById('chartType');
                 if (chartTypeSelect) {
                     chartTypeSelect.value = template.chartType;
                     chartTypeSelect.dispatchEvent(new Event('change'));
+                } else {
+                    console.warn("GraphsControl: chartType <select> not found in shadowRoot");
                 }
 
                 if (this.updateAxisSelections) {
@@ -7467,37 +7494,184 @@ class GraphsControl extends HTMLElement {
                 }
             }
 
-            // 3. Axis titles
-            if (template.xAxisTitle || template.yAxisTitle) {
-                this.setAxisTitles(template.xAxisTitle, template.yAxisTitle);
+            // 3. Set graph title
+            if (template.graphTitle) {
+                const graphTitleInput = this.shadowRoot.getElementById("graphTitleInput");
+                if (graphTitleInput) {
+                    graphTitleInput.value = template.graphTitle;
+                    console.log('GraphsControl: Set graphTitle:', template.graphTitle);
+                }
+                const titleDisplay = this.shadowRoot.getElementById("graphTitleDisplay");
+                if (titleDisplay) {
+                    titleDisplay.textContent = template.graphTitle;
+                    console.log("GraphsControl: Set graphTitle (display):", template.graphTitle);
+                }
             }
 
-            // 4. X-axis selection
-            if (template.xAxis && this.singleSelectDropdown) {
-                this.displaySingleValue(this.singleSelectDropdown, template.xAxis);
-                console.log('GraphsControl: Set xAxis:', template.xAxis);
+            // 4. Set axis labels/titles
+            if (template.xAxisLabel) {
+                const xAxisInput = this.shadowRoot.getElementById("xAxisInput");
+                if (xAxisInput) {
+                    xAxisInput.value = template.xAxisLabel;
+                    console.log('GraphsControl: Set xAxisLabel:', template.xAxisLabel);
+                }
             }
 
-            // 5. Y-axis selections
+            if (template.yAxisLabel) {
+                const yAxisInput = this.shadowRoot.getElementById("yAxisInput");
+                if (yAxisInput) {
+                    yAxisInput.value = template.yAxisLabel;
+                    console.log('GraphsControl: Set yAxisLabel:', template.yAxisLabel);
+                }
+            }
+
+            if (this.updateAxisTitlesFromInputs) {
+                this.updateAxisTitlesFromInputs();
+            }
+
+            // 5. Store axis selections to be applied AFTER doc type change
+            const pendingAxisSelections = {};
+            
+            if (template.xAxis) {
+                pendingAxisSelections.xAxis = template.xAxis;
+                console.log('GraphsControl: Stored pending xAxis selection:', template.xAxis);
+            }
+
             if (template.yAxis && Array.isArray(template.yAxis)) {
-                this.selectedMultiColumns = [...template.yAxis];
-                this.displayMultiSelectValues('y', template.yAxis);
-                console.log('GraphsControl: Set yAxis:', template.yAxis);
+                pendingAxisSelections.yAxis = [...template.yAxis];
+                console.log('GraphsControl: Stored pending yAxis selections:', template.yAxis);
             }
 
-            // 6. Z-axis selections
             if (template.zAxis && Array.isArray(template.zAxis)) {
-                this.selectedThirdMultiColumns = [...template.zAxis];
-                this.displayMultiSelectValues('z', template.zAxis);
-                console.log('GraphsControl: Set zAxis:', template.zAxis);
+                pendingAxisSelections.zAxis = [...template.zAxis];
+                console.log('GraphsControl: Stored pending zAxis selections:', template.zAxis);
             }
 
-            // ✅ Refresh chart here after X/Y/Z are set
-            if (this.updateChart) {
-                this.updateChart();
+            // 6. Function to apply axis selections after doc type change
+            const applyAxisSelections = () => {
+                console.log('GraphsControl: Applying stored axis selections...');
+                
+                // Apply y-axis and z-axis selections BEFORE populating dropdowns (they use internal state)
+                if (pendingAxisSelections.yAxis) {
+                    this.selectedMultiColumns = [...pendingAxisSelections.yAxis];
+                    console.log('GraphsControl: Set yAxis selections (before populate):', pendingAxisSelections.yAxis);
+                }
+
+                if (pendingAxisSelections.zAxis) {
+                    this.selectedThirdMultiColumns = [...pendingAxisSelections.zAxis];
+                    console.log('GraphsControl: Set zAxis selections (before populate):', pendingAxisSelections.zAxis);
+                }
+                
+                // Now populate dropdowns with current data (this will render Y/Z dropdowns with selections)
+                if (this.rowData && this.rowData.length > 0) {
+                    this.populateDropdowns();
+                }
+
+                // Small delay to ensure dropdowns are fully populated, then set X-axis
+                setTimeout(() => {
+                    // Apply x-axis selection AFTER populateDropdowns() has finished
+                    if (pendingAxisSelections.xAxis && this.singleSelectDropdown) {
+                        console.log('GraphsControl: Setting X-axis to:', pendingAxisSelections.xAxis);
+                        console.log('GraphsControl: Available X-axis options:', Array.from(this.singleSelectDropdown.options).map(o => o.value));
+                        
+                        this.singleSelectDropdown.value = pendingAxisSelections.xAxis;
+                        
+                        // Verify the value was set
+                        if (this.singleSelectDropdown.value === pendingAxisSelections.xAxis) {
+                            console.log('GraphsControl: ✅ X-axis value set successfully to:', this.singleSelectDropdown.value);
+                        } else {
+                            console.warn('GraphsControl: ❌ X-axis value not set. Current value:', this.singleSelectDropdown.value);
+                        }
+                        
+                        // Trigger change event to update the chart
+                        this.singleSelectDropdown.dispatchEvent(new Event('change'));
+                        console.log('GraphsControl: Applied xAxis selection:', pendingAxisSelections.xAxis);
+                    }
+
+                    // Force chart update after all selections are applied
+                    setTimeout(() => {
+                        if (this.updateChart) {
+                            this.updateChart();
+                            console.log('GraphsControl: Forced chart update after axis selection');
+                        }
+                    }, 50);
+                }, 100);
+            };
+
+            // 7. Set document type selection and handle axis selections after completion
+            if (template.selectedDocType) {
+                const docTypeSelect = this.shadowRoot.getElementById("docTypeSelect");
+                if (docTypeSelect) {
+                    docTypeSelect.value = template.selectedDocType;
+                    console.log('GraphsControl: Set selectedDocType:', template.selectedDocType);
+                    
+                    // Create a promise that resolves when all doc type changes are complete
+                    const waitForDocTypeChange = () => {
+                        return new Promise((resolve) => {
+                            let changeEventFired = false;
+                            let handleDocTypeFired = false;
+                            
+                            const checkCompletion = () => {
+                                if (changeEventFired && handleDocTypeFired) {
+                                    console.log('GraphsControl: Both doc type change events completed');
+                                    setTimeout(resolve, 100); // Small additional delay
+                                }
+                            };
+                            
+                            // Handle the programmatic doc type change
+                            if (this.handleDocTypeChange) {
+                                console.log('GraphsControl: Calling handleDocTypeChange programmatically');
+                                const result = this.handleDocTypeChange(template.selectedDocType);
+                                
+                                if (result && typeof result.then === 'function') {
+                                    // It's a Promise
+                                    result.then(() => {
+                                        console.log('GraphsControl: handleDocTypeChange promise resolved');
+                                        handleDocTypeFired = true;
+                                        checkCompletion();
+                                    }).catch(error => {
+                                        console.error('GraphsControl: Error in handleDocTypeChange:', error);
+                                        handleDocTypeFired = true;
+                                        checkCompletion();
+                                    });
+                                } else {
+                                    // It's synchronous
+                                    console.log('GraphsControl: handleDocTypeChange completed synchronously');
+                                    handleDocTypeFired = true;
+                                    checkCompletion();
+                                }
+                            } else {
+                                handleDocTypeFired = true;
+                                checkCompletion();
+                            }
+                            
+                            // Trigger change event after a small delay to let programmatic change complete
+                            setTimeout(() => {
+                                console.log('GraphsControl: Triggering change event on docTypeSelect');
+                                docTypeSelect.dispatchEvent(new Event('change'));
+                                
+                                // Give change event handlers time to complete
+                                setTimeout(() => {
+                                    console.log('GraphsControl: Change event processing completed');
+                                    changeEventFired = true;
+                                    checkCompletion();
+                                }, 150);
+                            }, 50);
+                        });
+                    };
+                    
+                    // Wait for all doc type changes to complete, then apply axis selections
+                    waitForDocTypeChange().then(() => {
+                        console.log('GraphsControl: All doc type changes complete, applying axis selections');
+                        applyAxisSelections();
+                    });
+                }
+            } else {
+                // No doc type change, apply axis selections immediately
+                setTimeout(applyAxisSelections, 200);
             }
 
-            // 7. Colors
+            // 8. Colors
             if (this.initializeColors) {
                 this.initializeColors();
             }
@@ -7506,24 +7680,183 @@ class GraphsControl extends HTMLElement {
                 console.log('GraphsControl: Set colors:', template.colors);
             }
 
-            // 8. Hidden columns
+            // 9. Hidden columns
             if (template.hiddenColumns && Array.isArray(template.hiddenColumns)) {
                 this.hiddenColumns = new Set(template.hiddenColumns);
                 console.log('GraphsControl: Set hiddenColumns:', template.hiddenColumns);
             }
 
-            // 9. Apply chart with template data (optional override)
+            // 10. Render chart - use template data if available, otherwise generate new chart
             setTimeout(() => {
                 if (template.plotlyData && template.plotlyLayout && this.graphCanvas) {
+                    // Use template data directly - preserves all template settings
+                    console.log('GraphsControl: Using template plotly data for rendering');
                     this.renderChartFromTemplate(template.plotlyData, template.plotlyLayout);
                 } else {
+                    // Only generate new chart if no template data exists
+                    console.log('GraphsControl: No template data, generating chart from current selections');
                     setTimeout(() => this.forceResize(), 500);
                 }
-            }, 300);
+            }, 500); // Increased delay to allow axis selections to complete
 
             console.log('GraphsControl: Chart template applied successfully');
         } catch (error) {
             console.error('GraphsControl: Error applying chart template:', error);
+            setTimeout(() => {
+                if (this.updateChart) {
+                    this.updateChart();
+                }
+                setTimeout(() => this.forceResize(), 500);
+            }, 300);
+        }
+    }
+
+    applyChartTemplateStrict(template) {
+        try {
+            console.log('GraphsControl (Strict): Applying chart template:', template);
+
+            // 1. Set row data (optional: keep same as template)
+            if (template.rowData && Array.isArray(template.rowData)) {
+                this.rowData = template.rowData;
+                console.log('GraphsControl (Strict): Set rowData:', template.rowData.length, 'rows');
+            }
+
+            // 2. Set chart type
+           const chartTypeSelect = this.shadowRoot.getElementById("chartType");
+            if (chartTypeSelect) {
+                chartTypeSelect.value = template.chartType;
+                chartTypeSelect.dispatchEvent(new Event("change"));
+                console.log("GraphsControl: Set chartType:", template.chartType);
+            } else {
+                console.warn("GraphsControl: chartType select element not found in shadowRoot");
+            }
+
+            // 3. Set graph title
+            if (template.graphTitle) {
+                const graphTitleInput = this.shadowRoot.getElementById("graphTitleInput");
+                if (graphTitleInput) {
+                    graphTitleInput.value = template.graphTitle;
+                    console.log('GraphsControl (Strict): Set graphTitle:', template.graphTitle);
+                }
+                const titleDisplay = this.shadowRoot.getElementById("graphTitleDisplay");
+                if (titleDisplay) {
+                    titleDisplay.textContent = template.graphTitle;
+                    console.log("GraphsControl: Set graphTitle (display):", template.graphTitle);
+                }
+            }
+
+            // 4. Set axis labels/titles
+            if (template.xAxisLabel) {
+                const xAxisInput = this.shadowRoot.getElementById("xAxisInput");
+                if (xAxisInput) {
+                    xAxisInput.value = template.xAxisLabel;
+                    console.log('GraphsControl (Strict): Set xAxisLabel:', template.xAxisLabel);
+                }
+            }
+
+            if (template.yAxisLabel) {
+                const yAxisInput = this.shadowRoot.getElementById("yAxisInput");
+                if (yAxisInput) {
+                    yAxisInput.value = template.yAxisLabel;
+                    console.log('GraphsControl (Strict): Set yAxisLabel:', template.yAxisLabel);
+                }
+            }
+
+            if (this.updateAxisTitlesFromInputs) {
+                this.updateAxisTitlesFromInputs();
+            }
+
+            // 5. Set document type (UI only, no dropdown population)
+            if (template.selectedDocType) {
+                const docTypeSelect = this.shadowRoot.getElementById("docTypeSelect");
+                if (docTypeSelect) {
+                    docTypeSelect.value = template.selectedDocType;
+                    this.selectedDocType = template.selectedDocType; // just store it
+                    console.log('GraphsControl (Strict): Set selectedDocType (UI only):', template.selectedDocType);
+                }
+            }
+
+            // 5. Strictly set axis values from template only
+            if (template.xAxis) {
+                this.pendingXAxisSelection = template.xAxis;
+                console.log('GraphsControl (Strict): Stored xAxis selection:', template.xAxis);
+            }
+
+            if (template.yAxis && Array.isArray(template.yAxis)) {
+                this.selectedMultiColumns = [...template.yAxis];
+                console.log('GraphsControl (Strict): Set yAxis selections:', template.yAxis);
+            }
+
+            if (template.zAxis && Array.isArray(template.zAxis)) {
+                this.selectedThirdMultiColumns = [...template.zAxis];
+                console.log('GraphsControl (Strict): Set zAxis selections:', template.zAxis);
+            }
+
+            // ✅ Instead of populating all options, override dropdowns with ONLY template values
+            if (this.singleSelectDropdown && template.xAxis) {
+                this.singleSelectDropdown.innerHTML = "";
+                const option = document.createElement("option");
+                option.value = template.xAxis;
+                option.textContent = template.xAxis;
+                this.singleSelectDropdown.appendChild(option);
+                this.singleSelectDropdown.value = template.xAxis;
+            }
+
+            // ✅ Y-Axis (multi select)
+            const yAxisContainer = this.shadowRoot.getElementById("customMultiSelectContainer");
+            if (yAxisContainer && Array.isArray(template.yAxis)) {
+                yAxisContainer.innerHTML = "";
+                template.yAxis.forEach(y => {
+                    const option = document.createElement("option");
+                    option.value = y;
+                    option.textContent = y;
+                    option.selected = true;
+                    yAxisContainer.appendChild(option);
+                });
+            }
+
+            // ✅ Z-Axis (multi select)
+            const zAxisContainer = this.shadowRoot.getElementById("customThirdMultiSelectContainer");
+            if (zAxisContainer && Array.isArray(template.zAxis)) {
+                zAxisContainer.innerHTML = "";
+                template.zAxis.forEach(z => {
+                    const option = document.createElement("option");
+                    option.value = z;
+                    option.textContent = z;
+                    option.selected = true;
+                    zAxisContainer.appendChild(option);
+                });
+            }
+
+            // 6. Colors
+            if (this.initializeColors) {
+                this.initializeColors();
+            }
+            if (template.colors && typeof template.colors === 'object') {
+                this.columnColors = { ...template.colors };
+                console.log('GraphsControl (Strict): Set colors:', template.colors);
+            }
+
+            // 7. Hidden columns
+            if (template.hiddenColumns && Array.isArray(template.hiddenColumns)) {
+                this.hiddenColumns = new Set(template.hiddenColumns);
+                console.log('GraphsControl (Strict): Set hiddenColumns:', template.hiddenColumns);
+            }
+
+            // 8. Render chart
+            setTimeout(() => {
+                if (template.plotlyData && template.plotlyLayout && this.graphCanvas) {
+                    console.log('GraphsControl (Strict): Using template plotly data for rendering');
+                    this.renderChartFromTemplate(template.plotlyData, template.plotlyLayout);
+                } else {
+                    console.log('GraphsControl (Strict): No template data, generating chart from current selections');
+                    setTimeout(() => this.forceResize(), 500);
+                }
+            }, 200);
+
+            console.log('GraphsControl (Strict): Chart template applied successfully');
+        } catch (error) {
+            console.error('GraphsControl (Strict): Error applying chart template:', error);
             setTimeout(() => {
                 if (this.updateChart) {
                     this.updateChart();
@@ -7554,7 +7887,12 @@ class GraphsControl extends HTMLElement {
     // Simple method to display multi-select values as tags only (no dropdowns)
     displayMultiSelectValues(axisType, values) {
         try {
-            if (!values || !Array.isArray(values)) return;
+            console.log(`displayMultiSelectValues called with axisType: ${axisType}, values:`, values);
+            
+            if (!values || !Array.isArray(values)) {
+                console.log(`Invalid values for ${axisType}:`, values);
+                return;
+            }
             
             let containerId = '';
             let bgColor = '';
@@ -7567,8 +7905,18 @@ class GraphsControl extends HTMLElement {
                 bgColor = '#28a745';
             }
             
+            console.log(`Looking for container: ${containerId}`);
             const container = this.shadowRoot.getElementById(containerId);
-            if (!container) return;
+            
+            if (!container) {
+                console.error(`Container ${containerId} not found in shadowRoot`);
+                // List all available elements for debugging
+                console.log('Available elements in shadowRoot:', 
+                    Array.from(this.shadowRoot.querySelectorAll('[id]')).map(el => el.id));
+                return;
+            }
+            
+            console.log(`Found container: ${containerId}`);
             
             // Clear container
             container.innerHTML = '';
@@ -7582,6 +7930,7 @@ class GraphsControl extends HTMLElement {
             
             // Add each value as a tag (no remove button)
             values.forEach(col => {
+                console.log(`Creating tag for: ${col}`);
                 const tag = document.createElement('span');
                 tag.textContent = col;
                 tag.style.background = bgColor;
@@ -7596,7 +7945,9 @@ class GraphsControl extends HTMLElement {
             
             container.appendChild(tagsDiv);
             
-            console.log(`${axisType.toUpperCase()}-axis set to:`, values);
+            console.log(`${axisType.toUpperCase()}-axis set successfully to:`, values);
+            console.log(`Container ${containerId} now contains:`, container.innerHTML);
+            
         } catch (error) {
             console.error(`Error setting ${axisType}-axis values:`, error);
         }
@@ -7787,6 +8138,7 @@ class GraphsControl extends HTMLElement {
             const xAxisInput = this.shadowRoot.getElementById("xAxisInput");
             const yAxisInput = this.shadowRoot.getElementById("yAxisInput");
             const graphTitleInput = this.shadowRoot.getElementById("graphTitleInput");
+            const graphTitleDisplay = this.shadowRoot.getElementById("graphTitleDisplay");
 
             if (xAxisInput) {
                 xAxisInput.value = "";
@@ -7797,6 +8149,11 @@ class GraphsControl extends HTMLElement {
             if (graphTitleInput) {
                 graphTitleInput.value = "";
             }
+
+            if (graphTitleDisplay) {
+                graphTitleDisplay.value = "";
+            }
+            
             // Clear axis titles
             this.setAxisTitles("X-Axis", "Y-Axis");
             
@@ -7899,7 +8256,7 @@ class GraphsControl extends HTMLElement {
     // **Set chart template data**
     set value(chartTemplateData) {
         if (!chartTemplateData) return;
-        
+        console.log("inside set value method!")
         let template;
         if (typeof chartTemplateData === "string") {
             try {
@@ -7917,33 +8274,63 @@ class GraphsControl extends HTMLElement {
         // Store the template for later use
         this.storedTemplate = template;
         
-        // If modal is already open, apply immediately
-        if (this.shadowRoot.getElementById("graphsModal").style.display === "block") {
-            this.applyChartTemplate(template);
-        }
+        setTimeout(() => {
+            try {
+                this.applyChartTemplate(template);
+                console.log('GraphsControl: Template applied successfully');
+            } catch (error) {
+                console.error('GraphsControl: Error applying template:', error);
+            }
+        }, 100);
     }
 
     // **Get current chart configuration as JSON**
     get value() {
         try {
+            // Get the current chart data from Plotly
+            const chartData = this.graphCanvas.data || [];
+            const chartLayout = this.graphCanvas.layout || {};
+            
+            // Get the axis labels from the input fields
+            const xAxisLabel = this.shadowRoot.getElementById("xAxisInput")?.value || "";
+            const yAxisLabel = this.shadowRoot.getElementById("yAxisInput")?.value || "";
+            
+            // Get the selected document type
+            const selectedDocType = this.shadowRoot.getElementById("docTypeSelect")?.value || "";
+            
+            // Get the graph title from the input field (not layout)
+            const titleInput = this.shadowRoot.getElementById("graphTitleInput");
+            const graphTitle = titleInput?.value || chartLayout.title?.text || "";
+            
+            // Update the display if both elements exist
+            const titleDisplay = this.shadowRoot.getElementById("graphTitleDisplay");
+            if (titleInput && titleDisplay) {
+                titleDisplay.textContent = graphTitle;
+            }
+            
+            // Prepare the chart template data
             const chartTemplate = {
+                graphTitle: graphTitle,
+                xAxisLabel: xAxisLabel,
+                yAxisLabel: yAxisLabel,
                 xAxis: this.singleSelectDropdown?.value || null,
                 yAxis: this.selectedMultiColumns || [],
                 zAxis: this.selectedThirdMultiColumns || [],
-                chartType: this.chartType || 'scatter',
+                chartType: this.chartType || "",
                 colors: this.columnColors || {},
                 hiddenColumns: Array.from(this.hiddenColumns || []),
-                xAxisTitle: this.xAxisTitle || "X-Axis",
-                yAxisTitle: this.yAxisTitle || "Y-Axis",
-                plotlyData: this.graphCanvas?.data || [],
-                plotlyLayout: this.graphCanvas?.layout || {},
-                rowData: this.rowData || []
+                selectedDocType: selectedDocType,
+                plotlyLayout: chartLayout
             };
             
+            console.log('GraphsControl: Returning chart template:', chartTemplate);
+            
+            // Return as JSON string for consistency with other controls
             return JSON.stringify(chartTemplate);
+            
         } catch (error) {
-            console.error('GraphsControl: Error getting chart template value:', error);
-            return JSON.stringify({});
+            console.error('GraphsControl: Error getting chart template data:', error);
+            return "{}"; // Return empty JSON object on error
         }
     }
 
@@ -8294,7 +8681,7 @@ class GraphsControl extends HTMLElement {
         setTimeout(() => {
             if (chartTemplate) {
                 // Apply template after modal is fully visible
-                this.applyChartTemplate(chartTemplate);
+                this.applyChartTemplateStrict(chartTemplate);
             } else {
                 // Normal initialization - just show empty chart area
                 console.log('Normal initialization - no template applied');

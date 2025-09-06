@@ -2091,7 +2091,12 @@ def save_chart():
         # Get JSON data from request
         data = request.get_json()
         
+        # DEBUG: Log what we received
+        logging.info(f"=== SAVE CHART DEBUG ===")
+        logging.info(f"Received data: {data}")
+        
         if not data:
+            logging.error("No data provided in request")
             return jsonify({
                 'success': False,
                 'error': 'No data provided'
@@ -2101,86 +2106,56 @@ def save_chart():
         chart_name = data.get('chartName', '').strip()
         chart_template = data.get('chartTemplate', '')
         description = data.get('description', '').strip()
+        status = data.get('status', 'active').strip()
+        
+        # DEBUG: Log extracted values
+        logging.info(f"Chart Name: '{chart_name}' (length: {len(chart_name)})")
+        logging.info(f"Chart Template: '{chart_template}' (length: {len(chart_template) if chart_template else 0})")
+        logging.info(f"Description: '{description}' (length: {len(description)})")
+        logging.info(f"Status: '{status}'")
+        logging.info(f"=== END DEBUG ===")
         
         # Basic validation
         if not chart_name:
+            logging.error("Chart name is empty after strip")
             return jsonify({
                 'success': False,
                 'error': 'Chart name is required'
             }), 400
         
         if not chart_template:
+            logging.error("Chart template is empty")
             return jsonify({
                 'success': False,
                 'error': 'Chart template is required'
             }), 400
         
+        # For drafts, description can be optional or have a default
         if not description:
-            return jsonify({
-                'success': False,
-                'error': 'Description is required'
-            }), 400
+            if status == 'draft':
+                description = 'Draft chart template'  # Default description for drafts
+                logging.info(f"Using default description for draft: '{description}'")
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': 'Description is required'
+                }), 400
         
         # Validate JSON format
         try:
-            json.loads(chart_template)
-        except json.JSONDecodeError:
+            parsed_template = json.loads(chart_template)
+            logging.info(f"Chart template JSON is valid: {parsed_template}")
+        except json.JSONDecodeError as e:
+            logging.error(f"Invalid JSON format: {e}")
             return jsonify({
                 'success': False,
-                'error': 'Invalid chart template JSON format'
+                'error': f'Invalid chart template JSON format: {str(e)}'
             }), 400
         
-        # Parse chart template to get axis information for validation
-        try:
-            template_data = json.loads(chart_template)
-            current_x_axis = template_data.get('xAxis')
-            current_y_axis = set(template_data.get('yAxis', []))  # Convert to set for comparison
-            current_z_axis = set(template_data.get('zAxis', []))  # Convert to set for comparison
-        except (json.JSONDecodeError, KeyError):
-            return jsonify({
-                'success': False,
-                'error': 'Invalid chart template structure'
-            }), 400
-        
+        # Rest of your existing code...
         # Get current timestamp
         created_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        
-        # Use your existing cursor
         cursor = db.cursor()
-        
-        # Check for duplicate charts with same configuration
-        # Extract selectedItemFromDropdown from chart_name (assuming it's the first part before underscore)
-        selected_item = chart_name.split('_')[0] if '_' in chart_name else chart_name
-        
-        # Query to find charts with same selectedItemFromDropdown and x-axis
-        duplicate_check_query = """
-        SELECT id, chart_name, settings FROM chart_templates 
-        WHERE chart_name LIKE %s AND status = 'active'
-        """
-        cursor.execute(duplicate_check_query, (f"{selected_item}_%",))
-        existing_charts = cursor.fetchall()
-        
-        # Check each existing chart for duplicate configuration
-        for existing_chart in existing_charts:
-            try:
-                existing_template = json.loads(existing_chart['settings'])
-                existing_x_axis = existing_template.get('xAxis')
-                existing_y_axis = set(existing_template.get('yAxis', []))
-                existing_z_axis = set(existing_template.get('zAxis', []))
-                
-                # Check if it's the exact same configuration
-                if (existing_x_axis == current_x_axis and 
-                    existing_y_axis == current_y_axis and 
-                    existing_z_axis == current_z_axis):
-                    
-                    return jsonify({
-                        'success': False,
-                        'error': f'A chart with identical configuration already exists: {existing_chart["chart_name"]}'
-                    }), 409
-                    
-            except (json.JSONDecodeError, KeyError):
-                # Skip malformed existing charts
-                continue
         
         # Check if chart with exact same name already exists (for update)
         check_query = "SELECT id FROM chart_templates WHERE chart_name = %s"
@@ -2189,21 +2164,24 @@ def save_chart():
         
         if existing_chart:
             # Update existing chart
+            logging.info(f"Updating existing chart with ID: {existing_chart['id']}")
             update_query = """
             UPDATE chart_templates 
-            SET settings = %s, description = %s, created_at = %s, status = 'active'
+            SET settings = %s, description = %s, created_at = %s, status = %s
             WHERE chart_name = %s
             """
             cursor.execute(update_query, (
                 chart_template,
                 description,
                 created_at,
+                status,
                 chart_name
             ))
             chart_id = existing_chart['id']
             action = 'updated'
         else:
             # Insert new chart
+            logging.info(f"Creating new chart")
             insert_query = """
             INSERT INTO chart_templates 
             (chart_name, doc_type_id, settings, description, status, created_at, version)
@@ -2214,7 +2192,7 @@ def save_chart():
                 None,  # doc_type_id is NULL
                 chart_template,
                 description,
-                'active',
+                status,
                 created_at,
                 '1.0'
             ))
@@ -2224,19 +2202,20 @@ def save_chart():
         # Commit transaction
         db.commit()
         
-        logging.info(f"Chart template {action}: {chart_name} (ID: {chart_id})")
+        logging.info(f"Chart template {action} as {status}: {chart_name} (ID: {chart_id})")
         
         return jsonify({
             'success': True,
-            'message': f'Chart template {action} successfully',
+            'message': f'Chart template {action} successfully as {status}',
             'chart_id': chart_id,
             'chart_name': chart_name,
-            'action': action
+            'action': action,
+            'status': status
         }), 200
         
     except pymysql.Error as e:
         logging.error(f"Database error: {e}")
-        db.rollback()  # Rollback on error
+        db.rollback()
         return jsonify({
             'success': False,
             'error': f'Database error: {str(e)}'

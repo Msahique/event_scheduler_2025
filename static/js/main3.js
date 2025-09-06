@@ -484,6 +484,7 @@ async function fetchChartTemplates() {
 function session_clear(){sessionStorage.clear();}
 // Function to extract the first part of chart name (before underscore)
 function getItemTypeFromChartName(chartName) {
+    console.log(chartName);
     // Split by underscore and take everything before the first underscore
     const parts = chartName.split('_');
     return parts[0];
@@ -662,7 +663,7 @@ async function createTable(responseData) {
                 if (control.roles && control.roles.includes(role)) {
                     console.log("Control Roled:", control.roles);
                     let input = null;
-                    console.log(selectedItemFromDropdown);
+                    console.log(control.type);
                     if (control.type === "select") {
                         console.log("inside select",control.type);
                         let selectContainer = document.createElement('div');
@@ -704,6 +705,7 @@ async function createTable(responseData) {
                             }
                         } else {
                             // Normal config dropdown
+                            console.log("Control Options:", control.options);
                             data = control.options || ["Config A", "Config B", "Config C"];
                         }
 
@@ -757,6 +759,7 @@ async function createTable(responseData) {
             container.appendChild(divControls);
         }
         catch (err) {
+            console.log(err);
             status=status + err.message;
             console.log(err.message);
         }
@@ -2511,6 +2514,35 @@ function editModalCreation(response,selectedItemFromDropdown) {
 
                 let venueControl = document.getElementById(field.field);
 
+            } else if (field.control === "graphs-control") {
+                console.log("Initializing graphs-control for:", field.field);
+                input = document.createElement("graphs-control");
+                input.id = field.field;
+
+                document.body.appendChild(input); // Ensure it's in DOM
+
+                // Use settings field for chart template data
+                if (rowData.settings) {
+                    setTimeout(() => {
+                        try {
+                            let chartTemplateData = rowData.settings;
+                            console.log("Raw chart template data:", chartTemplateData);
+                            
+                            if (typeof chartTemplateData === "string") {
+                                chartTemplateData = JSON.parse(chartTemplateData);
+                            }
+                            
+                            console.log("Parsed chart template data:", chartTemplateData);
+                            input.value = chartTemplateData; // This will call your setter
+                            
+                        } catch (error) {
+                            console.error("Invalid chart template data:", error);
+                        }
+                    }, 100);
+                }
+
+                let graphsControl = document.getElementById(field.field);
+
             } else if (field.control === "checkbox") {
                 console.log(4);
                 input = document.createElement('input');
@@ -2791,6 +2823,51 @@ function formatDateTime(dateString) {
     return date.toISOString().slice(0, 16); // Formats to "YYYY-MM-DDTHH:MM"
 }
 
+async function sendChartToBackend(payload) {
+        try {
+            const response = await fetch('http://localhost:5000/api/save-chart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            console.log('Chart saved successfully:', result);
+            
+            // Show success message
+            alert('Chart saved successfully!');
+            
+            // Dispatch success event
+            this.dispatchEvent(new CustomEvent('chartSaved', {
+                detail: {
+                    success: true,
+                    chartName: payload.chartName,
+                    response: result
+                }
+            }));
+
+            return result;
+            
+        } catch (error) {
+            console.error('Error sending chart to backend:', error);
+            alert(`Error saving chart to backend: ${error.message}`);
+            
+            // Dispatch error event
+            this.dispatchEvent(new CustomEvent('chartSaveError', {
+                detail: {
+                    success: false,
+                    error: error.message
+                }
+            }));
+        }
+}
+
 async function Registration_modal() {
     contextSwitch("create");
     console.log("Create New  Modal Opened");
@@ -3031,12 +3108,74 @@ async function Registration_modal() {
         let newData = {};
         let isValid = true;
         let firstInvalidField = null;
-    
+        let skipCreateEntry = false;
+
         for (const field of fields) {
             if (!field.show) continue;
             let input = form.elements[field.field];
-    
-            if (!input && field.control !== 'schedule-control' && field.control !== 'venue-control' && field.control !== 'file' && field.control !== 'attachment-control' && field.control !== 'doc-template-control' && field.control !== 'field-attribute-control' && field.control !== 'maps-control' && field.control !== 'venue-location-control' && field.control !=='graphs-control') {
+            
+            // Handle graphs-control specifically
+            if (field.control === 'graphs-control') {
+                let graphsElement = document.querySelector("graphs-control");
+                if (graphsElement) {
+                    // Validate the chart configuration
+                    if (!graphsElement.validateChartData()) {
+                        isValid = false;
+                        if (!firstInvalidField) firstInvalidField = graphsElement;
+                        continue;
+                    }
+                    
+                    // Generate chart name
+                    const chartName = graphsElement.generateChartName();
+                    console.log(chartName);
+                    // Prompt for description
+                    const description = prompt(`Please enter a description for the chart template:\n\nChart Name: ${chartName}`, "");
+                    
+                    // Check if user cancelled or entered empty description
+                    if (description === null) {
+                        // User cancelled - stop the registration process
+                        return;
+                    }
+                    
+                    if (description.trim() === "") {
+                        alert("Description is required. Please enter a description to register the chart.");
+                        return;
+                    }
+                    
+                    // Prepare chart data for backend
+                    const chartTemplate = graphsElement.value; // This uses your existing getter
+                    
+                    const chartPayload = {
+                        chartName: chartName,
+                        chartTemplate: chartTemplate,
+                        description: description.trim(),
+                        status: 'active' // Register = active
+                    };
+
+                    console.log(chartPayload);
+                    
+                    try {
+                        console.log('Registering chart with payload:', chartPayload);
+                        const result = await sendChartToBackend(chartPayload);
+                    
+                        console.log('Chart registered successfully:', result);
+                        skipCreateEntry = true;
+                        alert('Chart registered successfully!');
+                        
+                    } catch (error) {
+                        console.error('Error registering chart:', error);
+                        alert(`Error registering chart: ${error.message}`);
+                        isValid = false;
+                        continue;
+                    }
+                } else {
+                    console.warn(`graphs-control element not found.`);
+                    isValid = false;
+                }
+                continue; // Skip normal input processing
+            }
+
+            if (!input && field.control !== 'schedule-control' && field.control !== 'venue-control' && field.control !== 'file' && field.control !== 'attachment-control' && field.control !== 'doc-template-control' && field.control !== 'field-attribute-control' && field.control !== 'maps-control' && field.control !== 'venue-location-control') {
                 console.warn(`Field ${field.field} is missing in the form.`);
                 continue;
             }
@@ -3195,23 +3334,77 @@ async function Registration_modal() {
             return;
         }
     
-        console.log("New Data:", newData);
-        createEntry(newData);
+        if (!skipCreateEntry) {
+            // ✅ Always set status to "draft"
+            newData.status = "draft";
+
+            console.log("New Data (Saved as Draft):", newData);
+            createEntry(newData);
+        }
+        
         editModal.hide();
     };
 
     document.getElementById('save').onclick = async function () {  // Async function for Save button
         let newData = {};
+        let skipCreateEntry = false; // Flag to track if we should skip createEntry
+        
         // do not include field's values in the where clause if it has '*' or 'all'. 
         for (const field of fields) {
             if (!field.show) continue;
             let input = form.elements[field.field];
-    
-           /* if (!input && field.control !== 'schedule-control' && field.control !== 'venue-control' && field.control !== 'file') {
+
+        /* if (!input && field.control !== 'schedule-control' && field.control !== 'venue-control' && field.control !== 'file') {
                 console.warn(`Field ${field.field} is missing in the form.`);
                 continue;
             }*/
-    
+            if (field.control === 'graphs-control') {
+                let graphsElement = document.querySelector("graphs-control");
+                if (graphsElement) {
+                    // For drafts, we can save even incomplete charts
+                    const chartName = graphsElement.generateChartName();
+                    const chartTemplate = graphsElement.value;
+                    
+                    // DEBUG: Log what we're sending
+                    console.log('=== SAVE DEBUG ===');
+                    console.log('Chart Name:', chartName);
+                    console.log('Chart Template:', chartTemplate);
+                    console.log('Chart Template Type:', typeof chartTemplate);
+                    console.log('Chart Template Length:', chartTemplate ? chartTemplate.length : 'null/undefined');
+                    
+                    // Check if chartTemplate is valid JSON
+                    if (chartTemplate) {
+                        try {
+                            const parsed = JSON.parse(chartTemplate);
+                            console.log('Parsed Chart Template:', parsed);
+                        } catch (e) {
+                            console.error('Chart Template is not valid JSON:', e);
+                        }
+                    }
+                    
+                    const chartPayload = {
+                        chartName: chartName,
+                        chartTemplate: chartTemplate,
+                        description: 'Draft chart template', // Default description for drafts
+                        status: 'draft'
+                    };
+                    
+                    console.log('Full Chart Payload:', chartPayload);
+                    console.log('=== END DEBUG ===');
+                    
+                    try {
+                        const result = await sendChartToBackend(chartPayload);
+                        console.log('Chart saved as draft:', result);
+                        skipCreateEntry = true; // Set flag to skip createEntry since we handled saving here
+                    } catch (error) {
+                        console.error(`Error saving chart as draft:`, error);
+                        // For drafts, continue even if chart save fails
+                    }
+                } else {
+                    console.error('graphs-control element not found!');
+                }
+                continue; // Skip normal input processing AND don't store any reference
+            }
             if (field.control === 'checkbox') {
                 newData[field.field] = input.checked ? 1 : 0;
             } else if (field.control === 'schedule-control') {
@@ -3227,20 +3420,24 @@ async function Registration_modal() {
                 let fieldMappingElement = document.querySelector("field-mapping-control");
                 newData[field.field] = fieldMappingElement ? fieldMappingElement.value : "";
             }
-             else if (field.control === "file") {
+            else if (field.control === "file") {
                 newData.file = await storeFileForUpload(field);  // Store file for later upload
             } else if (input) {
                 newData[field.field] = input.value;
             }
         }
-    
-        // ✅ Always set status to "draft"
-        newData.status = "draft";
-    
-        console.log("New Data (Saved as Draft):", newData);
-        createEntry(newData);
+
+        // Only call createEntry if we haven't already handled saving (e.g., for graphs-control)
+        if (!skipCreateEntry) {
+            // ✅ Always set status to "draft"
+            newData.status = "draft";
+
+            console.log("New Data (Saved as Draft):", newData);
+            createEntry(newData);
+        }
+        
         editModal.hide();
-    };    
+    };
     
     async function uploadFile(field, newData) {
         console.log("Starting file upload process...");
