@@ -690,6 +690,280 @@ def get_data(db, table_name, select_fields, where_data=None, exact_match=False,
             print("[INFO] Database connection closed.")
 
 
+def get_data_list_working_old(db, table_name, select_fields, where_data=None,
+             user_affiliations=None, block_size=None, block_number=None):
+    
+    print("[init] where_data:", where_data)
+    connection = None
+    cursor = None
+
+    try:
+        print(f"[START] Querying table: `{table_name}` in DB: `{db}`")
+
+        connection = create_connection(db)
+        if not connection:
+            print("[ERROR] Failed to connect to database.")
+            return []
+
+        cursor = connection.cursor(dictionary=True)
+
+        # ✅ Build SELECT clause (support JSON fields)
+        formatted_select_fields = []
+        if select_fields == ['*']:
+            formatted_select_fields = ["*"]
+        else:
+            for field in select_fields:
+                if "." in field:
+                    column, *json_parts = field.split(".")
+                    json_path = ".".join(json_parts)
+                    formatted_select_fields.append(
+                        f"JSON_UNQUOTE(JSON_EXTRACT({column}, '$.{json_path}')) AS `{field}`"
+                    )
+                else:
+                    formatted_select_fields.append(field)
+
+        select_clause = ", ".join(formatted_select_fields)
+        query = f"SELECT {select_clause} FROM {table_name}"
+
+        where_clauses = []
+        values = []
+
+        # ✅ Handle new where_data schema
+        if where_data:
+            for key, condition in where_data.items():
+                column, *json_parts = key.split(".")
+                clause = (
+                    f"JSON_UNQUOTE(JSON_EXTRACT({column}, '$.{'.'.join(json_parts)}'))"
+                    if json_parts else column
+                )
+
+                if isinstance(condition, dict):
+                    col_type = condition.get("type", "string")
+                    exact = condition.get("exact_match", False)
+                    vals = condition.get("values")
+
+                    if vals is None:
+                        continue
+
+                    # Ensure values is iterable
+                    if not isinstance(vals, (list, tuple)):
+                        vals = [vals]
+
+                    if exact:
+                        # ✅ Exact match or IN
+                        if len(vals) == 1:
+                            where_clauses.append(f"{clause} = %s")
+                            values.append(vals[0])
+                        else:
+                            placeholders = ",".join(["%s"] * len(vals))
+                            where_clauses.append(f"{clause} IN ({placeholders})")
+                            values.extend(vals)
+                    else:
+                        # ✅ LIKE / partial match
+                        if col_type == "number":
+                            # treat as >=, <= range if 2 values given
+                            if len(vals) == 2:
+                                where_clauses.append(f"{clause} BETWEEN %s AND %s")
+                                values.extend(vals)
+                            else:
+                                placeholders = ",".join(["%s"] * len(vals))
+                                where_clauses.append(f"{clause} IN ({placeholders})")
+                                values.extend(vals)
+                        else:  # string → LIKE
+                            if len(vals) == 1:
+                                where_clauses.append(f"{clause} LIKE %s")
+                                values.append(f"%{vals[0]}%")
+                            else:
+                                like_parts = []
+                                for v in vals:
+                                    like_parts.append(f"{clause} LIKE %s")
+                                    values.append(f"%{v}%")
+                                where_clauses.append("(" + " OR ".join(like_parts) + ")")
+
+                else:
+                    # ✅ Fallback to simple exact or LIKE
+                    where_clauses.append(f"{clause} = %s")
+                    values.append(condition)
+
+        # ✅ Restrict by user affiliations
+        if user_affiliations:
+            allowed_ids = is_affiliation_allowed(table_name, user_affiliations, db)
+            if not allowed_ids:
+                print("[INFO] No affiliation matches. Returning empty result.")
+                return []
+            placeholders = ",".join(["%s"] * len(allowed_ids))
+            where_clauses.append(f"affiliation_id IN ({placeholders})")
+            values.extend(list(allowed_ids))
+
+        if where_clauses:
+            query += " WHERE " + " AND ".join(where_clauses)
+
+        # ✅ Pagination
+        if block_size and block_number:
+            offset = (block_number - 1) * block_size
+            query += " LIMIT %s OFFSET %s"
+            values.extend([block_size, offset])
+
+        print("[INFO] Final SQL Query:", query)
+        print("[INFO] Parameters:", values)
+
+        cursor.execute(query, values)
+        results = cursor.fetchall()
+        print(f"[INFO] Query returned {len(results)} result(s).")
+        return results
+
+    except Exception as e:
+        print(f"[ERROR] Exception in get_data(): {e}")
+        return []
+
+    finally:
+        if cursor:
+            cursor.close()
+        if connection and connection.is_connected():
+            connection.close()
+            print("[INFO] Database connection closed.")
+
+def get_data_list(db, table_name, select_fields, where_data=None,
+             user_affiliations=None, block_size=None, block_number=None):
+    
+    print("[init] where_data:", where_data)
+    connection = None
+    cursor = None
+
+    try:
+        print(f"[START] Querying table: `{table_name}` in DB: `{db}`")
+
+        connection = create_connection(db)
+        if not connection:
+            print("[ERROR] Failed to connect to database.")
+            return []
+
+        cursor = connection.cursor(dictionary=True)
+
+        # ✅ Build SELECT clause (support JSON fields)
+        formatted_select_fields = []
+        if select_fields == ['*']:
+            formatted_select_fields = ["*"]
+        else:
+            for field in select_fields:
+                if "." in field:
+                    column, *json_parts = field.split(".")
+                    json_path = ".".join(json_parts)
+                    formatted_select_fields.append(
+                        f"JSON_UNQUOTE(JSON_EXTRACT({column}, '$.{json_path}')) AS `{field}`"
+                    )
+                else:
+                    formatted_select_fields.append(field)
+
+        select_clause = ", ".join(formatted_select_fields)
+        query = f"SELECT {select_clause} FROM {table_name}"
+
+        where_clauses = []
+        values = []
+
+        # ✅ Handle new where_data schema
+        if where_data:
+            for key, condition in where_data.items():
+                column, *json_parts = key.split(".")
+                clause = (
+                    f"JSON_UNQUOTE(JSON_EXTRACT({column}, '$.{'.'.join(json_parts)}'))"
+                    if json_parts else column
+                )
+
+                if isinstance(condition, dict):
+                    col_type = condition.get("type", "string")
+                    exact = condition.get("exact_match", False)
+                    vals = condition.get("values")
+
+                    if vals is None:
+                        continue
+
+                    # Ensure values is iterable
+                    if not isinstance(vals, (list, tuple)):
+                        vals = [vals]
+
+                    if exact:
+                        # ✅ Exact match or IN
+                        if len(vals) == 1:
+                            where_clauses.append(f"{clause} = %s")
+                            values.append(vals[0])
+                        else:
+                            placeholders = ",".join(["%s"] * len(vals))
+                            where_clauses.append(f"{clause} IN ({placeholders})")
+                            values.extend(vals)
+                    else:
+                        if col_type == "number":
+                            # ✅ Odd count of values → invalid
+                            if len(vals) % 2 != 0:
+                                raise ValueError(
+                                    f"Invalid range specification for {key}: {vals}. "
+                                    "Number of values must be even to form ranges."
+                                )
+
+                            # ✅ Build ranges from pairs
+                            range_clauses = []
+                            for i in range(0, len(vals), 2):
+                                start, end = vals[i], vals[i+1]
+                                range_clauses.append(f"{clause} BETWEEN %s AND %s")
+                                values.extend([start, end])
+
+                            # Combine multiple ranges with OR
+                            where_clauses.append("(" + " OR ".join(range_clauses) + ")")
+                        else:
+                            # ✅ String partial match
+                            if len(vals) == 1:
+                                where_clauses.append(f"{clause} LIKE %s")
+                                values.append(f"%{vals[0]}%")
+                            else:
+                                like_parts = []
+                                for v in vals:
+                                    like_parts.append(f"{clause} LIKE %s")
+                                    values.append(f"%{v}%")
+                                where_clauses.append("(" + " OR ".join(like_parts) + ")")
+
+                else:
+                    # ✅ Fallback to simple exact
+                    where_clauses.append(f"{clause} = %s")
+                    values.append(condition)
+
+        # ✅ Restrict by user affiliations
+        if user_affiliations:
+            allowed_ids = is_affiliation_allowed(table_name, user_affiliations, db)
+            if not allowed_ids:
+                print("[INFO] No affiliation matches. Returning empty result.")
+                return []
+            placeholders = ",".join(["%s"] * len(allowed_ids))
+            where_clauses.append(f"affiliation_id IN ({placeholders})")
+            values.extend(list(allowed_ids))
+
+        if where_clauses:
+            query += " WHERE " + " AND ".join(where_clauses)
+
+        # ✅ Pagination
+        if block_size and block_number:
+            offset = (block_number - 1) * block_size
+            query += " LIMIT %s OFFSET %s"
+            values.extend([block_size, offset])
+
+        print("[INFO] Final SQL Query:", query)
+        print("[INFO] Parameters:", values)
+
+        cursor.execute(query, values)
+        results = cursor.fetchall()
+        print(f"[INFO] Query returned {len(results)} result(s).")
+        return results
+
+    except Exception as e:
+        print(f"[ERROR] Exception in get_data(): {e}")
+        return []
+
+    finally:
+        if cursor:
+            cursor.close()
+        if connection and connection.is_connected():
+            connection.close()
+            print("[INFO] Database connection closed.")
+
 
 def insert_ignore(db, table_name, insert_data, unique_columns=None):
     connection = create_connection(db)
@@ -985,10 +1259,12 @@ def insert_ignore(db, table_name, insert_data):
 #print("1] ",data)
 
 ''''''
-data = get_data(
+data = get_data_list(
     "event_scheduler2025",  "entity",   ["*"],
-    {"id": {"between": (10,17)}},
-    exact_match=False,   block_size=10,  block_number=1
+    {
+     "id": {"type":"number","exact_match":False,"values":[1,10,15,20]}
+     },
+   block_size=10,  block_number=1
 )
 '''
 (
@@ -996,7 +1272,17 @@ data = get_data(
     {"affiliation_id": {"between": (1,7),"exact_match":False}, "entry_status":"draft" },
     exact_match=True,   block_size=10,  block_number=1
 )
-
+    "event_scheduler2025",  "entity",   ["*"],
+    
+    {
+    "affiliation_id": {"type":"number","exact_match":False, "values":(1,7)}}, 
+    "affiliation_id": {"type":"number","exact_match":False, "values":(1,3,7)}}, 
+    "affiliation_id": {"type":"number","exact_match":true, "values":(1,3,7)}}, 
+    "entry_status":{"type":"string","exact_match":False, "values":"active"}, },
+    "entry_status":{"type":"string","exact_match":true, "values":"active"}, },
+    
+    exact_match=True,   block_size=10,  block_number=1
+)
 (
     "event_scheduler2025",  "entity",   ["*"],
     {"affiliation_id": {"between": (1,7)}, "entry_status":{"value":"draft","exact_match":True} },

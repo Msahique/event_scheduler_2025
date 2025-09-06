@@ -5362,7 +5362,7 @@ class GraphsControl extends HTMLElement {
 
         this.shadowRoot.innerHTML = `
             <style>
-                .graphs-container {
+                .graphs-container { 
                     display: flex;
                     flex-direction: column;
                     height: 100%;
@@ -5493,6 +5493,7 @@ class GraphsControl extends HTMLElement {
                     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
                     display: flex;
                     flex-direction: column;
+                    width: fit-content;
                     min-height: 200px; /* Set minimum height for proper initial display */
                     
                 }
@@ -5708,6 +5709,8 @@ class GraphsControl extends HTMLElement {
                     min-height: 500px; /* Ensure minimum height */
                     height: 100%; /* Take full height */
                     align-items: stretch;
+                    max-width: 100%; /* Add max-width constraint */
+                    width: fit-content; 
                 }
 
                 .y-axis-title {
@@ -5752,88 +5755,7 @@ class GraphsControl extends HTMLElement {
                     border-radius: 8px;
                     min-height: 450px; /* Ensure minimum height for initial render */
                     overflow: visible;
-                }
-
-                /* Modal Styles */
-                .modal {
-                    display: none;
-                    position: fixed;
-                    z-index: 1050;
-                    left: 0;
-                    top: 0;
-                    width: 100%;
-                    height: 100%;
-                    overflow: auto;
-                    background-color: rgba(0, 0, 0, 0.6);
-                    backdrop-filter: blur(2px);
-                }
-
-                .modal-content {
-                    background-color: #ffffff;
-                    margin: 2% auto;
-                    padding: 0;
-                    border: none;
-                    width: 95%;
-                    height: 95%;
-                    border-radius: 16px;
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-                    display: flex;
-                    flex-direction: column;
-                }
-
-                .modal-header {
-                    background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
-                    color: white;
-                    padding: 20px;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    border-radius: 16px 16px 0 0;
-                    flex-shrink: 0;
-                }
-
-                .modal-title {
-                    font-size: 20px;
-                    font-weight: 600;
-                    margin: 0;
-                }
-
-                .close {
-                    color: white;
-                    font-size: 28px;
-                    font-weight: bold;
-                    cursor: pointer;
-                    background: none;
-                    border: none;
-                    padding: 0;
-                    line-height: 1;
-                    opacity: 0.8;
-                    transition: opacity 0.2s ease;
-                }
-
-                .close:hover,
-                .close:focus {
-                    opacity: 1;
-                    text-decoration: none;
-                }
-
-                .modal-body {
-                    flex: 1;
-                    padding: 20px;
-                    overflow-y: auto;
-                    height: 0; /* This allows flex: 1 to work properly */
-                }
-
-                /* NEW: Modal Footer Styles */
-                .modal-footer {
-                    padding: 20px;
-                    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-                    border-top: 1px solid #dee2e6;
-                    border-radius: 0 0 16px 16px;
-                    display: flex;
-                    justify-content: flex-end;
-                    gap: 12px;
-                    flex-shrink: 0;
+                    max-width: 100%;
                 }
 
                 .btn {
@@ -6043,7 +5965,19 @@ class GraphsControl extends HTMLElement {
                     <!-- Graph Container -->
                     <div class="graph-container">
                         <div class="graph-header">
-                            <div class="graph-title">Data Visualization</div>
+                            <div class="graph-title">
+                              <label for="graphTitleInput">Graph Title:</label>
+                              <input type="text" id="graphTitleInput" placeholder="Enter graph title" class="form-control" style="width: 180px;">
+                            </div>
+                            <div>
+                              <!-- X Axis Input -->
+                              <label for="xAxisInput">X Axis:</label>
+                              <input type="text" id="xAxisInput" placeholder="Enter X axis label" class="form-control" style="width: 150px;">
+
+                              <!-- Y Axis Input -->
+                              <label for="yAxisInput">Y Axis:</label>
+                              <input type="text" id="yAxisInput" placeholder="Enter Y axis label" class="form-control" style="width: 150px;">
+                            </div>
                             <div class="plotly-toolbar-container">
                                 <div id="customToolbar" class="custom-modebar"></div>
                             </div>
@@ -6097,6 +6031,14 @@ class GraphsControl extends HTMLElement {
             this.changeGraphType(event.target.value);
         });
 
+        this.shadowRoot.getElementById("xAxisInput").addEventListener("input", () => {
+            this.updateAxisTitlesFromInputs();
+        });
+
+        this.shadowRoot.getElementById("yAxisInput").addEventListener("input", () => {
+            this.updateAxisTitlesFromInputs();
+        });
+
         // this.shadowRoot.querySelector(".close").addEventListener("click", () => {
         //     this.closeModal();
         // });
@@ -6138,6 +6080,21 @@ class GraphsControl extends HTMLElement {
     //         window.Plotly.Plots.resize(this.graphCanvas);
     //     }
     // }
+
+    updateAxisTitlesFromInputs() {
+        const xAxisInput = this.shadowRoot.getElementById("xAxisInput");
+        const yAxisInput = this.shadowRoot.getElementById("yAxisInput");
+        
+        const xTitle = xAxisInput.value.trim() || "X-Axis";
+        const yTitle = yAxisInput.value.trim() || "Y-Axis";
+        
+        this.setAxisTitles(xTitle, yTitle);
+        
+        // Update the chart if it exists
+        if (this.graphCanvas && this.graphCanvas.data && this.graphCanvas.data.length > 0) {
+            this.updateChart();
+        }
+    }
 
     initializeColors() {
         if (!this.colorPalette || this.colorPalette.length === 0) {
@@ -6541,7 +6498,7 @@ class GraphsControl extends HTMLElement {
         const yCols = this.selectedMultiColumns || [];
         const zCols = this.selectedThirdMultiColumns || [];
 
-        this.updateAxisTitlesFromColumns(chartType, xCol, yCols, zCols);
+        // this.updateAxisTitlesFromColumns(chartType, xCol, yCols, zCols);
 
         const data = [];
         const xValues = xCol ? this.rowData.map(row => row[xCol]) : [];
@@ -6966,79 +6923,79 @@ class GraphsControl extends HTMLElement {
         });
     }
 
-    updateAxisTitlesFromColumns(chartType, xCol, yCols, zCols) {
-        const is3DChart = ["3d-scatter", "3d-line", "3d-surface", "3d-mesh"].includes(chartType);
+    // updateAxisTitlesFromColumns(chartType, xCol, yCols, zCols) {
+    //     const is3DChart = ["3d-scatter", "3d-line", "3d-surface", "3d-mesh"].includes(chartType);
 
-        if (this.xAxisTitleElement) {
-            this.xAxisTitleElement.style.display = is3DChart ? 'none' : 'block';
-        }
-        if (this.yAxisTitleElement) {
-            this.yAxisTitleElement.style.display = is3DChart ? 'none' : 'block';
-        }
+    //     if (this.xAxisTitleElement) {
+    //         this.xAxisTitleElement.style.display = is3DChart ? 'none' : 'block';
+    //     }
+    //     if (this.yAxisTitleElement) {
+    //         this.yAxisTitleElement.style.display = is3DChart ? 'none' : 'block';
+    //     }
 
-        // If it's a 3D chart, don't set titles at all
-        if (is3DChart) return;
-        if (!is3DChart) {
-            this.xAxisTitleElement.style.textAnchor = 'middle'; // for SVG text
-            this.xAxisTitleElement.style.textAlign = 'center'; // for HTML text
-            this.yAxisTitleElement.style.textAnchor = 'middle'; // for SVG text
-            this.yAxisTitleElement.style.textAlign = 'center';
-        }
-        let xTitle = xCol || "X-Axis";
+    //     // If it's a 3D chart, don't set titles at all
+    //     if (is3DChart) return;
+    //     if (!is3DChart) {
+    //         this.xAxisTitleElement.style.textAnchor = 'middle'; // for SVG text
+    //         this.xAxisTitleElement.style.textAlign = 'center'; // for HTML text
+    //         this.yAxisTitleElement.style.textAnchor = 'middle'; // for SVG text
+    //         this.yAxisTitleElement.style.textAlign = 'center';
+    //     }
+    //     let xTitle = xCol || "X-Axis";
 
-        const formatMultiColumnTitle = (cols, defaultTitle) => {
-            if (!cols || cols.length === 0) return defaultTitle;
-            if (cols.length === 1) return cols[0];
-            if (cols.length <= 3) return cols.join(" + ");
-            return `${cols.slice(0, 2).join(" + ")} + ${cols.length - 2} more`;
-        };
+    //     const formatMultiColumnTitle = (cols, defaultTitle) => {
+    //         if (!cols || cols.length === 0) return defaultTitle;
+    //         if (cols.length === 1) return cols[0];
+    //         if (cols.length <= 3) return cols.join(" + ");
+    //         return `${cols.slice(0, 2).join(" + ")} + ${cols.length - 2} more`;
+    //     };
 
-        let yTitle;
-        switch (chartType) {
-            case "histogram":
-                yTitle = "Count";
-                break;
-            case "pie":
-            case "donut":
-                yTitle = yCols.length > 0 ? yCols[0] : "Values";
-                break;
-            case "bubble":
-                yTitle = yCols.length > 0 ? yCols[0] : "Y-Axis";
-                break;
-            case "heatmap":
-            case "contour":
-            case "2d-histogram":
-                yTitle = formatMultiColumnTitle(yCols, "Y-Axis");
-                break;
-            case "indicator":
-                yTitle = formatMultiColumnTitle(yCols, "Value");
-                break;
-            case "funnel":
-            case "waterfall":
-                yTitle = formatMultiColumnTitle(yCols, "Values");
-                break;
-            case "radar":
-            case "polar":
-            case "wind-rose":
-                yTitle = formatMultiColumnTitle(yCols, "Radius");
-                break;
-            case "time-series":
-                yTitle = formatMultiColumnTitle(yCols, "Values");
-                break;
-            case "parallel-coordinates":
-            case "parallel-categories":
-                yTitle = formatMultiColumnTitle(
-                    [...(yCols || []), ...(zCols || [])],
-                    "Variables"
-                );
-                break;
-            default:
-                yTitle = formatMultiColumnTitle(yCols, "Y-Axis");
-                break;
-        }
+    //     let yTitle;
+    //     switch (chartType) {
+    //         case "histogram":
+    //             yTitle = "Count";
+    //             break;
+    //         case "pie":
+    //         case "donut":
+    //             yTitle = yCols.length > 0 ? yCols[0] : "Values";
+    //             break;
+    //         case "bubble":
+    //             yTitle = yCols.length > 0 ? yCols[0] : "Y-Axis";
+    //             break;
+    //         case "heatmap":
+    //         case "contour":
+    //         case "2d-histogram":
+    //             yTitle = formatMultiColumnTitle(yCols, "Y-Axis");
+    //             break;
+    //         case "indicator":
+    //             yTitle = formatMultiColumnTitle(yCols, "Value");
+    //             break;
+    //         case "funnel":
+    //         case "waterfall":
+    //             yTitle = formatMultiColumnTitle(yCols, "Values");
+    //             break;
+    //         case "radar":
+    //         case "polar":
+    //         case "wind-rose":
+    //             yTitle = formatMultiColumnTitle(yCols, "Radius");
+    //             break;
+    //         case "time-series":
+    //             yTitle = formatMultiColumnTitle(yCols, "Values");
+    //             break;
+    //         case "parallel-coordinates":
+    //         case "parallel-categories":
+    //             yTitle = formatMultiColumnTitle(
+    //                 [...(yCols || []), ...(zCols || [])],
+    //                 "Variables"
+    //             );
+    //             break;
+    //         default:
+    //             yTitle = formatMultiColumnTitle(yCols, "Y-Axis");
+    //             break;
+    //     }
 
-        this.setAxisTitles(xTitle, yTitle);
-    }
+    //     this.setAxisTitles(xTitle, yTitle);
+    // }
 
     initializeDropdownListeners() {
         // X-axis single select listener
@@ -7366,8 +7323,18 @@ class GraphsControl extends HTMLElement {
             const chartData = this.graphCanvas.data || [];
             const chartLayout = this.graphCanvas.layout || {};
             
+            // Get the axis labels from the input fields
+            const xAxisLabel = this.shadowRoot.getElementById("xAxisInput").value || "";
+            const yAxisLabel = this.shadowRoot.getElementById("yAxisInput").value || "";
+            
+            // Get the graph title (assuming it's stored in the layout or you have it available)
+            const graphTitle = chartLayout.title?.text || "";
+            
             // Prepare the chart template data
             const chartTemplate = {
+                graphTitle: graphTitle,
+                xAxisLabel: xAxisLabel,
+                yAxisLabel: yAxisLabel,
                 xAxis: this.singleSelectDropdown.value || null,
                 yAxis: this.selectedMultiColumns || [],
                 zAxis: this.selectedThirdMultiColumns || [],
@@ -7640,18 +7607,24 @@ class GraphsControl extends HTMLElement {
         try {
             console.log('GraphsControl: Rendering chart from template data');
             
-            // Get container dimensions before rendering
-            const modal = this.closest('.modal') || this.querySelector('.modal') || document.querySelector('.modal');
-            const modalBody = modal ? modal.querySelector('.modal-body') : null;
+            // Get actual container dimensions
+            const graphContainer = this.querySelector('.graph-container') || this.closest('.graph-container');
             
-            let containerWidth = 800;
-            let containerHeight = 600;
+            let containerWidth = 1625; // Increased default width
+            let containerHeight = 500;
             
-            if (modalBody) {
-                const rect = modalBody.getBoundingClientRect();
-                containerWidth = Math.max(rect.width - 100, 1500);
-                containerHeight = Math.max(rect.height - 200, 400);
+            // Calculate based on actual available space
+            if (graphContainer) {
+                const rect = graphContainer.getBoundingClientRect();
+                containerWidth = Math.min(rect.width - 100, 1700); // Max 1200px width (increased by 400px)
+                containerHeight = Math.min(rect.height - 150, 450); // Max 450px height
             }
+            
+            // Ensure reasonable sizes that fit in containers
+            containerWidth = Math.max(containerWidth, 800); // Min 800px (increased minimum)
+            containerHeight = Math.max(containerHeight, 300); // Min 300px
+            
+            console.log(`Calculated chart dimensions: ${containerWidth}x${containerHeight}`);
             
             // Enhanced Plotly config
             const config = {
@@ -7674,13 +7647,20 @@ class GraphsControl extends HTMLElement {
                 autosize: false,
                 width: containerWidth,
                 height: containerHeight,
-                margin: { l: 60, r: 50, t: 50, b: 0 }
+                margin: { 
+                    l: 60,   // Left margin for y-axis labels
+                    r: 30,   // Reduced right margin
+                    t: 40,   // Reduced top margin
+                    b: 0    // Bottom margin for x-axis labels
+                }
             };
             
             // Clear and set canvas size
             this.graphCanvas.innerHTML = '';
             this.graphCanvas.style.width = containerWidth + 'px';
             this.graphCanvas.style.height = containerHeight + 'px';
+            this.graphCanvas.style.maxWidth = '100%';
+            this.graphCanvas.style.overflow = 'visible';
             
             // Plot the chart
             Plotly.newPlot(this.graphCanvas, plotlyData, enhancedLayout, config).then(() => {
@@ -7726,34 +7706,42 @@ class GraphsControl extends HTMLElement {
                 return;
             }
             
-            // Find the modal or container
-            const modal = this.closest('.modal') || this.querySelector('.modal') || document.querySelector('.modal');
-            const modalBody = modal ? modal.querySelector('.modal-body') : null;
-            const container = modalBody || this.graphCanvas.parentElement;
+            // Find the actual container
+            const graphContainer = this.querySelector('.graph-container') || this.closest('.graph-container');
             
-            if (!container) {
-                console.warn('No container found for resize');
-                return;
+            let containerWidth = 1625; // Increased default
+            let containerHeight = 500;
+            
+            // Calculate new dimensions based on container
+            if (graphContainer) {
+                const containerRect = graphContainer.getBoundingClientRect();
+                containerWidth = Math.min(containerRect.width - 100, 1700); // Max 1200px (increased)
+                containerHeight = Math.min(containerRect.height - 150, 450); // Max 450px
             }
             
-            // Get container dimensions
-            const containerRect = container.getBoundingClientRect();
+            // Ensure minimums
+            containerWidth = Math.max(containerWidth, 800); // Min 800px (increased)
+            containerHeight = Math.max(containerHeight, 350);
             
-            // Calculate dimensions with some padding
-            const availableWidth = containerRect.width - 100;
-            const availableHeight = containerRect.height - 200;
-            
-            const width = Math.max(availableWidth, 1500);
-            const height = Math.max(availableHeight, 400);
-            
-            console.log(`Resizing chart to: ${width}x${height}`);
+            console.log(`Resizing chart to: ${containerWidth}x${containerHeight}`);
             
             // Update Plotly layout
             const update = {
-                width: width,
-                height: height,
-                autosize: false
+                width: containerWidth,
+                height: containerHeight,
+                autosize: false,
+                margin: { 
+                    l: 60, 
+                    r: 30, 
+                    t: 40, 
+                    b: 0 
+                }
             };
+            
+            // Update canvas container size
+            this.graphCanvas.style.width = containerWidth + 'px';
+            this.graphCanvas.style.height = containerHeight + 'px';
+            this.graphCanvas.style.maxWidth = '100%';
             
             // Apply resize
             Plotly.relayout(this.graphCanvas, update).then(() => {
@@ -7761,8 +7749,8 @@ class GraphsControl extends HTMLElement {
             }).catch((error) => {
                 console.error('Error resizing chart:', error);
                 // Fallback to style-based resize
-                this.graphCanvas.style.width = width + 'px';
-                this.graphCanvas.style.height = height + 'px';
+                this.graphCanvas.style.width = containerWidth + 'px';
+                this.graphCanvas.style.height = containerHeight + 'px';
             });
             
         } catch (error) {
@@ -7796,7 +7784,19 @@ class GraphsControl extends HTMLElement {
             
             // Reset chart type to default
             this.chartType = 'scatter';
-            
+            const xAxisInput = this.shadowRoot.getElementById("xAxisInput");
+            const yAxisInput = this.shadowRoot.getElementById("yAxisInput");
+            const graphTitleInput = this.shadowRoot.getElementById("graphTitleInput");
+
+            if (xAxisInput) {
+                xAxisInput.value = "";
+            }
+            if (yAxisInput) {
+                yAxisInput.value = "";
+            }
+            if (graphTitleInput) {
+                graphTitleInput.value = "";
+            }
             // Clear axis titles
             this.setAxisTitles("X-Axis", "Y-Axis");
             
@@ -7957,7 +7957,7 @@ class GraphsControl extends HTMLElement {
         
         try {
             // Get row data for selected doc type
-            const rowData = await this.getRowDataForDocType(docType);
+            const rowData = await this.getActualRowDataForDocType(docType);
             
             if (!rowData || rowData.length === 0) {
                 alert('No data available for the selected document type.');
@@ -8016,6 +8016,91 @@ class GraphsControl extends HTMLElement {
             
         } catch (error) {
             console.error('Error populating doc type dropdown:', error);
+        }
+    }
+
+    async getActualRowDataForDocType(docType) {
+        try {
+            console.log('Getting actual row data for doc_type:', docType);
+            
+            // First get the UI template config to extract field names
+            const templateData = await this.getRowDataForDocType(docType);
+            
+            if (!templateData || templateData.length === 0) {
+                console.log('No template data found for doc_type:', docType);
+                return [];
+            }
+            
+            // Extract field names from the template config
+            // const listConfig = templateData[0];
+            let fieldNames = [];
+            
+            if (templateData[0] && templateData[0].data && templateData[0].data[0] && templateData[0].data[0].fields) {
+                // Extract the 'field' property from each item in the fields array
+                fieldNames = templateData[0].data[0].fields.map(fieldObj => fieldObj.field);
+            }
+            
+            console.log('Field names from template:', fieldNames);
+            
+            // Get tab name from get_DB_data.json configuration
+            const tabName = await this.getTabNameForDocType(docType);
+            
+            if (!tabName) {
+                console.log('No tab name found for doc_type:', docType);
+                return [];
+            }
+            
+            console.log('Tab name for', docType, ':', tabName);
+            
+            // Get the table name from get_DB_data.json
+            const tableName = await this.getTableNameForDocType(docType);
+            
+            if (!tableName) {
+                console.log('No table name found for doc_type:', docType);
+                return [];
+            }
+            
+            console.log('Table name for', docType, ':', tableName);
+            
+            // Prepare the API call body to get actual data
+            const dataBody = {
+                "requestor_id": "", 
+                "request_token": "", 
+                "tab": tabName,
+                "affiliations": JSON.parse(localStorage.getItem("my_current_affiliation[0].id")),
+                "event": "getTabContol",
+                "type": docType,
+                "qry": {
+                    "select_fields": fieldNames.length > 0 ? fieldNames : ["*"],
+                    "table_name": tableName,
+                    "where_data": {}  // Add any filtering conditions here if needed
+                }
+            };
+            
+            console.log('Data body for API call:', dataBody);
+            
+            // Make the API call to get actual data
+            const dataResult = await API_call(domain, "config/list_details_new", dataBody, "POST", false);   
+            console.log('Data result:', dataResult);
+            
+            // Return the actual data records
+            // if (dataResult && dataResult.data && Array.isArray(dataResult.data)) {
+            //     console.log('Returning actual row data for', docType, ':', dataResult.data);
+            //     return dataResult.data;
+            // }
+            
+            // return [];
+            if (dataResult && Array.isArray(dataResult) && dataResult.length > 0) {
+                const actualRecords = dataResult[0]; // Get the first element which contains the data array
+                
+                if (Array.isArray(actualRecords)) {
+                    return actualRecords; // Return the array of data objects
+                }
+            }
+            
+        } catch (error) {
+            console.error('Error getting actual row data for doc_type:', error);
+            return [];
         }
     }
 
@@ -8080,6 +8165,71 @@ class GraphsControl extends HTMLElement {
         }
     }
 
+    async getTabNameForDocType(docType) {
+        try {
+            // Read the get_DB_data.json file via API
+            const response = await fetch('http://127.0.0.1:5000/api/db-config');
+            const apiResponse = await response.json();
+            
+            console.log('API Response:', apiResponse);
+            
+            // Extract the actual config data from the API response
+            const dbConfig = apiResponse.data || apiResponse;
+            
+            console.log('Loaded DB config:', dbConfig);
+            console.log('Looking for doc_type:', docType);
+            
+            // Find which tab contains the docType
+            for (const [tabName, docTypes] of Object.entries(dbConfig)) {
+                if (tabName !== "db_name" && typeof docTypes === 'object') {
+                    console.log(`Checking tab "${tabName}":`, docTypes);
+                    if (docTypes.hasOwnProperty(docType)) {
+                        console.log('Found tab for', docType, ':', tabName);
+                        return tabName;
+                    }
+                }
+            }
+            
+            console.log('Tab name not found for doc_type:', docType);
+            return null;
+            
+        } catch (error) {
+            console.error('Error reading get_DB_data.json:', error);
+            return null;
+        }
+    }
+
+    async getTableNameForDocType(docType) {
+        try {
+            console.log('Getting table name for doc_type:', docType);
+            
+            // Read the get_DB_data.json file via API
+            const response = await fetch('http://127.0.0.1:5000/api/db-config');
+            const apiResponse = await response.json();
+            
+            // Extract the actual config data from the API response
+            const dbConfig = apiResponse.data || apiResponse;
+            
+            // Find which tab contains the docType and get the table name
+            for (const [tabName, docTypes] of Object.entries(dbConfig)) {
+                if (tabName !== "db_name" && typeof docTypes === 'object') {
+                    if (docTypes.hasOwnProperty(docType)) {
+                        const tableName = docTypes[docType];
+                        console.log('Found table name for', docType, ':', tableName);
+                        return tableName;
+                    }
+                }
+            }
+            
+            console.log('Table name not found for doc_type:', docType);
+            return null;
+            
+        } catch (error) {
+            console.error('Error getting table name:', error);
+            return null;
+        }
+    }
+
     // const dataBody = {
     //             "requestor_id": "",
     //             "request_token": "",
@@ -8135,7 +8285,7 @@ class GraphsControl extends HTMLElement {
             this.populateDropdowns();
             this.resetDropdownsToDefault();
         }
-        
+        this.showContent();
         this.initializeDropdownListeners();
         this.initializeChart();
         // this.openModal();

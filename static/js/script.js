@@ -7,7 +7,7 @@ const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB chunks for file uploads
 
 var sending = false;
 
-async function get_data_list(selected_doc_type,where_data,block_no,block_size){
+async function get_data_list(selected_doc_type,where_data,block_no=1,block_size=100){
     document.getElementById("tab_page_header").style.display = "block";
     console.log(selected_doc_type,where_data);
     page_load_conf.event="data_list";   console.log(">>>>>",  page_load_conf);

@@ -731,6 +731,37 @@
             </div>
         </div>
 
+        <div class="modal" id="graphModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Graph</h4>
+                        <div class="modal-header-buttons d-flex align-items-center gap-1">
+                            <button type="button" class="btn btn-sm btn-light" onclick="toggleModalFullscreen(this)" title="Toggle Fullscreen">
+                                <i class="fa fa-expand"></i>
+                            </button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="contextSwitch('list')"></button>
+                        </div>
+                    </div>
+        
+                    <!-- Modal Body -->
+                    <div class="modal-body" style="max-height: 50vh; overflow-y: auto;">
+                        <div id="modal_content">
+                            <form id="createForm"></form>
+                            <!-- Dynamic modal content -->
+                           
+                        </div>
+                    </div>
+        
+                    <!-- Modal Footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
        <div class="modal fade" id="mapViewModal" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -1308,7 +1339,6 @@
     <div id='div_iframe' class="container">
         <iframe id="myIframe" frameborder="0" width="100%" height="400"></iframe>
     </div>
-
     
 
     <!-- Footer -->

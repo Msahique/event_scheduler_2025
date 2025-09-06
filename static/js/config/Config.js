@@ -4497,7 +4497,7 @@ var MainConfig={
          {"type":"button","tooltip":"Edit","tag":"print","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
          {"type":"button","tooltip":"Delete","tag":"print","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
          {"type":"button","tooltip":"Graph","tag":"graphs","roles":["Admin"],"name":"<i class='fa fa-chart-bar'></i> ","function":"graphInitialization()","class":"btn btn-primary btn-xs my-xs-btn"},
-         {"type": "select", "tooltip":"this is a test description","tag": "chartTemplates", "roles": ["Admin"], "name": "DAQ Config", "options": [],"function":"getChartTemplate","textContent": "Chart Templates"},
+         {"type": "select", "tooltip":"this is a test description","tag": "chartTemplates", "roles": ["Admin"], "name": "DAQ Config", "options": [],"function":"getChartTemplate","textContent": "Chart Types"},
          {"type": "select", "tooltip":"this is a test description","tag": "items", "roles": ["Admin"], "name": "DAQ Config", "options": ["Env Measurements","Chart Templates"],"textContent": "Items"},
          {"type": "select", "tooltip":"this is a test description","tag": "entriesPerPage", "roles": ["Admin","Approver","User"], "name": "EntriesPerPage", "options": [2,3,5,10,15,20,25,30,35,40,45,50], "textContent": "Rows/Page"},
         ],
