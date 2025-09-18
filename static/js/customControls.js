@@ -1253,6 +1253,8 @@ class Doc_template_Control extends HTMLElement {
           <option value="datetime" ${field.datatype === 'datetime' ? 'selected' : ''}>Datetime</option>
           <option value="mediumtext" ${field.datatype === 'mediumtext' ? 'selected' : ''}>MediumText</option>
           <option value="json" ${field.datatype === 'json' ? 'selected' : ''}>JSON</option>
+          <option value="file" ${field.datatype === 'file' ? 'selected' : ''}>File</option>
+          <option value="document" ${field.datatype === 'document' ? 'selected' : ''}>Document</option>
         </select>
         <select class="field-unique">
           <option value="true" ${field.unique === 'true' ? 'selected' : ''}>Yes</option>
@@ -1411,6 +1413,7 @@ class QRControl extends HTMLElement {
 }
 customElements.define('qr-control', QRControl);
 
+/*  // latest version 1.0 2024-06-19 
 class FieldAttributeControl extends HTMLElement {
   constructor() {
     super();
@@ -1586,7 +1589,7 @@ class FieldAttributeControl extends HTMLElement {
     console.log(`[DEBUG] Saved job '${job}' only:`, this.jobs[job]);
   }
 
-  exportConfig(job) {
+  exportConfig_old(job) {
     if (job === 'cancel') {
       return {
         job: { cancel: this.jobs.cancel || { api: "config", onSuccess: "Role_canceled()" } }
@@ -1621,6 +1624,62 @@ class FieldAttributeControl extends HTMLElement {
       }
     };
   }
+
+  exportConfig() {
+    // always save current job before exporting
+    this.saveFields(this.currentJob);
+
+    if (this.currentJob === "cancel") {
+        return {
+        cancel: this.jobs.cancel || { api: "config/cancel", onSuccess: "Role_canceled()" }
+        };
+    }
+
+    // capture fields
+    const fields = this.jobs[this.currentJob] || [];
+
+    // transform fields into required format
+    const formattedFields = fields.map((f, idx) => ({
+        seqno: String(idx + 1),
+        field: f.field,
+        name: f.lang?.english || f.field,
+        control: f.control || "text",
+        default: f.default || "",
+        tooltip: f.tooltip || "this is a test description",
+        trigger: f.trigger || [
+        { event: "onchange", function: "tab_onchange_trigger" },
+        { event: "onselect", function: "tab_onselect_trigger" }
+        ],
+        edit: f.edit || false,
+        show: f.show || false,
+        mandatory: f.mandatory || false,
+        values: f.values || "",
+        description: f.description || "",
+        filter_type: f.filter_type || "textbox",
+        tooltip_source: f.tooltip_source || "",
+        tooltip_content: f.tooltip_content || "",
+        filter_default_value: f.filter_default_value || "",
+        lang: f.lang || { english: "", german: "", arabic: "", french: "" }
+    }));
+
+    // package into config
+    return {
+        [this.currentJob]: {
+        api: this.currentJob === "list" ? "config/list_details"
+            : this.currentJob === "update" ? "config/modifications"
+            : "config/new",
+        data: [{
+            fields: formattedFields,
+            helper: "none",
+            edit_option: true,
+            delete_option: true
+        }],
+        roles: ["Admin"],
+        onSuccess: `Role_${this.currentJob}ed()`
+        }
+    };
+    }
+
 
   addField(field = "", control = "text", trigger = []) {
     this.addFieldFromObject({
@@ -1750,8 +1809,527 @@ class FieldAttributeControl extends HTMLElement {
 }
 
 customElements.define('field-attribute-control', FieldAttributeControl);
+*/
 
+/* latest version 2.0 2024-06-19
+class FieldAttributeControl extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.jobs = {};
+    this.fieldsByDocType = {};
+    this.currentDocType = '';
+    this.currentJob = 'list';
+  }
 
+  connectedCallback() {
+    this.render();
+    this.loadDocTypesFromBackend();
+  }
+
+  async loadDocTypesFromBackend() {
+    try {
+      const templates = await getDocTemplates1({});
+      console.log("[DEBUG] Loaded templates:", templates);
+
+      if (Array.isArray(templates)) {
+        this.fieldsByDocType = {};
+        const selector = this.shadowRoot.getElementById('docTypeSelector');
+        selector.innerHTML = `<option value="">-- Select --</option>`;
+        const seen = new Set();
+
+        templates.forEach(tpl => {
+          const docType = tpl.doc_type?.trim();
+          if (!docType || seen.has(docType)) return;
+          seen.add(docType);
+
+          let fields = [];
+          try {
+            const parsed = tpl.doc_template && JSON.parse(tpl.doc_template);
+            if (Array.isArray(parsed?.fields)) {
+              fields = parsed.fields.map((f, index) => ({
+                seqno: f.seqno ?? index,
+                field: f.name || f.field || "",
+                control: f.control || "text",
+                trigger: f.trigger || [],
+                edit: f.edit ?? false,
+                show: f.show ?? true,
+                mandatory: f.mandatory ?? false,
+                default: f.default || "",
+                helper: f.helper || "none",
+                unique: f.unique || "false",
+                datatype: f.datatype || "",
+                filter_type: f.filter_type || "string",
+                lang: f.lang || { english: "", german: "", arabic: "", french: "" }
+              }));
+            }
+          } catch (e) {
+            console.warn(`[WARN] Invalid JSON for ${docType}:`, tpl.doc_template);
+          }
+
+          this.fieldsByDocType[docType] = fields;
+
+          const option = document.createElement("option");
+          option.value = docType;
+          option.textContent = docType;
+          selector.appendChild(option);
+        });
+      }
+    } catch (err) {
+      console.error("[ERROR] Could not load doc types:", err);
+    }
+  }
+
+  render() {
+    this.shadowRoot.innerHTML = `
+      <style>
+        table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+        th, td { border: 1px solid #ccc; padding: 0.5rem; text-align: left; }
+        button { margin: 0.5rem 0.25rem; }
+        input, select, textarea { width: 100%; box-sizing: border-box; }
+        .drag-handle { cursor: move; text-align: center; }
+        tr.dragging { opacity: 0.5; }
+      </style>
+      <div>
+        <label>getDataApi: <input type="text" id="getDataApi" value="config/list_details" /></label><br/>
+        <label>Doc Type:
+          <select id="docTypeSelector">
+            <option value="">-- Select --</option>
+          </select>
+        </label>
+        <label>Job Type:
+          <select id="jobSelector">
+            <option value="list">List</option>
+            <option value="create">Create</option>
+            <option value="update">Update</option>
+            <option value="cancel">Cancel</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <button id="loadJobFields">Load Fields</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>⇅</th><th>Field</th><th>Control</th><th>Edit</th><th>Show</th><th>Mandatory</th>
+            <th>Default</th><th>Trigger</th><th>Unique</th><th>DataType</th>
+            <th>Filter Type</th>
+            <th>Lang (EN)</th><th>Lang (DE)</th><th>Lang (AR)</th><th>Lang (FR)</th><th>Helper</th><th>Remove</th>
+          </tr>
+        </thead>
+        <tbody id="field-body"></tbody>
+      </table>
+      <button id="add-field" style="display:none;">Add Field</button>
+      <button id="save-fields" ">Save Job Fields</button>
+      <button id="export-json" ">Export Current Job</button>
+    `;
+
+    this.shadowRoot.getElementById('add-field').addEventListener('click', () => this.addField());
+    this.shadowRoot.getElementById('docTypeSelector').addEventListener('change', (e) => this.populateAllJobs(e.target.value));
+    this.shadowRoot.getElementById('loadJobFields').addEventListener('click', () => this.loadFields(this.currentJob));
+    this.shadowRoot.getElementById('save-fields').addEventListener('click', () => this.saveFields(this.currentJob));
+    this.shadowRoot.getElementById('export-json').addEventListener('click', () => {
+      const config = this.exportConfig(this.currentJob);
+      console.log("Exported:", config);
+    });
+    this.shadowRoot.getElementById('jobSelector').addEventListener('change', e => {
+      this.currentJob = e.target.value;
+      this.loadFields(this.currentJob);
+    });
+  }
+
+  populateAllJobs(docType) {
+    if (!docType) return;
+    this.currentDocType = docType;
+    const fields = this.fieldsByDocType[docType] || [];
+    this.jobs[this.currentJob] = JSON.parse(JSON.stringify(fields));
+    this.loadFields(this.currentJob);
+  }
+
+  loadFields(job) {
+    const tbody = this.shadowRoot.getElementById('field-body');
+    tbody.innerHTML = '';
+    if (!Array.isArray(this.jobs[job])) return;
+    this.jobs[job].forEach(f => this.addFieldFromObject(f));
+  }
+
+  saveFields(job) {
+    this.jobs[job] = this.captureFields();
+    console.log(`[DEBUG] Saved job '${job}' only:`, this.jobs[job]);
+  }
+
+  exportConfig(job) {
+    this.saveFields(this.currentJob);
+    const fields = this.jobs[this.currentJob] || [];
+    return {
+      [this.currentJob]: {
+        api: this.currentJob === "list" ? "config/list_details"
+          : this.currentJob === "update" ? "config/modifications"
+          : "config/new",
+        data: [{ fields }],
+        roles: ["Admin"],
+        onSuccess: `Role_${this.currentJob}ed()`
+      }
+    };
+  }
+
+  addField(field = "", control = "text", trigger = []) {
+    this.addFieldFromObject({
+      field, control, trigger, edit: false, show: false, mandatory: false,
+      default: "", unique: "false", datatype: "", filter_type: "string",
+      helper: "none", lang: { english: "", german: "", arabic: "", french: "" }
+    });
+  }
+
+  addFieldFromObject(obj) {
+    const tbody = this.shadowRoot.getElementById('field-body');
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td class="drag-handle">⇅</td>
+      <td><input type="text" class="field-name" value="${obj.field || ""}"/></td>
+      <td><select class="control">
+        <option value="text">text</option>
+        <option value="dropdown">dropdown</option>
+        <option value="field-attribute-control">field-attribute-control</option>
+        <option value="datime">datime</option>
+      </select></td>
+      <td><input type="checkbox" class="edit" ${obj.edit ? "checked" : ""}/></td>
+      <td><input type="checkbox" class="show" ${obj.show ? "checked" : ""}/></td>
+      <td><input type="checkbox" class="mandatory" ${obj.mandatory ? "checked" : ""}/></td>
+      <td><input type="text" class="default" value="${obj.default || ""}"/></td>
+      <td><textarea class="trigger" style="display:none">${JSON.stringify(obj.trigger || [])}</textarea><button class="trigger-btn">⚙️</button></td>
+      <td><input type="text" class="unique" value="${obj.unique || "false"}"/></td>
+      <td><input type="text" class="datatype" value="${obj.datatype || ""}"/></td>
+      <td>
+        <select class="filter_type">
+          <option value="string">string</option>
+          <option value="number">number</option>
+          <option value="date">date</option>
+          <option value="time">time</option>
+          <option value="location">location</option>
+        </select>
+      </td>
+      <td><input type="text" class="lang-en" value="${obj.lang?.english || ""}"/></td>
+      <td><input type="text" class="lang-de" value="${obj.lang?.german || ""}"/></td>
+      <td><input type="text" class="lang-ar" value="${obj.lang?.arabic || ""}"/></td>
+      <td><input type="text" class="lang-fr" value="${obj.lang?.french || ""}"/></td>
+      <td><select class="helper">
+        <option value="none">None</option>
+        <option value="getcurrentuserdetails">getcurrentuserdetails</option>
+        <option value="getresorceCategories">getresorceCategories</option>
+        <option value="get_affiliation">get_affiliation</option>
+      </select></td>
+      <td><button class="remove">X</button></td>
+    `;
+    row.querySelector('.control').value = obj.control || "text";
+    row.querySelector('.helper').value = obj.helper || "none";
+    row.querySelector('.filter_type').value = obj.filter_type || "string";
+    row.querySelector('.remove').addEventListener('click', () => row.remove());
+    tbody.appendChild(row);
+  }
+
+  captureFields() {
+    const rows = this.shadowRoot.querySelectorAll('#field-body tr');
+    return Array.from(rows).map((row, index) => ({
+      seqno: index + 1,
+      field: row.querySelector('.field-name').value,
+      control: row.querySelector('.control').value,
+      trigger: (() => {
+        try {
+          return JSON.parse(row.querySelector('.trigger').value || '[]');
+        } catch { return []; }
+      })(),
+      edit: row.querySelector('.edit').checked,
+      show: row.querySelector('.show').checked,
+      mandatory: row.querySelector('.mandatory').checked,
+      default: row.querySelector('.default').value,
+      unique: row.querySelector('.unique').value,
+      datatype: row.querySelector('.datatype').value,
+      filter_type: row.querySelector('.filter_type').value,
+      helper: row.querySelector('.helper').value,
+      lang: {
+        english: row.querySelector('.lang-en').value,
+        german: row.querySelector('.lang-de').value,
+        arabic: row.querySelector('.lang-ar').value,
+        french: row.querySelector('.lang-fr').value
+      }
+    }));
+  }
+}
+
+customElements.define('field-attribute-control', FieldAttributeControl);
+*/
+
+class FieldAttributeControl extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.jobs = {};
+    this.fieldsByDocType = {};
+    this.currentDocType = '';
+    this.currentJob = 'list';
+  }
+
+  connectedCallback() {
+    this.render();
+    this.loadDocTypesFromBackend();
+  }
+
+  async loadDocTypesFromBackend() {
+    try {
+      const templates = await getDocTemplates1({});
+      console.log("[DEBUG] Loaded templates:", templates);
+
+      if (Array.isArray(templates)) {
+        this.fieldsByDocType = {};
+        const selector = this.shadowRoot.getElementById('docTypeSelector');
+        selector.innerHTML = `<option value="">-- Select --</option>`;
+        const seen = new Set();
+
+        templates.forEach(tpl => {
+          const docType = tpl.doc_type?.trim();
+          if (!docType || seen.has(docType)) return;
+          seen.add(docType);
+
+          let fields = [];
+          try {
+            const parsed = tpl.doc_template && JSON.parse(tpl.doc_template);
+            if (Array.isArray(parsed?.fields)) {
+              fields = parsed.fields.map((f, index) => ({
+                seqno: f.seqno ?? index,
+                field: f.name || f.field || "",
+                control: f.control || "text",
+                trigger: f.trigger || [],
+                edit: f.edit ?? false,
+                show: f.show ?? true,
+                mandatory: f.mandatory ?? false,
+                default: f.default || "",
+                helper: f.helper || "none",
+                unique: f.unique || "false",
+                datatype: f.datatype || "",
+                filter_type: f.filter_type || "string",
+                lang: f.lang || { english: "", german: "", arabic: "", french: "" }
+              }));
+            }
+          } catch (e) {
+            console.warn(`[WARN] Invalid JSON for ${docType}:`, tpl.doc_template);
+          }
+
+          this.fieldsByDocType[docType] = fields;
+
+          const option = document.createElement("option");
+          option.value = docType;
+          option.textContent = docType;
+          selector.appendChild(option);
+        });
+      }
+    } catch (err) {
+      console.error("[ERROR] Could not load doc types:", err);
+    }
+  }
+
+  render() {
+    this.shadowRoot.innerHTML = `
+      <style>
+        table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+        th, td { border: 1px solid #ccc; padding: 0.5rem; text-align: left; }
+        button { margin: 0.5rem 0.25rem; }
+        input, select, textarea { width: 100%; box-sizing: border-box; }
+        .drag-handle { cursor: move; text-align: center; }
+        tr.dragging { opacity: 0.5; }
+      </style>
+      <div>
+        <label>getDataApi: <input type="text" id="getDataApi" value="config/list_details" /></label><br/>
+        <label>Doc Type:
+          <select id="docTypeSelector">
+            <option value="">-- Select --</option>
+          </select>
+        </label>
+        <label>Job Type:
+          <select id="jobSelector">
+            <option value="list">List</option>
+            <option value="create">Create</option>
+            <option value="update">Update</option>
+            <option value="cancel">Cancel</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <button id="loadJobFields">Load Fields</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>⇅</th><th>Field</th><th>Control</th><th>Edit</th><th>Show</th><th>Mandatory</th>
+            <th>Default</th><th>Trigger</th><th>Unique</th><th>DataType</th>
+            <th>Filter Type</th>
+            <th>Lang (EN)</th><th>Lang (DE)</th><th>Lang (AR)</th><th>Lang (FR)</th><th>Helper</th><th>Remove</th>
+          </tr>
+        </thead>
+        <tbody id="field-body"></tbody>
+      </table>
+      <button id="add-field" style="display:none;">Add Field</button>
+      <button id="save-fields">Save Job Fields</button>
+      <button id="export-json">Export Current Job</button>
+    `;
+
+    this.shadowRoot.getElementById('add-field').addEventListener('click', () => this.addField());
+    this.shadowRoot.getElementById('docTypeSelector').addEventListener('change', (e) => this.populateAllJobs(e.target.value));
+    this.shadowRoot.getElementById('loadJobFields').addEventListener('click', () => this.loadFields(this.currentJob));
+    this.shadowRoot.getElementById('save-fields').addEventListener('click', () => this.saveFields(this.currentJob));
+    this.shadowRoot.getElementById('export-json').addEventListener('click', () => {
+      const config = this.exportConfig(this.currentJob);
+      console.log("Exported:", config);
+    });
+    this.shadowRoot.getElementById('jobSelector').addEventListener('change', e => {
+      this.currentJob = e.target.value;
+      this.loadFields(this.currentJob);
+    });
+  }
+
+  populateAllJobs(docType) {
+    if (!docType) return;
+    this.currentDocType = docType;
+    const fields = this.fieldsByDocType[docType] || [];
+    this.jobs[this.currentJob] = JSON.parse(JSON.stringify(fields));
+    this.loadFields(this.currentJob);
+  }
+
+  loadFields(job) {
+    const tbody = this.shadowRoot.getElementById('field-body');
+    tbody.innerHTML = '';
+    if (!Array.isArray(this.jobs[job])) return;
+    this.jobs[job].forEach(f => this.addFieldFromObject(f));
+  }
+
+  saveFields(job) {
+    this.jobs[job] = this.captureFields();
+    console.log(`[DEBUG] Saved job '${job}' only:`, this.jobs[job]);
+  }
+
+  exportConfig(job) {
+    this.saveFields(this.currentJob);
+    const fields = this.jobs[this.currentJob] || [];
+    return {
+      [this.currentJob]: {
+        api: this.currentJob === "list" ? "config/list_details"
+          : this.currentJob === "update" ? "config/modifications"
+          : "config/new",
+        data: [{ fields }],
+        roles: ["Admin"],
+        onSuccess: `Role_${this.currentJob}ed()`
+      }
+    };
+  }
+
+  addField(field = "", control = "text", trigger = []) {
+    this.addFieldFromObject({
+      field, control, trigger, edit: false, show: false, mandatory: false,
+      default: "", unique: "false", datatype: "", filter_type: "string",
+      helper: "none", lang: { english: "", german: "", arabic: "", french: "" }
+    });
+  }
+
+  addFieldFromObject(obj) {
+    const tbody = this.shadowRoot.getElementById('field-body');
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td class="drag-handle">⇅</td>
+      <td><input type="text" class="field-name" value="${obj.field || ""}"/></td>
+      <td><select class="control">
+        <option value="text">text</option>
+        <option value="dropdown">dropdown</option>
+        <option value="field-attribute-control">field-attribute-control</option>
+        <option value="datime">datime</option>
+      </select></td>
+      <td><input type="checkbox" class="edit" ${obj.edit ? "checked" : ""}/></td>
+      <td><input type="checkbox" class="show" ${obj.show ? "checked" : ""}/></td>
+      <td><input type="checkbox" class="mandatory" ${obj.mandatory ? "checked" : ""}/></td>
+      <td><input type="text" class="default" value="${obj.default || ""}"/></td>
+      <td><textarea class="trigger" style="display:none">${JSON.stringify(obj.trigger || [])}</textarea><button class="trigger-btn">⚙️</button></td>
+      <td><input type="text" class="unique" value="${obj.unique || "false"}"/></td>
+      <td><input type="text" class="datatype" value="${obj.datatype || ""}"/></td>
+      <td>
+        <select class="filter_type">
+          <option value="string">string</option>
+          <option value="number">number</option>
+          <option value="date">date</option>
+          <option value="time">time</option>
+          <option value="location">location</option>
+        </select>
+      </td>
+      <td><input type="text" class="lang-en" value="${obj.lang?.english || ""}"/></td>
+      <td><input type="text" class="lang-de" value="${obj.lang?.german || ""}"/></td>
+      <td><input type="text" class="lang-ar" value="${obj.lang?.arabic || ""}"/></td>
+      <td><input type="text" class="lang-fr" value="${obj.lang?.french || ""}"/></td>
+      <td><select class="helper">
+        <option value="none">None</option>
+        <option value="getcurrentuserdetails">getcurrentuserdetails</option>
+        <option value="getresorceCategories">getresorceCategories</option>
+        <option value="get_affiliation">get_affiliation</option>
+      </select></td>
+      <td><button class="remove">X</button></td>
+    `;
+    row.querySelector('.control').value = obj.control || "text";
+    row.querySelector('.helper').value = obj.helper || "none";
+    row.querySelector('.filter_type').value = obj.filter_type || "string";
+    row.querySelector('.remove').addEventListener('click', () => row.remove());
+    tbody.appendChild(row);
+  }
+
+  captureFields() {
+    const rows = this.shadowRoot.querySelectorAll('#field-body tr');
+    return Array.from(rows).map((row, index) => ({
+      seqno: index + 1,
+      field: row.querySelector('.field-name').value,
+      control: row.querySelector('.control').value,
+      trigger: (() => {
+        try {
+          return JSON.parse(row.querySelector('.trigger').value || '[]');
+        } catch { return []; }
+      })(),
+      edit: row.querySelector('.edit').checked,
+      show: row.querySelector('.show').checked,
+      mandatory: row.querySelector('.mandatory').checked,
+      default: row.querySelector('.default').value,
+      unique: row.querySelector('.unique').value,
+      datatype: row.querySelector('.datatype').value,
+      filter_type: row.querySelector('.filter_type').value,
+      helper: row.querySelector('.helper').value,
+      lang: {
+        english: row.querySelector('.lang-en').value,
+        german: row.querySelector('.lang-de').value,
+        arabic: row.querySelector('.lang-ar').value,
+        french: row.querySelector('.lang-fr').value
+      }
+    }));
+  }
+
+  // ✅ Getter and Setter for `value`
+  get value() {
+    return this.exportConfig(this.currentJob);
+  }
+
+  set value(val) {
+    try {
+      const config = typeof val === "string" ? JSON.parse(val) : val;
+      if (config) {
+        const job = Object.keys(config)[0];
+        if (job) {
+          this.currentJob = job;
+          this.shadowRoot.getElementById("jobSelector").value = job;
+          this.jobs[job] = config[job]?.data?.[0]?.fields || [];
+          this.loadFields(job);
+        }
+      }
+    } catch (e) {
+      console.error("Invalid value passed to field-attribute-control:", e);
+    }
+  }
+}
+
+customElements.define('field-attribute-control', FieldAttributeControl);
 
 
 /*
@@ -9883,3 +10461,232 @@ class TemplateMappingControl extends HTMLElement {
 
 customElements.define("template-mapping-control", TemplateMappingControl);
 
+
+// this location input is used in the filter
+/*class LocationInput extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+
+    // Hidden input for forms
+    this.hiddenInput = document.createElement("input");
+    this.hiddenInput.type = "hidden";
+
+    // Visible single text input (like time)
+    this.input = document.createElement("input");
+    this.input.type = "text";
+    this.input.placeholder = "Lat,Long";
+    this.input.className = "form-control";
+
+    // Where we accumulate values
+    this.values = [];
+
+    const style = document.createElement("style");
+    style.textContent = `
+      .form-control {
+        padding: 4px 6px;
+        font-size: 14px;
+        width: 160px;
+      }
+    `;
+
+    this.shadowRoot.append(style, this.input, this.hiddenInput);
+  }
+
+  connectedCallback() {
+    if (this.hasAttribute("name")) {
+      this.hiddenInput.name = this.getAttribute("name");
+    }
+
+    // Commit only on blur or Enter
+    this.input.addEventListener("blur", () => this.commitValue());
+    this.input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        this.commitValue();
+        this.input.blur();
+      }
+    });
+  }
+
+  commitValue() {
+    let raw = this.input.value.trim();
+    if (!raw) return;
+
+    let parts = raw.split(",").map(v => v.trim());
+
+    if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1])) {
+      alert("Please enter location as Lat,Long (e.g., 41.23,56.30)");
+      return;
+    }
+
+    let lat = parseFloat(parts[0]);
+    let lng = parseFloat(parts[1]);
+
+    if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+      alert("Latitude must be between -90 and 90, Longitude between -180 and 180");
+      return;
+    }
+
+    // ✅ Append to flat list
+    this.values.push(lat, lng);
+
+    // Store as flat string
+    this.hiddenInput.value = this.values.join(",");
+
+    // Reset input for next entry
+    this.input.value = "";
+
+    // Notify parent
+    this.dispatchEvent(new Event("change"));
+  }
+
+  // Expose .value property
+  get value() {
+    return this.hiddenInput.value ? this.hiddenInput.value.split(",") : [];
+  }
+
+  set value(val) {
+    if (Array.isArray(val)) {
+      this.values = val;
+      this.hiddenInput.value = val.join(",");
+    }
+  }
+}
+
+customElements.define("location-input", LocationInput);
+*/
+
+class LocationInput extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+
+    // Hidden input for forms
+    this.hiddenInput = document.createElement("input");
+    this.hiddenInput.type = "hidden";
+
+    // Visible single text input (like time)
+    this.input = document.createElement("input");
+    this.input.type = "text";
+    this.input.placeholder = "Lat,Long (e.g., 41.23,56.30)";
+    this.input.className = "form-control";
+
+    // Where we accumulate values
+    this.values = [];
+
+    const style = document.createElement("style");
+    style.textContent = `
+      .form-control {
+        padding: 4px 6px;
+        font-size: 14px;
+        width: 200px;
+      }
+    `;
+
+    this.shadowRoot.append(style, this.input, this.hiddenInput);
+  }
+
+  connectedCallback() {
+    if (this.hasAttribute("name")) {
+      this.hiddenInput.name = this.getAttribute("name");
+    }
+
+    // Commit only on blur or Enter
+    this.input.addEventListener("blur", () => this.commitValue());
+    this.input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        this.commitValue();
+        this.input.blur();
+      }
+    });
+  }
+
+  commitValue() {
+    let raw = this.input.value.trim();
+    if (!raw) return;
+
+    let parts = raw.split(",").map(v => v.trim());
+
+    if (parts.length !== 2) {
+      alert("Please enter coordinates in Lat,Long format (e.g., 41.23,56.30).");
+      return;
+    }
+
+    let lat = parseFloat(parts[0]);
+    let lng = parseFloat(parts[1]);
+
+    // ✅ Validate numeric
+    if (isNaN(lat) || isNaN(lng)) {
+      alert("Latitude and Longitude must be valid numbers.");
+      return;
+    }
+
+    // ✅ Validate ranges
+    if (lat < -90 || lat > 90) {
+      alert("Latitude must be between -90 and 90.");
+      return;
+    }
+    if (lng < -180 || lng > 180) {
+      alert("Longitude must be between -180 and 180.");
+      return;
+    }
+
+    // ✅ Normalize to fixed precision
+    lat = lat.toFixed(6);
+    lng = lng.toFixed(6);
+
+    let newEntry = [lat, lng];
+
+    // ✅ Prevent duplicates
+    let existingPairs = [];
+    for (let i = 0; i < this.values.length; i += 2) {
+      existingPairs.push([this.values[i], this.values[i + 1]].join(","));
+    }
+
+    if (existingPairs.includes(newEntry.join(","))) {
+      alert("This coordinate already exists.");
+      this.input.value = "";
+      return;
+    }
+
+    // ✅ Append to flat list
+    this.values.push(lat, lng);
+
+    // Store as flat string
+    this.hiddenInput.value = this.values.join(",");
+
+    // Reset input for next entry
+    this.input.value = "";
+
+    // Notify parent
+    this.dispatchEvent(new Event("change"));
+  }
+
+  // Expose .value property
+  get value() {
+    return this.hiddenInput.value ? this.hiddenInput.value.split(",") : [];
+  }
+
+  set value(val) {
+    if (Array.isArray(val)) {
+      this.values = val;
+      this.hiddenInput.value = val.join(",");
+    }
+  }
+}
+
+customElements.define("location-input", LocationInput);
+
+
+/*
+{
+      "name": "log",
+      "unique": "false",
+      "datatype": "string",
+      "formats":["jpeg/mpeg/mp3/xls/png/jpg"],
+      "content_type":"document/file/value",
+      "not_null": "false"
+    },
+*/ 

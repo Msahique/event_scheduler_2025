@@ -1,6 +1,6 @@
 var global_settings={"language":"english"}
 
-
+// Datatypes to use in the code as : String, Number, Date (DD/MM/YYYY), Time (H:M:S), Location (lat,long)
 var MainConfig={
    "default_fields":{},
     "Entity Config":{
@@ -27,13 +27,13 @@ var MainConfig={
                     {  "helper":"none",
                         "fields":[ 
                             {"seqno":"","field":"id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","lang":{"english":"Role Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"seqno":"","field":"entity_id","name":"Entity Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"entity_id","name":"Entity Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":false,"tooltip":"this is a test description","default":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
                             {"seqno":"","field":"role_name","name":"Role Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
                             {"seqno":"","field": "status", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
                             {"seqno":"","field": "log", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
                             {"seqno":"","field": "affiliation_id", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
                             {"seqno":"","field": "remark", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
-                            {"seqno":"","field": "description", "edit": true, "show": true, "control": "graphs-control", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}}
+                            {"seqno":"","field": "description", "edit": true, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}}
                            ],
                         "edit_option":true,
                         "delete_option":true
@@ -1118,7 +1118,638 @@ var MainConfig={
                "cancel":{"api":"config","onSuccess":"Role_canceled()"},
             },
          },
-      "Entity log":{} 
+        "Entity log":{} ,
+         "Document Test Templates": {
+            "job": {
+               "list": {
+               "api": "config/list_details",
+               "data": [
+                  {
+                     "fields": [
+                     {
+                        "edit": false,
+                        "lang": {
+                           "arabic": "الوصف",
+                           "french": "Description",
+                           "german": "Beschreibung",
+                           "english": "Description"
+                        },
+                        "show": false,
+                        "field": "description",
+                        "seqno": "",
+                        "control": "text",
+                        "default": "",
+                        "tooltip": "this is a test description",
+                        "trigger": [
+                           {
+                           "event": "onchange",
+                           "function": "tab_onchange_trigger"
+                           },
+                           {
+                           "event": "onselect",
+                           "function": "tab_onselect_trigger"
+                           }
+                        ],
+                        "mandatory": false,
+                        "filter_type": "textbox",
+                        "filter_default_value": ""
+                     },
+                     {
+                        "edit": false,
+                        "lang": {
+                           "arabic": "معرف الدور",
+                           "french": "ID du rôle",
+                           "german": "Rollen-ID",
+                           "english": "id"
+                        },
+                        "name": "Id",
+                        "show": false,
+                        "field": "id",
+                        "seqno": "",
+                        "control": "text",
+                        "default": "",
+                        "tooltip": "this is a test description",
+                        "trigger": [
+                           {
+                           "event": "onchange",
+                           "function": "tab_onchange_trigger"
+                           },
+                           {
+                           "event": "onselect",
+                           "function": "tab_onselect_trigger"
+                           }
+                        ],
+                        "mandatory": true,
+                        "filter_type": "textbox",
+                        "filter_default_value": ""
+                     },
+                     {
+                        "edit": true,
+                        "lang": {
+                           "arabic": "معرف الكيان",
+                           "french": "ID de l'entité",
+                           "german": "Entitäts-ID",
+                           "english": "Affiliation Id"
+                        },
+                        "show": true,
+                        "field": "affiliation_id",
+                        "seqno": "",
+                        "control": "text",
+                        "default": "",
+                        "tooltip": "this is a test description",
+                        "trigger": [
+                           {
+                           "event": "onchange",
+                           "function": "tab_onchange_trigger"
+                           },
+                           {
+                           "event": "onselect",
+                           "function": "tab_onselect_trigger"
+                           }
+                        ],
+                        "mandatory": true,
+                        "filter_type": ""
+                     },
+                     {
+                        "edit": true,
+                        "lang": {
+                           "arabic": "اسم الدور",
+                           "french": "Nom du rôle",
+                           "german": "Rollenname",
+                           "english": "DB Config"
+                        },
+                        "show": true,
+                        "field": "db_config",
+                        "seqno": "",
+                        "control": "text",
+                        "default": "",
+                        "tooltip": "this is a test description",
+                        "trigger": [
+                           {
+                           "event": "onchange",
+                           "function": "tab_onchange_trigger"
+                           },
+                           {
+                           "event": "onselect",
+                           "function": "tab_onselect_trigger"
+                           }
+                        ],
+                        "mandatory": true,
+                        "filter_type": ""
+                     },
+                     {
+                        "edit": true,
+                        "lang": {
+                           "arabic": "اسم الدور",
+                           "french": "Nom du rôle",
+                           "german": "Rollenname",
+                           "english": "UI Template"
+                        },
+                        "show": true,
+                        "field": "task_ui_template",
+                        "seqno": "",
+                        "control": "text",
+                        "default": "",
+                        "tooltip": "this is a test description",
+                        "trigger": [
+                           {
+                           "event": "onchange",
+                           "function": "tab_onchange_trigger"
+                           },
+                           {
+                           "event": "onselect",
+                           "function": "tab_onselect_trigger"
+                           }
+                        ],
+                        "mandatory": true,
+                        "filter_type": ""
+                     }
+                     ],
+                     "helper": "none",
+                     "edit_option": true,
+                     "delete_option": true
+                  }
+               ],
+               "roles": [
+                  "Admin"
+               ],
+               "onSuccess": "Role_listed()"
+               },
+               "cancel": {
+               "api": "config",
+               "onSuccess": "Role_canceled()"
+               },
+               "create": {
+               "api": "config/new",
+               "data": [
+                  {
+                     "fields": [
+                     {
+                        "edit": false,
+                        "lang": {
+                           "arabic": "الوصف",
+                           "french": "Description",
+                           "german": "Beschreibung",
+                           "english": "Description"
+                        },
+                        "show": false,
+                        "field": "description",
+                        "seqno": "",
+                        "control": "text",
+                        "default": "",
+                        "tooltip": "this is a test description",
+                        "trigger": [
+                           {
+                           "event": "onchange",
+                           "function": "tab_onchange_trigger"
+                           },
+                           {
+                           "event": "onselect",
+                           "function": "tab_onselect_trigger"
+                           }
+                        ],
+                        "mandatory": false,
+                        "filter_type": "textbox",
+                        "filter_default_value": ""
+                     },
+                     {
+                        "edit": false,
+                        "lang": {
+                           "arabic": "معرف الدور",
+                           "french": "ID du rôle",
+                           "german": "Rollen-ID",
+                           "english": "id"
+                        },
+                        "name": "Id",
+                        "show": false,
+                        "field": "id",
+                        "seqno": "",
+                        "control": "text",
+                        "default": "",
+                        "tooltip": "this is a test description",
+                        "trigger": [
+                           {
+                           "event": "onchange",
+                           "function": "tab_onchange_trigger"
+                           },
+                           {
+                           "event": "onselect",
+                           "function": "tab_onselect_trigger"
+                           }
+                        ],
+                        "mandatory": true,
+                        "filter_type": "textbox",
+                        "filter_default_value": ""
+                     },
+                     {
+                        "edit": true,
+                        "lang": {
+                           "arabic": "معرف الكيان",
+                           "french": "ID de l'entité",
+                           "german": "Entitäts-ID",
+                           "english": "Affiliation Id"
+                        },
+                        "show": true,
+                        "field": "affiliation_id",
+                        "seqno": "",
+                        "control": "text",
+                        "default": "",
+                        "tooltip": "this is a test description",
+                        "trigger": [
+                           {
+                           "event": "onchange",
+                           "function": "tab_onchange_trigger"
+                           },
+                           {
+                           "event": "onselect",
+                           "function": "tab_onselect_trigger"
+                           }
+                        ],
+                        "mandatory": true,
+                        "filter_type": ""
+                     },
+                     {
+                        "edit": true,
+                        "lang": {
+                           "arabic": "اسم الدور",
+                           "french": "Nom du rôle",
+                           "german": "Rollenname",
+                           "english": "DB Config"
+                        },
+                        "show": true,
+                        "field": "db_config",
+                        "seqno": "",
+                        "control": "text",
+                        "default": "",
+                        "tooltip": "this is a test description",
+                        "trigger": [
+                           {
+                           "event": "onchange",
+                           "function": "tab_onchange_trigger"
+                           },
+                           {
+                           "event": "onselect",
+                           "function": "tab_onselect_trigger"
+                           }
+                        ],
+                        "mandatory": true,
+                        "filter_type": ""
+                     },
+                     {
+                        "edit": true,
+                        "lang": {
+                           "arabic": "اسم الدور",
+                           "french": "Nom du rôle",
+                           "german": "Rollenname",
+                           "english": "UI Template"
+                        },
+                        "show": true,
+                        "field": "task_ui_template",
+                        "seqno": "",
+                        "control": "text",
+                        "default": "",
+                        "tooltip": "this is a test description",
+                        "trigger": [
+                           {
+                           "event": "onchange",
+                           "function": "tab_onchange_trigger"
+                           },
+                           {
+                           "event": "onselect",
+                           "function": "tab_onselect_trigger"
+                           }
+                        ],
+                        "mandatory": true,
+                        "filter_type": ""
+                     }
+                     ],
+                     "helper": "none",
+                     "edit_option": true,
+                     "delete_option": true
+                  }
+               ],
+               "roles": [
+                  "Admin"
+               ],
+               "onSuccess": "Role_created()"
+               },
+               "update": {
+               "api": "config/modifications",
+               "data": [
+                  {
+                     "fields": [
+                     {
+                        "edit": false,
+                        "lang": {
+                           "arabic": "الوصف",
+                           "french": "Description",
+                           "german": "Beschreibung",
+                           "english": "Description"
+                        },
+                        "show": false,
+                        "field": "description",
+                        "seqno": "",
+                        "control": "text",
+                        "default": "",
+                        "tooltip": "this is a test description",
+                        "trigger": [
+                           {
+                           "event": "onchange",
+                           "function": "tab_onchange_trigger"
+                           },
+                           {
+                           "event": "onselect",
+                           "function": "tab_onselect_trigger"
+                           }
+                        ],
+                        "mandatory": false,
+                        "filter_type": "textbox",
+                        "filter_default_value": ""
+                     },
+                     {
+                        "edit": false,
+                        "lang": {
+                           "arabic": "معرف الدور",
+                           "french": "ID du rôle",
+                           "german": "Rollen-ID",
+                           "english": "id"
+                        },
+                        "name": "Id",
+                        "show": false,
+                        "field": "id",
+                        "seqno": "",
+                        "control": "text",
+                        "default": "",
+                        "tooltip": "this is a test description",
+                        "trigger": [
+                           {
+                           "event": "onchange",
+                           "function": "tab_onchange_trigger"
+                           },
+                           {
+                           "event": "onselect",
+                           "function": "tab_onselect_trigger"
+                           }
+                        ],
+                        "mandatory": true,
+                        "filter_type": "textbox",
+                        "filter_default_value": ""
+                     },
+                     {
+                        "edit": true,
+                        "lang": {
+                           "arabic": "معرف الكيان",
+                           "french": "ID de l'entité",
+                           "german": "Entitäts-ID",
+                           "english": "Affiliation Id"
+                        },
+                        "show": true,
+                        "field": "affiliation_id",
+                        "seqno": "",
+                        "control": "text",
+                        "default": "",
+                        "tooltip": "this is a test description",
+                        "trigger": [
+                           {
+                           "event": "onchange",
+                           "function": "tab_onchange_trigger"
+                           },
+                           {
+                           "event": "onselect",
+                           "function": "tab_onselect_trigger"
+                           }
+                        ],
+                        "mandatory": true,
+                        "filter_type": ""
+                     },
+                     {
+                        "edit": true,
+                        "lang": {
+                           "arabic": "اسم الدور",
+                           "french": "Nom du rôle",
+                           "german": "Rollenname",
+                           "english": "DB Config"
+                        },
+                        "show": true,
+                        "field": "db_config",
+                        "seqno": "",
+                        "control": "text",
+                        "default": "",
+                        "tooltip": "this is a test description",
+                        "trigger": [
+                           {
+                           "event": "onchange",
+                           "function": "tab_onchange_trigger"
+                           },
+                           {
+                           "event": "onselect",
+                           "function": "tab_onselect_trigger"
+                           }
+                        ],
+                        "mandatory": true,
+                        "filter_type": ""
+                     },
+                     {
+                        "edit": true,
+                        "lang": {
+                           "arabic": "اسم الدور",
+                           "french": "Nom du rôle",
+                           "german": "Rollenname",
+                           "english": "UI Template"
+                        },
+                        "show": true,
+                        "field": "task_ui_template",
+                        "seqno": "",
+                        "control": "text",
+                        "default": "",
+                        "tooltip": "this is a test description",
+                        "trigger": [
+                           {
+                           "event": "onchange",
+                           "function": "tab_onchange_trigger"
+                           },
+                           {
+                           "event": "onselect",
+                           "function": "tab_onselect_trigger"
+                           }
+                        ],
+                        "mandatory": true,
+                        "filter_type": ""
+                     }
+                     ],
+                     "helper": "none",
+                     "edit_option": true,
+                     "delete_option": true
+                  }
+               ],
+               "roles": [
+                  "Admin"
+               ],
+               "checklist": {
+                  "checkpoints": []
+               }
+               },
+               "approver": {
+               "data": [
+                  {
+                     "fields": [
+                     {
+                        "edit": false,
+                        "lang": {
+                           "arabic": "الوصف",
+                           "french": "Description",
+                           "german": "Beschreibung",
+                           "english": "Description"
+                        },
+                        "show": false,
+                        "field": "description",
+                        "seqno": "",
+                        "control": "text",
+                        "default": "",
+                        "tooltip": "this is a test description",
+                        "trigger": [
+                           {
+                           "event": "onchange",
+                           "function": "tab_onchange_trigger"
+                           },
+                           {
+                           "event": "onselect",
+                           "function": "tab_onselect_trigger"
+                           }
+                        ],
+                        "mandatory": false,
+                        "filter_type": "textbox",
+                        "filter_default_value": ""
+                     },
+                     {
+                        "edit": false,
+                        "lang": {
+                           "arabic": "معرف الدور",
+                           "french": "ID du rôle",
+                           "german": "Rollen-ID",
+                           "english": "id"
+                        },
+                        "name": "Id",
+                        "show": false,
+                        "field": "id",
+                        "seqno": "",
+                        "control": "text",
+                        "default": "",
+                        "tooltip": "this is a test description",
+                        "trigger": [
+                           {
+                           "event": "onchange",
+                           "function": "tab_onchange_trigger"
+                           },
+                           {
+                           "event": "onselect",
+                           "function": "tab_onselect_trigger"
+                           }
+                        ],
+                        "mandatory": true,
+                        "filter_type": "textbox",
+                        "filter_default_value": ""
+                     },
+                     {
+                        "edit": true,
+                        "lang": {
+                           "arabic": "معرف الكيان",
+                           "french": "ID de l'entité",
+                           "german": "Entitäts-ID",
+                           "english": "Affiliation Id"
+                        },
+                        "show": true,
+                        "field": "affiliation_id",
+                        "seqno": "",
+                        "control": "text",
+                        "default": "",
+                        "tooltip": "this is a test description",
+                        "trigger": [
+                           {
+                           "event": "onchange",
+                           "function": "tab_onchange_trigger"
+                           },
+                           {
+                           "event": "onselect",
+                           "function": "tab_onselect_trigger"
+                           }
+                        ],
+                        "mandatory": true,
+                        "filter_type": ""
+                     },
+                     {
+                        "edit": true,
+                        "lang": {
+                           "arabic": "اسم الدور",
+                           "french": "Nom du rôle",
+                           "german": "Rollenname",
+                           "english": "DB Config"
+                        },
+                        "show": true,
+                        "field": "db_config",
+                        "seqno": "",
+                        "control": "text",
+                        "default": "",
+                        "tooltip": "this is a test description",
+                        "trigger": [
+                           {
+                           "event": "onchange",
+                           "function": "tab_onchange_trigger"
+                           },
+                           {
+                           "event": "onselect",
+                           "function": "tab_onselect_trigger"
+                           }
+                        ],
+                        "mandatory": true,
+                        "filter_type": ""
+                     },
+                     {
+                        "edit": true,
+                        "lang": {
+                           "arabic": "اسم الدور",
+                           "french": "Nom du rôle",
+                           "german": "Rollenname",
+                           "english": "UI Template"
+                        },
+                        "show": true,
+                        "field": "task_ui_template",
+                        "seqno": "",
+                        "control": "text",
+                        "default": "",
+                        "tooltip": "this is a test description",
+                        "trigger": [
+                           {
+                           "event": "onchange",
+                           "function": "tab_onchange_trigger"
+                           },
+                           {
+                           "event": "onselect",
+                           "function": "tab_onselect_trigger"
+                           }
+                        ],
+                        "mandatory": true,
+                        "filter_type": ""
+                     }
+                     ],
+                     "helper": "none",
+                     "edit_option": true,
+                     "delete_option": false
+                  }
+               ],
+               "roles": [
+                  "Approver"
+               ],
+               "onSuccess": "Role_approved()"
+               }
+            },
+            "key": "id",
+            "doc_title": "",
+            "getDataApi": "config/list_details",
+            "attchment_files_path": ""
+         }
+
+      
 
     },
     "Network Config":{
@@ -3966,7 +4597,7 @@ var MainConfig={
                   "data":[
                      {"helper":"none",
                         "fields":[
-{"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                           {"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
                            {"seqno":"","field":"doc_view_template_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"ID","german":"Kennung","arabic":"معرف","french":"ID"}},
                            {"seqno":"","field":"doc_view_template_name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template Name","german":"Vorlagenname","arabic":"اسم القالب","french":"Nom du modèle"}},
                            {"seqno":"","field":"html_template","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document View HTML","german":"HTML-Ansicht","arabic":"عرض المستند HTML","french":"Vue HTML du document"}},
@@ -4038,7 +4669,7 @@ var MainConfig={
                         "delete_option":true}
                      ],
                   "api":"template_config/list_details",
-                  "onSuccess":"Role_approved()"
+                  "onSuccess":""
                 
                 },
                 "cancel":{"api":"config","onSuccess":"Role_canceled()"}
@@ -4168,6 +4799,94 @@ var MainConfig={
                 "cancel":{"api":"config","onSuccess":"Role_canceled()"}
             }
         },
+
+        "HTML Templates":{
+            "doc_title":"HTML Template",
+            "doc_title":"","getDataApi":"config/list_details",
+            "key":"id",
+            "attchment_files_path":"",
+            "job":{
+                "create":{
+                "roles":["Admin"],   
+                "data":[
+                    {  "helper":"none",
+                        "fields":[
+                            {"seqno":"","field":"id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"html","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document type","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"affiliation_id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"description","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"status","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}}
+                            
+                        ],
+                        "edit_option":true,
+                        "delete_option":true
+                    }
+                ],
+                "api":"config/new",
+                "onSuccess":"htmal_created()",
+                },
+                "list":{
+                "roles":["Admin"],  
+                "data":[
+                    {  "helper":"none",
+                        "fields":[
+                            {"seqno":"","field":"id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"html","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document type","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"affiliation_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"description","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"status","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}}
+                            
+                        ],
+                        "edit_option":true,
+                        "delete_option":true
+                    }
+                ],
+                "api":"config/list_details",
+                "onSuccess":"Role_listed()"
+                },
+                "update":{
+                    "roles":["Admin"],  
+                    "data":[
+
+                    {  "helper":"none",
+                        "fields":[
+                            {"seqno":"","field":"id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"html","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document type","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"affiliation_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"description","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}}
+                            
+                        ],
+                        "edit_option":true,
+                        "delete_option":true
+                    }
+                  ], 
+                  "api":"config/modifications"
+                    
+
+                },
+                "approver":{
+                "roles":["Approver"],
+                "data":[
+                    {  "helper":"none",
+                        "fields":[
+                            {"seqno":"","field":"id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"html","edit":true,"show":true,"control":"textarea","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Document type","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                            {"seqno":"","field":"affiliation_id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
+                            {"seqno":"","field":"description","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
+                            {"seqno":"","field":"status","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}}
+                        ],
+                        "edit_option":true,
+                        "delete_option":false
+                    }
+                ],
+                "onSuccess":"Role_approved()"
+                
+                },
+                "cancel":{"api":"config","onSuccess":"html_canceled()"}
+            }
+        },
+
         "Function Registry":{
             "doc_title":"","getDataApi":"config/list_details",
             "key":"id",
@@ -4860,5 +5579,4 @@ var MainConfig={
 
    }
 }
- 
 

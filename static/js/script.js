@@ -7,9 +7,9 @@ const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB chunks for file uploads
 
 var sending = false;
 
-async function get_data_list(selected_doc_type,where_data,block_no=1,block_size=100){
+async function get_data_list(selected_doc_type,where_data,block_size=100,block_number=1){
     document.getElementById("tab_page_header").style.display = "block";
-    console.log(selected_doc_type,where_data);
+    console.log(selected_doc_type,where_data,block_size,block_number);
     page_load_conf.event="data_list";   console.log(">>>>>",  page_load_conf);
 
     if(selected_doc_type) {
@@ -19,7 +19,7 @@ async function get_data_list(selected_doc_type,where_data,block_no=1,block_size=
             "type": "Document UI Templates",
             "qry": {
                 "select_fields": ["id","ui_template"], 
-                "where_data": {"doc_type":selected_doc_type}
+                "where_data": {"ui_template_name":selected_doc_type}
                 }
         }
         //var get_config = await API_helper_call(domain+"options",body);   console.log(">>>>>",page_load_conf.tab, body)
@@ -41,15 +41,17 @@ async function get_data_list(selected_doc_type,where_data,block_no=1,block_size=
             "requestor_id":"",
             "request_token":"",
             "affiliations": JSON.parse(localStorage.getItem("my_current_affiliation[0].id")),
+            "block_number": block_number,
+            "block_size": block_size,
             "qry":{
                 "select_fields":fieldsArray,
                 "where_data":where_data
             }
         }
         data_list_body.type = selected_doc_type;     // 
-        data_list_body.tab = page_load_conf.tab; //
-        console.log("Fetching data from API...");
-        API_call(domain, Registry.getDataApi, data_list_body, "POST");
+        data_list_body.tab = page_load_conf.tab;     //
+        console.log("Fetching data from API...",Registry.job.list.api);
+        API_call(domain, Registry.job.list.api, data_list_body, "POST");
         //getDocumentConfigWithCache(domain, MainConfig[page_load_conf.tab][selected_item].getDataApi, data_list_body, "POST");
 
 
@@ -127,7 +129,7 @@ async function present_Data(data,item) {
         "type": "Document UI Templates",
         "qry": {
             "select_fields": ["id","ui_template"], 
-            "where_data": {"doc_type":item}
+            "where_data": {"ui_template_name":item}
             }
     }
     if(item !== undefined) {
@@ -137,7 +139,7 @@ async function present_Data(data,item) {
         console.log("UI Template Config:", ui_template_config);
         // var get_config=  API_call(domain, MainConfig[page_load_conf.tab][selected_item].getDataApi, data_list_body, "POST");
         display_data=data[0];  
-        config_path=MainConfig[page_load_conf.tab][item]; 
+        config_path= ui_template_config[item]; 
         selectedItemFromDropdown=item;  
         field_datatype = ui_template_config[item].field || []
         field_data = ui_template_config[item].job.list
@@ -998,3 +1000,48 @@ async function test_API_call() {
        var get_config = await API_call(domain,"config/list_details",control_data_body,"POST",false);   
        console.log(get_config)
 }
+
+
+        /*else if (element.filter_type === "dropdown") {
+                    let label = document.createElement("label");
+                    label.innerHTML = element.field;
+                    label.className = "form-label";
+        
+                    let select = document.createElement("select");
+                    select.className = "form-select";
+                    select.name = element.field;
+        
+                    let defaultOption = document.createElement("option");
+                    defaultOption.value = "";
+                    defaultOption.textContent = "Select " + element.field;
+                    select.appendChild(defaultOption);
+        
+                    function populateOptions(options) {
+                        options.forEach(value => {
+                            let option = document.createElement("option");
+                            option.value = value;
+                            option.textContent = value;
+                            if (filterValues[element.key || element.field] === value) {
+                                option.selected = true;
+                            }
+                            select.appendChild(option);
+                        });
+                    }
+        
+                    if (element.filter_helper) {
+                        fetchHelperData(element.filter_helper,element.filter_type).then(helperOptions => {
+                            if (Array.isArray(helperOptions)) {
+                                populateOptions(helperOptions);
+                            }
+                        }).catch(error => console.error("Error fetching helper data:", error));
+                    } else if (Array.isArray(element.filter_default_value)) {
+                        populateOptions(element.filter_default_value);
+                    }
+        
+                    select.addEventListener("change", function () {
+                        filterValues[element.key || element.field] = this.value;
+                    });
+        
+                    //fieldWrapper.appendChild(label);
+                    fieldWrapper.appendChild(select);   //fieldWrapper.appendChild(document.createElement('br'));
+                }*/ 

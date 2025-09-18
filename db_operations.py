@@ -571,7 +571,8 @@ def get_data(db,table_name,select_fields,where_data=None,exact_match=False,user_
             connection.close()
             print("[INFO] Database connection closed.")
 '''
-
+# this is for getting data of selected fields within a document which is identified by 
+# the field values specified in where_data. 
 def get_data(db, table_name, select_fields, where_data=None, exact_match=False,
              user_affiliations=None, block_size=None, block_number=None):
     
@@ -823,7 +824,10 @@ def get_data_list_working_old(db, table_name, select_fields, where_data=None,
             connection.close()
             print("[INFO] Database connection closed.")
 
-def get_data_list(db, table_name, select_fields, where_data=None,
+
+# this finction is for getting ist of documents along with their selected_field specified contents, 
+# filtered by creitaria specified in where_data (ex: text,range of date / numbers,).
+def get_data_list1(db, table_name, select_fields, where_data=None,
              user_affiliations=None, block_size=None, block_number=None):
     
     print("[init] where_data:", where_data)
@@ -884,6 +888,7 @@ def get_data_list(db, table_name, select_fields, where_data=None,
 
                     if exact:
                         # ✅ Exact match or IN
+                        print("col_type1>>>>",col_type)
                         if len(vals) == 1:
                             where_clauses.append(f"{clause} = %s")
                             values.append(vals[0])
@@ -892,25 +897,88 @@ def get_data_list(db, table_name, select_fields, where_data=None,
                             where_clauses.append(f"{clause} IN ({placeholders})")
                             values.extend(vals)
                     else:
+                        #  "id": {"type":"number","exact_match":False,"values":[1,10,15,20]}
+                        print("col_type>>>>",col_type)
+                        if col_type == "numberasd" :
+                            if exact == False:
+                                # ✅ Odd count of values → invalid
+                                if len(vals) % 2 != 0:
+                                    raise ValueError(
+                                        f"Invalid range specification for {key}: {vals}. "
+                                        "Number of values must be even to form ranges."
+                                    )
+
+                                # ✅ Build ranges from pairs
+                                range_clauses = []
+                                for i in range(0, len(vals), 2):
+                                    start, end = vals[i], vals[i+1]
+                                    range_clauses.append(f"{clause} BETWEEN %s AND %s")
+                                    values.extend([start, end])
+
+                                # Combine multiple ranges with OR
+                                where_clauses.append("(" + " OR ".join(range_clauses) + ")")
+                            else:
+                                for i in vals:
+                                    where_clauses.append("(" + " OR ".join(i) + ")")
                         if col_type == "number":
-                            # ✅ Odd count of values → invalid
-                            if len(vals) % 2 != 0:
-                                raise ValueError(
-                                    f"Invalid range specification for {key}: {vals}. "
-                                    "Number of values must be even to form ranges."
-                                )
+                            # 🔹 Handle numeric ranges
+                            if not exact:
+                                if len(vals) % 2 != 0:
+                                    raise ValueError(
+                                        f"Invalid range specification for {key}: {vals}. "
+                                        "Number of values must be even to form ranges."
+                                    )
 
-                            # ✅ Build ranges from pairs
-                            range_clauses = []
-                            for i in range(0, len(vals), 2):
-                                start, end = vals[i], vals[i+1]
-                                range_clauses.append(f"{clause} BETWEEN %s AND %s")
-                                values.extend([start, end])
+                                range_clauses = []
+                                for i in range(0, len(vals), 2):
+                                    start, end = vals[i], vals[i+1]
+                                    range_clauses.append(f"{clause} BETWEEN %s AND %s")
+                                    values.extend([start, end])
 
-                            # Combine multiple ranges with OR
-                            where_clauses.append("(" + " OR ".join(range_clauses) + ")")
+                                where_clauses.append("(" + " OR ".join(range_clauses) + ")")
+                            else:
+                                placeholders = ",".join(["%s"] * len(vals))
+                                where_clauses.append(f"{clause} IN ({placeholders})")
+                                values.extend(vals)
+
+                        elif col_type == "date":
+                            # Always compare only DATE part
+                            
+                            if not exact:
+                                print("vals1>>>>",vals)
+                                if len(vals) % 2 != 0:
+                                    raise ValueError(
+                                        f"Invalid range specification for {key}: {vals}. "
+                                        "Number of values must be even to form ranges."
+                                    )
+
+                                range_clauses = []
+                                for i in range(0, len(vals), 2):
+                                    start, end = vals[i], vals[i+1]
+                                    range_clauses.append(f"DATE({clause}) BETWEEN %s AND %s")
+                                    values.extend([start, end])
+
+                                where_clauses.append("(" + " OR ".join(range_clauses) + ")")
+                            else:
+                                print("vals>>>>",vals)
+                                 # Exact match → list of specific dates (ignore time part)
+                                placeholders = ",".join(["%s"] * len(vals))
+                                where_clauses.append(f"DATE({clause}) IN ({placeholders})")
+                                values.extend(vals)
+
+
+                        elif col_type == "time":
+                            # 🔹 Compare only the TIME part
+                            if not exact and len(vals) == 2:
+                                where_clauses.append(f"TIME({clause}) BETWEEN %s AND %s")
+                                values.extend(vals)
+                            else:
+                                placeholders = ",".join(["%s"] * len(vals))
+                                where_clauses.append(f"TIME({clause}) IN ({placeholders})")
+                                values.extend(vals)
+
                         else:
-                            # ✅ String partial match
+                            # 🔹 String (LIKE)
                             if len(vals) == 1:
                                 where_clauses.append(f"{clause} LIKE %s")
                                 values.append(f"%{vals[0]}%")
@@ -964,6 +1032,260 @@ def get_data_list(db, table_name, select_fields, where_data=None,
             connection.close()
             print("[INFO] Database connection closed.")
 
+def get_data_list(db, table_name, select_fields, where_data=None,user_affiliations=None, block_size=None, startRange=None):
+    
+    print("[init] where_data:", where_data)
+    error_msg = None  # track validation errors
+    connection = None
+    cursor = None
+
+    try:
+        print(f"[START] Querying table: `{table_name}` in DB: `{db}`")
+
+        connection = create_connection(db)
+        if not connection:
+            print("[ERROR] Failed to connect to database.")
+            return []
+
+        cursor = connection.cursor(dictionary=True)
+
+        # ✅ Build SELECT clause (support JSON fields)
+        formatted_select_fields = []
+        if select_fields == ['*']:
+            formatted_select_fields = ["*"]
+        else:
+            for field in select_fields:
+                if "." in field:
+                    column, *json_parts = field.split(".")
+                    json_path = ".".join(json_parts)
+                    formatted_select_fields.append(
+                        f"JSON_UNQUOTE(JSON_EXTRACT({column}, '$.{json_path}')) AS `{field}`"
+                    )
+                else:
+                    formatted_select_fields.append(field)
+
+        select_clause = ", ".join(formatted_select_fields)
+        query = f"SELECT {select_clause} FROM {table_name}"
+
+        where_clauses = []
+        values = []
+
+        # ✅ Handle new where_data schema
+        if where_data:
+            for key, condition in where_data.items():
+                column, *json_parts = key.split(".")
+                clause = (
+                    f"JSON_UNQUOTE(JSON_EXTRACT({column}, '$.{'.'.join(json_parts)}'))"
+                    if json_parts else column
+                )
+
+                if isinstance(condition, dict):
+                    col_type = condition.get("type", "string")
+                    exact = condition.get("exact_match", False)
+                    vals = condition.get("values")
+
+                    if vals is None:
+                        continue
+
+                    if not isinstance(vals, (list, tuple)):
+                        vals = [vals]
+
+                    if col_type == "number":
+                        # 🔹 Handle numeric ranges or IN
+                        if not exact:
+                            if len(vals) % 2 != 0:
+                                raise ValueError(
+                                    f"Invalid range specification for {key}: {vals}. "
+                                    "Number of values must be even to form ranges."
+                                )
+                            range_clauses = []
+                            for i in range(0, len(vals), 2):
+                                start, end = vals[i], vals[i+1]
+                                range_clauses.append(f"{clause} BETWEEN %s AND %s")
+                                values.extend([start, end])
+                            where_clauses.append("(" + " OR ".join(range_clauses) + ")")
+                        else:
+                            placeholders = ",".join(["%s"] * len(vals))
+                            where_clauses.append(f"{clause} IN ({placeholders})")
+                            values.extend(vals)
+
+                    elif col_type == "date":
+                        # 🔹 Always compare only DATE part
+                        if not exact:
+                            if len(vals) % 2 != 0:
+                                raise ValueError(
+                                    f"Invalid range specification for {key}: {vals}. "
+                                    "Number of values must be even to form ranges."
+                                )
+                            range_clauses = []
+                            for i in range(0, len(vals), 2):
+                                start, end = vals[i], vals[i+1]
+                                range_clauses.append(f"DATE({clause}) BETWEEN %s AND %s")
+                                values.extend([start, end])
+                            where_clauses.append("(" + " OR ".join(range_clauses) + ")")
+                        else:
+                            placeholders = ",".join(["%s"] * len(vals))
+                            where_clauses.append(f"DATE({clause}) IN ({placeholders})")
+                            values.extend(vals)
+
+                    elif col_type == "time":
+                        norm_vals = []
+                        for v in vals:
+                            if v and len(v.split(":")) == 2:  # HH:MM
+                                start = f"{v}:00"
+                                end = f"{v}:59"
+                                norm_vals.extend([start, end])
+                            else:
+                                norm_vals.append(v)
+                        vals = norm_vals
+
+                        if exact:
+                            # exact = true → treat HH:MM as full minute range
+                            range_clauses = []
+                            for i in range(0, len(vals), 2):
+                                start, end = vals[i], vals[i + 1]
+                                range_clauses.append(f"TIME({clause}) BETWEEN %s AND %s")
+                                values.extend([start, end])
+                            where_clauses.append("(" + " OR ".join(range_clauses) + ")")
+
+                    elif col_type == "location":
+                        # Normalize lat/long values to float strings
+                        norm_vals = []
+                        for v in vals:
+                            try:
+                                norm_vals.append(str(float(v)))
+                            except (ValueError, TypeError):
+                                norm_vals.append(v)
+
+                        vals = norm_vals
+
+                        if exact:
+                            # exact = true → treat as exact lat/long matches
+                            # Expect values in pairs: [lat1, long1, lat2, long2, ...]
+                            if len(vals) % 2 != 0:
+                                raise ValueError(f"Invalid exact location specification for {key}: {vals}. Must be pairs of lat,long.")
+
+                            range_clauses = []
+                            for i in range(0, len(vals), 2):
+                                lat, lon = vals[i], vals[i + 1]
+                                range_clauses.append(
+                                    f"(JSON_UNQUOTE(JSON_EXTRACT({clause}, '$.lat')) = %s "
+                                    f"AND JSON_UNQUOTE(JSON_EXTRACT({clause}, '$.long')) = %s)"
+                                )
+                                values.extend([lat, lon])
+
+                            where_clauses.append("(" + " OR ".join(range_clauses) + ")")
+
+                        else:
+                            # exact = false → treat as bounding box ranges
+                            # Expect values in quads: [lat_min, lon_min, lat_max, lon_max]
+                            if len(vals) % 4 != 0:
+                                raise ValueError(f"Invalid location range specification for {key}: {vals}. Must be groups of 4.")
+
+                            range_clauses = []
+                            for i in range(0, len(vals), 4):
+                                lat_min, lon_min, lat_max, lon_max = vals[i:i + 4]
+                                range_clauses.append(
+                                    f"(CAST(JSON_UNQUOTE(JSON_EXTRACT({clause}, '$.lat')) AS DECIMAL(10,6)) BETWEEN %s AND %s "
+                                    f"AND CAST(JSON_UNQUOTE(JSON_EXTRACT({clause}, '$.long')) AS DECIMAL(10,6)) BETWEEN %s AND %s)"
+                                )
+                                values.extend([lat_min, lat_max, lon_min, lon_max])
+
+                            where_clauses.append("(" + " OR ".join(range_clauses) + ")")
+
+
+                    else:
+                        # 🔹 String (LIKE)
+                        if exact:
+                            if len(vals) == 1:
+                                where_clauses.append(f"{clause} = %s")
+                                values.append(vals[0])
+                            else:
+                                placeholders = ",".join(["%s"] * len(vals))
+                                where_clauses.append(f"{clause} IN ({placeholders})")
+                                values.extend(vals)
+                        else:
+                            like_parts = []
+                            for v in vals:
+                                like_parts.append(f"{clause} LIKE %s")
+                                values.append(f"%{v}%")
+                            where_clauses.append("(" + " OR ".join(like_parts) + ")")
+
+                else:
+                    # ✅ Simple exact match fallback
+                    where_clauses.append(f"{clause} = %s")
+                    values.append(condition)
+
+        # ✅ Restrict by user affiliations
+        if user_affiliations:
+            allowed_ids = is_affiliation_allowed(table_name, user_affiliations, db)
+            if not allowed_ids:
+                print("[INFO] No affiliation matches. Returning empty result.")
+                return []
+            placeholders = ",".join(["%s"] * len(allowed_ids))
+            where_clauses.append(f"affiliation_id IN ({placeholders})")
+            values.extend(list(allowed_ids))
+
+        if where_clauses:
+            query += " WHERE " + " AND ".join(where_clauses)
+        
+        # ✅ Pagination
+        try:
+            print("////////////////////////////////////////////////////////////////////////////////////////////////")
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute(f"SELECT COUNT(*) AS total FROM `{table_name}`")
+            row = cursor.fetchone()
+            total_rows = row["total"] if row else 0
+            print(f"[INFO] Total rows in {table_name}: {total_rows}")   
+        except Exception as e:
+            print("**********************************************************************************************")
+            print("[ERROR] Exception in COUNT query:", str(e))
+            total_rows = 0
+
+
+        if block_size and startRange:
+            try:
+                block_size = int(block_size)
+            except (ValueError, TypeError):
+                block_size = 10  # fallback default
+
+            try:
+                startRange = int(startRange) if startRange else 1
+            except (ValueError, TypeError):
+                startRange = 1
+
+            # ✅ Check: startRange should not be greater than block_size
+            if startRange > total_rows:
+                error_msg = (
+                    f"Invalid request: startRange ({startRange}) exceeds total candidates ({total_rows}). "
+                    f"Please choose a startRange ≤ {total_rows}."
+                )
+                startRange = total_rows  # clamp to last row
+
+            offset = startRange - 1 if startRange > 0 else 0
+
+            query += " LIMIT %s OFFSET %s"
+            values.extend([block_size, offset])
+
+        print("[INFO] Final SQL Query:", query)
+        print("[INFO] Parameters:", values)
+
+        cursor.execute(query, values)
+        results = cursor.fetchall()
+        print(f"[INFO] Query returned {len(results)} result(s).")
+        return results, error_msg
+
+    except Exception as e:
+        print(f"[ERROR] Exception : {e}")
+        return (f"[ERROR] Exception : {e}")
+
+    finally:
+        if cursor:
+            cursor.close()
+        if connection and connection.is_connected():
+            connection.close()
+            print("[INFO] Database connection closed.")
+
 
 def insert_ignore(db, table_name, insert_data, unique_columns=None):
     connection = create_connection(db)
@@ -1007,8 +1329,8 @@ def insert_ignore(db, table_name, insert_data, unique_columns=None):
                 is_duplicate, duplicate_columns = check_duplicate_entry(connection, table_name, insert_data)
                 if is_duplicate:
                     print(f"Insert ignored due to duplicate entry in {table_name}. Conflicting columns: {duplicate_columns}")
-                    user_input = input("Duplicate entry found. Do you want to insert with version control? (y/n): ").strip().lower()
-
+                    #user_input = input("Duplicate entry found. Do you want to insert with version control? (y/n): ").strip().lower()
+                    user_input = 'n'  # For testing purposes, auto-confirm versioning
                     if user_input == 'y':
                         if 'version' not in insert_data:
                             insert_data['version'] = 'v1'
@@ -1216,58 +1538,83 @@ def insert_ignore(db, table_name, insert_data):
 '''
 
 
-'''
-def insert_ignore(db, table_name, insert_data):
-    connection = create_connection(db)
-    cursor = None
-    try:
-        if connection and connection.is_connected():
-            cursor = connection.cursor()
-            insert_columns = ', '.join(insert_data.keys())
-            insert_placeholders = ', '.join(['%s'] * len(insert_data))
-            insert_values = list(insert_data.values())
-            query = f"""
-            INSERT IGNORE INTO {table_name} ({insert_columns})
-            VALUES ({insert_placeholders});
-            """
-            print(f"Executing Query: {query}")
-            cursor.execute(query, insert_values)
-            connection.commit()
-
-            if cursor.rowcount > 0:
-                print(f"Row inserted into {table_name} successfully.")
-                return True, "Row inserted into entity successfully."
-            else:
-                # Identify which columns caused the duplicate entry
-                is_duplicate, duplicate_columns = check_duplicate_entry(connection, table_name, insert_data)
-                if is_duplicate:
-                    print(f"Insert ignored due to duplicate entry in {table_name}. Conflicting columns: {duplicate_columns}")
-                    return False, f"Insert ignored due to duplicate entry. Conflicting columns: {duplicate_columns}"
-                else:
-                    return False, "Insert ignored, but no exact duplicate found."
-    except Error as e:
-        print(f"Error: {e}")
-        return False, str(e)
-    finally:
-        if cursor:
-            cursor.close()
-        if connection and connection.is_connected():
-            connection.close()
-'''
-
 #data = get_data("event_scheduler2025","entity", ['*'],{},False,None,10,1)
 #print("1] ",data)
 
-''''''
-data = get_data_list(
-    "event_scheduler2025",  "entity",   ["*"],
-    {
-     "id": {"type":"number","exact_match":False,"values":[1,10,15,20]}
-     },
-   block_size=10,  block_number=1
-)
 '''
+
+
+# ✅ Example usage with all filter types
+data = get_data_list(
+    db="event_scheduler2025",
+    table_name="event_new",
+    select_fields=["*"],
+    where_data={
+            "venue": {
+            "type": "location",
+            "exact_match": False,
+            "values": ['0.0001','0.0002','0.01','0.02']  # → start_time BETWEEN '09:00:00' AND '17:00:00'
+        }},
+    block_size=10,
+    startRange=1
+)
+
+'''
+
+'''
+where_data={
+        # 🔹 Number field with multiple ranges
+        "id": {
+            "type": "number",
+            "exact_match": False,
+            "values": [1, 10, 15, 21]   # → (id BETWEEN 1 AND 10) OR (id BETWEEN 15 AND 21)
+        },
+
+        # 🔹 String field with partial match (LIKE)
+        "name": {
+            "type": "string",
+            "exact_match": False,
+            "values": ["John", "Doe"]   # → name LIKE '%John%' OR name LIKE '%Doe%'
+        },
+
+        # 🔹 String field with exact match
+        "status": {
+            "type": "string",
+            "exact_match": True,
+            "values": ["active"]        # → status = 'active'
+        },
+
+        # 🔹 Date range (FROM, TO)
+        "created_at": {
+            "type": "date",
+            "exact_match": False,
+            "values": ["2025-01-01", "2025-01-31"]  # → created_at BETWEEN '2025-01-01' AND '2025-01-31'
+        },
+
+        # 🔹 Time range
+        "start_time": {
+            "type": "time",
+            "exact_match": False,
+            "values": ["09:00:00", "17:00:00"]  # → start_time BETWEEN '09:00:00' AND '17:00:00'
+        },
+
+        # 🔹 Location (latitude, longitude pair)
+        "geo_point": {
+            "type": "location",
+            "exact_match": True,  # exact match only when both lat & lng present
+            "values": [12.9716, 77.5946]   # → geo_point = (12.9716, 77.5946)
+        }
+    },
+    
+
+
+
+
+
+
+
 (
+
     "event_scheduler2025",  "entity",   ["*"],
     {"affiliation_id": {"between": (1,7),"exact_match":False}, "entry_status":"draft" },
     exact_match=True,   block_size=10,  block_number=1
@@ -1289,7 +1636,7 @@ data = get_data_list(
     block_size=10,  block_number=1
 )
 '''
-print("2] ",data)
+#print("2] ",data)
 #data = update_entry("event_scheduler2025", "entity",{"entity_name": "Updated Entity Name"},{"entity_id": "1"})
 
 #is_deleted = delete_entry("event_scheduler2025","entity", {"entity_id": "1"})

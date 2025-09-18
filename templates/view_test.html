@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Medical Store Bill</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-4" id="bill"></div>
+
+<script>
+  // Template with placeholders
+  const billTemplate = `
+    <div class="card shadow-lg">
+      <div class="card-header text-center bg-primary text-white">
+        <h2 class="mb-0">MediCare Pharmacy</h2>
+        <small>Your Trusted Medical Partner</small>
+      </div>
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col">
+            <p><strong>Customer Name:</strong> {{customer_name}}</p>
+            <p><strong>Date:</strong> {{date}}</p>
+          </div>
+          <div class="col text-end">
+            <p><strong>Bill No:</strong> {{bill_no}}</p>
+          </div>
+        </div>
+
+        <table class="table table-bordered table-striped text-center align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>#</th>
+              <th>Medicine</th>
+              <th>Quantity</th>
+              <th>Price per Unit (₹)</th>
+              <th>Total (₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{items}}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4" class="text-end fw-bold">Grand Total (₹)</td>
+              <td class="fw-bold">{{grand_total}}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div class="card-footer text-center bg-light">
+        <small class="text-muted">Thank you for shopping with us! Stay healthy.</small>
+      </div>
+    </div>
+  `;
+
+  // Example JSON data
+  const jsonData = {
+    bill_no: "B12345",
+    customer: "John Doe",
+    bill_date: "2025-09-16",
+    items: [
+      { med: "Paracetamol", qty: 2, unit_price: 50 },
+      { med: "Vitamin C", qty: 1, unit_price: 120 },
+      { med: "Cough Syrup", qty: 1, unit_price: 90 }
+    ]
+  };
+
+  // Mapper: placeholder -> JSON field
+  const mapper = {
+    customer_name: "customer",
+    date: "bill_date",
+    bill_no: "bill_no"
+  };
+
+  // Function to fill template
+  function fillTemplate(template, data, map) {
+    let filled = template;
+
+    // Replace simple mapped fields
+    for (const [placeholder, field] of Object.entries(map)) {
+      const regex = new RegExp(`{{${placeholder}}}`, "g");
+      filled = filled.replace(regex, data[field] ?? "");
+    }
+
+    // Generate items table rows
+    let itemsHTML = "";
+    let grandTotal = 0;
+    data.items.forEach((item, index) => {
+      const total = item.qty * item.unit_price;
+      grandTotal += total;
+      itemsHTML += `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${item.med}</td>
+          <td>${item.qty}</td>
+          <td>${item.unit_price}</td>
+          <td>${total}</td>
+        </tr>
+      `;
+    });
+
+    filled = filled.replace("{{items}}", itemsHTML);
+    filled = filled.replace("{{grand_total}}", grandTotal);
+
+    return filled;
+  }
+
+  // Generate final bill
+  const finalBill = fillTemplate(billTemplate, jsonData, mapper);
+
+  // Display in page
+  document.getElementById("bill").innerHTML = finalBill;
+</script>
+</body>
+</html>
