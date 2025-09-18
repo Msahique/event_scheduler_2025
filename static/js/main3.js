@@ -370,9 +370,11 @@ async function API_call(domain, endpoint, body = {}, method = "GET", autoPresent
         if (autoPresent) {
             console.log(result, page_load_conf.tab, body.type);
             if (body.type) {
-                present_Data(result, body.type);
+                if(result[0][1]!=null){alert(result[0][1]);}
+                present_Data(result[0], body.type);
             } else {
-                present_Data(result, null);
+                if(result[0][1]!=null){alert(result[0][1]);}
+                present_Data(result[0], null);
             }
             tab_status[page_load_conf.tab] = 1;
             console.log(tab_status);
@@ -389,41 +391,9 @@ async function API_call(domain, endpoint, body = {}, method = "GET", autoPresent
 
 /* USEAGE:  getDocument_data("https://mydomain.com", "/config/list_details", { type: "Invoice" }, "POST");    
    This function first checks sessionStorage for document config by typ. If found, it uses that or else gets it from DB.  */ 
-/*async function getDocument_data(domain, endpoint, body, method) {
-  const docType = body?.type || "default";
-    console.log(docType)
-  // Step 1: Check sessionStorage
-  let storedDocs = sessionStorage.getItem("documentType");
-  storedDocs = storedDocs ? JSON.parse(storedDocs) : {};
-  console.log(storedDocs)
-  if (storedDocs[docType]) {
-    console.log(`✅ Using cached config for ${docType}`);
-    present_Data(storedDocs[docType], body.type); // use cached result
-    return storedDocs[docType];
-  }
-
-  // Step 2: If not cached, call API_call
-  console.log(`⚡ Fetching ${docType} from API...`);
-
-  return new Promise((resolve) => {
-    API_call(domain, endpoint, body, method) // autoPresent = false;
-
-    // Override present_Data temporarily to also cache result
-    const originalPresentData = window.present_Data;
-    window.present_Data = function (data, type) {
-      // Save in sessionStorage
-      storedDocs[docType] = data;
-      sessionStorage.setItem("documentType", JSON.stringify(storedDocs));
-
-      // Call the original function
-      originalPresentData(data, type);
-      resolve(data);
-    };
-  });
-}*/
 
 async function getDocument_data(domain, endpoint, body, method) {
-  const docType = body?.qry?.where_data?.doc_type || "default";
+  const docType = body?.qry?.where_data?.ui_template_name || "default";
   console.log(body);
   console.log("DocType:", docType);
 
@@ -434,6 +404,7 @@ async function getDocument_data(domain, endpoint, body, method) {
 
   if (storedDocs[docType]) {
     console.log(`✅ Using cached config for ${docType}`);
+    if(domain=="" || endpoint==""){ return storedDocs[docType]; }
     present_Data(storedDocs[docType], body.type); // use cached result
     return storedDocs[docType];
   }
@@ -845,7 +816,7 @@ async function createTable(responseData) {
         var filterValues = {}; // Initialize globally if not already defined
     }
     // Check if filter form already exists, if not, create it
-    let filterForm = document.getElementById("filterForm");
+   /* let filterForm = document.getElementById("filterForm");
     if (!filterForm) {
         filterForm = document.createElement("div");
         filterForm.id = "filterForm";
@@ -853,280 +824,562 @@ async function createTable(responseData) {
         filterForm.className = "filter-form d-flex flex-wrap gap-2 align-items-center mb-3";
 
         filterContainer.appendChild(filterForm);
-    }
+    }*/
+   let filterForm = document.getElementById("filterForm");
+if (!filterForm) {
+    filterForm = document.createElement("div");
+    filterForm.id = "filterForm";
+    filterForm.className = "filter-form d-flex flex-wrap gap-2 align-items-center mb-3";
+
+    // Make scrollable
+    filterForm.style.maxHeight = "80vh";   // adjust height as needed
+    filterForm.style.overflowY = "auto";    // vertical scroll
+    filterForm.style.overflowX = "hidden";  // prevent horizontal scroll (optional)
+    filterForm.style.paddingRight = "10px"; // for scrollbar spacing
+
+    filterContainer.appendChild(filterForm);
+}
+
 
     //////////////////////////////////  FILTER START   ////////////////////////////////////////////////////
 
         // Clear existing filter inputs before adding new ones
         filterForm.innerHTML = "";
         var hasField = false;
-        
-        //console.log("page_load_conf:", page_load_conf);
-        //console.log("page_load_conf.tab:", page_load_conf?.tab);
-        //console.log("selectedItemFromDropdown:",selectedItemFromDropdown);
-        //console.log("page_load_conf.tab.selectedItemFromDropdown:", page_load_conf?.tab?.selectedItemFromDropdown);
-            
         // Ensure selectedItemFromDropdown exists before retrieving data
         if (selectedItemFromDropdown) {
             let key = String(selectedItemFromDropdown); // Convert to string if necessary
             let savedFilters = sessionStorage.getItem(key);
             
-            filterValues = savedFilters ? JSON.parse(savedFilters) : {}; // Parse if exists, else default to {}
+            //filterValues = savedFilters ? JSON.parse(savedFilters) : {}; // Parse if exists, else default to {}
         } else {
             console.warn("selectedItemFromDropdown is undefined.");
         }
     
         // Create input fields for each visible column
         console.log(visibleFields);
-        let field_datatype = responseData.field_datatype || {};
-        /*let field_datatype= {
-            "fields": [
-                {"name": "role_name","datatype": "string"},
-                {"name": "entity_id","datatype": "bigint"},
-                {"name": "id","datatype": "string"}
-         ]}*/
+        //let field_datatype = responseData.field_datatype || {};
+
+    
+        // Create Block Size + Block No only once
+        let fieldWrapper = document.createElement("div");
+        fieldWrapper.className = "mb-3";
+
+        let label_entries = document.createElement("label");
+        label_entries.innerHTML = "Block size";
+        label_entries.className = "form-label";
+
+        let input_entries = document.createElement("select");
+        input_entries.className = "form-control";
+        input_entries.name = "block_size";
+
+        let options = ["10", "25", "50", "100", "200", "500", "1000"];
+        options.forEach(opt => {
+            let option = document.createElement("option");
+            option.value = opt;
+            option.textContent = opt;
+            input_entries.appendChild(option);
+        });
+
+        let label_start_range = document.createElement("label");
+        label_start_range.innerHTML = "Start at item";
+        label_start_range.className = "form-label";
+
+        let input_start_range = document.createElement("input");
+        input_start_range.type = "number";
+        input_start_range.className = "form-control";
+        input_start_range.name = "start_range";
+
+        fieldWrapper.appendChild(label_start_range);
+        fieldWrapper.appendChild(input_start_range);
+        fieldWrapper.appendChild(label_entries);
+        fieldWrapper.appendChild(input_entries);
        
-        visibleFields.forEach(element => {
-            let field_datatype_val = field_datatype.find(f => f.name === element.field)?.datatype;
-            console.log("field_datatype_val: ", field_datatype_val, ", element: ", element);
-            try {
-                console.log("element.filter_type: ",element.filter_type, ", element: ",element);
-                // common field wrapper for each filter field to get no of rows form db
-                let fieldWrapper = document.createElement("div");
-                fieldWrapper.className = "mb-3"; // Ensures proper spacing and alignment
-                
-                let label_entries = document.createElement("label");
-                label_entries.innerHTML = "Block size";
-                label_entries.className = "form-label";
-                
-                let input_entries = document.createElement("select");
-                input_entries.className = "form-control";
-                input_entries.name = element.field;
-                   
-                let options = ["10", "25", "50", "100", "200", "500", "1000"];
 
-                // Populate options dynamically
-                options.forEach(opt => {
-                    let option = document.createElement("option");
-                    option.value = opt;
-                    option.textContent = opt;
-                    if (datTimeFilterObj[0].end === opt) {
-                        option.selected = true; // Pre-select saved value
-                    }
-                    input_entries.appendChild(option);
-                });
-                
-                let label_block_no = document.createElement("label");
-                label_block_no.innerHTML = "Block No";
-                label_block_no.className = "form-label";
-                
-                let input_block_no = document.createElement("select");
-                input_block_no.className = "form-control";
-                input_block_no.type = "number";
-                input_block_no.name = element.field;
+        // Append once before/after loop
+        filterForm.appendChild(fieldWrapper);
+        try{
+            visibleFields.forEach(element => {
+                console.log(", element: ", element);
+            // let field_datatype_val = field_datatype.find(f => f.name === element.field)?.datatype;
+            // let field_datatype_val = field_datatype.fields.find(f => f.name === element.field)?.datatype;
+                let field_datatype_val = element.filter_type || "string"; // Default to string if not found
 
-                fieldWrapper.appendChild(label_entries);
-                fieldWrapper.appendChild(input_entries);
-                fieldWrapper.appendChild(label_block_no);
-                fieldWrapper.appendChild(input_block_no);
+                console.log("field_datatype_val: ", field_datatype_val, ", element: ", element);
+                
+                try {
+                    //console.log("element.filter_type: ",element.filter_type, ", element: ",element);
 
-                if (field_datatype_val === "datetime" || field_datatype_val === "date") {
-                    var datTimeFilterObj = filterValues[element.key || element.field] || [{ "start": "", "end": "" }];
-        
-                    let label1 = document.createElement("label");
-                    label1.innerHTML = element.field + " FROM:";
-                    label1.className = "form-label";
-        
-                    let input1 = document.createElement("input");
-                    input1.type = "datetime-local";
-                    input1.placeholder = "FROM";
-                    input1.className = "form-control";
-                    input1.name = element.field;
-                    input1.value = datTimeFilterObj[0].start;
-        
-                    input1.addEventListener("input", function () {
-                        datTimeFilterObj[0].start = this.value;
-                        filterValues[element.key || element.field] = [...datTimeFilterObj];
-                    });
-        
-                    let label2 = document.createElement("label");
-                    label2.innerHTML = element.field + " TO:";
-                    label2.className = "form-label";
-        
-                    let input2 = document.createElement("input");
-                    input2.type = "datetime-local";
-                    input2.placeholder = "TO";
-                    input2.className = "form-control";
-                    input2.name = element.field;
-                    input2.value = datTimeFilterObj[0].end;
-        
-                    input2.addEventListener("input", function () {
-                        datTimeFilterObj[0].end = this.value;
-                        filterValues[element.key || element.field] = [...datTimeFilterObj];
-                    });
-        
-                    fieldWrapper.appendChild(label1);
-                    fieldWrapper.appendChild(input1);
-                    fieldWrapper.appendChild(label2);
-                    fieldWrapper.appendChild(input2); 
-                    //fieldWrapper.appendChild(document.createElement('br'));
-                } 
-                /*else if (element.filter_type === "dropdown") {
-                    let label = document.createElement("label");
-                    label.innerHTML = element.field;
-                    label.className = "form-label";
-        
-                    let select = document.createElement("select");
-                    select.className = "form-select";
-                    select.name = element.field;
-        
-                    let defaultOption = document.createElement("option");
-                    defaultOption.value = "";
-                    defaultOption.textContent = "Select " + element.field;
-                    select.appendChild(defaultOption);
-        
-                    function populateOptions(options) {
-                        options.forEach(value => {
-                            let option = document.createElement("option");
-                            option.value = value;
-                            option.textContent = value;
-                            if (filterValues[element.key || element.field] === value) {
-                                option.selected = true;
-                            }
-                            select.appendChild(option);
-                        });
-                    }
-        
-                    if (element.filter_helper) {
-                        fetchHelperData(element.filter_helper,element.filter_type).then(helperOptions => {
-                            if (Array.isArray(helperOptions)) {
-                                populateOptions(helperOptions);
-                            }
-                        }).catch(error => console.error("Error fetching helper data:", error));
-                    } else if (Array.isArray(element.filter_default_value)) {
-                        populateOptions(element.filter_default_value);
-                    }
-        
-                    select.addEventListener("change", function () {
-                        filterValues[element.key || element.field] = this.value;
-                    });
-        
-                    //fieldWrapper.appendChild(label);
-                    fieldWrapper.appendChild(select);   //fieldWrapper.appendChild(document.createElement('br'));
-                }*/ 
-                // Datatypes to use in the code as : String, Number, Date (DD/MM/YYYY), Time (H:M:S), Location (lat,long)
-                else if (field_datatype_val === "varchar" ||field_datatype_val === "string" || field_datatype_val === "text" || field_datatype_val === "mediumtext" || field_datatype_val === "json" ) {
+                    /*
+                    // Number formats
+                    10:30, 35:40, (range in numbers)
+                    exact_match = True/False
+                    */
+                if (["varchar", "string", "text", "mediumtext", "json"].includes(field_datatype_val)) {
+                    // STRING / TEXT
+                    let group = document.createElement("div");
+                    group.className = "mb-3";
+
                     let label = document.createElement("label");
                     label.innerHTML = element.label || element.field;
-                    label.className = "form-label";
-        
+                    label.className = "form-label fw-bold d-block";
+
                     let input = document.createElement("input");
-                    input.setAttribute("type", "text");
-                    input.setAttribute("placeholder", element.label || element.field);
-                    input.className = "form-control";
-                    input.value = filterValues[element.key || element.field] || element.filter_default_value || "";
-        
-                    if (element.filter_type === "lable") {
-                        input.setAttribute("readonly", true);
-                    }
-                    input.addEventListener("input", function () {
-                        filterValues[element.key || element.field] = this.value;
-                    });
-        
-                    //fieldWrapper.appendChild(label);
-                    fieldWrapper.appendChild(input);    //fieldWrapper.appendChild(document.createElement('br'));
-                } 
-                else if (field_datatype_val === "bigint" ||  field_datatype_val === "smallint" || field_datatype_val === "number" || field_datatype_val === "decimal" || field_datatype_val === "double" || field_datatype_val === "float" || field_datatype_val === "int" || field_datatype_val === "time"  ) {
-                    let label1 = document.createElement("label");
-                    label1.innerHTML = element.label || element.field;
-                    label1.className = "form-label";
+                    input.type = "text";
+                    input.placeholder = `Enter ${element.label || element.field}`;
+                    input.className = "form-control mb-2";
+                    input.value = filterValues[element.key || element.field]?.values?.[0] 
+                                || element.filter_default_value 
+                                || "";
 
-                    let input1 = document.createElement("input");
-                    input1.setAttribute("type", "number");
-                    input1.placeholder = "FROM";
-                    input1.setAttribute("placeholder", element.label || element.field);
-                    input1.className = "form-control";
-
-                    let label2 = document.createElement("label");
-                    label2.innerHTML = element.label || element.field;
-                    label2.className = "form-label";
-
-                    let input2 = document.createElement("input");
-                    input2.setAttribute("type", "number");
-                    input2.placeholder = "TO";
-                    input2.setAttribute("placeholder", element.label || element.field);
-                    input2.className = "form-control";
-
-                    // Pre-fill value if available
-                    input1.value = filterValues[element.key || element.field] || element.filter_default_value || "";
-                    input2.value = filterValues[element.key || element.field] || element.filter_default_value || "";
-
-                    // Prevent decimal points for bigint
-                    /*input.addEventListener("input", function () {
-                        this.value = this.value.replace(/\D/g, ''); // Only allow digits
-                        filterValues[element.key || element.field] = this.value;
-                    });
-                    input2.addEventListener("input", function () {
-                        this.value = this.value.replace(/\D/g, ''); // Only allow digits
-                        filterValues[element.key || element.field] = this.value;
-                    });*/
-
-                    // Make read-only if filter_type is label
-                    if (element.filter_type === "lable") {
-                        input.setAttribute("readonly", true);
+                    if (element.filter_type === "label") {
+                        input.readOnly = true;
                     }
 
-                    // Append elements
-                    //fieldWrapper.appendChild(label);
-                    //fieldWrapper.appendChild(input);
-                    //fieldWrapper.appendChild(document.createElement('br'));
-                    fieldWrapper.appendChild(label1);
-                    fieldWrapper.appendChild(input1);
-                    fieldWrapper.appendChild(label2);
-                    fieldWrapper.appendChild(input2);
-                }
-               
-                filterForm.appendChild(fieldWrapper);
-                hasField = true;
-            } catch (err) {
-                console.log(err);
-            }
-        });
-        
-        // Add the Filter button
-        if (hasField) {
-            let filterButtonWrapper = document.createElement("div");
-            filterButtonWrapper.className = "mb-3 text-center";
-            
-            let filterButton = document.createElement("button");
-            filterButton.textContent = "OK";
-            filterButton.className = "btn btn-primary";
-        
-            filterButton.addEventListener("click", function () {
-                // get data for block size
-                let filterQuery = { where: { ...filterValues } };
-                console.log("Filter Query:", filterQuery);
-                console.log(selectedItemFromDropdown, filterValues);
-        
-                // Store filterValues in sessionStorage for persistence
-                //sessionStorage.setItem("savedFilters", JSON.stringify(filterValues));
-                //sessionStorage.setItem(page_load_conf.tab.selectedItemFromDropdown, JSON.stringify(filterValues));
-                // Ensure page_load_conf and selectedItemFromDropdown exist
-                    // Ensure page_load_conf and selectedItemFromDropdown exist before storing
-                if (selectedItemFromDropdown) {
-                    let key = String(selectedItemFromDropdown);
-                    console.log("Saving to sessionStorage - Key:", key, "Values:", filterValues);
-                    sessionStorage.setItem(key, JSON.stringify(filterValues));
-                } else {
-                    console.warn("selectedItemFromDropdown is undefined.");
-                }
+                    // Exact match checkbox
+                    let exactMatchWrapper = document.createElement("div");
+                    exactMatchWrapper.className = "form-check form-check-inline";
+
+                    let exactCheckbox = document.createElement("input");
+                    exactCheckbox.type = "checkbox";
+                    exactCheckbox.className = "form-check-input";
+                    exactCheckbox.id = `${element.field}_exact`;
+                    exactCheckbox.checked = filterValues[element.key || element.field]?.exact_match || false;
+
+                    let exactLabel = document.createElement("label");
+                    exactLabel.className = "form-check-label small text-muted";
+                    exactLabel.setAttribute("for", `${element.field}_exact`);
+                    exactLabel.innerText = "Exact match";
+
+                    exactMatchWrapper.appendChild(exactCheckbox);
+                    exactMatchWrapper.appendChild(exactLabel);
+
+                    function updateStringFilter() {
+                        filterValues[element.key || element.field] = {
+                            type: "string",
+                            exact_match: exactCheckbox.checked,
+                            values: [input.value]
+                        };
+                    }
+
+                    input.addEventListener("input", updateStringFilter);
+                    exactCheckbox.addEventListener("change", updateStringFilter);
+
+                    group.appendChild(label);
+                    group.appendChild(input);
+                    group.appendChild(exactMatchWrapper);
+                    fieldWrapper.appendChild(group);
+                    }
+                    
+                    else if (["int", "bigint", "smallint", "decimal", "numeric", "float", "double","number"].includes(field_datatype_val)) {
+                        // NUMBER (single input with support for exact/range)
+                        let group = document.createElement("div");
+                        group.className = "mb-3";
+
+                        let label = document.createElement("label");
+                        label.innerHTML = element.label || element.field;
+                        label.className = "form-label fw-bold d-block";
+
+                        // Input field (numbers, commas, colons allowed)
+                        let inputBox = document.createElement("input");
+                        inputBox.type = "text";
+                        inputBox.placeholder = "Enter numbers (e.g., 5,8,10 or 2,5,8,12)";
+                        inputBox.className = "form-control";
+                        inputBox.value = filterValues[element.key || element.field]?.values?.join(",") || "";
+
+                        // Exact match checkbox
+                        let exactMatchWrapper = document.createElement("div");
+                        exactMatchWrapper.className = "form-check mt-2";
+
+                        let exactCheckbox = document.createElement("input");
+                        exactCheckbox.type = "checkbox";
+                        exactCheckbox.className = "form-check-input";
+                        exactCheckbox.id = `${element.field}_exact_num`;
+                        exactCheckbox.checked = filterValues[element.key || element.field]?.exact_match || false;
+
+                        let exactLabel = document.createElement("label");
+                        exactLabel.className = "form-check-label small text-muted";
+                        exactLabel.setAttribute("for", `${element.field}_exact_num`);
+                        exactLabel.innerText = "Exact match";
+
+                        exactMatchWrapper.appendChild(exactCheckbox);
+                        exactMatchWrapper.appendChild(exactLabel);
+
+                        function updateNumberFilter() {
+                            let rawInput = inputBox.value.trim();
+                            let values = rawInput.split(",").map(v => v.trim()).filter(v => v !== "");
+
+                            if (exactCheckbox.checked) {
+                                // Exact match → treat as list of numbers
+                                filterValues[element.key || element.field] = {
+                                    type: "number",
+                                    exact_match: true,
+                                    values: values
+                                };
+                            } else {
+                                // Range mode → must be pairs
+                                if (values.length % 2 !== 0) {
+                                    alert("Please enter numbers in pairs for ranges (e.g., 2,5,8,12).");
+                                    return;
+                                }
+
+                                let ranges = [];
+                                for (let i = 0; i < values.length; i += 2) {
+                                    ranges.push(values[i], values[i + 1]);  // push both numbers directly
+                                }
+
+
+                                filterValues[element.key || element.field] = {
+                                    type: "number",
+                                    exact_match: false,
+                                    values: ranges
+                                };
+                            }
+                        }
+
+                        inputBox.addEventListener("input", updateNumberFilter);
+                        exactCheckbox.addEventListener("change", updateNumberFilter);
+
+                        group.appendChild(label);
+                        group.appendChild(inputBox);
+                        group.appendChild(exactMatchWrapper);
+                        fieldWrapper.appendChild(group);
+                    }
+
+                    else if (["date"].includes(field_datatype_val)) {
+                        // DATE (multiple selections -> text box + exact/range)
+                        let group = document.createElement("div");
+                        group.className = "mb-3";
+
+                        let label = document.createElement("label");
+                        label.innerHTML = element.label || element.field;
+                        label.className = "form-label fw-bold d-block";
+
+                        // Date picker input
+                        let datePicker = document.createElement("input");
+                        datePicker.type = "date";
+                        datePicker.className = "form-control mb-2";
+
+                        // Text box showing selected dates
+                        let dateBox = document.createElement("input");
+                        dateBox.type = "text";
+                        dateBox.placeholder = "Selected dates (comma separated)";
+                        dateBox.className = "form-control";
+                        dateBox.value = filterValues[element.key || element.field]?.values?.join(",") || "";
+
+                        // Exact match option
+                        let exactMatchWrapper = document.createElement("div");
+                        exactMatchWrapper.className = "form-check mt-2";
+
+                        let exactCheckbox = document.createElement("input");
+                        exactCheckbox.type = "checkbox";
+                        exactCheckbox.className = "form-check-input";
+                        exactCheckbox.id = `${element.field}_exact_date`;
+                        exactCheckbox.checked = filterValues[element.key || element.field]?.exact_match || false;
+
+                        let exactLabel = document.createElement("label");
+                        exactLabel.className = "form-check-label small text-muted";
+                        exactLabel.setAttribute("for", `${element.field}_exact_date`);
+                        exactLabel.innerText = "Exact match";
+
+                        exactMatchWrapper.appendChild(exactCheckbox);
+                        exactMatchWrapper.appendChild(exactLabel);
+
+                        // Handle updates
+                        function updateDateFilter() {
+                            let rawInput = dateBox.value.trim();
+                            let values = rawInput.split(",").map(v => v.trim()).filter(v => v !== "");
+
+                            if (exactCheckbox.checked) {
+                                // Exact match → treat as list of dates
+                                filterValues[element.key || element.field] = {
+                                    type: "date",
+                                    exact_match: true,
+                                    values: values
+                                };
+                            } else {
+                                // Range mode → must be pairs
+                                if (values.length % 2 !== 0) {
+                                    alert("Please enter dates in pairs for ranges (e.g., 2024-01-01,2024-01-10,2024-02-01,2024-02-15).");
+                                    return;
+                                }
+
+                                let ranges = [];
+                                for (let i = 0; i < values.length; i += 2) {
+                                    ranges.push(values[i], values[i + 1]); // flat array [d1,d2,d3,d4]
+                                }
+
+                                filterValues[element.key || element.field] = {
+                                    type: "date",
+                                    exact_match: false,
+                                    values: ranges
+                                };
+                            }
+                        }
+
+                        // Add selected date to the text box
+                        datePicker.addEventListener("change", () => {
+                            if (datePicker.value) {
+                                let existing = dateBox.value ? dateBox.value.split(",").map(v => v.trim()).filter(v => v !== "") : [];
+                                if (!existing.includes(datePicker.value)) {
+                                    existing.push(datePicker.value);
+                                    dateBox.value = existing.join(",");
+                                    updateDateFilter();
+                                }
+                                datePicker.value = ""; // reset after adding
+                            }
+                        });
+
+                        dateBox.addEventListener("input", updateDateFilter);
+                        exactCheckbox.addEventListener("change", updateDateFilter);
+
+                        group.appendChild(label);
+                        group.appendChild(datePicker);
+                        group.appendChild(dateBox);
+                        group.appendChild(exactMatchWrapper);
+                        fieldWrapper.appendChild(group);
+                    }
+
+                    else if (["time"].includes(field_datatype_val)) {
+                        // TIME (multiple selections -> text box + exact/range)
+                        let group = document.createElement("div");
+                        group.className = "mb-3";
+
+                        let label = document.createElement("label");
+                        label.innerHTML = element.label || element.field;
+                        label.className = "form-label fw-bold d-block";
+
+                        // Time picker input
+                        let timePicker = document.createElement("input");
+                        timePicker.type = "time";
+                        timePicker.className = "form-control mb-2";
+
+                        // Text box showing selected times
+                        let timeBox = document.createElement("input");
+                        timeBox.type = "text";
+                        timeBox.placeholder = "Selected times (comma separated)";
+                        timeBox.className = "form-control";
+                        timeBox.value = filterValues[element.key || element.field]?.values?.join(",") || "";
+
+                        // Exact match option
+                        let exactMatchWrapper = document.createElement("div");
+                        exactMatchWrapper.className = "form-check mt-2";
+
+                        let exactCheckbox = document.createElement("input");
+                        exactCheckbox.type = "checkbox";
+                        exactCheckbox.className = "form-check-input";
+                        exactCheckbox.id = `${element.field}_exact_time`;
+                        exactCheckbox.checked = filterValues[element.key || element.field]?.exact_match || false;
+
+                        let exactLabel = document.createElement("label");
+                        exactLabel.className = "form-check-label small text-muted";
+                        exactLabel.setAttribute("for", `${element.field}_exact_time`);
+                        exactLabel.innerText = "Exact match";
+
+                        exactMatchWrapper.appendChild(exactCheckbox);
+                        exactMatchWrapper.appendChild(exactLabel);
+
+                        // Handle updates
+                        function updateTimeFilter() {
+                            let rawInput = timeBox.value.trim();
+                            let values = rawInput.split(",").map(v => v.trim()).filter(v => v !== "");
+
+                            if (exactCheckbox.checked) {
+                                // Exact match → treat as list of times
+                                filterValues[element.key || element.field] = {
+                                    type: "time",
+                                    exact_match: true,
+                                    values: values
+                                };
+                            } else {
+                                // Range mode → must be pairs
+                                if (values.length % 2 !== 0) {
+                                    alert("Please enter times in pairs for ranges (e.g., 08:00,12:00,14:00,18:00).");
+                                    return;
+                                }
+
+                                let ranges = [];
+                                for (let i = 0; i < values.length; i += 2) {
+                                    ranges.push(values[i], values[i + 1]); // flat array [t1,t2,t3,t4]
+                                }
+
+                                filterValues[element.key || element.field] = {
+                                    type: "time",
+                                    exact_match: false,
+                                    values: ranges
+                                };
+                            }
+                        }
+
+                        // Add selected time to the text box
+                        timePicker.addEventListener("change", () => {
+                            if (timePicker.value) {
+                                let existing = timeBox.value ? timeBox.value.split(",").map(v => v.trim()).filter(v => v !== "") : [];
+                                if (!existing.includes(timePicker.value)) {
+                                    existing.push(timePicker.value);
+                                    timeBox.value = existing.join(",");
+                                    updateTimeFilter();
+                                }
+                                timePicker.value = ""; // reset after adding
+                            }
+                        });
+
+                        timeBox.addEventListener("input", updateTimeFilter);
+                        exactCheckbox.addEventListener("change", updateTimeFilter);
+
+                        group.appendChild(label);
+                        group.appendChild(timePicker);
+                        group.appendChild(timeBox);
+                        group.appendChild(exactMatchWrapper);
+                        fieldWrapper.appendChild(group);
+                    }
     
-                get_data_list(selectedItemFromDropdown, filterValues);
+                    else if (["point", "geometry", "geography", "location"].includes(field_datatype_val)) {
+                    // LOCATION (custom <location-input> picker + exact/range)
+                    let group = document.createElement("div");
+                    group.className = "mb-3";
+
+                    let label = document.createElement("label");
+                    label.innerHTML = element.label || element.field;
+                    label.className = "form-label fw-bold d-block";
+
+                    // ✅ Use custom location-input control
+                    let locPicker = document.createElement("location-input");
+                    locPicker.setAttribute("name", element.field + "_picker");
+
+                    // Pre-fill if values exist
+                    let existingVals = filterValues[element.key || element.field]?.values || [];
+                    if (existingVals.length > 0) {
+                        locPicker.value = existingVals; // flat array
+                    }
+
+                    // Text box showing all selected locations (flat string)
+                    let locBox = document.createElement("input");
+                    locBox.type = "text";
+                    locBox.className = "form-control mb-2";
+                    locBox.value = existingVals.join(",") || "";
+
+                    // Exact match option
+                    let exactMatchWrapper = document.createElement("div");
+                    exactMatchWrapper.className = "form-check mt-2";
+
+                    let exactCheckbox = document.createElement("input");
+                    exactCheckbox.type = "checkbox";
+                    exactCheckbox.className = "form-check-input";
+                    exactCheckbox.id = `${element.field}_exact_location`;
+                    exactCheckbox.checked = filterValues[element.key || element.field]?.exact_match || false;
+
+                    let exactLabel = document.createElement("label");
+                    exactLabel.className = "form-check-label small text-muted";
+                    exactLabel.setAttribute("for", `${element.field}_exact_location`);
+                    exactLabel.innerText = "Exact match";
+
+                    exactMatchWrapper.appendChild(exactCheckbox);
+                    exactMatchWrapper.appendChild(exactLabel);
+
+                    // ✅ Sync filter values
+                    function updateLocationFilter() {
+                        let rawInput = locBox.value.trim();
+                        let values = rawInput.split(",").map(v => v.trim()).filter(v => v !== "");
+
+                        if (exactCheckbox.checked) {
+                        // ✅ Single point (lat,long)
+                        if (values.length !== 2) {
+                            console.warn("Exact match requires exactly 2 values: lat,long");
+                            return;
+                        }
+                        filterValues[element.key || element.field] = {
+                            type: "location",
+                            exact_match: true,
+                            values: values
+                        };
+                        } else {
+                        // ✅ Range / multiple pairs
+                        if (values.length % 2 !== 0) {
+                            console.warn("Range requires pairs of lat,long");
+                            return;
+                        }
+                        filterValues[element.key || element.field] = {
+                            type: "location",
+                            exact_match: false,
+                            values: values
+                        };
+                        }
+                    }
+
+                    // ✅ When user commits lat/long from <location-input>
+                    locPicker.addEventListener("change", () => {
+                        let vals = locPicker.value; // ["41.23","56.30","45.32","86.36"]
+                        if (Array.isArray(vals) && vals.length > 0) {
+                        locBox.value = vals.join(",");
+                        updateLocationFilter();
+                        }
+                    });
+
+                    // ✅ When user manually edits the text box
+                    locBox.addEventListener("blur", updateLocationFilter);
+                    locBox.addEventListener("keydown", (e) => {
+                        if (e.key === "Enter") {
+                        e.preventDefault();
+                        updateLocationFilter();
+                        locBox.blur();
+                        }
+                    });
+
+                    exactCheckbox.addEventListener("change", updateLocationFilter);
+
+                    group.appendChild(label);
+                    group.appendChild(locPicker);
+                    group.appendChild(locBox);
+                    group.appendChild(exactMatchWrapper);
+                    fieldWrapper.appendChild(group);
+                    }
+                    
+                    filterForm.appendChild(fieldWrapper);
+                    hasField = true;
+                } catch (err) {
+                    console.log(err);
+                }
             });
-            filterButtonWrapper.appendChild(document.createElement('br'));
-            filterButtonWrapper.appendChild(filterButton);
-            filterForm.appendChild(filterButtonWrapper);
-        }
+            
+            // Add the Filter button
+            if (hasField) {
+                let filterButtonWrapper = document.createElement("div");
+                filterButtonWrapper.className = "mb-3 text-center";
+                
+                let filterButton = document.createElement("button");
+                filterButton.textContent = "OK";
+                filterButton.className = "btn btn-primary";
+            
+                filterButton.addEventListener("click", function () {
+                    // get data for block size
+                    // ✅ Capture block size and block no separately
+                    let blockSize = document.querySelector("#filterForm select[name='block_size']")?.value || "100";
+                    let startRange = document.querySelector("#filterForm input[name='start_range']")?.value || "1";
+                    let filterQuery = { where: { ...filterValues } };
+                    console.log("Filter Query:", filterQuery);
+                    console.log(selectedItemFromDropdown, filterValues);
+            
+                    // Store filterValues in sessionStorage for persistence
+                    //sessionStorage.setItem("savedFilters", JSON.stringify(filterValues));
+                    //sessionStorage.setItem(page_load_conf.tab.selectedItemFromDropdown, JSON.stringify(filterValues));
+                    // Ensure page_load_conf and selectedItemFromDropdown exist
+                        // Ensure page_load_conf and selectedItemFromDropdown exist before storing
+                    if (selectedItemFromDropdown) {
+                        let key = String(selectedItemFromDropdown);
+                        console.log("Saving to sessionStorage - Key:", key, "Values:", filterValues);
+                        sessionStorage.setItem(key, JSON.stringify(filterValues));
+                    } else {
+                        console.warn("selectedItemFromDropdown is undefined.");
+                    }
+        
+                    get_data_list(selectedItemFromDropdown, filterValues,blockSize,startRange);
+                });
+                filterButtonWrapper.appendChild(document.createElement('br'));
+                filterButtonWrapper.appendChild(filterButton);
+                filterForm.appendChild(filterButtonWrapper);
+            }
+        } catch(err){ console.log(err); }
     
 
     //////////////////////////////////  FILTER END   ////////////////////////////////////////////////////
@@ -2897,8 +3150,21 @@ async function Registration_modal() {
     console.log(selectedItemFromDropdown)
     try{
        
-        if(selectedItemFromDropdown!=null) {data=MainConfig[page_load_conf.tab][selectedItemFromDropdown].job.create.data}
-        else{data=MainConfig[page_load_conf.tab].job.create.data}
+        if(selectedItemFromDropdown!=null) {
+            console.log("calling for specific config")
+            var body={"qry": {"where_data": {"ui_template_name":selectedItemFromDropdown}}};
+            get_config=await getDocument_data("", "", body, "");
+            let rawConfig = get_config[0].ui_template;  // string
+            config = JSON.parse(rawConfig);          // now it's an object
+            console.log("UI Template Config:", config);
+            const Registry = config[selectedItemFromDropdown]; // assuming your object is in variable `config`
+            console.log(Registry);
+            data=Registry.job.create.data;
+        }
+        else{
+            data=MainConfig[page_load_conf.tab].job.create.data
+            
+        }
     }catch(err){console.log("Error in data extraction",err)}
 
     console.log(data);
@@ -3114,6 +3380,7 @@ async function Registration_modal() {
 
         for (const field of fields) {
             if (!field.show) continue;
+            console.log("field>>>>>", field.field);
             let input = form.elements[field.field];
             
             // Handle graphs-control specifically
@@ -3296,16 +3563,17 @@ async function Registration_modal() {
                             parsedValue = rawValue; // Already an object or array
                         }
 
-                            console.log("Parsed field-attribute-control:", parsedValue);
+                        console.log("Parsed field-attribute-control:", parsedValue);
 
-                            // Store as stringified JSON if it's an object, else store as-is
-                            newData[field.field] = typeof parsedValue === "object"
-                                ? JSON.stringify(parsedValue)
-                                : parsedValue;
+                        // Store as stringified JSON if it's an object, else store as-is
+                        
+                        newData[field.field] = typeof parsedValue === "object"
+                            ? JSON.stringify(parsedValue)
+                            : parsedValue;
 
-                        } catch (e) {
-                            console.error("Failed to process field-attribute-control value:", e);
-                        }
+                    } catch (e) {
+                        console.error("Failed to process field-attribute-control value:", e);
+                    }
 
                 } else {
                     console.warn(`field-attribute-control element not found.`);
@@ -3328,6 +3596,7 @@ async function Registration_modal() {
             } else if (input) {
                 newData[field.field] = input.value;
             }
+            console.log("New Data :", newData);
         }
     
         if (!isValid) {

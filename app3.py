@@ -914,19 +914,24 @@ def entityConfig_new():
 def entityConfig_list():
     f=open('config/new/get_DB_data_new.json');  json_data = json.load(f)
     #print("db name: ",json_data)
-    data = json.loads(request.data); print(data)
+    #data = json.loads(request.data); print(data)
+    data = request.get_json(force=True, silent=True) or {}
+    print("Request Data:", data)
     
     try:
         #myresult=get_data(json_data['db_name'],json_data[data['type']], data['qry']['select_fields'],data['qry']['where_data']) 
-        myresult = get_data(
-            json_data['db_name'],
-            json_data[data['type']],
-            data['qry']['select_fields'],
-            data['qry']['where_data'],
-            "none",
-            data['affiliations']
-        )
+        #myresult = get_data_list(json_data['db_name'], json_data[data['type']],data['qry']['select_fields'],data['qry']['where_data'],data['affiliations'], data['block_size'],data['block_number'])
         
+        myresult = get_data_list(
+            json_data.get('db_name', 'default_db'),
+            json_data.get(data.get('type', ''), 'default_table'),
+            data.get('qry', {}).get('select_fields', ['*']),
+            data.get('qry', {}).get('where_data', {}),
+            data.get('affiliations', []),
+            data.get('block_size', 50),
+            data.get('block_number', 1)
+        )
+
         print(myresult)
         if(data['qry']['where_data']=={}):
             return jsonify(myresult,data['type'])

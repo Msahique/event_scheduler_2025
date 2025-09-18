@@ -11,6 +11,7 @@
     "Application Registry":"application_registry",
     "Storage Paths":"storage_paths",
     "Entity log":"",
+    "Document Test Templates":"",
 
     "Entity Category":"entity_types",
     "Entity Registry":"entity",
@@ -38,11 +39,12 @@
     "Document Data Templates":"doc_templates",
     "Document UI Templates":"doc_ui_template",
     "Document View Templates":"doc_view_template",
+    "HTML Template":"html_templates",
     "Trigger Functions":"trigger_functions",
     "Function Registry":"function_registry",
     "Image Registry":"images",
 
-    "Final Templates":"doc_final_templates",
+    "Final Templates":"tab_templates",
 
     "Env Measurements":"env_measurements",
     "Chart Templates":"chart_templates",
