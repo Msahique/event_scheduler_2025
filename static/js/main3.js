@@ -542,26 +542,38 @@ function handleChartTemplateSelection(templateName) {
 
 function hideChartConfiguration() {
     try {
-        // Target the control-panel div specifically from your HTML
-        const controlPanel = document.querySelector('.control-panel');
+        // First get the graphs-control element
+        const graphsControlElement = document.querySelector('graphs-control');
+        
+        if (!graphsControlElement) {
+            console.error('graphs-control element not found');
+            return;
+        }
+        
+        // Look for the control-panel within the graphs-control element
+        const controlPanel = graphsControlElement.querySelector('.control-panel');
         
         if (controlPanel) {
             controlPanel.style.display = 'none';
             console.log('Chart configuration panel hidden');
         } else {
-            // Fallback: try to find it within the modal
-            const modal = document.getElementById('graphsModal');
-            if (modal) {
-                const controlPanel = modal.querySelector('.control-panel');
-                if (controlPanel) {
-                    controlPanel.style.display = 'none';
-                    console.log('Chart configuration panel hidden via modal selector');
+            console.error('Control panel not found within graphs-control element');
+            
+            // Debug: log what's actually in the graphs-control element
+            console.log('graphs-control innerHTML:', graphsControlElement.innerHTML);
+            
+            // Fallback: try to find it in shadow DOM if graphs-control is a web component
+            if (graphsControlElement.shadowRoot) {
+                const shadowControlPanel = graphsControlElement.shadowRoot.querySelector('.control-panel');
+                if (shadowControlPanel) {
+                    shadowControlPanel.style.display = 'none';
+                    console.log('Chart configuration panel hidden via shadow DOM');
                 }
             }
         }
         
-        // Also hide the control panel title if it exists separately
-        const controlPanelTitle = document.querySelector('.control-panel-title');
+        // Also hide the control panel title if it exists within graphs-control
+        const controlPanelTitle = graphsControlElement.querySelector('.control-panel-title');
         if (controlPanelTitle) {
             controlPanelTitle.style.display = 'none';
         }
@@ -571,29 +583,101 @@ function hideChartConfiguration() {
     }
 }
 
-// Fixed function to show chart configuration section
 function showChartConfiguration() {
     try {
-        // Target the control-panel div specifically from your HTML
-        const controlPanel = document.querySelector('.control-panel');
+        // First get the graphs-control element
+        const graphsControlElement = document.querySelector('graphs-control');
+        
+        if (!graphsControlElement) {
+            console.error('graphs-control element not found');
+            return;
+        }
+        
+        // Check if chartType is 3D
+        const chartTypeElement = graphsControlElement.querySelector('#chartType');
+        const isChart3D = chartTypeElement && (
+            chartTypeElement.value.startsWith('3d-') || 
+            chartTypeElement.value.includes('3d')
+        );
+        
+        // Look for the control-panel within the graphs-control element
+        const controlPanel = graphsControlElement.querySelector('.control-panel');
         
         if (controlPanel) {
             controlPanel.style.display = '';
             console.log('Chart configuration panel shown');
         } else {
-            // Fallback: try to find it within the modal
-            const modal = document.getElementById('graphsModal');
-            if (modal) {
-                const controlPanel = modal.querySelector('.control-panel');
-                if (controlPanel) {
-                    controlPanel.style.display = '';
-                    console.log('Chart configuration panel shown via modal selector');
+            console.error('Control panel not found within graphs-control element');
+            
+            // Debug: log what's actually in the graphs-control element
+            console.log('graphs-control innerHTML:', graphsControlElement.innerHTML);
+            
+            // Fallback: try to find it in shadow DOM if graphs-control is a web component
+            if (graphsControlElement.shadowRoot) {
+                const shadowControlPanel = graphsControlElement.shadowRoot.querySelector('.control-panel');
+                if (shadowControlPanel) {
+                    shadowControlPanel.style.display = '';
+                    console.log('Chart configuration panel shown via shadow DOM');
                 }
             }
         }
         
-        // Also show the control panel title if it was hidden
-        const controlPanelTitle = document.querySelector('.control-panel-title');
+        // ✅ Show chart-wrapper only for non-3D charts
+        const chartWrapper = graphsControlElement.querySelector('.chart-wrapper');
+        if (chartWrapper) {
+            if (isChart3D) {
+                chartWrapper.style.display = 'none';
+                console.log('Chart wrapper hidden for 3D chart');
+            } else {
+                chartWrapper.style.display = '';
+                console.log('Chart wrapper shown for non-3D chart');
+            }
+        } else {
+            // Fallback: try shadow DOM
+            if (graphsControlElement.shadowRoot) {
+                const shadowChartWrapper = graphsControlElement.shadowRoot.querySelector('.chart-wrapper');
+                if (shadowChartWrapper) {
+                    if (isChart3D) {
+                        shadowChartWrapper.style.display = 'none';
+                        console.log('Chart wrapper hidden for 3D chart via shadow DOM');
+                    } else {
+                        shadowChartWrapper.style.display = '';
+                        console.log('Chart wrapper shown for non-3D chart via shadow DOM');
+                    }
+                }
+            }
+        }
+        
+        // ✅ Handle legend - don't show for 3D charts
+        const legendControlPanel = graphsControlElement.querySelector('#legendControlPanel');
+        if (legendControlPanel) {
+            if (isChart3D) {
+                legendControlPanel.style.display = 'none';
+                console.log('Legend control panel hidden for 3D chart');
+            } else {
+                // For non-3D charts, show legend only if it was previously visible
+                // You might want to add more logic here based on your requirements
+                legendControlPanel.style.display = '';
+                console.log('Legend control panel available for non-3D chart');
+            }
+        } else {
+            // Fallback: try shadow DOM
+            if (graphsControlElement.shadowRoot) {
+                const shadowLegendPanel = graphsControlElement.shadowRoot.querySelector('#legendControlPanel');
+                if (shadowLegendPanel) {
+                    if (isChart3D) {
+                        shadowLegendPanel.style.display = 'none';
+                        console.log('Legend control panel hidden for 3D chart via shadow DOM');
+                    } else {
+                        shadowLegendPanel.style.display = '';
+                        console.log('Legend control panel available for non-3D chart via shadow DOM');
+                    }
+                }
+            }
+        }
+        
+        // Also show the control panel title if it was hidden within graphs-control
+        const controlPanelTitle = graphsControlElement.querySelector('.control-panel-title');
         if (controlPanelTitle) {
             controlPanelTitle.style.display = '';
         }
@@ -1987,7 +2071,7 @@ async function loadTemplateAndInitialize(templateName, selectedData, graphsContr
             
             // Hide configuration after template is loaded
             setTimeout(() => hideChartConfiguration(), 500);
-            
+            console.log("Success");
         } else {
             console.error('Failed to load template, using default initialization');
             graphsControl.initializeAndOpenModal(selectedData, selectedItemFromDropdown);
@@ -2724,26 +2808,64 @@ function editModalCreation(response,selectedItemFromDropdown) {
     let editModal = new bootstrap.Modal(editModalElement, { backdrop: 'static' });
     editModal.show();
 
-    document.getElementById('saveChanges').onclick = function () {
+    document.getElementById('saveChanges').onclick = async function () {
         let updatedData = {
             "where_data": {},
             "update": {}
         };
         
         console.log(fields);
-        fields.forEach(field => {
-            if (!field.show) return;
+        
+        let graphsControlUpdated = false;
+        let newChartName = null;
+        
+        for (const field of fields) {
+            if (!field.show) continue;
             
             let input = form.elements[field.field];
-            let currentValue = rowData[field.field]; // Original value from rowData
+            let currentValue = rowData[field.field];
             let newValue;
+            let fieldNameToUpdate = field.field;
             
             console.log(input, currentValue);
             
-            if (field.field === "schedule") {
+            // Handle graphs-control specifically
+            if (field.control === 'graphs-control') {
+                let graphsElement = document.querySelector("graphs-control");
+                if (graphsElement) {
+                    if (!graphsElement.validateChartData()) {
+                        alert("Please ensure the chart configuration is valid before saving.");
+                        return;
+                    }
+                    
+                    const chartTemplate = graphsElement.value; // This is a JSON string
+                    console.log("Chart template (JSON string):", chartTemplate);
+                    
+                    // ✅ Parse JSON string to object for frontend processing
+                    // The updateEntry function will convert it back to JSON string for backend
+                    try {
+                        newValue = JSON.parse(chartTemplate);
+                        console.log("Parsed chart template (object):", newValue);
+                    } catch (e) {
+                        console.error("Failed to parse chart template JSON:", e);
+                        alert("Invalid chart configuration. Please check the chart settings.");
+                        return;
+                    }
+                    
+                    fieldNameToUpdate = "settings";
+                    newChartName = graphsElement.generateChartName();
+                    console.log("Generated new chart name:", newChartName);
+                    graphsControlUpdated = true;
+                    
+                } else {
+                    console.warn(`graphs-control element not found.`);
+                    newValue = currentValue;
+                }
+            }
+            else if (field.field === "schedule") {
                 let scheduleElement = document.querySelector("schedule-control");
                 newValue = scheduleElement ? scheduleElement.value : "";
-            } else if (field.field === "venue") { // Add this condition for venue-location
+            } else if (field.field === "venue") {
                 let venueLocationElement = document.querySelector("venue-location-control");
                 newValue = venueLocationElement ? venueLocationElement.value : "";
             } else if (input && field.control === "checkbox") {
@@ -2752,34 +2874,43 @@ function editModalCreation(response,selectedItemFromDropdown) {
                 newValue = input.value;
             } else if (field.field === "ui_template") {
                 let fieldAttrControl = document.querySelector("field-attribute-control");
-                //newValue = fieldAttrControl ? fieldAttrControl.value : ""; 
                 newValue = JSON.stringify(fieldAttrControl.value);
             } else if (field.field === "doc_template") {
                 let doctemplatecontrol = document.querySelector("doc-template-control");
                 newValue = doctemplatecontrol ? doctemplatecontrol.value : ""; 
             } 
             else {
-                // Handle case where input is undefined (custom controls)
                 console.warn(`Input element not found for field: ${field.field}`);
-                newValue = currentValue; // Keep original value if input not found
+                newValue = currentValue;
             }
-            console.log("NewVal : ",newValue)
-            // ✅ Only add changed fields to updatedData
-            // For JSON fields, we need to compare the parsed objects or strings
+            
+            console.log("NewVal : ", newValue);
+            console.log("Field to update in DB: ", fieldNameToUpdate);
+            
+            // ✅ Check for changes
             let hasChanged = false;
             
-            if (field.field === "venue" || field.field === "schedule") {
-                // For JSON fields, compare as strings or parse and compare objects
+            if (field.control === 'graphs-control') {
+                // For graphs-control, compare objects after ensuring both are objects
+                let currentValueObj;
                 try {
-                    // If currentValue is already a string, compare directly
+                    currentValueObj = typeof currentValue === 'string' ? 
+                        JSON.parse(currentValue) : currentValue;
+                } catch (e) {
+                    currentValueObj = currentValue;
+                }
+                
+                let newValueObj = newValue; // newValue is already an object
+                
+                hasChanged = JSON.stringify(currentValueObj) !== JSON.stringify(newValueObj);
+            } else if (field.field === "venue" || field.field === "schedule") {
+                try {
                     if (typeof currentValue === 'string') {
                         hasChanged = currentValue !== newValue;
                     } else {
-                        // If currentValue is an object, stringify it for comparison
                         hasChanged = JSON.stringify(currentValue) !== newValue;
                     }
                 } catch (e) {
-                    // Fallback to direct comparison
                     hasChanged = currentValue !== newValue;
                 }
             } else {
@@ -2787,27 +2918,50 @@ function editModalCreation(response,selectedItemFromDropdown) {
             }
             
             if (hasChanged) {
-                updatedData.update[field.field] = newValue;
+                updatedData.update[fieldNameToUpdate] = newValue;
             }
-        });
+        }
         
-        // ✅ Ensure at least one field is being updated
+        // ✅ Handle chart name update
+        if (graphsControlUpdated && newChartName) {
+            const currentChartName = rowData.chart_name;
+            
+            if (currentChartName !== newChartName) {
+                updatedData.update.chart_name = newChartName;
+                console.log("Chart name will be updated from:", currentChartName, "to:", newChartName);
+            }
+        }
+        
+        // ✅ Check if any updates are needed
         if (Object.keys(updatedData.update).length === 0) {
             console.log("No changes detected. No update required.");
             editModal.hide();
             return;
         }
         
-        // ✅ Set the `where_data` for the update query
+        // ✅ Set where condition
         updatedData.where_data[MainConfig[page_load_conf.tab][selectedItemFromDropdown].key] = 
             rowData[MainConfig[page_load_conf.tab][selectedItemFromDropdown].key];
         
-        console.log("Updated Data:", updatedData);
+        console.log("Updated Data being sent to updateEntry:", updatedData);
         
-        updateEntry(
-            rowData[MainConfig[page_load_conf.tab][selectedItemFromDropdown].key],
-            updatedData
-        );
+        const hasGraphsUpdate = Object.keys(updatedData.update).includes('settings');
+        
+        try {
+            await updateEntry(
+                rowData[MainConfig[page_load_conf.tab][selectedItemFromDropdown].key],
+                updatedData
+            );
+            
+            if (hasGraphsUpdate) {
+                alert('Chart template updated successfully!');
+            }
+            
+        } catch (error) {
+            console.error('Error updating entry:', error);
+            alert(`Error updating entry: ${error.message}`);
+            return;
+        }
         
         editModal.hide();
     };

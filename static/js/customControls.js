@@ -5499,11 +5499,12 @@ class GraphsControl extends HTMLElement {
                 }
                 .graph-header {
                     display: flex;
-                    justify-content: space-between;
+                    justify-content: flex-end;
                     align-items: center;
                     margin-bottom: 16px;
                     padding-bottom: 12px;
                     border-bottom: 2px solid #f8f9fa;
+                    position: relative;
                 }
 
                 .graph-title {
@@ -5744,6 +5745,26 @@ class GraphsControl extends HTMLElement {
                     padding: 10px;
                     min-height: 40px;
                 }
+                
+                .graph-title-display {
+                    position: absolute;
+                    left: 50%;
+                    transform: translateX(-50%); /* true horizontal centering */
+                    text-align: center;
+                    font-weight: bold;
+                    color: #333;
+                    margin-bottom: 8px;
+                }
+                .font-controls-container {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 12px;
+                    padding: 10px;
+                    background: #f8f9fa;
+                    border: 1px solid #dee2e6;
+                    border-radius: 6px;
+                    margin-bottom: 16px;
+                }
 
                 #graphCanvas {
                     grid-column: 2;
@@ -5875,23 +5896,338 @@ class GraphsControl extends HTMLElement {
                         gap: 20px;
                         align-items: end;
                     }
-                    .graph-title-display {
-                        text-align: center;
-                        font-size: 22px;
-                        font-weight: bold;
-                        color: #333;
-                        margin-bottom: 8px;
+                }
+                /* Help Button Styles - Add to your existing CSS */
+                .help-button {
+                    position: absolute;
+                    top: 20px;
+                    right: 20px;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                    color: white;
+                    border: none;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 18px;
+                    font-weight: bold;
+                    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+                    transition: all 0.3s ease;
+                    z-index: 100;
+                }
+
+                .help-button:hover {
+                    background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
+                    transform: scale(1.1);
+                    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+                }
+
+                /* Help Modal Styles */
+                .help-modal {
+                    display: none;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.7);
+                    z-index: 2000;
+                    overflow-y: auto;
+                    backdrop-filter: blur(5px);
+                }
+
+                .help-modal.active {
+                    display: flex;
+                    align-items: flex-start;
+                    justify-content: center;
+                    padding: 20px;
+                }
+
+                .help-content {
+                    background: white;
+                    border-radius: 16px;
+                    width: 90%;
+                    max-width: 1200px;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                    margin-top: 20px;
+                    position: relative;
+                }
+
+                .help-header {
+                    background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+                    color: white;
+                    padding: 30px;
+                    border-radius: 16px 16px 0 0;
+                    text-align: center;
+                    position: sticky;
+                    top: 0;
+                    z-index: 10;
+                }
+
+                .help-title {
+                    font-size: 28px;
+                    font-weight: 700;
+                    margin: 0 0 10px 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 12px;
+                }
+
+                .help-subtitle {
+                    font-size: 16px;
+                    opacity: 0.9;
+                    margin: 0;
+                    font-weight: 300;
+                }
+
+                .help-close {
+                    position: absolute;
+                    top: 20px;
+                    right: 30px;
+                    background: rgba(255, 255, 255, 0.2);
+                    border: none;
+                    color: white;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    font-size: 20px;
+                    font-weight: bold;
+                    transition: all 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .help-close:hover {
+                    background: rgba(255, 255, 255, 0.3);
+                    transform: rotate(90deg);
+                }
+
+                .help-body {
+                    padding: 0;
+                }
+
+                .help-nav {
+                    display: flex;
+                    background: #f8f9fa;
+                    border-bottom: 1px solid #dee2e6;
+                    overflow-x: auto;
+                    position: sticky;
+                    top: 100px;
+                    z-index: 9;
+                }
+
+                .help-nav-item {
+                    padding: 15px 25px;
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #495057;
+                    white-space: nowrap;
+                    transition: all 0.3s ease;
+                    border-bottom: 3px solid transparent;
+                }
+
+                .help-nav-item:hover {
+                    background: #e9ecef;
+                    color: #6f42c1;
+                }
+
+                .help-nav-item.active {
+                    background: white;
+                    color: #6f42c1;
+                    border-bottom-color: #6f42c1;
+                }
+
+                .help-section {
+                    display: none;
+                    padding: 30px;
+                }
+
+                .help-section.active {
+                    display: block;
+                }
+
+                .help-cards {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+                    gap: 25px;
+                    margin-bottom: 30px;
+                }
+
+                .help-card {
+                    background: white;
+                    border: 1px solid #e9ecef;
+                    border-radius: 12px;
+                    padding: 25px;
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+                    transition: all 0.3s ease;
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                .help-card::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 4px;
+                    background: linear-gradient(90deg, #6f42c1, #e83e8c, #fd7e14, #28a745);
+                    border-radius: 12px 12px 0 0;
+                }
+
+                .help-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+                }
+
+                .help-card-title {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #495057;
+                    margin: 0 0 15px 0;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+
+                .help-card-content {
+                    font-size: 14px;
+                    line-height: 1.6;
+                    color: #6c757d;
+                    margin-bottom: 20px;
+                }
+
+                .help-steps {
+                    list-style: none;
+                    padding: 0;
+                    margin: 0;
+                    counter-reset: step-counter;
+                }
+
+                .help-steps li {
+                    padding: 10px 0;
+                    border-bottom: 1px solid #f8f9fa;
+                    position: relative;
+                    padding-left: 30px;
+                }
+
+                .help-steps li::before {
+                    content: counter(step-counter);
+                    counter-increment: step-counter;
+                    position: absolute;
+                    left: 0;
+                    top: 10px;
+                    background: #6f42c1;
+                    color: white;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 11px;
+                    font-weight: bold;
+                }
+
+                .help-code {
+                    background: #f8f9fa;
+                    border: 1px solid #e9ecef;
+                    border-radius: 6px;
+                    padding: 15px;
+                    font-family: 'Courier New', monospace;
+                    font-size: 13px;
+                    margin: 15px 0;
+                    overflow-x: auto;
+                }
+
+                .help-warning {
+                    background: #fff3cd;
+                    border-left: 4px solid #ffc107;
+                    padding: 15px;
+                    margin: 15px 0;
+                    border-radius: 0 6px 6px 0;
+                }
+
+                .help-info {
+                    background: #d1ecf1;
+                    border-left: 4px solid #17a2b8;
+                    padding: 15px;
+                    margin: 15px 0;
+                    border-radius: 0 6px 6px 0;
+                }
+
+                .help-success {
+                    background: #d4edda;
+                    border-left: 4px solid #28a745;
+                    padding: 15px;
+                    margin: 15px 0;
+                    border-radius: 0 6px 6px 0;
+                }
+
+                .feature-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                    gap: 20px;
+                    margin: 20px 0;
+                }
+
+                .feature-item {
+                    text-align: center;
+                    padding: 20px;
+                    background: #f8f9fa;
+                    border-radius: 8px;
+                    transition: all 0.3s ease;
+                }
+
+                .feature-item:hover {
+                    background: #e9ecef;
+                    transform: translateY(-2px);
+                }
+
+                .feature-icon {
+                    font-size: 32px;
+                    margin-bottom: 10px;
+                }
+
+                @media (max-width: 768px) {
+                    .help-content {
+                        width: 95%;
+                        margin: 10px auto;
+                    }
+                    
+                    .help-cards {
+                        grid-template-columns: 1fr;
+                    }
+                    
+                    .help-nav {
+                        flex-wrap: wrap;
+                    }
+                    
+                    .help-nav-item {
+                        padding: 10px 15px;
+                        font-size: 13px;
                     }
                 }
             </style>
 
                 <div class="graphs-container">
+                    <button class="help-button" id="helpButton" title="Open Help Guide">?</button>
                     <!-- NEW: Doc Type Selection Panel -->
                     <div class="doc-type-panel">
-                        <div class="doc-type-panel-title">Document Type Selection</div>
+                        <div class="doc-type-panel-title"></div>
                         <div class="doc-type-row">
                             <div class="control-group">
-                                <label for="docTypeSelect">Document Type</label>
                                 <select id="docTypeSelect">
                                     <option value="">Select Document Type...</option>
                                 </select>
@@ -5980,13 +6316,130 @@ class GraphsControl extends HTMLElement {
                             </div>  
                         </div>
                     </div>
-                    
+                    <div class="font-controls-container">
+                        <label for="graphTitleFontSize">Graph Title Font</label>
+                        <select id="graphTitleFontSize">
+                            <option value="14">14px</option>
+                            <option value="16">16px</option>
+                            <option value="18" selected>18px</option>
+                            <option value="20">20px</option>
+                            <option value="22">22px</option>
+                            <option value="24">24px</option>
+                            <option value="26">26px</option>
+                            <option value="28">28px</option>
+                            <option value="30">30px</option>
+                            <option value="32">32px</option>
+                            <option value="34">34px</option>
+                            <option value="36">36px</option>
+                            <option value="38">38px</option>
+                            <option value="40">40px</option>
+                        </select>
+
+                        <label for="xAxisTitleFontSize">X-Axis Title Font</label>
+                        <select id="xAxisTitleFontSize">
+                            <option value="14">14px</option>
+                            <option value="16">16px</option>
+                            <option value="18">18px</option>
+                            <option value="20" selected>20px</option>
+                            <option value="22">22px</option>
+                            <option value="24">24px</option>
+                            <option value="26">26px</option>
+                            <option value="28">28px</option>
+                            <option value="30">30px</option>
+                            <option value="32">32px</option>
+                            <option value="34">34px</option>
+                            <option value="36">36px</option>
+                            <option value="38">38px</option>
+                            <option value="40">40px</option>
+                        </select>
+
+                        <label for="yAxisTitleFontSize">Y-Axis Title Font</label>
+                        <select id="yAxisTitleFontSize">
+                            <option value="14">14px</option>
+                            <option value="16">16px</option>
+                            <option value="18">18px</option>
+                            <option value="20" selected>20px</option>
+                            <option value="22">22px</option>
+                            <option value="24">24px</option>
+                            <option value="26">26px</option>
+                            <option value="28">28px</option>
+                            <option value="30">30px</option>
+                            <option value="32">32px</option>
+                            <option value="34">34px</option>
+                            <option value="36">36px</option>
+                            <option value="38">38px</option>
+                            <option value="40">40px</option>
+                        </select>
+
+                        <label for="xAxisFontSize">X-Axis Font</label>
+                        <select id="xAxisFontSize">
+                            <option value="10">10px</option>
+                            <option value="12">12px</option>
+                            <option value="14">14px</option>
+                            <option value="16">16px</option>
+                            <option value="18">18px</option>
+                            <option value="20">20px</option>
+                            <option value="22" selected>22px</option>
+                            <option value="24">24px</option>
+                            <option value="26">26px</option>
+                            <option value="28">28px</option>
+                            <option value="30">30px</option>
+                            <option value="32">32px</option>
+                            <option value="34">34px</option>
+                            <option value="36">36px</option>
+                            <option value="38">38px</option>
+                            <option value="40">40px</option>
+                        </select>
+
+                        <label for="yAxisFontSize">Y-Axis Font</label>
+                        <select id="yAxisFontSize">
+                            <option value="10">10px</option>
+                            <option value="12">12px</option>
+                            <option value="14">14px</option>
+                            <option value="16">16px</option>
+                            <option value="18">18px</option>
+                            <option value="20">20px</option>
+                            <option value="22" selected>22px</option>
+                            <option value="24">24px</option>
+                            <option value="26">26px</option>
+                            <option value="28">28px</option>
+                            <option value="30">30px</option>
+                            <option value="32">32px</option>
+                            <option value="34">34px</option>
+                            <option value="36">36px</option>
+                            <option value="38">38px</option>
+                            <option value="40">40px</option>
+                        </select>
+
+                        <label for="zAxisFontSize">Z-Axis Font</label>
+                        <select id="zAxisFontSize">
+                            <option value="10">10px</option>
+                            <option value="12">12px</option>
+                            <option value="14">14px</option>
+                            <option value="16">16px</option>
+                            <option value="18">18px</option>
+                            <option value="20">20px</option>
+                            <option value="22" selected>22px</option>
+                            <option value="24">24px</option>
+                            <option value="26">26px</option>
+                            <option value="28">28px</option>
+                            <option value="30">30px</option>
+                            <option value="32">32px</option>
+                            <option value="34">34px</option>
+                            <option value="36">36px</option>
+                            <option value="38">38px</option>
+                            <option value="40">40px</option>
+                        </select>
+                    </div>
                     <!-- Graph Container -->
                     <div class="graph-container">
                         <div class="graph-header">
-                            <div id="graphTitleDisplay" class="graph-title-display"></div>
+                            <!-- Center: Title -->
+                            <div id="graphTitleDisplay" class="graph-title-display">Sample Graph Title</div>
+
+                            <!-- Right: Toolbar -->
                             <div class="plotly-toolbar-container">
-                                <div id="customToolbar" class="custom-modebar"></div>
+                                <div id="customToolbar" class="custom-modebar">🔧 Tools</div>
                             </div>
                         </div>
                         <div class="chart-wrapper">
@@ -6001,6 +6454,430 @@ class GraphsControl extends HTMLElement {
                                 </div>
                                 <div class="legend-items" id="legendItems">
                                     <!-- Legend items will be populated dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Help Modal - Add this just before the closing </div> of graphs-container -->
+                    <div class="help-modal" id="helpModal">
+                        <div class="help-content">
+                            <div class="help-header">
+                                <button class="help-close" id="helpClose">&times;</button>
+                                <h1 class="help-title">
+                                    📊 Graphs Control Help Guide
+                                </h1>
+                                <p class="help-subtitle">Comprehensive guide to creating, saving, and managing chart templates</p>
+                            </div>
+                            
+                            <nav class="help-nav">
+                                <button class="help-nav-item active" data-section="overview">Overview</button>
+                                <button class="help-nav-item" data-section="getting-started">Getting Started</button>
+                                <button class="help-nav-item" data-section="chart-types">Chart Types</button>
+                                <button class="help-nav-item" data-section="templates">Templates</button>
+                                <button class="help-nav-item" data-section="customization">Customization</button>
+                                <button class="help-nav-item" data-section="troubleshooting">Troubleshooting</button>
+                            </nav>
+
+                            <div class="help-body">
+                                <!-- Overview Section -->
+                                <div class="help-section active" id="overview">
+                                    <h2>📋 Overview</h2>
+                                    <p>The Graphs Control is a powerful visualization tool that allows you to create, customize, and save chart templates from your data. You can generate various types of charts, customize their appearance, and save configurations for reuse.</p>
+                                    
+                                    <div class="feature-grid">
+                                        <div class="feature-item">
+                                            <div class="feature-icon">📈</div>
+                                            <h4>30+ Chart Types</h4>
+                                            <p>From basic bar charts to complex 3D visualizations</p>
+                                        </div>
+                                        <div class="feature-item">
+                                            <div class="feature-icon">🎨</div>
+                                            <h4>Full Customization</h4>
+                                            <p>Colors, fonts, titles, and styling options</p>
+                                        </div>
+                                        <div class="feature-item">
+                                            <div class="feature-icon">💾</div>
+                                            <h4>Template System</h4>
+                                            <p>Save and reuse chart configurations</p>
+                                        </div>
+                                        <div class="feature-item">
+                                            <div class="feature-icon">📊</div>
+                                            <h4>Interactive Charts</h4>
+                                            <p>Zoom, pan, and toggle data series</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Getting Started Section -->
+                                <div class="help-section" id="getting-started">
+                                    <h2>🚀 Getting Started</h2>
+                                    <div class="help-cards">
+                                        <div class="help-card">
+                                            <h3 class="help-card-title">
+                                                📋 Step 1: Select Document Type
+                                            </h3>
+                                            <div class="help-card-content">
+                                                Choose your data source from the Document Type dropdown. This determines which dataset will be used for your chart.
+                                            </div>
+                                            <ol class="help-steps">
+                                                <li>Click on "Select Document Type..." dropdown</li>
+                                                <li>Choose your desired document type</li>
+                                                <li>Wait for data to load</li>
+                                            </ol>
+                                        </div>
+
+                                        <div class="help-card">
+                                            <h3 class="help-card-title">
+                                                📊 Step 2: Choose Chart Type
+                                            </h3>
+                                            <div class="help-card-content">
+                                                Select the type of visualization that best represents your data. Different chart types work better for different data relationships.
+                                            </div>
+                                            <ol class="help-steps">
+                                                <li>Click on "Chart Type" dropdown</li>
+                                                <li>Browse through available options</li>
+                                                <li>Select the most appropriate chart type</li>
+                                            </ol>
+                                        </div>
+
+                                        <div class="help-card">
+                                            <h3 class="help-card-title">
+                                                📐 Step 3: Configure Axes
+                                            </h3>
+                                            <div class="help-card-content">
+                                                Map your data columns to chart axes. Different chart types require different axis configurations.
+                                            </div>
+                                            <ol class="help-steps">
+                                                <li>Select X-Axis column</li>
+                                                <li>Add one or more Y-Axis columns</li>
+                                                <li>Add Z-Axis columns if using 3D charts</li>
+                                                <li>Set custom axis titles</li>
+                                            </ol>
+                                        </div>
+
+                                        <div class="help-card">
+                                            <h3 class="help-card-title">
+                                                🎨 Step 4: Customize Appearance
+                                            </h3>
+                                            <div class="help-card-content">
+                                                Personalize your chart with titles, colors, and font sizes to match your presentation needs.
+                                            </div>
+                                            <ol class="help-steps">
+                                                <li>Enter a descriptive chart title</li>
+                                                <li>Adjust font sizes for different elements</li>
+                                                <li>Use the legend to show/hide data series</li>
+                                                <li>Right-click legend items to change colors</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Chart Types Section -->
+                                <div class="help-section" id="chart-types">
+                                    <h2>📈 Chart Types</h2>
+                                    <div class="help-cards">
+                                        <div class="help-card">
+                                            <h3 class="help-card-title">
+                                                📊 Basic Charts
+                                            </h3>
+                                            <div class="help-card-content">
+                                                <strong>Scatter Plot:</strong> Show relationships between two variables<br>
+                                                <strong>Line Chart:</strong> Display trends over time<br>
+                                                <strong>Bar Chart:</strong> Compare categories<br>
+                                                <strong>Pie/Donut:</strong> Show parts of a whole<br>
+                                                <strong>Area Chart:</strong> Emphasize magnitude of change
+                                            </div>
+                                            <div class="help-info">
+                                                <strong>Best for:</strong> General data visualization, presentations, reports
+                                            </div>
+                                        </div>
+
+                                        <div class="help-card">
+                                            <h3 class="help-card-title">
+                                                🧪 Scientific Charts
+                                            </h3>
+                                            <div class="help-card-content">
+                                                <strong>Heatmap:</strong> Show data density or correlation<br>
+                                                <strong>Contour Plot:</strong> Display 3D data in 2D<br>
+                                                <strong>Box Plot:</strong> Show statistical distributions<br>
+                                                <strong>Violin Plot:</strong> Combine box plot with density<br>
+                                                <strong>Histogram:</strong> Show frequency distributions
+                                            </div>
+                                            <div class="help-info">
+                                                <strong>Best for:</strong> Statistical analysis, research, data exploration
+                                            </div>
+                                        </div>
+
+                                        <div class="help-card">
+                                            <h3 class="help-card-title">
+                                                🌐 3D Charts
+                                            </h3>
+                                            <div class="help-card-content">
+                                                <strong>3D Scatter:</strong> Three-dimensional data points<br>
+                                                <strong>3D Surface:</strong> Mathematical surface visualization<br>
+                                                <strong>3D Line:</strong> Trajectories in 3D space<br>
+                                                <strong>3D Mesh:</strong> Wireframe 3D objects
+                                            </div>
+                                            <div class="help-warning">
+                                                <strong>Note:</strong> 3D charts require X, Y, and Z axis data
+                                            </div>
+                                        </div>
+
+                                        <div class="help-card">
+                                            <h3 class="help-card-title">
+                                                📊 Specialized Charts
+                                            </h3>
+                                            <div class="help-card-content">
+                                                <strong>Radar Chart:</strong> Multivariate data comparison<br>
+                                                <strong>Parallel Coordinates:</strong> High-dimensional data<br>
+                                                <strong>Waterfall:</strong> Sequential positive/negative changes<br>
+                                                <strong>Funnel:</strong> Process flow visualization<br>
+                                                <strong>Bubble Chart:</strong> Three-variable relationships
+                                            </div>
+                                            <div class="help-info">
+                                                <strong>Best for:</strong> Specific business cases, complex data relationships
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Templates Section -->
+                                <div class="help-section" id="templates">
+                                    <h2>💾 Chart Templates</h2>
+                                    <div class="help-cards">
+                                        <div class="help-card">
+                                            <h3 class="help-card-title">
+                                                🛠️ Creating Templates
+                                            </h3>
+                                            <div class="help-card-content">
+                                                Chart templates save your entire chart configuration for reuse with different datasets.
+                                            </div>
+                                            <ol class="help-steps">
+                                                <li>Configure your chart completely (type, axes, colors, titles)</li>
+                                                <li>Click the "Register" to Store Template</li>
+                                                <li>Provide a detailed description</li>
+                                                <li>Click "Save" to store the template as a Draft</li>
+                                            </ol>
+                                            <div class="help-success">
+                                                Templates automatically include: chart type, axis mappings, colors, titles, font sizes, and visibility settings.
+                                            </div>
+                                        </div>
+
+                                        <div class="help-card">
+                                            <h3 class="help-card-title">
+                                                🔄 Applying Templates
+                                            </h3>
+                                            <div class="help-card-content">
+                                                Reuse saved templates with new data to maintain consistent visualizations.
+                                            </div>
+                                            <ol class="help-steps">
+                                                <li>Select a document type with data</li>
+                                                <li>Choose "Load Template" option</li>
+                                                <li>Select your saved template</li>
+                                                <li>The chart will automatically configure</li>
+                                                <li>Adjust if needed for new data</li>
+                                            </ol>
+                                            <div class="help-info">
+                                                Templates work best when the new dataset has similar column names and structure.
+                                            </div>
+                                        </div>
+
+                                        <div class="help-card">
+                                            <h3 class="help-card-title">
+                                                📝 Template Naming Convention
+                                            </h3>
+                                            <div class="help-card-content">
+                                                Templates are automatically named based on your selections:
+                                            </div>
+                                            <div class="help-code">
+                    Format: [DocType]_[ChartType]_[XAxis]_[YAxis]_[ZAxis]
+
+                    Example: "Sales_bar_Region_Revenue_Profit"
+                                            </div>
+                                            <ol class="help-steps">
+                                                <li>Document Type (from dropdown selection)</li>
+                                                <li>Chart Type (scatter, bar, line, etc.)</li>
+                                                <li>X-Axis column name</li>
+                                                <li>Y-Axis column names (joined with dashes)</li>
+                                                <li>Z-Axis column names (if any)</li>
+                                            </ol>
+                                        </div>
+
+                                        <div class="help-card">
+                                            <h3 class="help-card-title">
+                                                🔧 Template Management
+                                            </h3>
+                                            <div class="help-card-content">
+                                                Best practices for organizing and maintaining your chart templates.
+                                            </div>
+                                            <ol class="help-steps">
+                                                <li>Use descriptive names and descriptions</li>
+                                                <li>Include purpose and usage notes</li>
+                                                <li>Group similar templates together</li>
+                                                <li>Regularly review and update templates</li>
+                                                <li>Document any special requirements</li>
+                                            </ol>
+                                            <div class="help-warning">
+                                                Templates are stored on the backend and shared across users with appropriate permissions.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Customization Section -->
+                                <div class="help-section" id="customization">
+                                    <h2>🎨 Customization Options</h2>
+                                    <div class="help-cards">
+                                        <div class="help-card">
+                                            <h3 class="help-card-title">
+                                                🎭 Colors and Legend
+                                            </h3>
+                                            <div class="help-card-content">
+                                                Customize the visual appearance of your data series.
+                                            </div>
+                                            <ol class="help-steps">
+                                                <li>Each Y-axis column gets a unique color automatically</li>
+                                                <li>Click legend items to show/hide data series</li>
+                                                <li>Right-click legend items to change colors</li>
+                                                <li>Choose from the preset color palette</li>
+                                                <li>Colors are saved with templates</li>
+                                            </ol>
+                                            <div class="help-info">
+                                                The color system ensures consistent visualization across different chart types.
+                                            </div>
+                                        </div>
+
+                                        <div class="help-card">
+                                            <h3 class="help-card-title">
+                                                🔤 Font Customization
+                                            </h3>
+                                            <div class="help-card-content">
+                                                Adjust text sizes for better readability and presentation.
+                                            </div>
+                                            <ol class="help-steps">
+                                                <li>Graph Title Font: 14px - 40px</li>
+                                                <li>X-Axis Title Font: 14px - 40px</li>
+                                                <li>Y-Axis Title Font: 14px - 40px</li>
+                                                <li>Axis Label Fonts: 10px - 40px</li>
+                                                <li>Z-Axis Font: For 3D charts</li>
+                                            </ol>
+                                            <div class="help-success">
+                                                Default sizes are optimized for most use cases: 18px for titles, 22px for axis labels.
+                                            </div>
+                                        </div>
+
+                                        <div class="help-card">
+                                            <h3 class="help-card-title">
+                                                🏷️ Titles and Labels
+                                            </h3>
+                                            <div class="help-card-content">
+                                                Provide clear, descriptive titles for better understanding.
+                                            </div>
+                                            <ol class="help-steps">
+                                                <li>Enter a descriptive graph title</li>
+                                                <li>Set custom X-axis label</li>
+                                                <li>Set custom Y-axis label</li>
+                                                <li>Titles update automatically on the chart</li>
+                                                <li>Empty fields use default labels</li>
+                                            </ol>
+                                        </div>
+
+                                        <div class="help-card">
+                                            <h3 class="help-card-title">
+                                                🛠️ Interactive Features
+                                            </h3>
+                                            <div class="help-card-content">
+                                                Use built-in tools for better chart interaction.
+                                            </div>
+                                            <ol class="help-steps">
+                                                <li>Zoom: Use zoom tool or mouse wheel</li>
+                                                <li>Pan: Click and drag to move around</li>
+                                                <li>Reset: Return to original view</li>
+                                                <li>Download: Save chart as PNG image</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Troubleshooting Section -->
+                                <div class="help-section" id="troubleshooting">
+                                    <h2>🔧 Troubleshooting</h2>
+                                    <div class="help-cards">
+                                        <div class="help-card">
+                                            <h3 class="help-card-title">
+                                                ❌ Common Issues
+                                            </h3>
+                                            <div class="help-card-content">
+                                                Solutions to frequently encountered problems.
+                                            </div>
+                                            <div class="help-warning">
+                                                <strong>Chart not displaying:</strong><br>
+                                                • Ensure you've selected a document type<br>
+                                                • Check that data is loaded<br>
+                                                • Verify axis selections are appropriate for chart type
+                                            </div>
+                                            <div class="help-warning">
+                                                <strong>Template not loading:</strong><br>
+                                                • Check if column names match between template and data<br>
+                                                • Ensure document type has the required columns<br>
+                                                • Try refreshing the control
+                                            </div>
+                                        </div>
+
+                                        <div class="help-card">
+                                            <h3 class="help-card-title">
+                                                📊 Chart Type Requirements
+                                            </h3>
+                                            <div class="help-card-content">
+                                                Understanding what each chart type needs to work properly.
+                                            </div>
+                                            <div class="help-code">
+                    Single Axis: Histogram, Rug, Indicator
+                    - X-Axis only
+
+                    Two Axis: Scatter, Line, Bar, Pie, etc.
+                    - X-Axis + Y-Axis (one or more)
+
+                    Three Axis: 3D Charts
+                    - X-Axis + Y-Axis + Z-Axis required
+                                            </div>
+                                        </div>
+
+                                        <div class="help-card">
+                                            <h3 class="help-card-title">
+                                                🔄 Performance Tips
+                                            </h3>
+                                            <div class="help-card-content">
+                                                Optimize your charts for better performance.
+                                            </div>
+                                            <ol class="help-steps">
+                                                <li>Limit the number of data points for complex charts</li>
+                                                <li>Use appropriate chart types for your data size</li>
+                                                <li>Avoid too many Y-axis columns simultaneously</li>
+                                                <li>Close unused modals and controls</li>
+                                                <li>Refresh the page if charts become unresponsive</li>
+                                            </ol>
+                                        </div>
+
+                                        <div class="help-card">
+                                            <h3 class="help-card-title">
+                                                💡 Best Practices
+                                            </h3>
+                                            <div class="help-card-content">
+                                                Guidelines for creating effective visualizations.
+                                            </div>
+                                            <ol class="help-steps">
+                                                <li>Choose chart types that match your data story</li>
+                                                <li>Use consistent colors across related charts</li>
+                                                <li>Provide clear, descriptive titles and labels</li>
+                                                <li>Test templates with different datasets</li>
+                                                <li>Document template purposes and requirements</li>
+                                            </ol>
+                                            <div class="help-success">
+                                                Well-designed charts communicate information clearly and effectively.
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -6048,47 +6925,74 @@ class GraphsControl extends HTMLElement {
             });
         }
 
-        // this.shadowRoot.querySelector(".close").addEventListener("click", () => {
-        //     this.closeModal();
-        // });
+        this.shadowRoot.getElementById("graphTitleFontSize").addEventListener("change", (e) => {
+            const size = e.target.value + "px";
+            const graphTitleDisplay = this.shadowRoot.getElementById("graphTitleDisplay");
+            if (graphTitleDisplay) {
+                graphTitleDisplay.style.fontSize = size;
+            }
+        });
 
-        // // NEW: Add Cancel button functionality
-        // this.shadowRoot.getElementById("cancel").addEventListener("click", () => {
-        //     this.closeModal();
-        // });
+        // X-Axis Title Font
+        this.shadowRoot.getElementById("xAxisTitleFontSize").addEventListener("change", (e) => {
+            const size = e.target.value + "px";
+            const xAxisTitle = this.shadowRoot.getElementById("xAxisTitle");
+            if (xAxisTitle) {
+                xAxisTitle.style.fontSize = size;
+            }
+        });
 
-        // NEW: Add Save button functionality
-        // this.shadowRoot.getElementById("save").addEventListener("click", () => {
-        //     this.saveChart();
-        // });
+        // Y-Axis Title Font
+        this.shadowRoot.getElementById("yAxisTitleFontSize").addEventListener("change", (e) => {
+            const size = e.target.value + "px";
+            const yAxisTitle = this.shadowRoot.getElementById("yAxisTitle");
+            if (yAxisTitle) {
+                yAxisTitle.style.fontSize = size;
+            }
+        });
 
-        // this.shadowRoot.getElementById("graphsModal").addEventListener("click", (event) => {
-        //     if (event.target === this.shadowRoot.getElementById("graphsModal")) {
-        //         this.closeModal();
-        //     }
-        // });
+
+        this.shadowRoot.getElementById("xAxisFontSize").addEventListener("change", () => {
+            this.updateChart();
+        });
+
+        this.shadowRoot.getElementById("yAxisFontSize").addEventListener("change", () => {
+            this.updateChart();
+        });
+
+        this.shadowRoot.getElementById("zAxisFontSize").addEventListener("change", () => {
+            this.updateChart();
+        });
+
+        this.shadowRoot.getElementById("helpButton").addEventListener("click", () => {
+            this.openHelpModal();
+        });
+
+        this.shadowRoot.getElementById("helpClose").addEventListener("click", () => {
+            this.closeHelpModal();
+        });
+
+        this.shadowRoot.getElementById("helpModal").addEventListener("click", (e) => {
+            if (e.target.id === "helpModal") {
+                this.closeHelpModal();
+            }
+        });
+
+        // Help navigation
+        const helpNavItems = this.shadowRoot.querySelectorAll(".help-nav-item");
+        helpNavItems.forEach(item => {
+            item.addEventListener("click", () => {
+                this.switchHelpSection(item.dataset.section);
+            });
+        });
+
+        // Keyboard support for help modal
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && this.shadowRoot.getElementById("helpModal").classList.contains("active")) {
+                this.closeHelpModal();
+            }
+        });
     }
-
-    // NEW: Force resize after Y column selection
-    // forceResize() {
-    //     setTimeout(() => {
-    //         if (window.Plotly && this.graphCanvas && this.graphCanvas.data) {
-    //             console.log('Forcing chart resize...');
-    //             Plotly.Plots.resize(this.graphCanvas);
-                
-    //             // Additional resize after a short delay to ensure proper scaling
-    //             setTimeout(() => {
-    //                 Plotly.Plots.resize(this.graphCanvas);
-    //             }, 100);
-    //         }
-    //     }, 100);
-    // }
-
-    // handleResize() {
-    //     if (window.Plotly && this.graphCanvas && this.graphCanvas.children.length > 0) {
-    //         window.Plotly.Plots.resize(this.graphCanvas);
-    //     }
-    // }
 
     updateAxisTitlesFromInputs() {
         const xAxisInput = this.shadowRoot.getElementById("xAxisInput");
@@ -6204,7 +7108,7 @@ class GraphsControl extends HTMLElement {
         }
         
         // Get all columns that have data traces
-        const allColumns = [...(this.selectedMultiColumns || []), ...(this.selectedThirdMultiColumns || [])];
+        const allColumns = [...(this.selectedMultiColumns || [])];
         console.log('ALL COLUMNS', allColumns);
         if (allColumns.length === 0) {
             legendItems.innerHTML = '';
@@ -6411,7 +7315,7 @@ class GraphsControl extends HTMLElement {
     
     // Toggle all legend items
     toggleAllLegendItems() {
-        const allColumns = [...(this.selectedMultiColumns || []), ...(this.selectedThirdMultiColumns || [])];
+        const allColumns = [...(this.selectedMultiColumns || [])];
         
         if (this.hiddenColumns.size === 0) {
             // Hide all
@@ -6498,53 +7402,93 @@ class GraphsControl extends HTMLElement {
         }
         this.graphCanvas.innerHTML = '';
         const chartType = this.chartType;
-        // console.log(chartType)
-        // console.log("Before updateAxisSelections:");
-        // console.log("Y container exists:", !!document.querySelector("#customMultiSelectContainer"));
-        // console.log("Z container exists:", !!document.querySelector("#customThirdMultiSelectContainer"));
+        
         this.updateAxisSelections(chartType);
         const xCol = this.singleSelectDropdown.value;
         const yCols = this.selectedMultiColumns || [];
         const zCols = this.selectedThirdMultiColumns || [];
 
-        // this.updateAxisTitlesFromColumns(chartType, xCol, yCols, zCols);
-
         const data = [];
         const xValues = xCol ? this.rowData.map(row => row[xCol]) : [];
         const layout = this.getChartLayout();
         this.initializeColors();
-        // Generate colors for all columns that will be used
-        const allColumns = [...yCols, ...zCols];
-        this.generateColumnColors(allColumns);
-        // console.log('Generated colors:', this.columnColors);
+        
+        // FIXED: Generate colors only for columns that will actually be used as traces
+        let columnsForTraces = [];
+        
+        // Determine which columns will actually be used for traces based on chart type
+        if (["scatter", "line", "bar", "area", "box", "violin", "time-series"].includes(chartType)) {
+            columnsForTraces = [...yCols];
+        } else if (chartType === "histogram" || chartType === "rug") {
+            columnsForTraces = [xCol];
+        } else if (chartType === "pie" || chartType === "donut") {
+            columnsForTraces = [...yCols];
+        } else if (chartType === "bubble") {
+            columnsForTraces = [...yCols];
+        } else if (["3d-scatter", "3d-line", "3d-surface", "3d-mesh"].includes(chartType)) {
+            // For 3D charts, only Y columns get traces (Z is used as the Z-axis data)
+            columnsForTraces = [...yCols];
+        } else if (chartType === "heatmap" || chartType === "contour" || chartType === "2d-histogram") {
+            columnsForTraces = [...yCols];
+        } else if (chartType === "parallel-coordinates" || chartType === "parallel-categories") {
+            columnsForTraces = [...yCols, ...zCols];
+        } else {
+            // Default case
+            columnsForTraces = [...yCols];
+        }
+        
+        // Generate colors for the correct columns
+        console.log('🎨 Generating colors for trace columns:', columnsForTraces);
+        this.generateColumnColors(columnsForTraces);
+        console.log('🎨 Final column colors after generation:', this.columnColors);
+
         // Helper for error display
         const showError = (msg) => {
             this.graphCanvas.innerHTML = `<p style="color:red">${msg}</p>`;
         };
 
-        // Helper function to apply colors and visibility to traces
+        // Simplified applyTraceProperties function
         const applyTraceProperties = (trace, columnName) => {
+            console.log(`🔍 Applying properties to trace for column: ${columnName}`);
+            
             if (this.columnColors[columnName]) {
                 const color = this.columnColors[columnName];
+                console.log(`🎨 Found color ${color} for column ${columnName}`);
                 
-                // Fixed color application - ensure marker object exists first
-                if (trace.type === 'scatter' || trace.type === 'line' || !trace.type) {
+                // Apply color based on trace type
+                if (trace.type === 'scatter3d') {
                     if (!trace.marker) trace.marker = {};
                     trace.marker.color = color;
                     
-                    // For line charts, also set line color
+                    // For lines in 3D
                     if (trace.mode && trace.mode.includes('lines')) {
                         if (!trace.line) trace.line = {};
                         trace.line.color = color;
                     }
-                } else if (trace.type === 'bar') {
+                } else if (trace.type === 'surface') {
+                    trace.colorscale = [[0, color], [1, color]];
+                    trace.showscale = false;
+                } else if (trace.type === 'mesh3d') {
+                    trace.color = color;
+                } else {
+                    // 2D charts
                     if (!trace.marker) trace.marker = {};
                     trace.marker.color = color;
-                } else if (trace.type === 'pie') {
-                    // For pie charts, colors should be an array
-                    if (!trace.marker) trace.marker = {};
-                    trace.marker.colors = [color]; // or generate array for multiple slices
+                    
+                    if (trace.mode && trace.mode.includes('lines')) {
+                        if (!trace.line) trace.line = {};
+                        trace.line.color = color;
+                    }
                 }
+                
+                console.log(`✅ Applied color to ${columnName}:`, {
+                    type: trace.type,
+                    markerColor: trace.marker?.color,
+                    lineColor: trace.line?.color
+                });
+            } else {
+                console.error(`❌ No color found for column: ${columnName}`);
+                console.log(`Available colors:`, Object.keys(this.columnColors));
             }
             
             // Set visibility
@@ -6628,24 +7572,31 @@ class GraphsControl extends HTMLElement {
             trace = applyTraceProperties(trace, yCols[0]);
             data.push(trace);
         }
-        // 5. 3D Charts
+        // 5. 3D Charts - FIXED VERSION
         else if (["3d-scatter", "3d-line", "3d-surface", "3d-mesh"].includes(chartType)) {
             if (!xCol || yCols.length === 0 || zCols.length === 0) return showError("Select X, Y, and Z columns for 3D chart.");
             const x = this.rowData.map(row => row[xCol]);
-            const y = this.rowData.map(row => row[yCols[0]]);
             const z = this.rowData.map(row => row[zCols[0]]);
             
             if (chartType === "3d-scatter" || chartType === "3d-line") {
-                let trace = {
-                    x, y, z,
-                    type: "scatter3d",
-                    mode: chartType === "3d-line" ? "lines" : "markers",
-                    marker: { size: 4 },
-                    name: `${xCol} vs ${yCols[0]} vs ${zCols[0]}`
-                };
-                
-                trace = applyTraceProperties(trace, yCols[0]);
-                data.push(trace);
+                // Create separate traces for each Y column
+                yCols.forEach((yCol, index) => {
+                    const yData = this.rowData.map(row => row[yCol]);
+                    
+                    let trace = {
+                        x: x,
+                        y: yData,
+                        z: z,
+                        type: "scatter3d",
+                        mode: chartType === "3d-line" ? "lines+markers" : "markers",
+                        marker: { size: 4 },
+                        name: yCol
+                    };
+                    
+                    console.log(`🔵 Creating 3D trace for ${yCol}`);
+                    trace = applyTraceProperties(trace, yCol);
+                    data.push(trace);
+                });
             } else if (chartType === "3d-surface") {
                 // For surface, z should be a 2D array. Here we just reshape if possible.
                 let zMatrix = [];
@@ -6653,24 +7604,34 @@ class GraphsControl extends HTMLElement {
                 for (let i = 0; i < x.length; i += sqrtLength) {
                     zMatrix.push(z.slice(i, i + sqrtLength));
                 }
-                let trace = {
-                    x, y,
-                    z: zMatrix,
-                    type: "surface",
-                    name: zCols[0]
-                };
                 
-                trace = applyTraceProperties(trace, zCols[0]);
-                data.push(trace);
+                yCols.forEach((yCol, index) => {
+                    const yData = this.rowData.map(row => row[yCol]);
+                    let trace = {
+                        x: x,
+                        y: yData,
+                        z: zMatrix,
+                        type: "surface",
+                        name: yCol
+                    };
+                    
+                    trace = applyTraceProperties(trace, yCol);
+                    data.push(trace);
+                });
             } else if (chartType === "3d-mesh") {
-                let trace = {
-                    x, y, z,
-                    type: "mesh3d",
-                    name: zCols[0]
-                };
-                
-                trace = applyTraceProperties(trace, zCols[0]);
-                data.push(trace);
+                yCols.forEach((yCol, index) => {
+                    const yData = this.rowData.map(row => row[yCol]);
+                    let trace = {
+                        x: x,
+                        y: yData,
+                        z: z,
+                        type: "mesh3d",
+                        name: yCol
+                    };
+                    
+                    trace = applyTraceProperties(trace, yCol);
+                    data.push(trace);
+                });
             }
         }
         // 6. Heatmap/Contour/2D Histogram
@@ -6932,80 +7893,6 @@ class GraphsControl extends HTMLElement {
         });
     }
 
-    // updateAxisTitlesFromColumns(chartType, xCol, yCols, zCols) {
-    //     const is3DChart = ["3d-scatter", "3d-line", "3d-surface", "3d-mesh"].includes(chartType);
-
-    //     if (this.xAxisTitleElement) {
-    //         this.xAxisTitleElement.style.display = is3DChart ? 'none' : 'block';
-    //     }
-    //     if (this.yAxisTitleElement) {
-    //         this.yAxisTitleElement.style.display = is3DChart ? 'none' : 'block';
-    //     }
-
-    //     // If it's a 3D chart, don't set titles at all
-    //     if (is3DChart) return;
-    //     if (!is3DChart) {
-    //         this.xAxisTitleElement.style.textAnchor = 'middle'; // for SVG text
-    //         this.xAxisTitleElement.style.textAlign = 'center'; // for HTML text
-    //         this.yAxisTitleElement.style.textAnchor = 'middle'; // for SVG text
-    //         this.yAxisTitleElement.style.textAlign = 'center';
-    //     }
-    //     let xTitle = xCol || "X-Axis";
-
-    //     const formatMultiColumnTitle = (cols, defaultTitle) => {
-    //         if (!cols || cols.length === 0) return defaultTitle;
-    //         if (cols.length === 1) return cols[0];
-    //         if (cols.length <= 3) return cols.join(" + ");
-    //         return `${cols.slice(0, 2).join(" + ")} + ${cols.length - 2} more`;
-    //     };
-
-    //     let yTitle;
-    //     switch (chartType) {
-    //         case "histogram":
-    //             yTitle = "Count";
-    //             break;
-    //         case "pie":
-    //         case "donut":
-    //             yTitle = yCols.length > 0 ? yCols[0] : "Values";
-    //             break;
-    //         case "bubble":
-    //             yTitle = yCols.length > 0 ? yCols[0] : "Y-Axis";
-    //             break;
-    //         case "heatmap":
-    //         case "contour":
-    //         case "2d-histogram":
-    //             yTitle = formatMultiColumnTitle(yCols, "Y-Axis");
-    //             break;
-    //         case "indicator":
-    //             yTitle = formatMultiColumnTitle(yCols, "Value");
-    //             break;
-    //         case "funnel":
-    //         case "waterfall":
-    //             yTitle = formatMultiColumnTitle(yCols, "Values");
-    //             break;
-    //         case "radar":
-    //         case "polar":
-    //         case "wind-rose":
-    //             yTitle = formatMultiColumnTitle(yCols, "Radius");
-    //             break;
-    //         case "time-series":
-    //             yTitle = formatMultiColumnTitle(yCols, "Values");
-    //             break;
-    //         case "parallel-coordinates":
-    //         case "parallel-categories":
-    //             yTitle = formatMultiColumnTitle(
-    //                 [...(yCols || []), ...(zCols || [])],
-    //                 "Variables"
-    //             );
-    //             break;
-    //         default:
-    //             yTitle = formatMultiColumnTitle(yCols, "Y-Axis");
-    //             break;
-    //     }
-
-    //     this.setAxisTitles(xTitle, yTitle);
-    // }
-
     initializeDropdownListeners() {
         // X-axis single select listener
         const singleSelectDropdown = this.shadowRoot.getElementById('singleSelectDropdown');
@@ -7061,10 +7948,15 @@ class GraphsControl extends HTMLElement {
     }
 
     getChartLayout() {
+        // Read selected font sizes from the UI
+        const xAxisFontSize = parseInt(this.shadowRoot.getElementById("xAxisFontSize").value, 10);
+        const yAxisFontSize = parseInt(this.shadowRoot.getElementById("yAxisFontSize").value, 10);
+        const zAxisFontSize = parseInt(this.shadowRoot.getElementById("zAxisFontSize").value, 10);
+        
         const layout = {
             font: {
                 family: "Arial, sans-serif",
-                size: 22,
+                size: 22,   // <-- Title font size
                 color: "#333"
             },
             plot_bgcolor: 'white',
@@ -7072,74 +7964,90 @@ class GraphsControl extends HTMLElement {
             autosize: true
         };
 
-        // Different layouts for different chart types
+        // Check if this is a 3D chart
+        const is3DChart = ["3d-scatter", "3d-line", "3d-surface", "3d-mesh"].includes(this.chartType);
+
+        // Chart type specific margins and axis configuration
         if (this.chartType === 'pie' || this.chartType === 'donut') {
-            layout.margin = { 
-                t: 40,   // More space for title
-                l: 80,   // More space for labels
-                r: 80,   // More space for labels
-                b: 0    // More space for labels
+            layout.margin = { t: 40, l: 80, r: 80, b: 0 };
+        } else if (is3DChart) {
+            // 3D charts use scene configuration
+            layout.margin = { t: 60, l: 60, r: 60, b: 60 };
+            layout.scene = {
+                xaxis: {
+                    showgrid: true,
+                    gridcolor: '#e6e6e6',
+                    tickfont: {
+                        size: xAxisFontSize,
+                        color: "#333"
+                    },
+                    showline: true,
+                    linecolor: '#333',
+                    linewidth: 1,
+                    showticklabels: true
+                },
+                yaxis: {
+                    showgrid: true,
+                    gridcolor: '#e6e6e6',
+                    tickfont: {
+                        size: yAxisFontSize,
+                        color: "#333"
+                    },
+                    showline: true,
+                    linecolor: '#333',
+                    linewidth: 1,
+                    showticklabels: true
+                },
+                zaxis: {
+                    showgrid: true,
+                    gridcolor: '#e6e6e6',
+                    tickfont: {
+                        size: zAxisFontSize,
+                        color: "#333"
+                    },
+                    showline: true,
+                    linecolor: '#333',
+                    linewidth: 1,
+                    showticklabels: true
+                }
             };
         } else {
-            // For other chart types (bar, line, scatter, etc.)
-            layout.margin = { 
-                t: 60,   // Space for title
-                l: 80,   // More space for y-axis labels
-                r: 60,   // Space for any overflow
-                b: 0   // More space for x-axis labels
-            };
-            
+            // 2D charts use regular axis configuration
+            layout.margin = { t: 60, l: 80, r: 60, b: 0 };
+
             layout.xaxis = {
                 showgrid: true,
                 gridcolor: '#e6e6e6',
                 tickfont: {
-                    size: 22,
+                    size: xAxisFontSize,
                     color: "#333"
                 },
                 showline: true,
                 linecolor: '#333',
                 linewidth: 1,
                 showticklabels: true,
-                tickangle: -45,  // Angle labels to prevent overlap
-                automargin: true  // Auto adjust margins for labels
+                tickangle: -45,
+                automargin: true
             };
-            
+
             layout.yaxis = {
                 showgrid: true,
                 gridcolor: '#e6e6e6',
                 tickfont: {
-                    size: 22,
+                    size: yAxisFontSize,
                     color: "#333"
                 },
                 showline: true,
                 linecolor: '#333',
                 linewidth: 1,
                 showticklabels: true,
-                automargin: true  // Auto adjust margins for labels
+                automargin: true
             };
         }
 
         return layout;
     }
-    
-    // openModal() {
-    //     const modal = this.shadowRoot.getElementById("graphsModal");
-    //     modal.style.display = "block";
 
-    //     // Wait for the modal to be visible, then resize the plot
-    //     setTimeout(() => {
-    //         // Force initial resize
-    //         // this.forceResize();
-    //         window.addEventListener('resize', () => this.handleResize());
-    //     }, 200); // Increased timeout for better reliability
-    // }
-
-    // closeModal() {
-    //     this.shadowRoot.getElementById("graphsModal").style.display = "none";
-    // }
-
-    // Method to set custom axis titles
-    
     setAxisTitles(xTitle, yTitle) {
         this.xAxisTitle = xTitle || "Labels";
         this.yAxisTitle = yTitle || "Values";
@@ -7722,7 +8630,7 @@ class GraphsControl extends HTMLElement {
             }
 
             // 2. Set chart type
-           const chartTypeSelect = this.shadowRoot.getElementById("chartType");
+            const chartTypeSelect = this.shadowRoot.getElementById("chartType");
             if (chartTypeSelect) {
                 chartTypeSelect.value = template.chartType;
                 chartTypeSelect.dispatchEvent(new Event("change"));
@@ -7766,17 +8674,24 @@ class GraphsControl extends HTMLElement {
                 this.updateAxisTitlesFromInputs();
             }
 
-            // 5. Set document type (UI only, no dropdown population)
+            // 5. Set document type (STRICT: override dropdown with ONLY template value)
             if (template.selectedDocType) {
                 const docTypeSelect = this.shadowRoot.getElementById("docTypeSelect");
                 if (docTypeSelect) {
-                    docTypeSelect.value = template.selectedDocType;
-                    this.selectedDocType = template.selectedDocType; // just store it
-                    console.log('GraphsControl (Strict): Set selectedDocType (UI only):', template.selectedDocType);
+                    docTypeSelect.innerHTML = ""; // clear all previous options
+
+                    const option = document.createElement("option");
+                    option.value = template.selectedDocType;
+                    option.textContent = template.selectedDocType;
+                    option.selected = true;
+                    docTypeSelect.appendChild(option);
+
+                    this.selectedDocType = template.selectedDocType; // store it internally
+                    console.log('GraphsControl (Strict): Set selectedDocType:', template.selectedDocType);
                 }
             }
 
-            // 5. Strictly set axis values from template only
+            // 6. Strictly set axis values from template only
             if (template.xAxis) {
                 this.pendingXAxisSelection = template.xAxis;
                 console.log('GraphsControl (Strict): Stored xAxis selection:', template.xAxis);
@@ -7828,7 +8743,7 @@ class GraphsControl extends HTMLElement {
                 });
             }
 
-            // 6. Colors
+            // 7. Colors
             if (this.initializeColors) {
                 this.initializeColors();
             }
@@ -7837,33 +8752,91 @@ class GraphsControl extends HTMLElement {
                 console.log('GraphsControl (Strict): Set colors:', template.colors);
             }
 
-            // 7. Hidden columns
+            // 8. Hidden columns
             if (template.hiddenColumns && Array.isArray(template.hiddenColumns)) {
                 this.hiddenColumns = new Set(template.hiddenColumns);
                 console.log('GraphsControl (Strict): Set hiddenColumns:', template.hiddenColumns);
             }
 
-            // 8. Render chart
-            setTimeout(() => {
-                if (template.plotlyData && template.plotlyLayout && this.graphCanvas) {
-                    console.log('GraphsControl (Strict): Using template plotly data for rendering');
-                    this.renderChartFromTemplate(template.plotlyData, template.plotlyLayout);
-                } else {
-                    console.log('GraphsControl (Strict): No template data, generating chart from current selections');
-                    setTimeout(() => this.forceResize(), 500);
-                }
-            }, 200);
+            // 9. ✅ FIXED: Wait for component to be fully ready before rendering
+            this.waitForReadyAndRender(template);
 
             console.log('GraphsControl (Strict): Chart template applied successfully');
         } catch (error) {
             console.error('GraphsControl (Strict): Error applying chart template:', error);
+            // Fallback rendering with longer delay
             setTimeout(() => {
                 if (this.updateChart) {
                     this.updateChart();
                 }
                 setTimeout(() => this.forceResize(), 500);
-            }, 300);
+            }, 500); // Increased delay for error case
         }
+    }
+
+    //Method to ensure component is ready before rendering
+    waitForReadyAndRender(template) {
+        const maxAttempts = 10;
+        let attempts = 0;
+        
+        const checkReadyAndRender = () => {
+            attempts++;
+            
+            // Check if essential elements exist and component is ready
+            const isReady = this.graphCanvas && 
+                        this.rowData && 
+                        this.rowData.length > 0 &&
+                        (template.xAxis ? this.singleSelectDropdown : true) &&
+                        this.shadowRoot.getElementById("chartType");
+            
+            if (isReady) {
+                console.log('GraphsControl: Component ready, rendering chart');
+                
+                if (template.plotlyData && template.plotlyLayout) {
+                    console.log('GraphsControl (Strict): Using template plotly data for rendering');
+                    this.renderChartFromTemplate(template.plotlyData, template.plotlyLayout);
+                } else {
+                    console.log('GraphsControl (Strict): Generating chart from current selections');
+                    // Ensure updateChart method exists and call it
+                    if (this.updateChart) {
+                        this.updateChart();
+                    } else {
+                        console.warn('updateChart method not found, trying alternative render methods');
+                        // Try alternative rendering methods if available
+                        if (this.generateChart) {
+                            this.generateChart();
+                        } else if (this.renderChart) {
+                            this.renderChart();
+                        }
+                    }
+                }
+                
+                // Force resize after rendering
+                setTimeout(() => {
+                    if (this.forceResize) {
+                        this.forceResize();
+                    }
+                }, 100);
+                
+            } else if (attempts < maxAttempts) {
+                console.log(`GraphsControl: Component not ready (attempt ${attempts}/${maxAttempts}), retrying...`);
+                setTimeout(checkReadyAndRender, 200);
+            } else {
+                console.error('GraphsControl: Component failed to become ready, attempting fallback render');
+                // Final fallback attempt
+                setTimeout(() => {
+                    if (this.updateChart) {
+                        this.updateChart();
+                    }
+                    if (this.forceResize) {
+                        this.forceResize();
+                    }
+                }, 300);
+            }
+        };
+        
+        // Start the ready check
+        setTimeout(checkReadyAndRender, 100);
     }
 
     // Simple method to display single value in X-axis dropdown
@@ -8050,6 +9023,39 @@ class GraphsControl extends HTMLElement {
         }
     }
 
+    openHelpModal() {
+        const modal = this.shadowRoot.getElementById("helpModal");
+        modal.classList.add("active");
+        document.body.style.overflow = "hidden"; // Prevent background scrolling
+        console.log("Help modal opened");
+    }
+
+    closeHelpModal() {
+        const modal = this.shadowRoot.getElementById("helpModal");
+        modal.classList.remove("active");
+        document.body.style.overflow = ""; // Restore background scrolling
+        console.log("Help modal closed");
+    }
+
+    switchHelpSection(sectionId) {
+        // Remove active class from all nav items and sections
+        const navItems = this.shadowRoot.querySelectorAll(".help-nav-item");
+        const sections = this.shadowRoot.querySelectorAll(".help-section");
+        
+        navItems.forEach(item => item.classList.remove("active"));
+        sections.forEach(section => section.classList.remove("active"));
+        
+        // Add active class to selected nav item and section
+        const selectedNavItem = this.shadowRoot.querySelector(`[data-section="${sectionId}"]`);
+        const selectedSection = this.shadowRoot.getElementById(sectionId);
+        
+        if (selectedNavItem && selectedSection) {
+            selectedNavItem.classList.add("active");
+            selectedSection.classList.add("active");
+            console.log(`Switched to help section: ${sectionId}`);
+        }
+    }
+
     // Enhanced forceResize method
     forceResize() {
         try {
@@ -8135,6 +9141,10 @@ class GraphsControl extends HTMLElement {
             
             // Reset chart type to default
             this.chartType = 'scatter';
+            const chartTypeSelect = this.shadowRoot.getElementById("chartType");
+            if (chartTypeSelect) {
+                chartTypeSelect.value = 'scatter';
+            }
             const xAxisInput = this.shadowRoot.getElementById("xAxisInput");
             const yAxisInput = this.shadowRoot.getElementById("yAxisInput");
             const graphTitleInput = this.shadowRoot.getElementById("graphTitleInput");
@@ -8151,7 +9161,7 @@ class GraphsControl extends HTMLElement {
             }
 
             if (graphTitleDisplay) {
-                graphTitleDisplay.value = "";
+                graphTitleDisplay.textContent = "";
             }
             
             // Clear axis titles
@@ -8616,19 +9626,6 @@ class GraphsControl extends HTMLElement {
             return null;
         }
     }
-
-    // const dataBody = {
-    //             "requestor_id": "",
-    //             "request_token": "",
-    //             "tab": "Entity Config", 
-    //             "event": "list",
-    //             "type": "Role Registry", // Or whatever your table mapping is called
-    //             "qry": {
-    //                 "select_fields": ["entity_id"],
-    //                 "where_data": {"doc_type": docType}
-    //             },
-    //             "affiliations": "" // Add the missing affiliations field
-    //         };
 
     showContent() {
         const container = this.shadowRoot.querySelector('.graphs-container');

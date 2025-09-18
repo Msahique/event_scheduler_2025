@@ -344,6 +344,12 @@ function present_Data(data, item, config_path) {
 
 function updateEntry(Id, updatedData) {
     let apiEndpoint =""
+    
+    if (updatedData.update && updatedData.update.settings && typeof updatedData.update.settings === 'object') {
+        console.log("Converting settings object to JSON string for backend compatibility");
+        updatedData.update.settings = JSON.stringify(updatedData.update.settings);
+    }
+    
     var update_body={
         "requestor_id":"",
         "request_token":"",
