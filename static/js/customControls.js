@@ -10679,7 +10679,6 @@ class LocationInput extends HTMLElement {
 
 customElements.define("location-input", LocationInput);
 
-
 /*
 {
       "name": "log",
@@ -10690,3 +10689,1449 @@ customElements.define("location-input", LocationInput);
       "not_null": "false"
     },
 */ 
+
+class AppConfig extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+        this.config = {};
+        this.uiTemplates = [];
+        this.currentSuperkey = "";
+        this.currentUITemplate = "";
+        this.addedItems = [];
+        this.user_tab = { Admin: { tab_list: [] } };
+        
+        // User Configuration - can be passed as attributes
+        this.USER_CONFIG = {
+            user_id: 3,
+            program: 'farmer support program',
+            service: 'entity_administration',
+            department: null,
+            role: null,
+            entity: null,
+            useAdvancedFiltering: false
+        };
+    }
+
+    connectedCallback() {
+        this.render();
+        this.initializeEventListeners();
+        this.loadTabs();
+    }
+
+    render() {
+        this.shadowRoot.innerHTML = `
+            <style>
+                .config-container { font-family: Arial, sans-serif; }
+                .step { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+                .step h4 { margin: 0 0 15px 0; color: #333; }
+                .form-group { margin: 10px 0; }
+                .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+                .form-control { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+                .btn { padding: 8px 16px; margin: 5px; border: none; border-radius: 4px; cursor: pointer; }
+                .btn-primary { background: #007bff; color: white; }
+                .btn-success { background: #28a745; color: white; }
+                .btn-danger { background: #dc3545; color: white; }
+                .btn-warning { background: #ffc107; color: black; }
+                .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+                .new-tab-container { display: none; margin-top: 10px; }
+                .added-items-container { margin-top: 20px; }
+                .added-item { padding: 10px; margin: 5px 0; background: #f8f9fa; border-radius: 4px; position: relative; }
+                .added-item .remove-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); }
+                .document-info { margin: 10px 0; padding: 10px; background: #e9ecef; border-radius: 4px; }
+                .preview-btn { margin: 5px; }
+                .hidden { display: none; }
+            </style>
+            
+            <div class="config-container">
+                <!-- Step 1: Tab Selection -->
+                <div class="step" id="step1">
+                    <h4>Step 1: Select or Create Tab</h4>
+                    <div class="form-group">
+                        <label for="tabSelect">Select Tab:</label>
+                        <select id="tabSelect" class="form-control">
+                            <option value="">Loading tabs...</option>
+                        </select>
+                        <div class="new-tab-container" id="newTabContainer">
+                            <label for="newTabName">New Tab Name:</label>
+                            <input type="text" id="newTabName" class="form-control" placeholder="Enter new tab name">
+                            <button id="confirmNewTab" class="btn btn-primary">Confirm New Tab</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: UI Template Selection -->
+                <div class="step hidden" id="step2">
+                    <h4>Step 2: Select UI Template</h4>
+                    <div class="form-group">
+                        <label for="uiTemplateSelect">Select UI Template:</label>
+                        <select id="uiTemplateSelect" class="form-control">
+                            <option value="">Select a UI template...</option>
+                        </select>
+                    </div>
+                    <div id="templateInfo" class="document-info"></div>
+                </div>
+
+                <!-- Step 3: Actions -->
+                <div class="step hidden" id="step3">
+                    <h4>Step 3: Actions</h4>
+                    <button id="previewBtn" class="btn btn-warning preview-btn" disabled>Preview Template</button>
+                    <button id="addBtn" class="btn btn-success">Add to Configuration</button>
+                </div>
+
+                <!-- Added Items Display -->
+                <div class="added-items-container hidden" id="addedItemsContainer">
+                    <h4>Added Items</h4>
+                    <div id="addedItemsList"></div>
+                </div>
+
+                <!-- Final Actions -->
+                <div class="step">
+                    <button id="submitBtn" class="btn btn-primary" disabled>Submit Configuration</button>
+                    <button id="previewAndRedirectBtn" class="btn btn-warning" disabled>Preview & Redirect</button>
+                    <button id="saveBtn" class="btn btn-success" disabled>Save as Draft</button>
+                    <button id="resetBtn" class="btn btn-danger">Reset All</button>
+                </div>
+            </div>
+        `;
+    }
+
+    initializeEventListeners() {
+        const tabSelect = this.shadowRoot.getElementById('tabSelect');
+        const uiTemplateSelect = this.shadowRoot.getElementById('uiTemplateSelect');
+        const confirmNewTab = this.shadowRoot.getElementById('confirmNewTab');
+        const previewBtn = this.shadowRoot.getElementById('previewBtn');
+        const addBtn = this.shadowRoot.getElementById('addBtn');
+        const submitBtn = this.shadowRoot.getElementById('submitBtn');
+        const previewAndRedirectBtn = this.shadowRoot.getElementById('previewAndRedirectBtn');
+        const saveBtn = this.shadowRoot.getElementById('saveBtn');
+        const resetBtn = this.shadowRoot.getElementById('resetBtn');
+
+        tabSelect.addEventListener('change', (e) => this.handleTabSelection(e.target.value));
+        uiTemplateSelect.addEventListener('change', (e) => this.handleUITemplateSelection(e.target.value));
+        confirmNewTab.addEventListener('click', () => this.confirmNewTab());
+        previewBtn.addEventListener('click', () => this.previewTemplate());
+        addBtn.addEventListener('click', () => this.addToConfig());
+        submitBtn.addEventListener('click', () => this.submitConfig('active'));
+        previewAndRedirectBtn.addEventListener('click', () => this.submitPreviewAndRedirect());
+        saveBtn.addEventListener('click', () => this.submitConfig('draft'));
+        resetBtn.addEventListener('click', () => this.resetConfig());
+    }
+
+    async loadTabs() {
+        try {
+            const tabSelect = this.shadowRoot.getElementById('tabSelect');
+            
+            // Call your existing helper function to get tabs
+            const tabsResponse = await fetchHelperData("fetchTabs", "dropdown");
+            const tabs = tabsResponse.map(item => item.tab_name).filter(Boolean);
+            
+            if (!tabs || tabs.length === 0) {
+                console.warn('No tabs available');
+                tabSelect.innerHTML = '<option value="">No tabs available...</option>';
+                return;
+            }
+            
+            // Clear existing options
+            tabSelect.innerHTML = '<option value="">Select a tab...</option>';
+            
+            // Add tab options
+            tabs.forEach(tabName => {
+                const option = document.createElement('option');
+                option.value = tabName;
+                option.textContent = tabName;
+                tabSelect.appendChild(option);
+            });
+            
+            // Add "Create New Tab" option
+            const newTabOption = document.createElement('option');
+            newTabOption.value = '__new__';
+            newTabOption.textContent = '+ Create New Tab';
+            tabSelect.appendChild(newTabOption);
+            
+            console.log('Tab dropdown populated with:', tabs);
+            
+        } catch (error) {
+            console.error('Error loading tabs:', error);
+            const tabSelect = this.shadowRoot.getElementById('tabSelect');
+            tabSelect.innerHTML = '<option value="">Error loading tabs...</option>';
+        }
+    }
+
+    async fetchTabs() {
+        try {
+            const tabs = await fetchHelperData("fetchTabs", "dropdown");
+            return tabs;
+        } catch (error) {
+            console.error('Error calling fetchTabs:', error);
+            return [];
+        }
+    }
+
+    async loadUITemplates() {
+        try {
+            const templateSelect = this.shadowRoot.getElementById('uiTemplateSelect');
+            
+            // Call your existing helper function to get UI templates
+            const templatesResponse = await fetchHelperData("getUITemplates", "dropdown");
+            const templates = templatesResponse.filter(Boolean);
+            
+            if (!templates || templates.length === 0) {
+                console.warn('No UI templates available');
+                templateSelect.innerHTML = '<option value="">No templates available...</option>';
+                return;
+            }
+            
+            // Clear existing options
+            templateSelect.innerHTML = '<option value="">Select a UI template...</option>';
+            this.uiTemplates = templates;
+            
+            // Add template options
+            templates.forEach((template, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = template.ui_template_name;
+                option.dataset.templateInfo = JSON.stringify(template);
+                templateSelect.appendChild(option);
+            });
+            
+            console.log('UI template dropdown populated with:', templates.map(t => t.ui_template_name));
+            
+        } catch (error) {
+            console.error('Error loading UI templates:', error);
+            const templateSelect = this.shadowRoot.getElementById('uiTemplateSelect');
+            templateSelect.innerHTML = '<option value="">Error loading templates...</option>';
+        }
+    }
+
+    async getUITemplates() {
+        try {
+            const templates = await fetchHelperData("getUITemplates", "dropdown");
+            return templates;
+        } catch (error) {
+            console.error('Error calling getUITemplates:', error);
+            return [];
+        }
+    }
+
+    handleTabSelection(value) {
+        const newTabContainer = this.shadowRoot.getElementById('newTabContainer');
+        const step2 = this.shadowRoot.getElementById('step2');
+        const step3 = this.shadowRoot.getElementById('step3');
+        
+        if (value === '__new__') {
+            newTabContainer.style.display = 'block';
+            step2.classList.add('hidden');
+            step3.classList.add('hidden');
+        } else if (value) {
+            newTabContainer.style.display = 'none';
+            this.currentSuperkey = value;
+            
+            // Check if tab already exists in user_tab structure
+            const existingTab = this.user_tab["Admin"]["tab_list"].find(tab => tab.Name === this.currentSuperkey);
+            if (!existingTab) {
+                this.user_tab["Admin"]["tab_list"].push({ Name: this.currentSuperkey });
+            }
+            
+            this.loadUITemplates();
+            this.showStep2();
+        } else {
+            newTabContainer.style.display = 'none';
+            this.hideSteps();
+        }
+    }
+
+    confirmNewTab() {
+        const newTabName = this.shadowRoot.getElementById('newTabName').value.trim();
+        if (!newTabName) {
+            alert('Please enter a tab name');
+            return;
+        }
+        
+        // Check if tab name already exists
+        const existingTab = this.user_tab["Admin"]["tab_list"].find(tab => tab.Name === newTabName);
+        if (existingTab) {
+            alert('Tab name already exists. Please choose a different name.');
+            return;
+        }
+        
+        this.currentSuperkey = newTabName;
+        this.user_tab["Admin"]["tab_list"].push({ Name: this.currentSuperkey });
+        
+        const newTabContainer = this.shadowRoot.getElementById('newTabContainer');
+        newTabContainer.style.display = 'none';
+        
+        // Add to tab select for future use
+        const tabSelect = this.shadowRoot.getElementById('tabSelect');
+        const option = document.createElement('option');
+        option.value = newTabName;
+        option.textContent = newTabName;
+        tabSelect.insertBefore(option, tabSelect.lastElementChild);
+        tabSelect.value = newTabName;
+        
+        this.loadUITemplates();
+        this.showStep2();
+    }
+
+    handleUITemplateSelection(value) {
+        const previewBtn = this.shadowRoot.getElementById('previewBtn');
+        const step3 = this.shadowRoot.getElementById('step3');
+        
+        if (value !== '') {
+            this.currentUITemplate = value;
+            const templateInfo = JSON.parse(this.shadowRoot.getElementById('uiTemplateSelect').selectedOptions[0].dataset.templateInfo);
+            this.displayTemplateInfo(templateInfo);
+            previewBtn.disabled = false;
+            this.showStep3();
+        } else {
+            this.shadowRoot.getElementById('templateInfo').innerHTML = '';
+            previewBtn.disabled = true;
+            step3.classList.add('hidden');
+        }
+    }
+
+    displayTemplateInfo(templateInfo) {
+        const infoDiv = this.shadowRoot.getElementById('templateInfo');
+        infoDiv.innerHTML = `
+            <strong>Template Name:</strong> ${templateInfo.ui_template_name || 'N/A'}<br>
+            <strong>Description:</strong> ${templateInfo.description || 'N/A'}
+        `;
+    }
+
+    previewTemplate() {
+        if (this.currentUITemplate !== '') {
+            const template = this.uiTemplates[this.currentUITemplate];
+            console.log('Preview template:', template);
+            // You can implement modal preview logic here
+            alert('Preview functionality - Template: ' + template.ui_template_name);
+        }
+    }
+
+    addToConfig() {
+        if (!this.currentSuperkey || this.currentUITemplate === '') {
+            alert('Please complete all selections');
+            return;
+        }
+        
+        const template = this.uiTemplates[this.currentUITemplate];
+        
+        // Check if this combination already exists
+        const existingItem = this.addedItems.find(item => 
+            item.superkey === this.currentSuperkey && 
+            item.templateName === template.ui_template_name
+        );
+        
+        if (existingItem) {
+            alert('This combination already exists in the configuration');
+            return;
+        }
+        
+        // Initialize superkey in config if not exists
+        if (!this.config[this.currentSuperkey]) {
+            this.config[this.currentSuperkey] = {
+                controls: [
+                    {
+                        type: "button",
+                        tag: "create",
+                        roles: ["Admin"],
+                        name: "<i class='fa fa-plus'></i>",
+                        function: "Registration_modal()",
+                        class: "btn btn-success btn-xs my-xs-btn"
+                    },
+                    {
+                        type: "button",
+                        tag: "print",
+                        roles: ["Admin"],
+                        name: "<i class='fa fa-print'></i>",
+                        function: "",
+                        class: "btn btn-primary btn-xs my-xs-btn"
+                    },
+                    {
+                        type: "select",
+                        tag: "items",
+                        roles: ["Admin"],
+                        name: this.currentSuperkey,
+                        options: [],
+                        textContent: "Items"
+                    },
+                    {
+                        type: "select",
+                        tag: "entriesPerPage",
+                        roles: ["Admin", "Approver", "User"],
+                        name: "EntriesPerPage",
+                        options: [2, 3, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50],
+                        textContent: "Rows/Page"
+                    }
+                ],
+                Roles: ["Admin"]
+            };
+        }
+        
+        // Add UI template to items options if not already present
+        const itemsControl = this.config[this.currentSuperkey].controls.find(c => c.tag === "items");
+        if (itemsControl && !itemsControl.options.includes(template.ui_template_name)) {
+            itemsControl.options.push(template.ui_template_name);
+        }
+        
+        // Add the UI template configuration
+        this.config[this.currentSuperkey][template.ui_template_name] = template;
+        
+        // Track added items
+        this.addedItems.push({
+            superkey: this.currentSuperkey,
+            templateName: template.ui_template_name,
+            template: template
+        });
+        
+        // Update displays
+        this.updateAddedItemsDisplay();
+        this.enableSubmitButtons();
+        
+        // Show success message
+        this.showSuccess(`Added ${this.currentSuperkey} → ${template.ui_template_name} to configuration`);
+        
+        // Reset selections for next addition
+        this.resetSelections();
+    }
+
+    updateAddedItemsDisplay() {
+        const container = this.shadowRoot.getElementById('addedItemsContainer');
+        const list = this.shadowRoot.getElementById('addedItemsList');
+        
+        if (this.addedItems.length > 0) {
+            container.classList.remove('hidden');
+            list.innerHTML = '';
+            
+            this.addedItems.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'added-item';
+                itemDiv.innerHTML = `
+                    <strong>${item.superkey}</strong> → <strong>${item.templateName}</strong>
+                    <button class="btn btn-danger remove-btn" onclick="this.getRootNode().host.removeAddedItem(${index})">
+                        Remove
+                    </button>
+                `;
+                list.appendChild(itemDiv);
+            });
+        } else {
+            container.classList.add('hidden');
+        }
+    }
+
+    removeAddedItem(index) {
+        const item = this.addedItems[index];
+        
+        // Remove from config
+        if (this.config[item.superkey] && this.config[item.superkey][item.templateName]) {
+            delete this.config[item.superkey][item.templateName];
+            
+            // Remove from items options
+            const itemsControl = this.config[item.superkey].controls.find(c => c.tag === "items");
+            if (itemsControl) {
+                const optionIndex = itemsControl.options.indexOf(item.templateName);
+                if (optionIndex > -1) {
+                    itemsControl.options.splice(optionIndex, 1);
+                }
+            }
+            
+            // Remove superkey if no templates left
+            const hasTemplates = Object.keys(this.config[item.superkey]).some(key => 
+                key !== 'controls' && key !== 'Roles'
+            );
+            if (!hasTemplates) {
+                delete this.config[item.superkey];
+            }
+        }
+        
+        // Remove from user_tab structure
+        if (this.user_tab.Admin && this.user_tab.Admin.tab_list) {
+            const tabIndex = this.user_tab.Admin.tab_list.findIndex(tab => 
+                tab.Name === item.superkey
+            );
+            
+            if (tabIndex > -1) {
+                this.user_tab.Admin.tab_list.splice(tabIndex, 1);
+            }
+        }
+        
+        // Remove from added items
+        this.addedItems.splice(index, 1);
+        
+        // Update displays
+        this.updateAddedItemsDisplay();
+        
+        if (this.addedItems.length === 0) {
+            this.disableSubmitButtons();
+        }
+    }
+
+    async submitConfig(status = 'active') {
+        if (Object.keys(this.config).length === 0) {
+            alert('No configuration to submit');
+            return;
+        }
+        
+        try {
+            const domain = window.domain || 'http://127.0.0.1:5000/';
+            const endpoint = domain + 'api/submit-config';
+            
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    config: this.config,
+                    user_id: this.USER_CONFIG.user_id,
+                    tab_config: this.user_tab,
+                    status: status
+                })
+            });
+            
+            const result = await response.json();
+            console.log('Configuration submission result:', result);
+            
+            if (result.success) {
+                this.showSuccess('Configuration submitted successfully!');
+            } else {
+                this.showError('Failed to submit configuration: ' + result.error);
+            }
+            
+        } catch (error) {
+            console.error('Error submitting configuration:', error);
+            this.showError('Error submitting configuration: ' + error.message);
+        }
+    }
+
+    async submitPreviewAndRedirect() {
+        if (Object.keys(this.config).length === 0) {
+            alert('No configuration to submit');
+            return;
+        }
+
+        try {
+            // Store config in sessionStorage
+            sessionStorage.setItem("config_data", JSON.stringify(this.config));
+            sessionStorage.setItem("tab_config", JSON.stringify(this.user_tab));
+            sessionStorage.setItem("user_id", this.USER_CONFIG.user_id);
+
+            // Open preview in new tab
+            window.open('/preview', '_blank');
+
+        } catch (error) {
+            console.error('Error during preview redirection:', error);
+            alert('Error: ' + error.message);
+        }
+    }
+
+    resetConfig() {
+        if (confirm('Are you sure you want to reset the entire configuration?')) {
+            this.config = {};
+            this.addedItems = [];
+            this.user_tab = { Admin: { tab_list: [] } };
+            this.resetSelections();
+            this.updateAddedItemsDisplay();
+            this.disableSubmitButtons();
+            this.showSuccess('Configuration reset successfully');
+        }
+    }
+
+    // Utility methods
+    resetSelections() {
+        this.shadowRoot.getElementById('tabSelect').value = '';
+        this.shadowRoot.getElementById('uiTemplateSelect').value = '';
+        this.shadowRoot.getElementById('newTabName').value = '';
+        this.hideSteps();
+    }
+
+    showStep2() {
+        this.shadowRoot.getElementById('step2').classList.remove('hidden');
+    }
+
+    showStep3() {
+        this.shadowRoot.getElementById('step3').classList.remove('hidden');
+    }
+
+    hideSteps() {
+        this.shadowRoot.getElementById('step2').classList.add('hidden');
+        this.shadowRoot.getElementById('step3').classList.add('hidden');
+    }
+
+    enableSubmitButtons() {
+        this.shadowRoot.getElementById('submitBtn').disabled = false;
+        this.shadowRoot.getElementById('previewAndRedirectBtn').disabled = false;
+        this.shadowRoot.getElementById('saveBtn').disabled = false;
+    }
+
+    disableSubmitButtons() {
+        this.shadowRoot.getElementById('submitBtn').disabled = true;
+        this.shadowRoot.getElementById('previewAndRedirectBtn').disabled = true;
+        this.shadowRoot.getElementById('saveBtn').disabled = true;
+    }
+
+    showSuccess(message) {
+        alert('✅ ' + message);
+    }
+
+    showError(message) {
+        alert('❌ ' + message);
+    }
+
+    // Getter and Setter for value
+    get value() {
+        return {
+            config: this.config,
+            user_tab: this.user_tab,
+            addedItems: this.addedItems
+        };
+    }
+
+    set value(val) {
+        try {
+            const data = typeof val === "string" ? JSON.parse(val) : val;
+            if (data) {
+                this.config = data.config || {};
+                this.user_tab = data.user_tab || { Admin: { tab_list: [] } };
+                this.addedItems = data.addedItems || [];
+                this.updateAddedItemsDisplay();
+                if (this.addedItems.length > 0) {
+                    this.enableSubmitButtons();
+                }
+            }
+        } catch (e) {
+            console.error("Invalid value passed to AppConfig:", e);
+        }
+    }
+
+    // Method to set user configuration
+    setUserConfig(userConfig) {
+        this.USER_CONFIG = { ...this.USER_CONFIG, ...userConfig };
+    }
+}
+
+customElements.define('app-config', AppConfig);
+
+class TabConfig extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+
+        // State
+        this.config = {};
+        this.docTypes = [];
+        this.selectedDocTypes = [];
+        this.currentSuperkey = "";
+        this.addedItems = [];
+        this.user_tab = { Admin: { tab_list: [] } };
+        this.availableControls = [];
+        this.selectedControls = [];
+
+        // User Configuration - can be passed as attributes
+        this.USER_CONFIG = {
+            user_id: 3,
+            program: 'farmer support program',
+            service: 'entity_administration',
+            department: null,
+            role: null,
+            entity: null,
+            useAdvancedFiltering: false
+        };
+
+        // Control type mappings with functions included
+        this.controlMappings = {
+            'create': {"type":"button","tooltip":"Add","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
+            'print': {"type":"button","tooltip":"Print","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
+            'location': {"type":"button","tooltip":"Location","tag":"location","roles":["User","Admin"],"name":"<i class='fa fa-map-marker'></i> ","function":"get_location()","class":"btn btn-warning btn-xs my-xs-btn"},
+            'edit': {"type":"button","tooltip":"Edit","tag":"edit","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'></i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
+            'delete': {"type":"button","tooltip":"Delete","tag":"delete","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
+            'graphs': {"type":"button","tooltip":"Graph","tag":"graphs","roles":["Admin"],"name":"<i class='fa fa-chart-bar'></i> ","function":"graphInitialization()","class":"btn btn-primary btn-xs my-xs-btn"},
+            'chartTemplates': {"type": "select", "tooltip":"this is a test description","tag": "chartTemplates", "roles": ["Admin"], "name": "DAQ Config", "options": [],"function":"getChartTemplate","textContent": "Chart Templates"},
+            'items': {"type": "select", "tooltip":"this is a test description","tag": "items", "roles": ["Admin"], "name": "DAQ Config", "options": [],"textContent": "Items"},
+            'entriesPerPage': {"type": "select", "tooltip":"this is a test description","tag": "entriesPerPage", "roles": ["Admin","Approver","User"], "name": "EntriesPerPage", "options": [2,3,5,10,15,20,25,30,35,40,45,50], "textContent": "Rows/Page"}
+        };
+    }
+
+    connectedCallback() {
+        this.render();
+        this.initializeEventListeners();
+        this.loadTabControls();
+    }
+
+    render() {
+        this.shadowRoot.innerHTML = `
+            <style>
+                .config-container { font-family: Arial, sans-serif; }
+                .step { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+                .step h4 { margin: 0 0 15px 0; color: #333; }
+                .form-group { margin: 10px 0; }
+                .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+                .form-control { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+                .btn { padding: 8px 16px; margin: 5px; border: none; border-radius: 4px; cursor: pointer; }
+                .btn-primary { background: #007bff; color: white; }
+                .btn-success { background: #28a745; color: white; }
+                .btn-danger { background: #dc3545; color: white; }
+                .btn-warning { background: #ffc107; color: black; }
+                .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+                .new-tab-container { display: block; margin-top: 10px; }
+                .controls-panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; margin: 15px 0; }
+                .control-item { display: flex; align-items: center; padding: 8px; border: 1px solid #eee; border-radius: 4px; }
+                .control-item input[type="checkbox"] { margin-right: 8px; }
+                .control-item label { flex: 1; margin-right: 10px; }
+                .roles-input { flex: 0 0 120px; padding: 4px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px; }
+                .roles-label { font-size: 11px; color: #666; margin-right: 5px; }
+                .selected-doctypes { margin: 15px 0; }
+                .template-tag { display: inline-block; background: #e9ecef; padding: 5px 10px; margin: 3px; border-radius: 15px; position: relative; }
+                .template-tag .remove-btn { background: #dc3545; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; margin-left: 8px; cursor: pointer; font-size: 12px; }
+                .added-items-container { margin-top: 20px; }
+                .added-item { padding: 10px; margin: 5px 0; background: #f8f9fa; border-radius: 4px; position: relative; }
+                .added-item .remove-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); }
+                .document-info { margin: 10px 0; padding: 10px; background: #e9ecef; border-radius: 4px; }
+                .preview-btn { margin: 5px; }
+                .hidden { display: none; }
+            </style>
+            
+            <div class="config-container">
+                <!-- Step 1: Create New Tab -->
+                <div class="step" id="step1">
+                    <h4>Step 1: Create New Tab</h4>
+                    <div class="form-group">
+                        <div class="new-tab-container">
+                            <label for="newTabName">Tab Name:</label>
+                            <input type="text" id="newTabName" class="form-control" placeholder="Enter new tab name">
+                            <button id="confirmNewTab" class="btn btn-primary">Create Tab</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Configure Controls -->
+                <div class="step hidden" id="step2">
+                    <h4>Step 2: Configure Tab Controls</h4>
+                    <div id="controlsPanel" class="controls-panel">
+                        <!-- Controls will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Step 3: Select Doc Types -->
+                <div class="step hidden" id="step3">
+                    <h4>Step 3: Select Document Types</h4>
+                    <div class="form-group">
+                        <label for="docTypeSelect">Add Document Type:</label>
+                        <select id="docTypeSelect" class="form-control">
+                            <option value="">Select a Document Type...</option>
+                        </select>
+                        <button id="addDocTypeBtn" class="btn btn-success" disabled>Add Document Type</button>
+                    </div>
+                    <div class="selected-doctypes" id="selectedDocTypes">
+                        <label>Selected Document Types:</label>
+                        <div id="docTypeTags"></div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Actions -->
+                <div class="step hidden" id="step4">
+                    <h4>Step 4: Actions</h4>
+                    <button id="previewBtn" class="btn btn-warning preview-btn" disabled>Preview DocTypes</button>
+                </div>
+
+                <!-- Added Items Display -->
+                <div class="added-items-container hidden" id="addedItemsContainer">
+                    <h4>Added Items</h4>
+                    <div id="addedItemsList"></div>
+                </div>
+            </div>
+        `;
+    }
+
+    initializeEventListeners() {
+        const confirmNewTab = this.shadowRoot.getElementById('confirmNewTab');
+        const docTypeSelect = this.shadowRoot.getElementById('docTypeSelect');
+        const addDocTypeBtn = this.shadowRoot.getElementById('addDocTypeBtn');
+        const previewBtn = this.shadowRoot.getElementById('previewBtn');
+
+        confirmNewTab.addEventListener('click', () => this.confirmNewTab());
+        docTypeSelect.addEventListener('change', (e) => this.handleDocTypeSelection(e.target.value));
+        addDocTypeBtn.addEventListener('click', () => this.addSelectedDocType());
+        previewBtn.addEventListener('click', () => this.previewDocTypes());
+    }
+
+    handleControlSelection(event) {
+        const checkbox = event.target;
+        const controlName = checkbox.value;
+        const functionName = checkbox.dataset.function || "";
+        const controlId = checkbox.id.replace("control_", "");
+        const rolesInput = this.shadowRoot.getElementById(`roles_${controlId}`);
+
+        if (checkbox.checked) {
+            if (rolesInput) rolesInput.disabled = false;
+
+            const affiliations = rolesInput && rolesInput.value.trim()
+                ? rolesInput.value.split(",").map(r => r.trim()).filter(Boolean)
+                : [];
+
+            const existingIndex = this.selectedControls.findIndex(c =>
+                String(c.controlId) === String(controlId) || c.tag === controlName
+            );
+
+            if (existingIndex > -1) {
+                const existing = this.selectedControls[existingIndex];
+                existing.affiliations = affiliations;
+                if (functionName && functionName.trim()) existing.function = functionName;
+                existing.controlId = controlId;
+            } else {
+                let controlConfig;
+                if (this.controlMappings[controlName]) {
+                    controlConfig = { ...this.controlMappings[controlName] };
+                    if (controlConfig.roles) delete controlConfig.roles;
+                    controlConfig.affiliations = affiliations;
+                    controlConfig.controlId = controlId;
+                    if (functionName && functionName.trim()) controlConfig.function = functionName;
+                } else {
+                    controlConfig = {
+                        type: "button",
+                        tooltip: controlName,
+                        tag: controlName,
+                        affiliations: affiliations,
+                        name: controlName,
+                        function: functionName || "",
+                        class: "btn btn-secondary btn-xs",
+                        controlId: controlId
+                    };
+                }
+                this.selectedControls.push(controlConfig);
+            }
+        } else {
+            if (rolesInput) {
+                rolesInput.value = "";
+                rolesInput.disabled = true;
+            }
+
+            this.selectedControls = this.selectedControls.filter(c =>
+                !(String(c.controlId) === String(controlId) || c.tag === controlName)
+            );
+        }
+
+        if (this.selectedControls.length > 0) {
+            this.showStep3();
+        }
+
+        console.log('Selected controls:', this.selectedControls);
+    }
+
+    updateAffiliations(controlId, rawValue) {
+        const affiliations = rawValue && String(rawValue).trim()
+            ? String(rawValue).split(",").map(s => s.trim()).filter(Boolean)
+            : [];
+
+        let idx = this.selectedControls.findIndex(c => String(c.controlId) === String(controlId));
+
+        if (idx === -1) {
+            const ctrl = this.availableControls.find(ac => String(ac.id) === String(controlId));
+            if (ctrl) {
+                idx = this.selectedControls.findIndex(c => c.tag === ctrl.control_name);
+            }
+        }
+
+        if (idx > -1) {
+            this.selectedControls[idx].affiliations = affiliations;
+        }
+    }
+
+    confirmNewTab() {
+        const newTabName = this.shadowRoot.getElementById('newTabName').value.trim();
+        if (!newTabName) {
+            alert('Please enter a tab name');
+            return;
+        }
+        
+        const existingTab = (this.user_tab && this.user_tab.Admin && Array.isArray(this.user_tab.Admin.tab_list))
+            ? this.user_tab.Admin.tab_list.find(tab => tab.Name === newTabName)
+            : null;
+        if (existingTab) {
+            alert('Tab name already exists. Please choose a different name.');
+            return;
+        }
+        
+        this.currentSuperkey = newTabName;
+        if (!this.user_tab.Admin) this.user_tab.Admin = { tab_list: [] };
+        this.user_tab.Admin.tab_list.push({ Name: this.currentSuperkey });
+        
+        this.loadDocTypes();
+        this.showStep2();
+        this.showStep3();
+    }
+
+    async loadDocTypes() {
+        try {
+            const templatesResponse = await getDocTemplates("dropdown");
+            const docTypes = Array.isArray(templatesResponse) ? templatesResponse.filter(Boolean) : [];
+            
+            if (!docTypes || docTypes.length === 0) {
+                console.warn('No Document Types available');
+                this.docTypes = [];
+                return;
+            }
+            
+            const docTypeSelect = this.shadowRoot.getElementById('docTypeSelect');
+            if (!docTypeSelect) return;
+            docTypeSelect.innerHTML = '<option value="">Select a Document Type...</option>';
+            this.docTypes = docTypes;
+            
+            docTypes.forEach((doc, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = doc.doc_type || doc.name || `doc-${index}`;
+                option.dataset.docInfo = JSON.stringify(doc);
+                docTypeSelect.appendChild(option);
+            });
+            
+        } catch (error) {
+            console.error('Error loading Document Types:', error);
+        }
+    }
+
+    handleDocTypeSelection(value) {
+        const addDocTypeBtn = this.shadowRoot.getElementById('addDocTypeBtn');
+        addDocTypeBtn.disabled = (value === '');
+    }
+
+    addSelectedDocType() {
+        const docTypeSelect = this.shadowRoot.getElementById('docTypeSelect');
+        const selectedIndex = docTypeSelect.value;
+        
+        if (selectedIndex !== '') {
+            const doc = this.docTypes[selectedIndex];
+            
+            const alreadySelected = this.selectedDocTypes.find(d => d.doc_type === doc.doc_type);
+            if (alreadySelected) {
+                alert('Document Type already selected');
+                return;
+            }
+            
+            this.selectedDocTypes.push(doc);
+            this.updateSelectedDocTypesDisplay();
+            
+            docTypeSelect.value = '';
+            this.shadowRoot.getElementById('addDocTypeBtn').disabled = true;
+            
+            if (this.selectedDocTypes.length > 0) {
+                this.showStep4();
+                this.shadowRoot.getElementById('previewBtn').disabled = false;
+            }
+        }
+    }
+
+    updateSelectedDocTypesDisplay() {
+        const docTypeTags = this.shadowRoot.getElementById('docTypeTags');
+        if (!docTypeTags) return;
+        docTypeTags.innerHTML = '';
+        
+        this.selectedDocTypes.forEach((doc, index) => {
+            const tag = document.createElement('span');
+            tag.className = 'template-tag';
+            tag.innerHTML = `
+                ${doc.doc_type || doc.name || 'Unnamed'}
+                <button class="remove-btn" onclick="this.getRootNode().host.removeSelectedDocType(${index})">×</button>
+            `;
+            docTypeTags.appendChild(tag);
+        });
+    }
+
+    removeSelectedDocType(index) {
+        this.selectedDocTypes.splice(index, 1);
+        this.updateSelectedDocTypesDisplay();
+        
+        if (this.selectedDocTypes.length === 0) {
+            this.shadowRoot.getElementById('step4').classList.add('hidden');
+        }
+    }
+
+    previewDocTypes() {
+        if (this.selectedDocTypes.length > 0) {
+            console.log('Preview docTypes:', this.selectedDocTypes);
+            alert(`Preview functionality - ${this.selectedDocTypes.length} document types selected`);
+        } else {
+            alert('No document types selected to preview');
+        }
+    }
+
+    updateAddedItemsDisplay() {
+        const container = this.shadowRoot.getElementById('addedItemsContainer');
+        const list = this.shadowRoot.getElementById('addedItemsList');
+        
+        if (!list || !container) return;
+        list.innerHTML = '';
+        
+        if (this.addedItems.length > 0) {
+            container.classList.remove('hidden');
+            this.addedItems.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'added-item';
+                itemDiv.innerHTML = `
+                    <strong>${item.superkey}</strong><br>
+                    <small>DocTypes: ${item.docTypes.map(t => t.doc_type || t.name).join(', ')}</small><br>
+                    <small>Controls: ${item.controls.map(c => `${c.tag}${c.affiliations && c.affiliations.length ? `[${c.affiliations.join(',')}]` : ''}`).join(', ')}</small>
+                    <button class="btn btn-danger remove-btn" onclick="this.getRootNode().host.removeAddedItem(${index})">
+                        Remove
+                    </button>
+                `;
+                list.appendChild(itemDiv);
+            });
+        } else {
+            container.classList.add('hidden');
+            list.innerHTML = '';
+        }
+    }
+
+    removeAddedItem(index) {
+        const item = this.addedItems[index];
+        if (!item) return;
+
+        if (this.config[item.superkey]) {
+            delete this.config[item.superkey];
+        }
+
+        if (this.user_tab.Admin && this.user_tab.Admin.tab_list) {
+            const tabIndex = this.user_tab.Admin.tab_list.findIndex(tab => tab.Name === item.superkey);
+            if (tabIndex > -1) {
+                this.user_tab.Admin.tab_list.splice(tabIndex, 1);
+            }
+        }
+
+        this.addedItems.splice(index, 1);
+        this.updateAddedItemsDisplay();
+
+        const roleInputs = this.shadowRoot.querySelectorAll('.roles-input');
+        roleInputs.forEach(input => input.value = '');
+    }
+
+    resetSelections() {
+        const newTabNameEl = this.shadowRoot.getElementById('newTabName');
+        if (newTabNameEl) newTabNameEl.value = '';
+        const docTypeSelect = this.shadowRoot.getElementById('docTypeSelect');
+        if (docTypeSelect) docTypeSelect.value = '';
+        this.selectedDocTypes = [];
+        this.selectedControls = [];
+        this.currentSuperkey = "";
+        this.updateSelectedDocTypesDisplay();
+        
+        const cbs = this.shadowRoot.querySelectorAll('input[type="checkbox"]');
+        cbs.forEach(cb => cb.checked = false);
+
+        const roleInputs = this.shadowRoot.querySelectorAll('.roles-input');
+        roleInputs.forEach(input => {
+            input.value = '';
+            input.disabled = true;
+        });
+
+        this.hideSteps();
+    }
+
+    showStep2() {
+        this.shadowRoot.getElementById('step2').classList.remove('hidden');
+    }
+
+    showStep3() {
+        this.shadowRoot.getElementById('step3').classList.remove('hidden');
+    }
+
+    showStep4() {
+        this.shadowRoot.getElementById('step4').classList.remove('hidden');
+    }
+
+    hideSteps() {
+        this.shadowRoot.getElementById('step2').classList.add('hidden');
+        this.shadowRoot.getElementById('step3').classList.add('hidden');
+        this.shadowRoot.getElementById('step4').classList.add('hidden');
+    }
+
+    showSuccess(message) {
+        alert('✅ ' + message);
+    }
+
+    showError(message) {
+        alert('❌ ' + message);
+    }
+
+    validateTabData() {
+        // Check if we have a tab name and at least one control selected
+        if (!this.currentSuperkey || this.currentSuperkey.trim() === "") {
+            console.error("Tab validation failed: No tab name provided");
+            return false;
+        }
+        
+        if (!this.selectedControls || this.selectedControls.length === 0) {
+            console.error("Tab validation failed: No controls selected");
+            return false;
+        }
+        
+        // Validate that each control has required properties
+        for (const control of this.selectedControls) {
+            if (!control.tag || control.tag.trim() === "") {
+                console.error("Tab validation failed: Control missing tag property");
+                return false;
+            }
+            
+            if (!control.type) {
+                console.error("Tab validation failed: Control missing type property");
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    // Method to update the items control with selected document types
+    updateItemsControlOptions() {
+        // Find the items control in selectedControls
+        const itemsControl = this.selectedControls.find(control => control.tag === 'items');
+        
+        if (itemsControl) {
+            // Convert selectedDocTypes to options format
+            itemsControl.options = this.selectedDocTypes.map(doc => ({
+                value: doc.doc_type || doc.name,
+                label: doc.doc_type || doc.name
+            }));
+            
+            console.log("Updated items control options:", itemsControl.options);
+        }
+    }
+
+    // Call this method whenever selectedDocTypes changes
+    updateSelectedDocTypesDisplay() {
+        const docTypeTags = this.shadowRoot.getElementById('docTypeTags');
+        if (!docTypeTags) return;
+        docTypeTags.innerHTML = '';
+        
+        this.selectedDocTypes.forEach((doc, index) => {
+            const tag = document.createElement('span');
+            tag.className = 'template-tag';
+            tag.innerHTML = `
+                ${doc.doc_type || doc.name || 'Unnamed'}
+                <button class="remove-btn" onclick="this.getRootNode().host.removeSelectedDocType(${index})">×</button>
+            `;
+            docTypeTags.appendChild(tag);
+        });
+        
+        // Update the items control options whenever doc types change
+        this.updateItemsControlOptions();
+    }
+
+    addSelectedDocType() {
+        const docTypeSelect = this.shadowRoot.getElementById('docTypeSelect');
+        const selectedIndex = docTypeSelect.value;
+        
+        if (selectedIndex !== '') {
+            const doc = this.docTypes[selectedIndex];
+            
+            const alreadySelected = this.selectedDocTypes.find(d => d.doc_type === doc.doc_type);
+            if (alreadySelected) {
+                alert('Document Type already selected');
+                return;
+            }
+            
+            this.selectedDocTypes.push(doc);
+            this.updateSelectedDocTypesDisplay(); // This will now update items control
+            
+            docTypeSelect.value = '';
+            this.shadowRoot.getElementById('addDocTypeBtn').disabled = true;
+            
+            if (this.selectedDocTypes.length > 0) {
+                this.showStep4();
+                this.shadowRoot.getElementById('previewBtn').disabled = false;
+            }
+        }
+    }
+
+    removeSelectedDocType(index) {
+        this.selectedDocTypes.splice(index, 1);
+        this.updateSelectedDocTypesDisplay(); // This will now update items control
+        
+        if (this.selectedDocTypes.length === 0) {
+            this.shadowRoot.getElementById('step4').classList.add('hidden');
+        }
+    }
+
+    // Getter returns only the controls list formatted for backend
+    get value() {
+        // First, update the items control options with current selected doc types
+        this.updateItemsControlOptions();
+        
+        // ✅ FIXED: Remove tab_name from here
+        const result = {
+            controls: []  // Only controls, no tab_name
+        };
+
+        if (this.selectedControls && this.selectedControls.length > 0) {
+            result.controls = this.selectedControls.map(control => {
+                const controlCopy = { ...control };
+
+                // For items control, ensure options are populated with selected doc types
+                if (controlCopy.tag === 'items') {
+                    controlCopy.options = this.selectedDocTypes.map(doc => ({
+                        value: doc.doc_type || doc.name,
+                        label: doc.doc_type || doc.name,
+                        id: doc.id,
+                        name: doc.name
+                    }));
+                    console.log("Items control options set to:", controlCopy.options);
+                }
+
+                // Always keep affiliations as array of strings
+                if (controlCopy.affiliations && Array.isArray(controlCopy.affiliations)) {
+                    controlCopy.affiliations = controlCopy.affiliations.map(String);
+                } else {
+                    controlCopy.affiliations = [];
+                }
+
+                // Remove UI-only fields
+                delete controlCopy.controlId;
+
+                return controlCopy;
+            });
+        }
+
+        console.log("TabConfig getter returning (controls only):", result);
+        return result; // Now returns { controls: [...] } without tab_name
+    }
+
+    // Setter - remove the separate doc_types handling since we're using items control options
+    set value(val) {
+        try {
+            console.log("TabConfig setter called with:", val);
+            
+            // Reset current state first
+            this.resetSelections();
+            
+            // Handle different input formats
+            let data = val;
+            if (typeof val === "string") {
+                try {
+                    data = JSON.parse(val);
+                } catch (e) {
+                    console.error("Failed to parse string value:", e);
+                    return;
+                }
+            }
+            
+            if (!data) {
+                console.error("No data provided to setter");
+                return;
+            }
+            
+            // If data is an array, get the first item
+            if (Array.isArray(data) && data.length > 0) {
+                data = data[0];
+                console.log("Extracted object from array:", data);
+            }
+            
+            // Set tab name
+            if (data.tab_name) {
+                this.currentSuperkey = data.tab_name;
+                const newTabNameEl = this.shadowRoot.getElementById('newTabName');
+                if (newTabNameEl) {
+                    newTabNameEl.value = data.tab_name;
+                    console.log("Set tab name:", data.tab_name);
+                }
+            }
+            
+            // Extract controls from tab_common_template
+            let controlsData = [];
+            
+            if (data.tab_common_template) {
+                console.log("Found tab_common_template:", data.tab_common_template);
+                let templateData = data.tab_common_template;
+                
+                // Parse if it's a string
+                if (typeof templateData === 'string') {
+                    try {
+                        templateData = JSON.parse(templateData);
+                    } catch (e) {
+                        console.error("Failed to parse tab_common_template:", e);
+                        return;
+                    }
+                }
+                
+                // Extract controls array
+                if (templateData && Array.isArray(templateData.controls)) {
+                    controlsData = templateData.controls;
+                    console.log("Extracted controls:", controlsData);
+                }
+            }
+            
+            // Set the selected controls
+            this.selectedControls = controlsData.map((control, index) => {
+                const controlCopy = { ...control };
+                
+                // Ensure affiliations is properly formatted as array of strings
+                if (controlCopy.affiliations && Array.isArray(controlCopy.affiliations)) {
+                    controlCopy.affiliations = controlCopy.affiliations.map(String);
+                } else if (controlCopy.affiliations && typeof controlCopy.affiliations === 'string') {
+                    controlCopy.affiliations = controlCopy.affiliations.split(',').map(s => s.trim()).filter(Boolean);
+                } else {
+                    controlCopy.affiliations = [];
+                }
+                
+                // Add controlId for UI tracking
+                controlCopy.controlId = controlCopy.tag || `control-${index}`;
+                
+                return controlCopy;
+            });
+            
+            console.log("Processed selectedControls:", this.selectedControls);
+            
+            // Extract document types from items control options (if exists)
+            const itemsControl = this.selectedControls.find(control => control.tag === 'items');
+            if (itemsControl && Array.isArray(itemsControl.options)) {
+                // Convert options back to selectedDocTypes format
+                this.selectedDocTypes = itemsControl.options.map(option => ({
+                    doc_type: option.value || option.label,
+                    name: option.label,
+                    id: option.id
+                }));
+                console.log("Extracted doc types from items control:", this.selectedDocTypes);
+            }
+            
+            // Load controls only once and then update UI
+            if (!this.isInitialized) {
+                this.loadTabControls().then(() => {
+                    this.updateUIFromData();
+                });
+                this.isInitialized = true;
+            } else {
+                this.updateUIFromData();
+            }
+            
+        } catch (e) {
+            console.error("Error in TabConfig setter:", e);
+        }
+    }
+
+     updateUIFromData() {
+        // Show all steps since we have existing data
+        this.showStep2();
+        this.showStep3();
+        this.showStep4();
+        
+        // Update the controls panel with existing data
+        this.populateControlsPanel();
+        
+        // Update document types display
+        this.updateSelectedDocTypesDisplay();
+        
+        // Load doc types if needed
+        if (this.selectedControls.length > 0) {
+            this.loadDocTypes().then(() => {
+                // After loading doc types, try to restore the selected ones
+                this.restoreSelectedDocTypes();
+            });
+        }
+    }
+
+    // Method to restore selected document types after loading all doc types
+    restoreSelectedDocTypes() {
+        if (this.selectedDocTypes.length > 0) {
+            console.log("Restoring selected document types:", this.selectedDocTypes);
+            
+            // Clear current selection and re-add from stored data
+            this.selectedDocTypes.forEach(storedDoc => {
+                // Find the corresponding doc in loaded docTypes
+                const matchingDoc = this.docTypes.find(doc => 
+                    doc.doc_type === storedDoc.doc_type || doc.name === storedDoc.doc_type
+                );
+                
+                if (matchingDoc) {
+                    // Check if not already added
+                    const alreadyExists = this.selectedDocTypes.find(d => 
+                        d.doc_type === matchingDoc.doc_type
+                    );
+                    
+                    if (!alreadyExists) {
+                        this.selectedDocTypes.push(matchingDoc);
+                    }
+                }
+            });
+            
+            this.updateSelectedDocTypesDisplay();
+        }
+    }
+
+    async loadTabControls() {
+        try {
+            const controlsResponse = await fetchHelperData("getTabControls", "dropdown");
+            if (Array.isArray(controlsResponse) && controlsResponse.length) {
+                this.availableControls = controlsResponse.filter(Boolean);
+            } else {
+                this.availableControls = Object.keys(this.controlMappings).map((k, idx) => ({
+                    id: idx,
+                    control_name: k,
+                    function_name: this.controlMappings[k].function || ""
+                }));
+            }
+            
+            this.populateControlsPanel();
+        } catch (error) {
+            console.error('Error loading tab controls:', error);
+            this.availableControls = Object.keys(this.controlMappings).map((k, idx) => ({
+                id: idx,
+                control_name: k,
+                function_name: this.controlMappings[k].function || ""
+            }));
+            this.populateControlsPanel();
+        }
+    }
+
+    populateControlsPanel() {
+        const controlsPanel = this.shadowRoot.getElementById('controlsPanel');
+        if (!controlsPanel) return;
+        
+        controlsPanel.innerHTML = '';
+
+        this.availableControls.forEach(control => {
+            const controlName = control.control_name || control;
+            const controlId = control.id || controlName;
+            const functionName = control.function_name || '';
+
+            const controlDiv = document.createElement('div');
+            controlDiv.className = 'control-item';
+            controlDiv.innerHTML = `
+                <input type="checkbox" id="control_${controlId}" value="${controlName}" data-function="${functionName}">
+                <label for="control_${controlId}">${controlName}</label>
+                <span class="roles-label">Affiliations:</span>
+                <input type="text" class="roles-input" id="roles_${controlId}" placeholder="1,2,3" title="Enter role IDs separated by commas (e.g., 1,2,3)" disabled>
+            `;
+
+            controlsPanel.appendChild(controlDiv);
+
+            const checkbox = this.shadowRoot.getElementById(`control_${controlId}`);
+            const rolesInput = this.shadowRoot.getElementById(`roles_${controlId}`);
+
+            checkbox.addEventListener('change', (e) => this.handleControlSelection(e));
+            rolesInput.addEventListener('input', (e) => this.updateAffiliations(controlId, e.target.value));
+
+            // Restore existing state from selectedControls
+            const existingControl = this.selectedControls.find(c => 
+                c.tag === controlName || c.controlId === controlId
+            );
+
+            if (existingControl) {
+                console.log("Restoring control:", controlName, existingControl);
+                checkbox.checked = true;
+                rolesInput.disabled = false;
+                
+                if (Array.isArray(existingControl.affiliations)) {
+                    rolesInput.value = existingControl.affiliations.join(',');
+                } else if (typeof existingControl.affiliations === 'string') {
+                    rolesInput.value = existingControl.affiliations;
+                }
+            }
+        });
+        
+        console.log("UI populated with controls");
+    }
+
+    setUserConfig(userConfig) {
+        this.USER_CONFIG = { ...this.USER_CONFIG, ...userConfig };
+    }
+}
+
+customElements.define('tab-config', TabConfig);

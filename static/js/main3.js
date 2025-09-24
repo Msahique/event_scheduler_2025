@@ -2882,6 +2882,33 @@ function editModalCreation(response,selectedItemFromDropdown) {
 
                 let graphsControl = document.getElementById(field.field);
 
+            } else if (field.control === "tab-config") {
+                console.log("Initializing tab-config for:", field.field);
+                
+                // Create the custom element
+                input = document.createElement("tab-config");
+                input.id = field.field;
+                input.className = 'form-control';
+
+                // Append to form group
+                formGroup.appendChild(label);
+                formGroup.appendChild(input);
+                form.appendChild(formGroup);
+
+                // Set the value after the element is in DOM
+                if (rowData && rowData.length > 0) {
+                    setTimeout(() => {
+                        try {
+                            // Pass the actual row data object, not the array
+                            const rowDataObject = rowData[0];
+                            console.log("Setting tab-config with row data:", rowDataObject);
+                            input.value = rowDataObject; // Pass the object, not the array
+                            
+                        } catch (error) {
+                            console.error("Error setting tab-config value:", error);
+                        }
+                    }, 100);
+                }
             } else if (field.control === "checkbox") {
                 console.log(4);
                 input = document.createElement('input');
@@ -2964,12 +2991,13 @@ function editModalCreation(response,selectedItemFromDropdown) {
                 }
             } else {
                 console.log(7);
-                console.log(label, field.field, field.control, rowData[field.field]);
+                console.log(label, field.field, field.control, rowData[0][field.field]);
                 
                 input = document.createElement('input');
                 input.className = 'form-control';
                 input.name = field.field;
-                input.value = rowData[field.field] || "";
+                input.value = rowData[0][field.field] || "";
+                console.log(input.value);
             }
             console.log(8)
 
@@ -3113,6 +3141,79 @@ function editModalCreation(response,selectedItemFromDropdown) {
                 } else {
                     console.warn(`graphs-control element not found.`);
                     newValue = currentValue;
+                }
+            }
+            else if (field.control === 'tab-config') {
+                let tabElement = document.querySelector("tab-config");
+                if (tabElement) {
+                    const tabName = tabElement.currentSuperkey || "";
+                    const tabTemplate = tabElement.value;
+
+                    console.log('=== TAB UPDATE DEBUG ===');
+                    console.log('Tab Name:', tabName);
+                    console.log('Tab Template:', tabTemplate);
+                    console.log('Tab Template Type:', typeof tabTemplate);
+
+                    if (!tabElement.validateTabData()) {
+                        alert("Please ensure the tab configuration is valid before saving.");
+                        return;
+                    }
+
+                    // Compare with current DB template
+                    let currentTabTemplate = rowData.tab_common_template;
+                    if (Array.isArray(rowData) && rowData.length > 0) {
+                        currentTabTemplate = Array.isArray(rowData[0]) && rowData[0].length > 0
+                            ? rowData[0][0].tab_common_template
+                            : rowData[0].tab_common_template;
+                    }
+
+                    let hasTabChanged = false;
+                    try {
+                        let currentTemplateObj = typeof currentTabTemplate === 'string'
+                            ? JSON.parse(currentTabTemplate)
+                            : currentTabTemplate;
+                        hasTabChanged = JSON.stringify(currentTemplateObj) !== JSON.stringify(tabTemplate);
+                    } catch (e) {
+                        console.log('Error comparing templates, assuming changed:', e);
+                        hasTabChanged = true;
+                    }
+
+                    if (hasTabChanged) {
+                        const tabPayload = {
+                            tabName: tabName,
+                            tabCommonTemplate: tabTemplate,
+                            status: 'active'
+                        };
+
+                        let tabId = Array.isArray(rowData) && rowData.length > 0
+                            ? (Array.isArray(rowData[0]) && rowData[0].length > 0 ? rowData[0][0].id : rowData[0].id)
+                            : rowData.id;
+
+                        console.log('Tab ID for update:', tabId);
+                        console.log('Tab Payload for Update:', tabPayload);
+
+                        try {
+                            const result = await updateTabToBackend(tabPayload, tabId);
+                            console.log('Tab updated successfully:', result);
+                            alert('Tab configuration updated successfully!');
+                            editModal.hide();
+
+                            if (typeof get_data_list === 'function') {
+                                get_data_list(selectedItemFromDropdown, {});
+                            }
+                            return; // ✅ Exit saveChanges completely here
+                        } catch (error) {
+                            console.error('Error updating tab:', error);
+                            alert(`Error updating tab configuration: ${error.message}`);
+                            return;
+                        }
+                    } else {
+                        console.log('No tab changes detected, skipping tab update');
+                        continue; // ✅ Skip adding to updatedData
+                    }
+                } else {
+                    console.warn(`tab-config element not found.`);
+                    continue;
                 }
             }
             else if (field.field === "schedule") {
@@ -3275,6 +3376,69 @@ async function sendChartToBackend(payload) {
                 }
             }));
         }
+}
+
+async function sendTabToBackend(tabPayload) {
+    try {
+        console.log('Sending tab to backend:', tabPayload);
+        
+        const response = await fetch('/api/register-tab', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                // Add any authentication headers if needed
+                // 'Authorization': 'Bearer ' + yourAuthToken
+            },
+            body: JSON.stringify(tabPayload)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('Tab registration successful:', result);
+        return result;
+
+    } catch (error) {
+        console.error('Error sending tab to backend:', error);
+        throw error;
+    }
+}
+
+async function updateTabToBackend(tabPayload, tabId) {
+    try {
+        console.log('Updating tab in backend:', tabPayload, 'ID:', tabId);
+        
+        const response = await fetch('/api/update-tab', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                // Add any authentication headers if needed
+                // 'Authorization': 'Bearer ' + yourAuthToken
+            },
+            body: JSON.stringify({
+                ...tabPayload,
+                tabId: tabId
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('Tab update successful:', result);
+        return result;
+
+    } catch (error) {
+        console.error('Error updating tab in backend:', error);
+        throw error;
+    }
 }
 
 async function Registration_modal() {
@@ -3453,7 +3617,7 @@ async function Registration_modal() {
                 input.addEventListener("change", (e) => window[field.onchange](e));
             }
 
-        } else if (["schedule-control", "venue-control","field-mapping-control", "doc-template-control", "attachment-control", "field-attribute-control", "maps-control", "venue-location-control","template-mapping-control","graphs-control"].includes(field.control)) {
+        } else if (["schedule-control", "venue-control","field-mapping-control", "doc-template-control", "attachment-control", "field-attribute-control", "maps-control", "venue-location-control","template-mapping-control","graphs-control","app-config","tab-config"].includes(field.control)) {
             input = document.createElement(field.control);
             input.id = fieldId;
             if (currentValue) {
@@ -3597,7 +3761,50 @@ async function Registration_modal() {
                 }
                 continue; // Skip normal input processing
             }
+            if (field.control === 'tab-config') {
+                let tabElement = document.querySelector("tab-config");
+                if (tabElement) {
+                    // Validate the tab configuration
+                    if (!tabElement.validateTabData()) {
+                        isValid = false;
+                        if (!firstInvalidField) firstInvalidField = tabElement;
+                        continue;
+                    }
 
+                    // Get tab name from the element
+                    const tabName = tabElement.currentSuperkey || "";
+                    console.log('Tab name:', tabName);
+
+                    // Get controls object directly from the getter
+                    const tabControls = tabElement.value; // returns { controls: [...] }
+
+                    // Prepare payload for backend - Send as OBJECT, not string
+                    const tabPayload = {
+                        tabName: tabName,
+                        tabCommonTemplate: tabControls, // Object, not stringified
+                        status: 'draft'
+                    };
+
+                    console.log('Tab payload for saving:', tabPayload);
+                    console.log('Type of tabCommonTemplate:', typeof tabPayload.tabCommonTemplate);
+
+                    try {
+                        const result = await sendTabToBackend(tabPayload);
+                        console.log('Tab saved successfully:', result);
+                        skipCreateEntry = true;
+                        alert('Tab saved successfully!');
+                    } catch (error) {
+                        console.error('Error saving tab:', error);
+                        alert(`Error saving tab: ${error.message}`);
+                        isValid = false;
+                        continue;
+                    }
+                } else {
+                    console.warn(`tab-config element not found.`);
+                    isValid = false;
+                }
+                continue; // Skip normal input processing
+            }
             if (!input && field.control !== 'schedule-control' && field.control !== 'venue-control' && field.control !== 'file' && field.control !== 'attachment-control' && field.control !== 'doc-template-control' && field.control !== 'field-attribute-control' && field.control !== 'maps-control' && field.control !== 'venue-location-control') {
                 console.warn(`Field ${field.field} is missing in the form.`);
                 continue;
@@ -3827,6 +4034,52 @@ async function Registration_modal() {
                     }
                 } else {
                     console.error('graphs-control element not found!');
+                }
+                continue; // Skip normal input processing AND don't store any reference
+            }
+            if (field.control === 'tab-config') {
+                let tabElement = document.querySelector("tab-config");
+                if (tabElement) {
+                    // For drafts, we can save even incomplete tabs
+                    const tabName = tabElement.currentSuperkey || "";
+                    const tabTemplate = tabElement.value;
+                    
+                    // DEBUG: Log what we're sending
+                    console.log('=== TAB SAVE DEBUG ===');
+                    console.log('Tab Name:', tabName);
+                    console.log('Tab Template:', tabTemplate);
+                    console.log('Tab Template Type:', typeof tabTemplate);
+                    console.log('Tab Template Length:', tabTemplate ? tabTemplate.length : 'null/undefined');
+                    
+                    // Check if tabTemplate is valid JSON
+                    if (tabTemplate) {
+                        try {
+                            const parsed = JSON.parse(tabTemplate);
+                            console.log('Parsed Tab Template:', parsed);
+                        } catch (e) {
+                            console.error('Tab Template is not valid JSON:', e);
+                        }
+                    }
+                    
+                    const tabPayload = {
+                        tabName: tabName,
+                        tabCommonTemplate: tabTemplate,
+                        status: 'draft'
+                    };
+                    
+                    console.log('Full Tab Payload:', tabPayload);
+                    console.log('=== END TAB DEBUG ===');
+                    
+                    try {
+                        const result = await sendTabToBackend(tabPayload);
+                        console.log('Tab saved as draft:', result);
+                        skipCreateEntry = true; // Set flag to skip createEntry since we handled saving here
+                    } catch (error) {
+                        console.error(`Error saving tab as draft:`, error);
+                        // For drafts, continue even if tab save fails
+                    }
+                } else {
+                    console.error('tab-control element not found!');
                 }
                 continue; // Skip normal input processing AND don't store any reference
             }

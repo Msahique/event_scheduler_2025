@@ -5100,10 +5100,10 @@ var MainConfig={
     },
     "App Config":{
         "controls":[
-         {"type":"button","tooltip":"this is a test description","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"editor_config_modal()","class":"btn btn-success btn-xs my-xs-btn"},
+         {"type":"button","tooltip":"this is a test description","tag":"create","roles":["Admin"],"name":"<i class='fa fa-plus'></i> ","function":"Registration_modal()","class":"btn btn-success btn-xs my-xs-btn"},
          {"type":"button","tooltip":"this is a test description","tag":"print","roles":["Admin"],"name":"<i class='fa fa-print'></i> ","function":"print_document()","class":"btn btn-primary btn-xs my-xs-btn"},
-         {"type":"button","tooltip":"this is a test description","tag":"print","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
-         {"type":"button","tooltip":"this is a test description","tag":"print","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
+         {"type":"button","tooltip":"this is a test description","tag":"edit","roles":["Admin"],"name":"<i class='bi bi-pencil-fill'><i> ","function":"edit_data()","class":"btn btn-warning btn-sm"},
+         {"type":"button","tooltip":"this is a test description","tag":"delete","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
          {"type": "select", "tooltip":"this is a test description","tag": "items", "roles": ["Admin"], "name": "Entity Config", "options": ["Final Templates"],"textContent": "Items"},
          {"type": "select", "tooltip":"this is a test description","tag": "entriesPerPage", "roles": ["Admin","Approver","User"], "name": "EntriesPerPage", "options": [1,5,10,25,50,100], "textContent": "Rows/Page"},
         ],
@@ -5116,22 +5116,9 @@ var MainConfig={
                 "create":{
                 "roles":["Admin"],   
                 "data":[
-                   {"helper":"getTabs",
+                   {"helper":"none",
                      "fields":[
-                        {"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
-                        {"seqno":"","field":"Select tab","edit":true,"show":true,"control":"dropdown","onchange":"tab_onchange_trigger","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":""},
-                        //{"seqno":"","field":"Select tab","edit":true,"show":true,"control":"dropdown","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":""}
-                        ]
-                   },
-                    {  "helper":"none",
-                        "fields":[
-                            {"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
-                            {"seqno":"","field":"doc_final_templates_id","name":"Id","edit":false,"show":false,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Affiliation ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                            {"seqno":"","field":"doc_type","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Type","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"seqno":"","field":"affiliation_id","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                            {"seqno":"","field":"doc_description","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Description","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"seqno":"","field":"doc_template","edit":true,"show":true,"control":"doc-template-control","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Doc Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            {"seqno":"","field":"ui_template","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                            {"seqno":"","field":"App Configuration","edit":true,"show":true,"control":"app-config","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -5146,15 +5133,13 @@ var MainConfig={
                 "data":[
                     {  "helper":"none",
                         "fields":[
-{"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
-                            {"seqno":"","field":"doc_final_templates_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
+                           {"seqno":"","field": "description", "edit": false, "show": true, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
+                            {"seqno":"","field":"id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","filter_default_value":"","lang":{"english":"Template ID","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
                             {"seqno":"","field":"affiliation_id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Affiliation Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
                             {"seqno":"","field":"template","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Final Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
                             {"seqno":"","field":"status","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Status","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
                             {"seqno":"","field":"log","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Log","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
                             {"seqno":"","field":"remarks","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"Remarks","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}},
-                            
-                           
                         ],
                         "edit_option":true,
                         "delete_option":true
@@ -5168,11 +5153,8 @@ var MainConfig={
                     "data":[
                         {  "helper":"none",
                             "fields":[
-{"seqno":"","field": "description", "edit": false, "show": false, "control": "text", "trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory": false, "tooltip":"this is a test description","default": "", "filter_type":"textbox","filter_default_value":"","lang": {"english": "Description", "german": "Beschreibung", "arabic": "الوصف", "french": "Description"}},
-                                {"seqno":"","field":"role_id","name":"Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Id","german":"Rollen-ID","arabic":"معرف الدور","french":"ID du rôle"}},
-                                {"seqno":"","field":"entity_id","name":"Entity Id","edit":false,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Entity Id","german":"Entitäts-ID","arabic":"معرف الكيان","french":"ID de l'entité"}},
-                                {"seqno":"","field":"role_name","name":"Role Name","edit":true,"show":true,"control":"text","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"textbox","filter_default_value":"","filter_type":"textbox","filter_default_value":"","lang":{"english":"Role Name","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
-                            ],
+                                 {"seqno":"","field":"App Configuration","edit":true,"show":true,"control":"app-config","trigger":[{"event":"onchange","function":"tab_onchange_trigger"}, {"event":"onselect","function":"tab_onselect_trigger"}],"mandatory":true,"tooltip":"this is a test description","default":"","filter_type":"","lang":{"english":"UI Template","german":"Rollenname","arabic":"اسم الدور","french":"Nom du rôle"}}
+                             ],
                             "edit_option":true,
                             "delete_option":true
                         }
@@ -5356,10 +5338,248 @@ var MainConfig={
          {"type":"button","tooltip":"Delete","tag":"print","roles":["Admin"],"name":"<i class='bi bi-trash-fill'></i> ","function":"delete_data()","class":"btn btn-danger btn-sm"},
          {"type":"button","tooltip":"Graph","tag":"graphs","roles":["Admin"],"name":"<i class='fa fa-chart-bar'></i> ","function":"graphInitialization()","class":"btn btn-primary btn-xs my-xs-btn"},
          {"type": "select", "tooltip":"this is a test description","tag": "chartTemplates", "roles": ["Admin"], "name": "DAQ Config", "options": [],"function":"getChartTemplate","textContent": "Chart Templates"},
-         {"type": "select", "tooltip":"this is a test description","tag": "items", "roles": ["Admin"], "name": "DAQ Config", "options": ["Tab Registry","Chart Templates"],"textContent": "Items"},
+         {"type": "select", "tooltip":"this is a test description","tag": "items", "roles": ["Admin"], "name": "DAQ Config", "options": ["Tab Configuration","Tab Registry"],"textContent": "Items"},
          {"type": "select", "tooltip":"this is a test description","tag": "entriesPerPage", "roles": ["Admin","Approver","User"], "name": "EntriesPerPage", "options": [2,3,5,10,15,20,25,30,35,40,45,50], "textContent": "Rows/Page"},
       ],
       "Roles":["Admin"],
+      "Tab Configuration": {
+         "doc_title": "",
+         "getDataApi": "config/list_details",
+         "key": "id",
+         "attchment_files_path": "",
+         "job": {
+            "create": {
+               "roles": ["Admin"],
+               "data": [
+               {
+                  "helper": "none",
+                  "fields": [
+                     {
+                     "seqno": "",
+                     "field": "id",
+                     "edit": false,
+                     "show": true,
+                     "control": "text",
+                     "trigger": [
+                        { "event": "onchange", "function": "tab_onchange_trigger" }
+                     ],
+                     "mandatory": true,
+                     "tooltip": "ID",
+                     "default": "",
+                     "lang": {
+                        "english": "ID",
+                        "german": "ID",
+                        "arabic": "المعرف",
+                        "french": "Nom de l'onglet"
+                     }
+                     },
+                     {
+                     "seqno": "",
+                     "field": "control_name",
+                     "edit": true,
+                     "show": true,
+                     "control": "text",
+                     "trigger": [
+                        { "event": "onchange", "function": "tab_onchange_trigger" }
+                     ],
+                     "mandatory": true,
+                     "tooltip": "Control Name",
+                     "default": "",
+                     "lang": {
+                        "english": "Control Name",
+                        "german": "Registername",
+                        "arabic": "اسم التبويب",
+                        "french": "Nom de l'onglet"
+                     }
+                     },
+                     {
+                     "seqno": "",
+                     "field": "function_name",
+                     "edit": true,
+                     "show": true,
+                     "control": "text",
+                     "trigger": [
+                        { "event": "onchange", "function": "tab_onchange_trigger" }
+                     ],
+                     "mandatory": true,
+                     "tooltip": "Control Name",
+                     "default": "",
+                     "lang": {
+                        "english": "Control Name",
+                        "german": "Registername",
+                        "arabic": "اسم التبويب",
+                        "french": "Nom de l'onglet"
+                     }
+                     }
+                  ]
+               }
+               ],
+               "api": "config/new",
+               "onSuccess": "Tab_created()"
+            },
+            "list": {
+               "roles": ["Admin"],
+               "data": [
+               {
+                  "helper": "none",
+                  "fields": [
+                     {
+                     "seqno": "",
+                     "field": "id",
+                     "edit": false,
+                     "show": false,
+                     "control": "text",
+                     "trigger": [
+                        { "event": "onchange", "function": "tab_onchange_trigger" },
+                        { "event": "onselect", "function": "tab_onselect_trigger" }
+                     ],
+                     "mandatory": false,
+                     "tooltip": "Unique Tab ID",
+                     "default": "",
+                     "filter_type": "textbox",
+                     "filter_default_value": "",
+                     "lang": {
+                        "english": "ID",
+                        "german": "ID",
+                        "arabic": "المعرف",
+                        "french": "Identifiant"
+                     }
+                     },
+                     {
+                     "seqno": "",
+                     "field": "control_name",
+                     "edit": false,
+                     "show": true,
+                     "control": "text",
+                     "trigger": [
+                        { "event": "onchange", "function": "tab_onchange_trigger" },
+                        { "event": "onselect", "function": "tab_onselect_trigger" }
+                     ],
+                     "mandatory": true,
+                     "tooltip": "Control Name",
+                     "default": "",
+                     "filter_type": "textbox",
+                     "filter_default_value": "",
+                     "lang": {
+                        "english": "Control Name",
+                        "german": "Registername",
+                        "arabic": "اسم التبويب",
+                        "french": "Nom de l'onglet"
+                     }
+                     },
+                     {
+                     "seqno": "",
+                     "field": "function_name",
+                     "edit": false,
+                     "show": true,
+                     "control": "text",
+                     "trigger": [
+                        { "event": "onchange", "function": "tab_onchange_trigger" },
+                        { "event": "onselect", "function": "tab_onselect_trigger" }
+                     ],
+                     "mandatory": true,
+                     "tooltip": "Tab Function Name",
+                     "default": "",
+                     "filter_type": "textbox",
+                     "filter_default_value": "",
+                     "lang": {
+                        "english": "Function Name",
+                        "german": "Gemeinsame Vorlage",
+                        "arabic": "القالب المشترك للتبويب",
+                        "french": "Modèle commun d'onglet"
+                     }
+                     }
+                  ],
+                  "edit_option": true,
+                  "delete_option": true
+               }
+               ],
+               "api": "config/list_details",
+               "onSuccess": "Tab_listed()"
+            },
+            "update": {
+               "roles": ["Admin"],
+               "data": [
+               {
+                  "helper": "none",
+                  "fields": [
+                     {
+                     "seqno": "",
+                     "field": "id",
+                     "edit": false,
+                     "show": false,
+                     "control": "text",
+                     "trigger": [
+                        { "event": "onchange", "function": "tab_onchange_trigger" },
+                        { "event": "onselect", "function": "tab_onselect_trigger" }
+                     ],
+                     "mandatory": false,
+                     "tooltip": "Unique Tab ID",
+                     "default": "",
+                     "filter_type": "textbox",
+                     "filter_default_value": "",
+                     "lang": {
+                        "english": "ID",
+                        "german": "ID",
+                        "arabic": "المعرف",
+                        "french": "Identifiant"
+                     }
+                     },
+                     {
+                     "seqno": "",
+                     "field": "control_name",
+                     "edit": true,
+                     "show": true,
+                     "control": "text",
+                     "trigger": [
+                        { "event": "onchange", "function": "tab_onchange_trigger" },
+                        { "event": "onselect", "function": "tab_onselect_trigger" }
+                     ],
+                     "mandatory": true,
+                     "tooltip": "Control Name",
+                     "default": "",
+                     "filter_type": "textbox",
+                     "filter_default_value": "",
+                     "lang": {
+                        "english": "Control Name",
+                        "german": "Registername",
+                        "arabic": "اسم التبويب",
+                        "french": "Nom de l'onglet"
+                     }
+                     },
+                     {
+                     "seqno": "",
+                     "field": "function_name",
+                     "edit": true,
+                     "show": true,
+                     "control": "text",
+                     "trigger": [
+                        { "event": "onchange", "function": "tab_onchange_trigger" },
+                        { "event": "onselect", "function": "tab_onselect_trigger" }
+                     ],
+                     "mandatory": true,
+                     "tooltip": "Tab Function Name",
+                     "default": "",
+                     "filter_type": "textbox",
+                     "filter_default_value": "",
+                     "lang": {
+                        "english": "Function Name",
+                        "german": "Gemeinsame Vorlage",
+                        "arabic": "القالب المشترك للتبويب",
+                        "french": "Modèle commun d'onglet"
+                     }
+                     }
+                     
+                  ],
+                  "edit_option": true,
+                  "delete_option": true
+               }
+               ],
+               "api": "config/modifications"
+            },
+            "cancel": { "api": "config", "onSuccess": "Tab_canceled()" }
+         }
+      },
       "Tab Registry": {
          "doc_title": "",
          "getDataApi": "config/list_details",
@@ -5376,7 +5596,7 @@ var MainConfig={
                      "seqno": "",
                      "field": "tab_name",
                      "edit": true,
-                     "show": true,
+                     "show": false,
                      "control": "text",
                      "trigger": [
                         { "event": "onchange", "function": "tab_onchange_trigger" }
@@ -5396,7 +5616,7 @@ var MainConfig={
                      "field": "tab_common_template",
                      "edit": true,
                      "show": true,
-                     "control": "text",
+                     "control": "tab-config",
                      "trigger": [
                         { "event": "onchange", "function": "tab_onchange_trigger" }
                      ],
@@ -5448,7 +5668,7 @@ var MainConfig={
                      "seqno": "",
                      "field": "tab_name",
                      "edit": false,
-                     "show": true,
+                     "show": false,
                      "control": "text",
                      "trigger": [
                         { "event": "onchange", "function": "tab_onchange_trigger" },
@@ -5528,7 +5748,7 @@ var MainConfig={
                      "seqno": "",
                      "field": "tab_name",
                      "edit": true,
-                     "show": true,
+                     "show": false,
                      "control": "text",
                      "trigger": [
                         { "event": "onchange", "function": "tab_onchange_trigger" }
@@ -5550,7 +5770,7 @@ var MainConfig={
                      "field": "tab_common_template",
                      "edit": true,
                      "show": true,
-                     "control": "text",
+                     "control": "tab-config",
                      "trigger": [
                         { "event": "onchange", "function": "tab_onchange_trigger" }
                      ],

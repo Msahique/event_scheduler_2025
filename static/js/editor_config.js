@@ -223,392 +223,392 @@
     }
 
     function createTableForOperation(operationName, operationData, tabId) {
-            if (!operationData.data || !operationData.data.length) {
-                return '';
+        if (!operationData.data || !operationData.data.length) {
+            return '';
+        }
+
+        const operationId = `${tabId}_${operationName}`;
+        
+        let html = `
+            <div class="mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <button class="btn btn-link text-decoration-none p-0 w-100 text-start collapsed" type="button" 
+                                    data-bs-toggle="collapse" data-bs-target="#${operationId}" 
+                                    aria-expanded="false" aria-controls="${operationId}">
+                                <i class="fas fa-${getOperationIcon(operationName)} me-2"></i>${operationName.toUpperCase()} Operation
+                                <i class="fas fa-chevron-down float-end mt-1"></i>
+                            </button>
+                        </h6>
+                    </div>
+                    <div id="${operationId}" class="collapse">
+                        <div class="card-body">
+                            <div class="api-info">
+                                <div class="row">
+                                    ${operationData.getDataApi ? `<div class="col-md-4"><strong>API:</strong> <code>${operationData.getDataApi}</code></div>` : ''}
+                                    ${operationData.onSuccess ? `<div class="col-md-4"><strong>Success:</strong> <code>${operationData.onSuccess}</code></div>` : ''}
+                                    ${operationData.roles ? `<div class="col-md-4"><strong>Roles:</strong> ${operationData.roles.join(', ')}</div>` : ''}
+                                </div>
+                            </div>
+                            
+                            <div class="table-container mt-3">
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Field Name</th>
+                                            <th>Field Key</th>
+                                            <th>Control Type</th>
+                                            <th>Show</th>
+                                            <th>Edit</th>
+                                            <th>Mandatory</th>
+                                            <th>Delete Option</th>
+                                            <th>Edit Option</th>
+                                            <th>Default Value</th>
+                                            <th>Filter Type</th>
+                                            <th>Languages</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+        `;
+
+        operationData.data.forEach(dataItem => {
+            if (dataItem.fields) {
+                dataItem.fields.forEach(field => {
+                    const languages = Object.keys(field.lang || {}).join(', ') || 'None';
+                    
+                    html += `
+                        <tr>
+                            <td><span class="field-name">${field.name}</span></td>
+                            <td><span class="field-code">${field.field}</span></td>
+                            <td><span class="control-badge">${field.control}</span></td>
+                            <td class="text-center">${field.show ? '<i class="fas fa-check check-icon"></i>' : '<i class="fas fa-times cross-icon"></i>'}</td>
+                            <td class="text-center">${field.edit ? '<i class="fas fa-check check-icon"></i>' : '<i class="fas fa-times cross-icon"></i>'}</td>
+                            <td class="text-center">${field.mandatory ? '<i class="fas fa-check check-icon"></i>' : '<i class="fas fa-times cross-icon"></i>'}</td>
+                            <td class="text-center">${field.delete_option ? '<i class="fas fa-check check-icon"></i>' : '<i class="fas fa-times cross-icon"></i>'}</td>
+                            <td class="text-center">${field.edit_option ? '<i class="fas fa-check check-icon"></i>' : '<i class="fas fa-times cross-icon"></i>'}</td>
+                            <td>${field.default || '<em>None</em>'}</td>
+                            <td>${field.filter_type || '<em>None</em>'}</td>
+                            <td><span class="lang-list">${languages}</span></td>
+                        </tr>
+                    `;
+                });
             }
+        });
 
-            const operationId = `${tabId}_${operationName}`;
-            
-            let html = `
-                <div class="mb-3">
-                    <div class="card">
-                        <div class="card-header">
-                            <h6 class="mb-0">
-                                <button class="btn btn-link text-decoration-none p-0 w-100 text-start collapsed" type="button" 
-                                        data-bs-toggle="collapse" data-bs-target="#${operationId}" 
-                                        aria-expanded="false" aria-controls="${operationId}">
-                                    <i class="fas fa-${getOperationIcon(operationName)} me-2"></i>${operationName.toUpperCase()} Operation
-                                    <i class="fas fa-chevron-down float-end mt-1"></i>
-                                </button>
-                            </h6>
-                        </div>
-                        <div id="${operationId}" class="collapse">
-                            <div class="card-body">
-                                <div class="api-info">
-                                    <div class="row">
-                                        ${operationData.getDataApi ? `<div class="col-md-4"><strong>API:</strong> <code>${operationData.getDataApi}</code></div>` : ''}
-                                        ${operationData.onSuccess ? `<div class="col-md-4"><strong>Success:</strong> <code>${operationData.onSuccess}</code></div>` : ''}
-                                        ${operationData.roles ? `<div class="col-md-4"><strong>Roles:</strong> ${operationData.roles.join(', ')}</div>` : ''}
-                                    </div>
-                                </div>
-                                
-                                <div class="table-container mt-3">
-                                    <table class="table table-bordered table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Field Name</th>
-                                                <th>Field Key</th>
-                                                <th>Control Type</th>
-                                                <th>Show</th>
-                                                <th>Edit</th>
-                                                <th>Mandatory</th>
-                                                <th>Delete Option</th>
-                                                <th>Edit Option</th>
-                                                <th>Default Value</th>
-                                                <th>Filter Type</th>
-                                                <th>Languages</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-            `;
-
-            operationData.data.forEach(dataItem => {
-                if (dataItem.fields) {
-                    dataItem.fields.forEach(field => {
-                        const languages = Object.keys(field.lang || {}).join(', ') || 'None';
-                        
-                        html += `
-                            <tr>
-                                <td><span class="field-name">${field.name}</span></td>
-                                <td><span class="field-code">${field.field}</span></td>
-                                <td><span class="control-badge">${field.control}</span></td>
-                                <td class="text-center">${field.show ? '<i class="fas fa-check check-icon"></i>' : '<i class="fas fa-times cross-icon"></i>'}</td>
-                                <td class="text-center">${field.edit ? '<i class="fas fa-check check-icon"></i>' : '<i class="fas fa-times cross-icon"></i>'}</td>
-                                <td class="text-center">${field.mandatory ? '<i class="fas fa-check check-icon"></i>' : '<i class="fas fa-times cross-icon"></i>'}</td>
-                                <td class="text-center">${field.delete_option ? '<i class="fas fa-check check-icon"></i>' : '<i class="fas fa-times cross-icon"></i>'}</td>
-                                <td class="text-center">${field.edit_option ? '<i class="fas fa-check check-icon"></i>' : '<i class="fas fa-times cross-icon"></i>'}</td>
-                                <td>${field.default || '<em>None</em>'}</td>
-                                <td>${field.filter_type || '<em>None</em>'}</td>
-                                <td><span class="lang-list">${languages}</span></td>
-                            </tr>
-                        `;
-                    });
-                }
-            });
-
-            html += `
-                                        </tbody>
-                                    </table>
-                                </div>
+        html += `
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        `;
+
+        return html;
+    }
+
+    function getOperationIcon(operation) {
+        const icons = {
+            'create': 'plus',
+            'list': 'list',
+            'update': 'edit',
+            'cancel': 'times'
+        };
+        return icons[operation] || 'cog';
+    }
+
+    function renderTemplate(template) {
+        let html = `<div class="accordion" id="templateAccordion">`;
+        
+        // Iterate through all top-level keys (tabs) in the template
+        Object.keys(template).forEach((tabKey, tabIndex) => {
+            if (tabKey === 'key') return; // Skip the key field
+            
+            const tabData = template[tabKey];
+            const tabId = `tab_${tabIndex}`;
+            
+            html += `
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="heading_${tabId}">
+                        <button class="accordion-button collapsed" type="button" 
+                                data-bs-toggle="collapse" data-bs-target="#collapse_${tabId}" 
+                                aria-expanded="false" aria-controls="collapse_${tabId}">
+                            <i class="fas fa-seedling me-2"></i>${tabKey.replace(/_/g, ' ').toUpperCase()} Configuration
+                        </button>
+                    </h2>
+                    <div id="collapse_${tabId}" class="accordion-collapse collapse" 
+                            aria-labelledby="heading_${tabId}" data-bs-parent="#templateAccordion">
+                        <div class="accordion-body">
+                            <div class="alert alert-info mb-4">
+                                <div class="row">
+                                    <div class="col-md-4"><strong>Key Field:</strong> <code>${template.key}</code></div>
+                                    ${tabData.getDatagetDataApi ? `<div class="col-md-8"><strong>Main API:</strong> <code>${tabData.getDatagetDataApi}</code></div>` : ''}
+                                </div>
+                            </div>
             `;
 
-            return html;
-        }
-
-        function getOperationIcon(operation) {
-            const icons = {
-                'create': 'plus',
-                'list': 'list',
-                'update': 'edit',
-                'cancel': 'times'
-            };
-            return icons[operation] || 'cog';
-        }
-
-        function renderTemplate(template) {
-            let html = `<div class="accordion" id="templateAccordion">`;
-            
-            // Iterate through all top-level keys (tabs) in the template
-            Object.keys(template).forEach((tabKey, tabIndex) => {
-                if (tabKey === 'key') return; // Skip the key field
-                
-                const tabData = template[tabKey];
-                const tabId = `tab_${tabIndex}`;
-                
-                html += `
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="heading_${tabId}">
-                            <button class="accordion-button collapsed" type="button" 
-                                    data-bs-toggle="collapse" data-bs-target="#collapse_${tabId}" 
-                                    aria-expanded="false" aria-controls="collapse_${tabId}">
-                                <i class="fas fa-seedling me-2"></i>${tabKey.replace(/_/g, ' ').toUpperCase()} Configuration
-                            </button>
-                        </h2>
-                        <div id="collapse_${tabId}" class="accordion-collapse collapse" 
-                             aria-labelledby="heading_${tabId}" data-bs-parent="#templateAccordion">
-                            <div class="accordion-body">
-                                <div class="alert alert-info mb-4">
-                                    <div class="row">
-                                        <div class="col-md-4"><strong>Key Field:</strong> <code>${template.key}</code></div>
-                                        ${tabData.getDatagetDataApi ? `<div class="col-md-8"><strong>Main API:</strong> <code>${tabData.getDatagetDataApi}</code></div>` : ''}
-                                    </div>
-                                </div>
-                `;
-
-                // Render operations for this tab
-                if (tabData.job) {
-                    if (tabData.job.create) {
-                        html += createTableForOperation('create', tabData.job.create, tabId);
-                    }
-                    
-                    if (tabData.job.list) {
-                        html += createTableForOperation('list', tabData.job.list, tabId);
-                    }
-                    
-                    if (tabData.job.update) {
-                        html += createTableForOperation('update', tabData.job.update, tabId);
-                    }
-                    
-                    if (tabData.job.cancel) {
-                        html += createTableForOperation('cancel', tabData.job.cancel, tabId);
-                    }
+            // Render operations for this tab
+            if (tabData.job) {
+                if (tabData.job.create) {
+                    html += createTableForOperation('create', tabData.job.create, tabId);
                 }
+                
+                if (tabData.job.list) {
+                    html += createTableForOperation('list', tabData.job.list, tabId);
+                }
+                
+                if (tabData.job.update) {
+                    html += createTableForOperation('update', tabData.job.update, tabId);
+                }
+                
+                if (tabData.job.cancel) {
+                    html += createTableForOperation('cancel', tabData.job.cancel, tabId);
+                }
+            }
 
-                html += `
-                            </div>
+            html += `
                         </div>
                     </div>
-                `;
-            });
+                </div>
+            `;
+        });
 
-            html += `</div>`;
-            return html;
-        }
+        html += `</div>`;
+        return html;
+    }
 
-        function previewTemplate() {
-            const templateSelect = document.getElementById('templateSelect');
-            const selectedIndex = templateSelect.value;
+    function previewTemplate() {
+        const templateSelect = document.getElementById('templateSelect');
+        const selectedIndex = templateSelect.value;
+        
+        if (selectedIndex !== '') {
+            const template = templates[0].ui_template;
+            const modal = new bootstrap.Modal(document.getElementById('templatePreviewModal'));
             
-            if (selectedIndex !== '') {
-                const template = templates[0].ui_template;
-                const modal = new bootstrap.Modal(document.getElementById('templatePreviewModal'));
-                
-                document.getElementById('templatePreviewContent').innerHTML = renderTemplate(template);
-                
-                modal.show();
+            document.getElementById('templatePreviewContent').innerHTML = renderTemplate(template);
+            
+            modal.show();
+        }
+    }
+
+    function renderUIPreview(data) {
+        let html = '';
+        
+        // Iterate through each document/form
+        for (const [documentName, documentData] of Object.entries(data)) {
+            html += `<div class="form-section">`;
+            html += `<div class="section-header" onclick="toggleSection(this)">
+                <span>${documentName.replace(/_/g, ' ')}</span>
+                <i class="fas fa-chevron-down collapse-icon"></i>
+            </div>`;
+            html += `<div class="section-content show">`;
+            
+            // Check if it has job operations
+            if (documentData.job) {
+                html += renderSimpleFields(documentData.job);
+            } else if (documentData.fields) {
+                // Direct fields
+                html += renderSimpleFieldList(documentData.fields);
             }
-        }
-
-        function renderUIPreview(data) {
-            let html = '';
             
-            // Iterate through each document/form
-            for (const [documentName, documentData] of Object.entries(data)) {
-                html += `<div class="form-section">`;
-                html += `<div class="section-header" onclick="toggleSection(this)">
-                    <span>${documentName.replace(/_/g, ' ')}</span>
-                    <i class="fas fa-chevron-down collapse-icon"></i>
+            html += `</div></div>`;
+        }
+        
+        return html;
+    }
+
+    function renderSimpleFields(jobData) {
+        let html = '';
+        let allFields = [];
+        
+        // Collect all unique fields from all operations
+        const operations = Object.keys(jobData);
+        operations.forEach(operation => {
+            if (jobData[operation].data && jobData[operation].data[0] && jobData[operation].data[0].fields) {
+                jobData[operation].data[0].fields.forEach(field => {
+                    // Check if field already exists in allFields
+                    const existingField = allFields.find(f => f.field === field.field);
+                    if (!existingField && field.show) {
+                        allFields.push(field);
+                    }
+                });
+            }
+        });
+        
+        return renderSimpleFieldList(allFields);
+    }
+
+    function renderSimpleFieldList(fields) {
+        let html = '';
+        
+        fields.forEach((field, index) => {
+            if (field.show) {
+                const controlType = getControlDisplayName(field.control);
+                
+                html += `<div class="mb-3">
+                    <label class="form-label fw-semibold">${field.name}</label>
+                    ${renderFieldControl(field)}
                 </div>`;
-                html += `<div class="section-content show">`;
-                
-                // Check if it has job operations
-                if (documentData.job) {
-                    html += renderSimpleFields(documentData.job);
-                } else if (documentData.fields) {
-                    // Direct fields
-                    html += renderSimpleFieldList(documentData.fields);
-                }
-                
-                html += `</div></div>`;
             }
-            
-            return html;
-        }
+        });
+        
+        return html;
+    }
 
-        function renderSimpleFields(jobData) {
-            let html = '';
-            let allFields = [];
+    function getControlDisplayName(control) {
+        const controlMap = {
+            'text': 'Text Box',
+            'password': 'Password Field',
+            'email': 'Email Field',
+            'number': 'Number Input',
+            'date': 'Date Picker',
+            'datetime': 'DateTime Picker',
+            'datetime-local': 'DateTime Picker',
+            'time': 'Time Picker',
+            'dropdown': 'Dropdown',
+            'select': 'Dropdown',
+            'textarea': 'Text Area',
+            'checkbox': 'Checkbox',
+            'radio': 'Radio Button',
+            'file': 'File Upload',
+            'url': 'URL Field',
+            'tel': 'Phone Number',
+            'color': 'Color Picker',
+            'range': 'Range Slider'
+        };
+        
+        return controlMap[control] || 'Text Box';
+    }
+
+    function renderFields(fields) {
+        let html = '';
+        
+        fields.forEach(field => {
+            if (field.show) {
+                html += `<div class="field-group">`;
+                html += `<label class="field-label">
+                    ${field.name}
+                    ${field.mandatory ? '<span class="text-danger">*</span>' : ''}
+                </label>`;
+                html += renderFieldControl(field);
+                html += `</div>`;
+            }
+        });
+        
+        return html;
+    }
+
+    function renderFieldControl(field) {
+        const commonAttributes = `class="form-control field-control" placeholder="${field.name}"`;
+        
+        switch (field.control) {
+            case 'text':
+                return `<input type="text" ${commonAttributes} value="${field.default || ''}">`;
             
-            // Collect all unique fields from all operations
-            const operations = Object.keys(jobData);
-            operations.forEach(operation => {
-                if (jobData[operation].data && jobData[operation].data[0] && jobData[operation].data[0].fields) {
-                    jobData[operation].data[0].fields.forEach(field => {
-                        // Check if field already exists in allFields
-                        const existingField = allFields.find(f => f.field === field.field);
-                        if (!existingField && field.show) {
-                            allFields.push(field);
-                        }
-                    });
+            case 'password':
+                return `<input type="password" ${commonAttributes}>`;
+            
+            case 'email':
+                return `<input type="email" ${commonAttributes} value="${field.default || ''}">`;
+            
+            case 'number':
+                return `<input type="number" ${commonAttributes} value="${field.default || ''}">`;
+            
+            case 'date':
+                return `<input type="date" ${commonAttributes} value="${field.default || ''}">`;
+            
+            case 'datetime':
+            case 'datetime-local':
+                return `<input type="datetime-local" ${commonAttributes} value="${field.default || ''}">`;
+            
+            case 'time':
+                return `<input type="time" ${commonAttributes} value="${field.default || ''}">`;
+            
+            case 'dropdown':
+            case 'select':
+                let options = '';
+                if (field.options && Array.isArray(field.options)) {
+                    options = field.options.map(option => 
+                        `<option value="${option}" ${option === field.default ? 'selected' : ''}>${option}</option>`
+                    ).join('');
+                } else {
+                    options = `<option value="">Select ${field.name}</option>
+                                <option value="option1">Option 1</option>
+                                <option value="option2">Option 2</option>
+                                <option value="option3">Option 3</option>`;
                 }
-            });
+                return `<select class="form-select field-control">
+                    <option value="">Select ${field.name}</option>
+                    ${options}
+                </select>`;
             
-            return renderSimpleFieldList(allFields);
-        }
-
-        function renderSimpleFieldList(fields) {
-            let html = '';
+            case 'textarea':
+                return `<textarea ${commonAttributes} rows="3">${field.default || ''}</textarea>`;
             
-            fields.forEach((field, index) => {
-                if (field.show) {
-                    const controlType = getControlDisplayName(field.control);
-                    
-                    html += `<div class="mb-3">
-                        <label class="form-label fw-semibold">${field.name}</label>
-                        ${renderFieldControl(field)}
-                    </div>`;
-                }
-            });
+            case 'checkbox':
+                return `<div class="form-check">
+                    <input class="form-check-input" type="checkbox" ${field.default ? 'checked' : ''}>
+                    <label class="form-check-label">${field.name}</label>
+                </div>`;
             
-            return html;
-        }
-
-        function getControlDisplayName(control) {
-            const controlMap = {
-                'text': 'Text Box',
-                'password': 'Password Field',
-                'email': 'Email Field',
-                'number': 'Number Input',
-                'date': 'Date Picker',
-                'datetime': 'DateTime Picker',
-                'datetime-local': 'DateTime Picker',
-                'time': 'Time Picker',
-                'dropdown': 'Dropdown',
-                'select': 'Dropdown',
-                'textarea': 'Text Area',
-                'checkbox': 'Checkbox',
-                'radio': 'Radio Button',
-                'file': 'File Upload',
-                'url': 'URL Field',
-                'tel': 'Phone Number',
-                'color': 'Color Picker',
-                'range': 'Range Slider'
-            };
-            
-            return controlMap[control] || 'Text Box';
-        }
-
-        function renderFields(fields) {
-            let html = '';
-            
-            fields.forEach(field => {
-                if (field.show) {
-                    html += `<div class="field-group">`;
-                    html += `<label class="field-label">
-                        ${field.name}
-                        ${field.mandatory ? '<span class="text-danger">*</span>' : ''}
-                    </label>`;
-                    html += renderFieldControl(field);
-                    html += `</div>`;
-                }
-            });
-            
-            return html;
-        }
-
-        function renderFieldControl(field) {
-            const commonAttributes = `class="form-control field-control" placeholder="${field.name}"`;
-            
-            switch (field.control) {
-                case 'text':
-                    return `<input type="text" ${commonAttributes} value="${field.default || ''}">`;
-                
-                case 'password':
-                    return `<input type="password" ${commonAttributes}>`;
-                
-                case 'email':
-                    return `<input type="email" ${commonAttributes} value="${field.default || ''}">`;
-                
-                case 'number':
-                    return `<input type="number" ${commonAttributes} value="${field.default || ''}">`;
-                
-                case 'date':
-                    return `<input type="date" ${commonAttributes} value="${field.default || ''}">`;
-                
-                case 'datetime':
-                case 'datetime-local':
-                    return `<input type="datetime-local" ${commonAttributes} value="${field.default || ''}">`;
-                
-                case 'time':
-                    return `<input type="time" ${commonAttributes} value="${field.default || ''}">`;
-                
-                case 'dropdown':
-                case 'select':
-                    let options = '';
-                    if (field.options && Array.isArray(field.options)) {
-                        options = field.options.map(option => 
-                            `<option value="${option}" ${option === field.default ? 'selected' : ''}>${option}</option>`
-                        ).join('');
-                    } else {
-                        options = `<option value="">Select ${field.name}</option>
-                                  <option value="option1">Option 1</option>
-                                  <option value="option2">Option 2</option>
-                                  <option value="option3">Option 3</option>`;
-                    }
-                    return `<select class="form-select field-control">
-                        <option value="">Select ${field.name}</option>
-                        ${options}
-                    </select>`;
-                
-                case 'textarea':
-                    return `<textarea ${commonAttributes} rows="3">${field.default || ''}</textarea>`;
-                
-                case 'checkbox':
+            case 'radio':
+                if (field.options && Array.isArray(field.options)) {
+                    return field.options.map(option => 
+                        `<div class="form-check">
+                            <input class="form-check-input" type="radio" name="${field.field}" value="${option}" ${option === field.default ? 'checked' : ''}>
+                            <label class="form-check-label">${option}</label>
+                        </div>`
+                    ).join('');
+                } else {
                     return `<div class="form-check">
-                        <input class="form-check-input" type="checkbox" ${field.default ? 'checked' : ''}>
-                        <label class="form-check-label">${field.name}</label>
+                        <input class="form-check-input" type="radio" name="${field.field}" value="yes">
+                        <label class="form-check-label">Yes</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="${field.field}" value="no">
+                        <label class="form-check-label">No</label>
                     </div>`;
-                
-                case 'radio':
-                    if (field.options && Array.isArray(field.options)) {
-                        return field.options.map(option => 
-                            `<div class="form-check">
-                                <input class="form-check-input" type="radio" name="${field.field}" value="${option}" ${option === field.default ? 'checked' : ''}>
-                                <label class="form-check-label">${option}</label>
-                            </div>`
-                        ).join('');
-                    } else {
-                        return `<div class="form-check">
-                            <input class="form-check-input" type="radio" name="${field.field}" value="yes">
-                            <label class="form-check-label">Yes</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="${field.field}" value="no">
-                            <label class="form-check-label">No</label>
-                        </div>`;
-                    }
-                
-                case 'file':
-                    return `<input type="file" class="form-control field-control">`;
-                
-                default:
-                    return `<input type="text" ${commonAttributes} value="${field.default || ''}">`;
-            }
-        }
-
-        function toggleSection(header) {
-            const content = header.nextElementSibling;
-            const icon = header.querySelector('.collapse-icon');
+                }
             
-            if (content.classList.contains('show')) {
-                content.classList.remove('show');
-                header.classList.add('collapsed');
-            } else {
-                content.classList.add('show');
-                header.classList.remove('collapsed');
-            }
-        }
-
-
-        function previewUI() {
-            const templateSelect = document.getElementById('templateSelect');
-            const selectedIndex = templateSelect.value;
+            case 'file':
+                return `<input type="file" class="form-control field-control">`;
             
-            if (selectedIndex !== '') {
-                const template = templates[selectedIndex].ui_template; // Use selectedIndex instead of hardcoded 0
-                const modal = new bootstrap.Modal(document.getElementById('uiPreviewModal'));
-                
-                document.getElementById('uiPreviewContent').innerHTML = renderUIPreview(template);
-                
-                modal.show();
-            } else {
-                alert('Please select a template first');
-            }
+            default:
+                return `<input type="text" ${commonAttributes} value="${field.default || ''}">`;
         }
+    }
+
+    function toggleSection(header) {
+        const content = header.nextElementSibling;
+        const icon = header.querySelector('.collapse-icon');
+        
+        if (content.classList.contains('show')) {
+            content.classList.remove('show');
+            header.classList.add('collapsed');
+        } else {
+            content.classList.add('show');
+            header.classList.remove('collapsed');
+        }
+    }
+
+
+    function previewUI() {
+        const templateSelect = document.getElementById('templateSelect');
+        const selectedIndex = templateSelect.value;
+        
+        if (selectedIndex !== '') {
+            const template = templates[selectedIndex].ui_template; // Use selectedIndex instead of hardcoded 0
+            const modal = new bootstrap.Modal(document.getElementById('uiPreviewModal'));
+            
+            document.getElementById('uiPreviewContent').innerHTML = renderUIPreview(template);
+            
+            modal.show();
+        } else {
+            alert('Please select a template first');
+        }
+    }
 
     // Add to configuration
     function addToConfig() {

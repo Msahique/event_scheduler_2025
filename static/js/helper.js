@@ -71,7 +71,7 @@ async function getDocTemplates(data) {
         "request_token": "", 
         "tab":"Document Config",
         "event": "getDocTemplates",
-        "type":"Document Registry",
+        "type":"Document Data Templates",
         "qry": {
             "select_fields": ["doc_type"], 
             "where_data": {}
@@ -81,7 +81,7 @@ async function getDocTemplates(data) {
     /*body.array.forEach(element => {
         console.log(element);
     });*/
-    if (data=="dropdown") {body.qry.select_fields.push("description")}
+    // if (data=="dropdown") {body.qry.select_fields.push("description")}
     console.log("Fetching:", end_point, body);
     var options =  API_helper_call(end_point, body);
     console.log(options)
@@ -136,7 +136,32 @@ async function fetchDocTypes(data) {
     console.log(options);
     return options;
 }
-  
+
+async function fetchTabs(data) {
+    var end_point = domain + "options";
+    var body = {
+        "requestor_id": "",
+        "request_token": "",
+        "event": "fetchTabs",
+        "type": "Tab Registry",
+        "qry": {
+            "select_fields": ["tab_name"], // Fetch the tab_name column
+            "where_data": {}
+        }
+    };
+
+    // if (data == "dropdown") {
+    //     body.qry.select_fields.push("description"); // Add description if dropdown is needed
+    // }
+
+    console.log("Fetching:", end_point, body);
+
+    var options = API_helper_call(end_point, body);
+    console.log(options);
+    return options;
+}
+
+
 async function getTabs(data) {
     var end_point = domain +"options";
     var body={
@@ -153,6 +178,30 @@ async function getTabs(data) {
     console.log("Fetching:", end_point, body);
     //var options =  API_helper_call(end_point, body);
     var options= ["entity", "event", "resource", "document", "user", "role", "program_service", "affiliation"];
+    console.log(options)
+    return options
+}
+
+async function getTabControls(data) {
+    var end_point = domain +"options";
+    var body={
+        "requestor_id":"", 
+        "request_token": "", 
+        "tab":"Document Config",
+        "event": "getTabControls",
+        "type":"Tab Configuration",
+        "qry": {
+            "select_fields": ["control_name","function_name"], 
+            "where_data": {}
+            }
+    }
+    console.log("Fetching:", end_point, body);
+    /*body.array.forEach(element => {
+        console.log(element);
+    });*/
+    // if (data=="dropdown") {body.qry.select_fields.push("description")}
+    console.log("Fetching:", end_point, body);
+    var options =  API_helper_call(end_point, body);
     console.log(options)
     return options
 }
@@ -187,6 +236,24 @@ async function getHtmlTemplates(data) {
         "type": "Document View Templates",
         "qry": {
             "select_fields": ["html"], 
+            "where_data": {}
+            }
+    }
+    if (data=="dropdown") {body.qry.select_fields.push("description")}
+    console.log("Fetching:", end_point, body);
+    var options =  API_helper_call(end_point, body);
+    return options
+}
+
+async function getUITemplates(data) {
+    var end_point = domain +"options";
+    var body={
+        "requestor_id":"", 
+        "request_token": "",
+        "event": "getUITemplates",
+        "type": "Document UI Templates",
+        "qry": {
+            "select_fields": ["ui_template_name"], 
             "where_data": {}
             }
     }

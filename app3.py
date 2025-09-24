@@ -11,7 +11,7 @@ import datetime
 from datetime import datetime, timedelta
 import pymysql
 from db_operations import * 
-
+import traceback
 
 # global variables
 db = pymysql.connect(
@@ -2328,6 +2328,162 @@ def get_db_config():
             "details": str(e)
         }), 500
 
+@app.route('/api/register-tab', methods=['POST'])
+def register_tab():
+    try:
+        if not request.is_json:
+            return jsonify({'success': False, 'message': 'Request must be JSON'}), 400
+
+        data = request.get_json()
+
+        # Required fields check
+        for field in ['tabName', 'tabCommonTemplate', 'status']:
+            if field not in data or not data[field]:
+                return jsonify({'success': False, 'message': f'Missing required field: {field}'}), 400
+
+        tab_name = data['tabName'].strip()
+        tab_common_template = data['tabCommonTemplate']
+        status = data['status'].lower()
+
+        if status not in ['draft', 'active']:
+            return jsonify({'success': False, 'message': 'Status must be "draft" or "active"'}), 400
+
+        if not isinstance(tab_common_template, dict):
+            return jsonify({'success': False, 'message': 'tabCommonTemplate must be a JSON object'}), 400
+
+        tab_common_template_str = json.dumps(tab_common_template)
+        cursor = db.cursor()
+
+        # SIMPLER APPROACH: Always insert as new, handle duplicates differently
+        try:
+            # Try to insert new record
+            cursor.execute(
+                'INSERT INTO tab_registry (tab_name, tab_common_template, status) VALUES (%s, %s, %s)',
+                (tab_name, tab_common_template_str, status)
+            )
+            operation = 'created'
+            tab_id = cursor.lastrowid
+        except Exception as insert_error:
+            # If insert fails (duplicate), then update
+            print(f"Insert failed, trying update: {insert_error}")
+            cursor.execute('SELECT id FROM tab_registry WHERE tab_name = %s', (tab_name,))
+            existing = cursor.fetchone()
+            
+            if existing:
+                # Safe access - convert to list/tuple first
+                existing_list = list(existing) if existing else []
+                tab_id = existing_list[0] if existing_list else None
+                
+                if tab_id:
+                    cursor.execute(
+                        'UPDATE tab_registry SET tab_common_template=%s, status=%s WHERE id=%s',
+                        (tab_common_template_str, status, tab_id)
+                    )
+                    operation = 'updated'
+                else:
+                    raise ValueError("Could not extract ID from existing record")
+            else:
+                raise ValueError("Insert failed and no existing record found")
+
+        db.commit()
+
+        return jsonify({
+            'success': True,
+            'message': f'Tab {operation} successfully',
+            'data': {'id': tab_id, 'tab_name': tab_name, 'status': status, 'operation': operation}
+        }), 200
+
+    except Exception as e:
+        db.rollback()
+        print(f"Error in register_tab: {str(e)}")
+        print(traceback.format_exc())
+        return jsonify({'success': False, 'message': f'Internal server error: {str(e)}'}), 500
+    
+@app.route('/api/update-tab', methods=['PUT'])
+def update_tab():
+    """
+    Update an existing tab configuration
+    Expected payload: {
+        "tabId": integer,
+        "tabName": "string",
+        "tabCommonTemplate": { ... },  # JSON object
+        "status": "draft" or "active"
+    }
+    """
+    try:
+        if not request.is_json:
+            return jsonify({'success': False, 'message': 'Request must be JSON'}), 400
+
+        data = request.get_json()
+
+        # Required fields check
+        for field in ['tabId', 'tabName', 'tabCommonTemplate', 'status']:
+            if field not in data:
+                return jsonify({'success': False, 'message': f'Missing required field: {field}'}), 400
+
+        tab_id = data['tabId']
+        tab_name = data['tabName'].strip()
+        tab_common_template = data['tabCommonTemplate']
+        status = data['status'].lower()
+
+        # Validation
+        if not isinstance(tab_id, int) or tab_id <= 0:
+            return jsonify({'success': False, 'message': 'tabId must be a positive integer'}), 400
+
+        if not tab_name:
+            return jsonify({'success': False, 'message': 'tabName cannot be empty'}), 400
+
+        if status not in ['draft', 'active']:
+            return jsonify({'success': False, 'message': 'Status must be "draft" or "active"'}), 400
+
+        if not isinstance(tab_common_template, dict):
+            return jsonify({'success': False, 'message': 'tabCommonTemplate must be a JSON object'}), 400
+
+        cursor = db.cursor()
+
+        # Check if the tab exists with this ID
+        cursor.execute('SELECT id, tab_name FROM tab_registry WHERE id = %s', (tab_id,))
+        existing_tab = cursor.fetchone()
+
+        if not existing_tab:
+            return jsonify({'success': False, 'message': f'Tab with ID {tab_id} not found'}), 404
+
+        # Check if another tab with the same name exists (excluding current tab)
+        cursor.execute('SELECT id FROM tab_registry WHERE tab_name = %s AND id != %s', (tab_name, tab_id))
+        duplicate_tab = cursor.fetchone()
+
+        if duplicate_tab:
+            return jsonify({'success': False, 'message': f'Another tab with name "{tab_name}" already exists'}), 409
+
+        # Update the tab - Note: MySQL JSON column handles the conversion automatically
+        cursor.execute(
+            '''UPDATE tab_registry 
+               SET tab_name = %s, tab_common_template = %s, status = %s 
+               WHERE id = %s''',
+            (tab_name, json.dumps(tab_common_template), status, tab_id)
+        )
+
+        if cursor.rowcount == 0:
+            return jsonify({'success': False, 'message': 'No rows were updated'}), 500
+
+        db.commit()
+
+        return jsonify({
+            'success': True,
+            'message': 'Tab updated successfully',
+            'data': {
+                'id': tab_id,
+                'tab_name': tab_name,
+                'status': status,
+                'operation': 'updated'
+            }
+        }), 200
+
+    except Exception as e:
+        db.rollback()
+        print(f"Error in update_tab: {str(e)}")
+        print(traceback.format_exc())
+        return jsonify({'success': False, 'message': f'Internal server error: {str(e)}'}), 500
 
 if __name__ == '__main__':
    app.run(host='0.0.0.0', port=5000, debug=True)

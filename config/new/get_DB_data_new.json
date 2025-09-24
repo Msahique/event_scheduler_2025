@@ -49,6 +49,7 @@
     "Env Measurements":"env_measurements",
     "Chart Templates":"chart_templates",
 
+    "Tab Configuration":"tab_control_registry",
     "Tab Registry":"tab_registry"
 }
 
