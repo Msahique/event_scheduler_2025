@@ -391,7 +391,7 @@ async function API_call(domain, endpoint, body = {}, method = "GET", autoPresent
 
 /* USEAGE:  getDocument_data("https://mydomain.com", "/config/list_details", { type: "Invoice" }, "POST");    
    This function first checks sessionStorage for document config by typ. If found, it uses that or else gets it from DB.  */ 
-
+/*
 async function getDocument_data(domain, endpoint, body, method) {
   const docType = body?.qry?.where_data?.ui_template_name || "default";
   console.log(body);
@@ -425,6 +425,55 @@ async function getDocument_data(domain, endpoint, body, method) {
     return data;
   } catch (err) {
     console.error("❌ Failed to fetch document config:", err);
+    throw err;
+  }
+}*/
+
+
+async function getDocument_data(domain, endpoint, body, method) {
+  const docType = body?.ui_template_name || body?.qry?.where_data?.ui_template_name || "default";
+  
+  // Map task_type_id → CRUD action
+  const typeMap = {
+    1: "create",
+    2: "list",
+    3: "update",
+    4: "delete"
+  };
+  const actionType = typeMap[body?.qry?.where_data?.task_type_id] || "list"; 
+  console.log("DocType:", docType, "Action:", actionType);
+
+  // Step 1: Check sessionStorage
+  let storedDocs = sessionStorage.getItem(docType);
+  storedDocs = storedDocs ? JSON.parse(storedDocs) : {};
+  console.log("Cached docs:", storedDocs);
+
+  if (storedDocs[actionType]) {
+    console.log(`✅ Using cached config for ${docType}.${actionType}`);
+    if (domain === "" || endpoint === "") return storedDocs[actionType];
+    present_Data(storedDocs[actionType], actionType);
+    return storedDocs[actionType];
+  }
+
+  // Step 2: Fetch from API if not cached
+  console.log(`⚡ Fetching ${docType}.${actionType} from API...`);
+  try {
+    const response = await API_call(domain, endpoint, body, method, false);
+    console.log("Fetched data:", response);
+
+    // Response looks like { "list": {...} } or { "create": {...} }
+    const crudKey = Object.keys(response)[0]; 
+    const configData = response[crudKey];
+
+    // Save under correct CRUD key
+    storedDocs[crudKey] = configData;
+    sessionStorage.setItem(docType, JSON.stringify(storedDocs));
+
+    //present_Data(configData, crudKey);
+
+    return configData;
+  } catch (err) {
+    console.error(`❌ Failed to fetch ${docType}.${actionType}:`, err);
     throw err;
   }
 }
@@ -2600,7 +2649,7 @@ function deleteRow(rowData) {
         if (data.message) {
             alert("Entry deleted successfully!");
             console.log(page_load_conf.tab)
-            get_data_list(selectedItemFromDropdown,{"affiliation_id":""});
+            get_data_list(selectedItemFromDropdown,{});
             //if (page_load_conf.tab === "Entity") { tab_status[page_load_conf.tab]=0; get_entity_list();}
         } else {
             alert("Error: " + (data.message || "Failed to delete entity."));
@@ -2671,7 +2720,7 @@ async function handleCreateActionFromSelection() {
     }
 }
 
-function editModalCreation(response,selectedItemFromDropdown) {
+async function editModalCreation(response,selectedItemFromDropdown) {
     var rowData = response[0];
     console.log(rowData,selectedItemFromDropdown);
     let form = document.getElementById('editForm');
@@ -2684,23 +2733,49 @@ function editModalCreation(response,selectedItemFromDropdown) {
 
     let data = {};
     var config_path;
+
     if (selectedItemFromDropdown==null){config_path=MainConfig[page_load_conf.tab]; }
-    else{config_path=MainConfig[page_load_conf.tab][selectedItemFromDropdown]; rowData = response[0][0]; }
+    else{
+        var body={
+            "requestor_id":"", 
+            "request_token": "", 
+            "type": "Document UI Templates",
+            "qry": {
+                "select_fields": ["id","task_ui_template"], 
+                "where_data": {"ui_template_name":selectedItemFromDropdown,"task_type_id":3}
+                }
+        }
+        //var get_config = await API_helper_call(domain+"options",body);   console.log(">>>>>",page_load_conf.tab, body)
+       var get_config = await getDocument_data(domain,"options",body,"POST");   console.log(">>>>>",page_load_conf.tab, body)
+       console.log(get_config)
+       let rawConfig = get_config.task_ui_template;  // string 
+
+       config = JSON.parse(rawConfig);          // now it's an object
+       console.log("UI Template Config:", config);
+       config_path = config; // assuming your object is in variable `config`
+        //console.log(Registry);
+        //config_path=MainConfig[page_load_conf.tab][selectedItemFromDropdown]; 
+        rowData = response[0][0]; 
+    }
     console.log("rowData:", rowData);
-    console.log(config_path.job);
-    if(role == "Admin"){data=config_path.job.update.data[0];}
-    else if(role == "Admin"){data=config_path.job.approver.data[0];}
+    console.log(config_path);
+    if(role == "Admin"){data=config_path.update.data[0];}
+    else if(role == "Admin"){data=config_path.approver.data[0];}
     else{console.log("Role not defined")}
 
-  
+    console.log(role,data)
     let fields = data.fields || [];
     if (!fields.length) {
         console.error("No fields found in configuration!");
         return;
     }
-
+    console.log("Fields to render:", fields);
     fields.forEach(field => {
         if (!field.show) return;
+        console.log("rowData : ",rowData);
+        console.log("rowData[0] : ",rowData[0]);
+        console.log("field : ",field.field);
+        console.log("rowData[0][field] : ",rowData[0][field.field]);
 
         let formGroup = document.createElement('div');
         formGroup.className = 'form-group mb-3';
@@ -2951,43 +3026,35 @@ function editModalCreation(response,selectedItemFromDropdown) {
                 input.id = field.field;
 
                 document.body.appendChild(input); // Ensure it's in the DOM
-                console.log("rowData[field.field]:", rowData[field.field]); // Debug
-                // Wait for the custom element to be fully initialized
-                if (rowData[field.field]) {
+
+                let rawData = rowData[0][field.field];
+                if (rawData) {
                     setTimeout(() => {
-                        try {
-                            let attrData = rowData[field.field];
-                            if (typeof attrData === "string") {attrData = JSON.parse(attrData);}
-                            input.value = attrData;
-                            console.log("Parsed field-attribute-control data:", attrData); // Debug
-                            //const config = attrData;
-                            //const control = document.querySelector('field-attribute-control');
-                            console.log(">>> Final attrData before populate:", JSON.stringify(attrData, null, 2));
-                            input.populateFromTemplate(attrData);
-                        } catch (e) {
-                            console.error("Failed to parse field-attribute-control data", e);
-                        }
+                    try {
+                        let attrData = typeof rawData === "string" ? JSON.parse(rawData) : rawData;
+                        console.log(">>> Passing attrData into field-attribute-control:", attrData);
+                        input.value = attrData;   // <-- This triggers the setter in your custom control
+                    } catch (e) {
+                        console.error("Failed to parse field-attribute-control data", e);
+                    }
                     }, 100);
                 }
 
                 let attrControl = document.getElementById(field.field);
- 
             } else if (field.control === "doc-template-control") {
                 input = document.createElement("doc-template-control");
                 input.id = field.field;
-                document.body.appendChild(input); // Ensure it's in DOM
+                console.log("Creating doc-template-control for:", field.field, input, rowData[0][field.field]);
+                // Append to your form group instead of document.body
+                formGroup.appendChild(input);
 
-                if (rowData[field.field]) {
-                    setTimeout(() => {
-                        try {
-                            let attrData = rowData[field.field];
-                            if (typeof attrData === "string") attrData = JSON.parse(attrData);
-                            input.value = attrData;
-                            input.populateFromTemplate(attrData);
-                        } catch (e) {
-                            console.error("Failed to populate doc-template-control", e);
-                        }
-                    }, 100);
+                if (rowData[0][field.field]) {
+                    try {
+                        console.log("Setting doc-template-control value:", rowData[0][field.field]);
+                        input.value = rowData[0][field.field]; // setter handles parsing + populate
+                    } catch (e) {
+                        console.error("Failed to set value in doc-template-control", e);
+                    }
                 }
             } else {
                 console.log(7);
@@ -3091,7 +3158,7 @@ function editModalCreation(response,selectedItemFromDropdown) {
 
     document.getElementById('saveChanges').onclick = async function () {
         let updatedData = {
-            "where_data": {},
+            "where_data": {"id":rowData[0]["id"]},
             "update": {}
         };
         
@@ -3226,7 +3293,7 @@ function editModalCreation(response,selectedItemFromDropdown) {
                 newValue = input.checked ? 1 : 0;
             } else if (input) {
                 newValue = input.value;
-            } else if (field.field === "ui_template") {
+            } else if (field.control === "field-attribute-control") {
                 let fieldAttrControl = document.querySelector("field-attribute-control");
                 newValue = JSON.stringify(fieldAttrControl.value);
             } else if (field.field === "doc_template") {
@@ -3294,9 +3361,9 @@ function editModalCreation(response,selectedItemFromDropdown) {
         }
         
         // ✅ Set where condition
-        updatedData.where_data[MainConfig[page_load_conf.tab][selectedItemFromDropdown].key] = 
-            rowData[MainConfig[page_load_conf.tab][selectedItemFromDropdown].key];
-        
+       // updatedData.where_data[MainConfig[page_load_conf.tab][selectedItemFromDropdown].key] = 
+       //     rowData[MainConfig[page_load_conf.tab][selectedItemFromDropdown].key];
+        //console.log(updatedData.where_data[MainConfig[page_load_conf.tab][selectedItemFromDropdown].key], rowData[MainConfig[page_load_conf.tab][selectedItemFromDropdown].key])
         console.log("Updated Data being sent to updateEntry:", updatedData);
         
         const hasGraphsUpdate = Object.keys(updatedData.update).includes('settings');
@@ -3470,17 +3537,25 @@ async function Registration_modal() {
        
         if(selectedItemFromDropdown!=null) {
             console.log("calling for specific config")
-            var body={"qry": {"where_data": {"ui_template_name":selectedItemFromDropdown}}};
-            get_config=await getDocument_data("", "", body, "");
-            let rawConfig = get_config[0].ui_template;  // string
+            //var body={"qry": {"where_data": {"ui_template_name":selectedItemFromDropdown}}};
+            var body={
+                "type": "Document UI Templates",
+                "qry": {
+                    "select_fields": ["id","task_ui_template"], 
+                    "where_data": {"ui_template_name":selectedItemFromDropdown,"task_type_id":1}
+                }
+            }
+            var get_config = await getDocument_data(domain,"options",body,"POST");   console.log(">>>>>",page_load_conf.tab, body)
+            console.log(get_config)
+            let rawConfig = get_config.task_ui_template;  // string 
             config = JSON.parse(rawConfig);          // now it's an object
             console.log("UI Template Config:", config);
-            const Registry = config[selectedItemFromDropdown]; // assuming your object is in variable `config`
+            const Registry = config; // assuming your object is in variable `config`
             console.log(Registry);
-            data=Registry.job.create.data;
+            data=Registry.create.data;
         }
         else{
-            data=MainConfig[page_load_conf.tab].job.create.data
+            data=[] //MainConfig[page_load_conf.tab].job.create.data
             
         }
     }catch(err){console.log("Error in data extraction",err)}

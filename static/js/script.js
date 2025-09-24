@@ -13,7 +13,7 @@ async function get_data_list(selected_doc_type,where_data,block_size=100,block_n
     page_load_conf.event="data_list";   console.log(">>>>>",  page_load_conf);
 
     if(selected_doc_type) {
-        var body={
+       /* var body={
             "requestor_id":"", 
             "request_token": "", 
             "type": "Document UI Templates",
@@ -21,19 +21,29 @@ async function get_data_list(selected_doc_type,where_data,block_size=100,block_n
                 "select_fields": ["id","ui_template"], 
                 "where_data": {"ui_template_name":selected_doc_type}
                 }
+        }*/
+        var body={
+            "requestor_id":"", 
+            "request_token": "", 
+            "type": "Document UI Templates",
+            "qry": {
+                "select_fields": ["id","task_ui_template"], 
+                "where_data": {"ui_template_name":selected_doc_type,"task_type_id":2}
+                }
         }
         //var get_config = await API_helper_call(domain+"options",body);   console.log(">>>>>",page_load_conf.tab, body)
        var get_config = await getDocument_data(domain,"options",body,"POST");   console.log(">>>>>",page_load_conf.tab, body)
        console.log(get_config)
-       let rawConfig = get_config[0].ui_template;  // string
+       let rawConfig = get_config.task_ui_template;  // string 
+
        config = JSON.parse(rawConfig);          // now it's an object
        console.log("UI Template Config:", config);
-       const Registry = config[selected_doc_type]; // assuming your object is in variable `config`
+       const Registry = config; // assuming your object is in variable `config`
         console.log(Registry);
         let fieldsArray = [];
 
-        if (Registry?.job?.list?.data?.[0]?.fields) {
-        fieldsArray = Registry.job.list.data[0].fields.map(f => f.field);
+        if (Registry?.list?.data?.[0]?.fields) {
+        fieldsArray = Registry.list.data[0].fields.map(f => f.field);
         }
 
         console.log(fieldsArray);
@@ -50,8 +60,8 @@ async function get_data_list(selected_doc_type,where_data,block_size=100,block_n
         }
         data_list_body.type = selected_doc_type;     // 
         data_list_body.tab = page_load_conf.tab;     //
-        console.log("Fetching data from API...",Registry.job.list.api);
-        API_call(domain, Registry.job.list.api, data_list_body, "POST");
+        console.log("Fetching data from API...",Registry.list.api);
+        API_call(domain, Registry.list.api, data_list_body, "POST");
         //getDocumentConfigWithCache(domain, MainConfig[page_load_conf.tab][selected_item].getDataApi, data_list_body, "POST");
 
 
@@ -114,6 +124,8 @@ async function get_data_list(selected_doc_type,where_data,block_size=100,block_n
     } 
     else{console.log("Missing Doc_type, please select doc type..");present_Data({})}
 }
+
+
 
 async function present_Data(data,item) {
     console.log(data, item);
