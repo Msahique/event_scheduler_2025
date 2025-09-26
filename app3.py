@@ -17,7 +17,7 @@ import traceback
 db = pymysql.connect(
   host="localhost",
   user="root",
-  password="root",
+  password="Blr@2025",
   database="event_scheduler2025",
   port=3306,
   cursorclass=pymysql.cursors.DictCursor

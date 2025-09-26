@@ -14,7 +14,7 @@ def create_connection(db="event_scheduler2025"):
             host='localhost',
             database=db,
             user='root',
-            password='root'
+            password='Blr@2025'
         )
         return connection
     except Error as e:

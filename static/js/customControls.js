@@ -988,9 +988,11 @@ class Doc_template_Control extends HTMLElement {
     this.staticFields = [
       { name: "log", unique: "false", datatype: "string", not_null: "false" },
       { name: "status", unique: "false", datatype: "string", not_null: "false" },
-      { name: "affiliation", unique: "false", datatype: "string", not_null: "false" },
+      { name: "affiliation_id", unique: "false", datatype: "string", not_null: "false" },
       { name: "remarks", unique: "false", datatype: "string", not_null: "false" },
-      { name: "description", unique: "false", datatype: "mediumtext", not_null: "false" }
+      { name: "description", unique: "false", datatype: "mediumtext", not_null: "false" },
+      { name: "created_at", unique: "false", datatype: "datetime", not_null: "false" },
+      { name: "version", unique: "false", datatype: "int", not_null: "false" }
     ];
 
     this.fields = [];
@@ -1252,6 +1254,7 @@ class Doc_template_Control extends HTMLElement {
           <option value="time" ${field.datatype === 'time' ? 'selected' : ''}>time</option>
           <option value="datetime" ${field.datatype === 'datetime' ? 'selected' : ''}>Datetime</option>
           <option value="mediumtext" ${field.datatype === 'mediumtext' ? 'selected' : ''}>MediumText</option>
+          <option value="longtext" ${field.datatype === 'longtext' ? 'selected' : ''}>LongText</option>
           <option value="json" ${field.datatype === 'json' ? 'selected' : ''}>JSON</option>
           <option value="file" ${field.datatype === 'file' ? 'selected' : ''}>File</option>
           <option value="document" ${field.datatype === 'document' ? 'selected' : ''}>Document</option>
