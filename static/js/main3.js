@@ -478,9 +478,6 @@ async function getDocument_data(domain, endpoint, body, method) {
   }
 }
 
-
-
-
 /*displayObjectList*/
 
 let selectedChartTemplateName = null;
@@ -903,6 +900,9 @@ async function createTable(responseData) {
     let headerRow = document.createElement('tr');
         let received_Data = responseData.fields.data[0];
         // Add Select-All Column
+       received_Data["edit_option"] = true;
+
+        console.log("Edit Option:", received_Data);
         if (received_Data.edit_option) {
             let editTh = document.createElement('th');
             editTh.className = "text-center";
@@ -1683,7 +1683,7 @@ if (!filterForm) {
             td.className = "text-center";
             td.setAttribute("data-field", field.field);
         
-            if (["remark", "schedule", "venue", "photo","doc_template","ui_template"].includes(field.field.toLowerCase())) {
+            if (["remark", "schedule", "venue", "photo","doc_template","task_ui_template"].includes(field.field.toLowerCase())) {
                 let viewBtn = document.createElement("button");
                 viewBtn.className = "btn btn-info btn-sm";
                 viewBtn.innerHTML = "View";
@@ -1692,7 +1692,7 @@ if (!filterForm) {
                 viewBtn.onclick = async function () {
                     console.log(1);
         
-                    if (selectedItemFromDropdown === "Resource Registry" && field.field.toLowerCase() === "schedule") {
+                    if (selectedItemFromDropdown === "Resource Registry" && field.field.toLowerCase() === "schedule" ) {
                         console.log(2);
                         let schedule = rowData[field.field] ? JSON.parse(rowData[field.field]) : null;
                         let details = rowData.details;
@@ -1832,7 +1832,7 @@ if (!filterForm) {
                         let modalInstance = new bootstrap.Modal(document.getElementById("remark_modal"));
                         modalInstance.show();
                     }
-                    else if (field.field.toLowerCase() === "ui_template") {
+                    else if (field.field.toLowerCase() === "task_ui_template") {
                         console.log(6);
                         let remarkContent = document.getElementById("remark_content");
                         let content = rowData[field.field] ? JSON.stringify(JSON.parse(rowData[field.field]), null, 2) : "No data available";
@@ -2667,8 +2667,8 @@ async function editRow(rowData, action) {
     page_load_conf.role = localStorage.getItem("u_role");
 
     // Extract API and key config
-    const key_val = MainConfig[page_load_conf.tab][selectedItemFromDropdown].key;
-    const api = MainConfig[page_load_conf.tab][selectedItemFromDropdown].getDataApi;
+    const key_val = "id" // MainConfig[page_load_conf.tab][selectedItemFromDropdown].key;
+    const api = "config/list_details" // MainConfig[page_load_conf.tab][selectedItemFromDropdown].getDataApi;
 
     // Construct request body
     const modal_body = {
@@ -2734,7 +2734,7 @@ async function editModalCreation(response,selectedItemFromDropdown) {
     let data = {};
     var config_path;
 
-    if (selectedItemFromDropdown==null){config_path=MainConfig[page_load_conf.tab]; }
+    if (selectedItemFromDropdown==null){config_path={};}//MainConfig[page_load_conf.tab]; }
     else{
         var body={
             "requestor_id":"", 
@@ -3369,10 +3369,11 @@ async function editModalCreation(response,selectedItemFromDropdown) {
         const hasGraphsUpdate = Object.keys(updatedData.update).includes('settings');
         
         try {
-            await updateEntry(
+           /* await updateEntry(
                 rowData[MainConfig[page_load_conf.tab][selectedItemFromDropdown].key],
                 updatedData
-            );
+            );*/
+            await updateEntry(rowData["id"],updatedData);
             
             if (hasGraphsUpdate) {
                 alert('Chart template updated successfully!');

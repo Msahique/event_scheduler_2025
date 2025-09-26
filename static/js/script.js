@@ -13,15 +13,6 @@ async function get_data_list(selected_doc_type,where_data,block_size=100,block_n
     page_load_conf.event="data_list";   console.log(">>>>>",  page_load_conf);
 
     if(selected_doc_type) {
-       /* var body={
-            "requestor_id":"", 
-            "request_token": "", 
-            "type": "Document UI Templates",
-            "qry": {
-                "select_fields": ["id","ui_template"], 
-                "where_data": {"ui_template_name":selected_doc_type}
-                }
-        }*/
         var body={
             "requestor_id":"", 
             "request_token": "", 
@@ -133,28 +124,37 @@ async function present_Data(data,item) {
     var display_data;
     var field_data,field_datatype = {}; // Ensure it's initialized properly
     var config_path;
+
     var body={
         "requestor_id":"", 
         "request_token": "", 
-        "tab":"Document Config",
-        "event": "getdocumentuitemplate",
         "type": "Document UI Templates",
         "qry": {
-            "select_fields": ["id","ui_template"], 
-            "where_data": {"ui_template_name":item}
+            "select_fields": ["id","task_ui_template"], 
+            "where_data": {"ui_template_name":item,"task_type_id":2}
             }
     }
+    //var get_config = await API_helper_call(domain+"options",body);   console.log(">>>>>",page_load_conf.tab, body)
+    var get_config = await getDocument_data(domain,"options",body,"POST");   console.log(">>>>>",page_load_conf.tab, body)
+    console.log(get_config)
+    let rawConfig = get_config.task_ui_template;  // string 
+
+    config = JSON.parse(rawConfig);          // now it's an object
+    console.log("UI Template Config:", config);
+    const Registry = config; // assuming your object is in variable `config`
+    console.log(Registry);
+
     if(item !== undefined) {
         var get_config = await API_helper_call(domain+"options",body)
         console.log("=======>>>>>",get_config)
-        var ui_template_config = JSON.parse(get_config[0].ui_template);
+        var ui_template_config = JSON.parse(get_config[0].task_ui_template);
         console.log("UI Template Config:", ui_template_config);
         // var get_config=  API_call(domain, MainConfig[page_load_conf.tab][selected_item].getDataApi, data_list_body, "POST");
         display_data=data[0];  
-        config_path= ui_template_config[item]; 
+        config_path= ui_template_config ; 
         selectedItemFromDropdown=item;  
-        field_datatype = ui_template_config[item].field || []
-        field_data = ui_template_config[item].job.list
+        field_datatype = ui_template_config.field || []
+        field_data = ui_template_config.list
         console.log(2)
     }
     else{
@@ -213,7 +213,7 @@ async function present_Data(data,item) {
     //if (item==undefined){display_data=data;  config_path=MainConfig[page_load_conf.tab]; selectedItemFromDropdown=null;  console.log(1)}
     //else{display_data=data[0];  config_path=MainConfig[page_load_conf.tab][item]; selectedItemFromDropdown=item;  console.log(2)}
     console.log(page_load_conf.tab)
-    console.log(MainConfig[page_load_conf.tab])
+    //console.log(MainConfig[page_load_conf.tab])
     console.log(config_path)
     /*if (config_path.Roles.includes(role)) {
         field_data = config_path.job.list;
@@ -224,7 +224,7 @@ async function present_Data(data,item) {
     }*/  
     var data_list = {
         tab_name: page_load_conf.tab,
-        controls: config_path.controls,
+        controls: config_path.controls || undefined,
         data: display_data,
         fields: field_data,
         field_datatype : field_datatype
@@ -401,26 +401,7 @@ function updateEntry(Id, updatedData) {
     }
     console.log(requestData)
     storeRequest(requestData)
-   /* fetch(apiEndpoint, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(update_body)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message) {
-            alert("updated successfully!");
-            get_data_list(selectedItemFromDropdown,{});
-            } else {
-            alert("Update failed: " + (data.message || "Unknown error"));
-        }
-    })
-    .catch(error => {
-        console.error("Update request failed:", error);
-        alert("An error occurred while updating the entity.");
-    });*/
+
 }
 
 function createEntry(newEntry) {

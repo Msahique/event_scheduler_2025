@@ -1479,7 +1479,7 @@
     <script src="{{ url_for('static', filename='js/helper.js') }}"></script>
     <script src="{{ url_for('static', filename='js/entity.js') }}"></script>
     <script src="{{ url_for('static', filename='js/config/Config.js') }}"></script>
-    <!-- <script src="{{ url_for('static', filename='js/triggers.js') }}"></script>  -->
+     <!--<script src="{{ url_for('static', filename='js/triggers.js') }}"></script>  -->
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script src="{{ url_for('static', filename='js/customControls.js') }}"></script>
     <script src="{{ url_for('static', filename='js/editor_config.js') }}"></script>
@@ -1489,6 +1489,7 @@
     <!-- <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js" defer></script>
     <script>
+        var global_settings={"language":"english"}
         // const affiliations = {{ affiliation | tojson | safe }};
         var tabStatus=1;
         console.log("Affiliations:", affiliations);

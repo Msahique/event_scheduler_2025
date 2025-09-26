@@ -4469,7 +4469,8 @@ var MainConfig={
             }
         },
         "Document UI Templates":{
-             "doc_title":"","getDataApi":"config/list_details",
+            "doc_title":"",
+            "getDataApi":"config/list_details",
             "key":"id",
             "attchment_files_path":"",
             "job":{
